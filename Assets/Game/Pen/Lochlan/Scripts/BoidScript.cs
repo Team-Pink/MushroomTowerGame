@@ -28,4 +28,48 @@ public class BoidScript : MonoBehaviour
         return new Vector3(x,0,z);
     }
 
+    /* Comment out to suppress issues with unfinished code
+    Vector3 Coherence(Collider[] colliders)
+    {
+        Vector3 coherence;
+        foreach(Collider boid in colliders)
+        {
+
+        }
+
+        return coherence;
+    }
+
+    Vector3 Seperation(Collider[] colliders)
+    {
+        Vector3 seperation;
+        foreach (Collider boid in colliders)
+        {
+
+        }
+
+        return seperation;
+    }
+
+    Vector3 Alignment(Collider[] colliders)
+    {
+        Vector3 alignment;
+        foreach (Collider boid in colliders)
+        {
+
+        }
+
+        return alignment;
+    }
+
+    Vector3 CalculateBoidMovement()
+    {
+        Collider[] colliders = Physics.OverlapSphere(this.transform.position, 0.2f, this.gameObject.layer);
+        Vector3 Move = Vector3.zero;
+        Move += Coherence(colliders);
+        Move += Seperation(colliders);
+        Move += Alignment(colliders);
+        return Move;
+    }*/
+
 }
