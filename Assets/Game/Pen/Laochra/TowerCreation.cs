@@ -1,5 +1,7 @@
+using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum InteractionState
 {
@@ -10,21 +12,52 @@ public enum InteractionState
 
 public class TowerCreation : MonoBehaviour
 {
-    [SerializeField] private bool debugMode;
-    [SerializeField] private KeyCode interactKey = KeyCode.Mouse0;
+    [Header("Objects")]
+    [SerializeField] GameObject targetPlane;
+    [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
+    private const int towerPrefabAmount = 4;
+
+    [Header("Placement")]
+    [SerializeField] LayerMask layersToCheck;
+    [SerializeField] float placementExclusionSize = 5;
+    private const float capsuleCheckBound = 5;
+
+    [Header("UI")]
+    [SerializeField] GameObject radialMenu;
+    [SerializeField] Image selectionIndicator;
+
+    [Header("Testing")]
+    [SerializeField] bool debugMode;
+    [SerializeField] KeyCode interactKey = KeyCode.Mouse0;
 
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
 
-    [SerializeField] private GameObject targetPlane;
-    [SerializeField] private GameObject towerPrefab;
-
-    [SerializeField] LayerMask layersToCheck;
-    [SerializeField] private float placementExclusionSize = 5;
-    private const float capsuleCheckBound = 5;
-
     private InteractionState currentInteraction = InteractionState.None;
     private RaycastHit currentHit;
+
+    private void Awake()
+    {
+        radialMenu.SetActive(false);
+        selectionIndicator.enabled = false;
+    }
+
+    private void OnValidate()
+    {
+        if (towerPrefabs.Count == towerPrefabAmount)
+            return;
+
+        Debug.LogWarning("Stop that, the list tpwer prefabs should be exactly " + towerPrefabAmount + " elements!", this);
+
+        while (towerPrefabs.Count < towerPrefabAmount)
+        {
+            towerPrefabs.Add(null);
+        }
+        while (towerPrefabs.Count > towerPrefabAmount)
+        {
+            towerPrefabs.RemoveAt(towerPrefabs.Count - 1);
+        }
+    }
 
     private void Update()
     {
@@ -34,7 +67,7 @@ public class TowerCreation : MonoBehaviour
         switch(currentInteraction)
         {
             case InteractionState.None:
-                DraggingBudState();
+                DefaultState();
                 break;
             case InteractionState.DraggingBud:
                 DraggingBudState();
@@ -50,9 +83,18 @@ public class TowerCreation : MonoBehaviour
                 Debug.DrawRay(Camera.main.transform.position, (mouseWorldPosition - Camera.main.transform.position) * 1000, Color.red);
             else
                 Debug.DrawRay(Camera.main.transform.position, (mouseWorldPosition - Camera.main.transform.position).normalized * GetRayHit().distance, Color.green);
+            Debug.Log(currentInteraction);
         }
     }
 
+
+    private void DefaultState()
+    {
+        if (Input.GetKeyDown(interactKey))
+        {
+            currentInteraction = InteractionState.DraggingBud;
+        }
+    }
 
 
     private void DraggingBudState()
@@ -77,9 +119,16 @@ public class TowerCreation : MonoBehaviour
         }
 
         if (SpaceForTower())
-            SpawnTower();
+        {
+            if (selectionIndicator.enabled == false)
+            {
+                radialMenu.SetActive(true);
 
-        currentInteraction = InteractionState.None;
+                selectionIndicator.rectTransform.position = mouseScreenPosition;
+                selectionIndicator.enabled = true;
+            }
+        }
+        else currentInteraction = InteractionState.None;
     }
 
 
@@ -106,8 +155,13 @@ public class TowerCreation : MonoBehaviour
         return targets.Count == 0; 
     }
 
-    private void SpawnTower()
+    public void SpawnTower(int towerIndex)
     {
-        Instantiate(towerPrefab, currentHit.point, Quaternion.identity);
+        Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+
+        radialMenu.SetActive(false);
+        selectionIndicator.enabled = false;
+
+        currentInteraction = InteractionState.None;
     }
 }
