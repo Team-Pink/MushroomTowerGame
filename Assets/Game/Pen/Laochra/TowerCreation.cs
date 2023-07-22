@@ -12,6 +12,8 @@ public enum InteractionState
 
 public class TowerCreation : MonoBehaviour
 {
+    private Camera mainCamera;
+
     [Header("Objects")]
     [SerializeField] GameObject targetPlane;
     [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
@@ -26,8 +28,12 @@ public class TowerCreation : MonoBehaviour
     [SerializeField] GameObject radialMenu;
     [SerializeField] Image selectionIndicator;
 
-    [Header("Testing")]
-    [SerializeField] bool debugMode;
+    [Header("Debug")]
+    [SerializeField] bool showMouseDirection;
+    [SerializeField] bool showCameraProjection;
+    private float screenWidth;
+    private float screenHeight;
+    [SerializeField] bool logCurrentInteraction;
     [SerializeField] KeyCode interactKey = KeyCode.Mouse0;
 
     private Vector3 mouseScreenPosition;
@@ -38,6 +44,7 @@ public class TowerCreation : MonoBehaviour
 
     private void Awake()
     {
+        mainCamera = Camera.main;
         radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
     }
@@ -62,7 +69,7 @@ public class TowerCreation : MonoBehaviour
     private void Update()
     {
         mouseScreenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.1f);
-        mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
 
         switch(currentInteraction)
         {
@@ -77,22 +84,27 @@ public class TowerCreation : MonoBehaviour
                 break;
         }
 
-        if(debugMode)
-        {
-            if (GetRayHit().collider is null)
-                Debug.DrawRay(Camera.main.transform.position, (mouseWorldPosition - Camera.main.transform.position) * 1000, Color.red);
-            else
-                Debug.DrawRay(Camera.main.transform.position, (mouseWorldPosition - Camera.main.transform.position).normalized * GetRayHit().distance, Color.green);
-            Debug.Log(currentInteraction);
-        }
+#if UNITY_EDITOR
+        DEBUG();
+#endif
     }
-
 
     private void DefaultState()
     {
         if (Input.GetKeyDown(interactKey))
         {
-            currentInteraction = InteractionState.DraggingBud;
+            currentHit = GetRayHit();
+
+            if (currentHit.collider is null)
+                return;
+
+            if (currentHit.collider.CompareTag("Bud"))
+            {
+                currentHit.collider.gameObject.SetActive(false);
+                selectionIndicator.enabled = true;
+
+                currentInteraction = InteractionState.DraggingBud;
+            }
         }
     }
 
@@ -108,6 +120,8 @@ public class TowerCreation : MonoBehaviour
             else
                 currentInteraction = InteractionState.None;
         }
+
+        selectionIndicator.rectTransform.position = mouseScreenPosition;
     }
 
     private void PositionSelectedState()
@@ -120,12 +134,9 @@ public class TowerCreation : MonoBehaviour
 
         if (SpaceForTower())
         {
-            if (selectionIndicator.enabled == false)
+            if (radialMenu.activeSelf == false)
             {
                 radialMenu.SetActive(true);
-
-                selectionIndicator.rectTransform.position = mouseScreenPosition;
-                selectionIndicator.enabled = true;
             }
         }
         else currentInteraction = InteractionState.None;
@@ -135,7 +146,7 @@ public class TowerCreation : MonoBehaviour
 
     private RaycastHit GetRayHit()
     {
-        Physics.Raycast(Camera.main.transform.position, mouseWorldPosition - Camera.main.transform.position, out RaycastHit hit, Mathf.Infinity);
+        Physics.Raycast(mainCamera.transform.position, mouseWorldPosition - mainCamera.transform.position, out RaycastHit hit, Mathf.Infinity);
         return hit;
     }
 
@@ -151,7 +162,7 @@ public class TowerCreation : MonoBehaviour
 
         var targets = Physics.CapsuleCastAll(capsuleTop, capsuleBottom, placementExclusionSize, Vector3.up, Mathf.Infinity, layersToCheck).ToList();
         
-        Debug.Log(targets.Count);
+        //Debug.Log(targets.Count);
         return targets.Count == 0; 
     }
 
@@ -163,5 +174,73 @@ public class TowerCreation : MonoBehaviour
         selectionIndicator.enabled = false;
 
         currentInteraction = InteractionState.None;
+    }
+
+
+
+    private void DEBUG()
+    {
+        if (showMouseDirection)
+        {
+            if (GetRayHit().collider is null)
+                Debug.DrawRay(mainCamera.transform.position, mainCamera.farClipPlane * 10 * (mouseWorldPosition - mainCamera.transform.position), Color.red);
+            else
+                Debug.DrawRay(mainCamera.transform.position, (mouseWorldPosition - mainCamera.transform.position).normalized * GetRayHit().distance, Color.green);
+        }
+
+        if (showCameraProjection)
+        {
+            if (screenHeight != mainCamera.pixelHeight)
+                screenHeight = mainCamera.pixelHeight;
+            if (screenWidth != mainCamera.pixelWidth)
+                screenWidth = mainCamera.pixelWidth;
+
+            Vector3 cameraPosition = mainCamera.transform.position;
+
+            RaycastHit[] projectionCorners = new RaycastHit[]
+            {
+                DrawCameraProjectionRay(new Vector3(0, 0, 0.1f), cameraPosition),
+                DrawCameraProjectionRay(new Vector3(0, screenHeight, 0.1f), cameraPosition),
+                DrawCameraProjectionRay(new Vector3(screenWidth, screenHeight, 0.1f), cameraPosition),
+                DrawCameraProjectionRay(new Vector3(screenWidth, 0, 0.1f), cameraPosition)
+            };
+
+            for(int i = 0; i < projectionCorners.Length; i++)
+            {
+                if (projectionCorners[i].collider is null)
+                    continue;
+
+                if (i == projectionCorners.Length - 1)
+                {
+                    if (projectionCorners[0].collider is null)
+                        continue;
+
+                    Debug.DrawLine(projectionCorners[i].point, projectionCorners[0].point, Color.white);
+                }
+                else
+                {
+                    if (projectionCorners[i+1].collider is null)
+                        continue;
+
+                    Debug.DrawLine(projectionCorners[i].point, projectionCorners[i+1].point, Color.white);
+                }
+
+            }
+        }
+
+        if (logCurrentInteraction)
+            Debug.Log(currentInteraction);
+    }
+
+    private RaycastHit DrawCameraProjectionRay(Vector3 screenPosition, Vector3 cameraPosition)
+    {
+        Physics.Raycast(mainCamera.transform.position, mainCamera.ScreenToWorldPoint(screenPosition) - cameraPosition, out RaycastHit hit, Mathf.Infinity);
+
+        if (hit.collider is null)
+            Debug.DrawRay(mainCamera.transform.position, mainCamera.farClipPlane * 10 * (mainCamera.ScreenToWorldPoint(screenPosition) - cameraPosition), Color.white);
+        else
+            Debug.DrawRay(mainCamera.transform.position, (mainCamera.ScreenToWorldPoint(screenPosition) - cameraPosition).normalized * hit.distance, Color.white);
+        
+        return hit;
     }
 }
