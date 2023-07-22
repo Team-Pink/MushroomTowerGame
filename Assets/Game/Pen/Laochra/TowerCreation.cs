@@ -21,8 +21,10 @@ public class TowerCreation : MonoBehaviour
 
     [Header("Placement")]
     [SerializeField] LayerMask layersToCheck;
-    [SerializeField] float placementExclusionSize = 5;
+    [SerializeField] float placementExclusionSize = 1;
+    [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
+    private Vector3 dragStartPosition;
 
     [Header("UI")]
     [SerializeField] GameObject radialMenu;
@@ -34,11 +36,13 @@ public class TowerCreation : MonoBehaviour
     private float screenWidth;
     private float screenHeight;
     [SerializeField] bool logCurrentInteraction;
-    [SerializeField] KeyCode interactKey = KeyCode.Mouse0;
+
+    [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
 
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
 
+    private GameObject activeBud;
     private InteractionState currentInteraction = InteractionState.None;
     private RaycastHit currentHit;
 
@@ -100,28 +104,66 @@ public class TowerCreation : MonoBehaviour
 
             if (currentHit.collider.CompareTag("Bud"))
             {
-                currentHit.collider.gameObject.SetActive(false);
+                activeBud = currentHit.collider.gameObject;
+                activeBud.SetActive(false);
                 selectionIndicator.enabled = true;
 
                 currentInteraction = InteractionState.DraggingBud;
             }
+
         }
     }
 
 
     private void DraggingBudState()
     {
-        if (Input.GetKeyUp(interactKey))
-        {
-            currentHit = GetRayHit();
+        bool canPlaceTower;
+        currentHit = GetRayHit();
 
-            if (currentHit.collider is not null)
-                currentInteraction = InteractionState.PositionSelected;
+        if (dragStartPosition == Vector3.zero)
+            dragStartPosition = new Vector3(currentHit.point.x, 0, currentHit.point.z);
+
+        if (currentHit.collider is not null && SpaceForTower())
+        {
+            float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+            if (distanceFromPylon < maxDistanceFromPylon)
+            {
+                canPlaceTower = true;
+                selectionIndicator.color = Color.green;
+            }
+            else if (distanceFromPylon > 2 * maxDistanceFromPylon)
+            {
+                //Add implementation for placing a new pylon instead ##########################################################################
+                canPlaceTower = false;
+                selectionIndicator.color = Color.green;
+            }
             else
-                currentInteraction = InteractionState.None;
+            {
+                canPlaceTower = false;
+                selectionIndicator.color = Color.red;
+            }
+        }
+        else
+        {
+            canPlaceTower = false;
+            selectionIndicator.color = Color.red;
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
+
+        if (Input.GetKeyUp(interactKey))
+        {
+            if (canPlaceTower)
+                currentInteraction = InteractionState.PositionSelected;
+            else
+            {
+                activeBud.SetActive(true);
+                activeBud = null;
+                selectionIndicator.enabled = false;
+                currentInteraction = InteractionState.None;
+            }
+        }
     }
 
     private void PositionSelectedState()
@@ -132,14 +174,8 @@ public class TowerCreation : MonoBehaviour
             return;
         }
 
-        if (SpaceForTower())
-        {
-            if (radialMenu.activeSelf == false)
-            {
-                radialMenu.SetActive(true);
-            }
-        }
-        else currentInteraction = InteractionState.None;
+        if (radialMenu.activeSelf == false)
+            radialMenu.SetActive(true);
     }
 
 
@@ -162,7 +198,6 @@ public class TowerCreation : MonoBehaviour
 
         var targets = Physics.CapsuleCastAll(capsuleTop, capsuleBottom, placementExclusionSize, Vector3.up, Mathf.Infinity, layersToCheck).ToList();
         
-        //Debug.Log(targets.Count);
         return targets.Count == 0; 
     }
 
@@ -174,6 +209,8 @@ public class TowerCreation : MonoBehaviour
         selectionIndicator.enabled = false;
 
         currentInteraction = InteractionState.None;
+        activeBud.SetActive(true);
+        activeBud = null;
     }
 
 
@@ -205,24 +242,24 @@ public class TowerCreation : MonoBehaviour
                 DrawCameraProjectionRay(new Vector3(screenWidth, 0, 0.1f), cameraPosition)
             };
 
-            for(int i = 0; i < projectionCorners.Length; i++)
+            for(int pointIndex = 0; pointIndex < projectionCorners.Length; pointIndex++)
             {
-                if (projectionCorners[i].collider is null)
+                if (projectionCorners[pointIndex].collider is null)
                     continue;
 
-                if (i == projectionCorners.Length - 1)
+                if (pointIndex == projectionCorners.Length - 1)
                 {
                     if (projectionCorners[0].collider is null)
                         continue;
 
-                    Debug.DrawLine(projectionCorners[i].point, projectionCorners[0].point, Color.white);
+                    Debug.DrawLine(projectionCorners[pointIndex].point, projectionCorners[0].point, Color.white);
                 }
                 else
                 {
-                    if (projectionCorners[i+1].collider is null)
+                    if (projectionCorners[pointIndex+1].collider is null)
                         continue;
 
-                    Debug.DrawLine(projectionCorners[i].point, projectionCorners[i+1].point, Color.white);
+                    Debug.DrawLine(projectionCorners[pointIndex].point, projectionCorners[pointIndex+1].point, Color.white);
                 }
 
             }
