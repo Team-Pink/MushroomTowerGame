@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public enum InteractionState
 {
     None,
-    DraggingBud,
-    PositionSelected
+    DraggingFromPylon,
+    PlacingTower,
+    DraggingFromHub,
+    PlacingPylon
 }
 
 public class TowerCreation : MonoBehaviour
@@ -16,11 +18,14 @@ public class TowerCreation : MonoBehaviour
 
     [Header("Objects")]
     [SerializeField] GameObject targetPlane;
+    [SerializeField] GameObject pylonPrefab;
     [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
     private const int towerPrefabAmount = 4;
 
     [Header("Placement")]
-    [SerializeField] LayerMask layersToCheck;
+    [SerializeField] LayerMask placementBlockers;
+    private LayerMask pylonLayer;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
@@ -51,6 +56,9 @@ public class TowerCreation : MonoBehaviour
         mainCamera = Camera.main;
         radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
+
+        pylonLayer = LayerMask.NameToLayer("Pylon");
+        Debug.Log(LayerMask.LayerToName(groundLayer)); // WHY IS THIS LOGGING HUB????? #################################################################
     }
 
     private void OnValidate()
@@ -80,11 +88,17 @@ public class TowerCreation : MonoBehaviour
             case InteractionState.None:
                 DefaultState();
                 break;
-            case InteractionState.DraggingBud:
-                DraggingBudState();
+            case InteractionState.DraggingFromHub:
+                DraggingFromHubState();
                 break;
-            case InteractionState.PositionSelected:
-                PositionSelectedState();
+            case InteractionState.PlacingPylon:
+                PlacingPylonState();
+                break;
+            case InteractionState.DraggingFromPylon:
+                DraggingFromPylonState();
+                break;
+            case InteractionState.PlacingTower:
+                PlacingTowerState();
                 break;
         }
 
@@ -108,45 +122,70 @@ public class TowerCreation : MonoBehaviour
                 activeBud.SetActive(false);
                 selectionIndicator.enabled = true;
 
-                currentInteraction = InteractionState.DraggingBud;
+                currentInteraction = InteractionState.DraggingFromPylon;
             }
-
         }
+
+        if (dragStartPosition != Vector3.zero)
+            dragStartPosition = Vector3.zero;
     }
 
-
-    private void DraggingBudState()
+    private void DraggingFromHubState()
     {
-        bool canPlaceTower;
-        currentHit = GetRayHit();
+
+    }
+
+    private void PlacingPylonState()
+    {
+        if (!TargetIsPlane())
+        {
+            currentInteraction = InteractionState.None;
+            return;
+        }
+
+        SpawnPylon();
+    }
+
+    private void DraggingFromPylonState()
+    {
+        bool canPlace;
+        bool placingPylon = false;
+
+        currentHit = GetRayHit(groundLayer);
 
         if (dragStartPosition == Vector3.zero)
-            dragStartPosition = new Vector3(currentHit.point.x, 0, currentHit.point.z);
+            dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
-        if (currentHit.collider is not null && SpaceForTower())
+        if (currentHit.collider is not null)
         {
+            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+
             float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-            if (distanceFromPylon < maxDistanceFromPylon)
+            bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
+            bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
+
+            if (inTowerBuildRange & spaceToPlace)
             {
-                canPlaceTower = true;
+                canPlace = true;
                 selectionIndicator.color = Color.green;
             }
-            else if (distanceFromPylon > 2 * maxDistanceFromPylon)
+            else if (inPylonBuildRange && spaceToPlace && spaceForPylon)
             {
-                //Add implementation for placing a new pylon instead ##########################################################################
-                canPlaceTower = false;
+                placingPylon = true;
+                canPlace = true;
                 selectionIndicator.color = Color.green;
             }
             else
             {
-                canPlaceTower = false;
+                canPlace = false;
                 selectionIndicator.color = Color.red;
             }
         }
         else
         {
-            canPlaceTower = false;
+            canPlace = false;
             selectionIndicator.color = Color.red;
         }
 
@@ -154,19 +193,31 @@ public class TowerCreation : MonoBehaviour
 
         if (Input.GetKeyUp(interactKey))
         {
-            if (canPlaceTower)
-                currentInteraction = InteractionState.PositionSelected;
+            if (canPlace)
+            {
+                if (placingPylon)
+                {
+                    selectionIndicator.color = Color.white;
+                    currentInteraction = InteractionState.PlacingPylon;
+                }
+                else
+                {
+                    selectionIndicator.color = Color.white;
+                    currentInteraction = InteractionState.PlacingTower;
+                }
+            }
             else
             {
                 activeBud.SetActive(true);
                 activeBud = null;
+                selectionIndicator.color = Color.white;
                 selectionIndicator.enabled = false;
                 currentInteraction = InteractionState.None;
             }
         }
     }
 
-    private void PositionSelectedState()
+    private void PlacingTowerState()
     {
         if (!TargetIsPlane())
         {
@@ -185,20 +236,36 @@ public class TowerCreation : MonoBehaviour
         Physics.Raycast(mainCamera.transform.position, mouseWorldPosition - mainCamera.transform.position, out RaycastHit hit, Mathf.Infinity);
         return hit;
     }
+    private RaycastHit GetRayHit(LayerMask targetLayers)
+    {
+        Physics.Raycast(mainCamera.transform.position, mouseWorldPosition - mainCamera.transform.position, out RaycastHit hit, Mathf.Infinity, targetLayers);
+        return hit;
+    }
 
     private bool TargetIsPlane()
     {
         return currentHit.collider.gameObject == targetPlane;
     }
 
-    private bool SpaceForTower()
+    private bool SpaceToPlace(float detectionArea, LayerMask layerMask)
     {
         Vector3 capsuleTop = new(currentHit.point.x, currentHit.point.y + capsuleCheckBound, currentHit.point.z);
         Vector3 capsuleBottom = new(currentHit.point.x, currentHit.point.y - capsuleCheckBound, currentHit.point.z);
 
-        var targets = Physics.CapsuleCastAll(capsuleTop, capsuleBottom, placementExclusionSize, Vector3.up, Mathf.Infinity, layersToCheck).ToList();
-        
-        return targets.Count == 0; 
+        var targets = Physics.CapsuleCastAll(capsuleTop, capsuleBottom, detectionArea, Vector3.up, Mathf.Infinity, layerMask).ToList();
+
+        return targets.Count == 0;
+    }
+
+    private void SpawnPylon()
+    {
+        Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+
+        selectionIndicator.enabled = false;
+
+        currentInteraction = InteractionState.None;
+        activeBud.SetActive(true);
+        activeBud = null;
     }
 
     public void SpawnTower(int towerIndex)
@@ -261,7 +328,6 @@ public class TowerCreation : MonoBehaviour
 
                     Debug.DrawLine(projectionCorners[pointIndex].point, projectionCorners[pointIndex+1].point, Color.white);
                 }
-
             }
         }
 

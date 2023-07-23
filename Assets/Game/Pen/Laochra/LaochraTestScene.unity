@@ -730,14 +730,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPlane: {fileID: 781113485}
+  pylonPrefab: {fileID: 5090340476508024332, guid: f2c484290cb59e94ebf444451a0e8271, type: 3}
   towerPrefabs:
   - {fileID: 4566758681882099792, guid: 1e43abcf9044d39428fff739d24aab6c, type: 3}
   - {fileID: 8068595304501415392, guid: 896f8c00d7dab2d419eb6cec20948391, type: 3}
   - {fileID: 4943118599607259700, guid: 45ff3ac439861334dae8e784058989ae, type: 3}
   - {fileID: 209136843924614162, guid: c3c78f97f225f504f934f80bbd3575f0, type: 3}
-  layersToCheck:
+  placementBlockers:
     serializedVersion: 2
     m_Bits: 448
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   placementExclusionSize: 1.5
   maxDistanceFromPylon: 6
   radialMenu: {fileID: 1772979609}
@@ -773,7 +777,7 @@ GameObject:
   - component: {fileID: 781113488}
   - component: {fileID: 781113487}
   - component: {fileID: 781113490}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
