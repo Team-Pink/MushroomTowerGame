@@ -8,9 +8,12 @@ public class LochTestEnemy : MonoBehaviour
     Vector3 startPos;
     public Vector3 targetHeart;
     public LayerMask heartMask;
+    public LayerMask range;
     Vector3 velocity;
-    float health = 100;
+    public float health = 100;
+    bool dead; // indicates availability to object pool
     // Start is called before the first frame update
+    public int priorityScoreModifier = 0;   
     void Start()
     {
         startPos = transform.position;
@@ -22,8 +25,7 @@ public class LochTestEnemy : MonoBehaviour
     void Update()
     {
         transform.Translate(velocity * Time.deltaTime * 0.5f);
-        if (health <= 0)
-            OnDeath();
+        if (health <= 0 && !dead) OnDeath();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -32,16 +34,36 @@ public class LochTestEnemy : MonoBehaviour
             transform.position = startPos;
     }
 
-    void OnDeath()
-    {
-        //increase currency in closest Pylon
-
+    public void OnDeath()
+    {        
+        
         // do a sphere cast for towers in range and remove this enemy from them
-        Collider[] towers = Physics.OverlapSphere(this.transform.position, 0.2f, LayerMask.NameToLayer("Range"));
+        Collider[] towers = Physics.OverlapSphere(this.transform.position, 0.2f, range);
         foreach(Collider tower in towers)
         {
+            if(tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Contains(this.gameObject))
+            { 
             tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Remove(this.gameObject); //The Remove method returns false if item is not found in the Hashset.
-            
-        }
+            }
+        }  
+        // play death animation
+
+        // increase global currency
+  
+        //increase exp in closest Pylon
+
+
+        //unrender enamy and reset values
+
+        // flag the enemy data as available in the object pool
+        dead = true;
+        // get rid of this when alternative solution is implemented. // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Debug.Log(this.gameObject.name + " is dead");
+        this.gameObject.SetActive(false);
+        // get rid of this when alternative solution is implemented. //
+
+        
     }
+
+
 }

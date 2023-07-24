@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8870922411599402562}
   - component: {fileID: 8870922411599402563}
   - component: {fileID: 8870922411599402567}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,11 @@ MonoBehaviour:
   targetHeart: {x: 0, y: 0, z: 0}
   heartMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
+  range:
+    serializedVersion: 2
+    m_Bits: 128
+  health: 100
 --- !u!54 &8870922411599402567
 Rigidbody:
   m_ObjectHideFlags: 0
