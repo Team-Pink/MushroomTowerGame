@@ -10,6 +10,8 @@ public class TempTower : MonoBehaviour
 
     Attacking attacking;
 
+    public bool isAlive;
+
     private void Awake()
     {
         
@@ -18,6 +20,11 @@ public class TempTower : MonoBehaviour
 
     private void Update()
     {
+        if(health <= 0)
+        {
+            gameObject.SetActive(false);
+        }
+
         foreach(var enemy in enemyList)
         {
             if (attacking.DistanceCheck(gameObject, enemy.gameObject, enemy.attackRange))
@@ -29,10 +36,8 @@ public class TempTower : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Detected collision");
         if(other.GetComponent<TempEnemy>() != null)
         {
-            Debug.Log("collided with an enemy");
             TempEnemy enemy = other.GetComponent<TempEnemy>();
             enemyList.Add(enemy);
         }
@@ -40,10 +45,8 @@ public class TempTower : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Detected object leaving trigger");
         if (other.GetComponent<TempEnemy>() != null)
         {
-            Debug.Log("Enemy has left tower range");
             TempEnemy enemy = other.GetComponent<TempEnemy>();
             enemyList.Remove(enemy);
         }

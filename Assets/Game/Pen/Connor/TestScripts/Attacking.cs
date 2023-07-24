@@ -34,7 +34,6 @@ public class Attacking : MonoBehaviour
     {
         if (enemy.isAttacking == false)
         {
-            Debug.Log("Enemy can attack");
             enemy.isAttacking = true;
 
             CallAttackLogic(tower, enemy);
@@ -50,11 +49,9 @@ public class Attacking : MonoBehaviour
 
     IEnumerator Attack(TempTower tower, TempEnemy enemy)
     {
-        Debug.Log("Tower health before: " + tower.health);
 
         tower.health -= enemy.attackDamage;
 
-        Debug.Log("Tower health after: " + tower.health);
 
         yield return new WaitForSeconds(enemy.timeBetweenAttacks);
 
