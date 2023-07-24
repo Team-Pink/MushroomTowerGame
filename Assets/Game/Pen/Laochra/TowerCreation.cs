@@ -25,7 +25,8 @@ public class TowerCreation : MonoBehaviour
     [Header("Placement")]
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
-    [SerializeField] private LayerMask groundLayer;
+    private LayerMask placableLayers;
+    private bool placedFromPylon;
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
@@ -57,8 +58,8 @@ public class TowerCreation : MonoBehaviour
         radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
 
-        pylonLayer = LayerMask.NameToLayer("Pylon");
-        Debug.Log(LayerMask.LayerToName(groundLayer)); // WHY IS THIS LOGGING HUB????? #################################################################
+        placableLayers = LayerMask.GetMask("Ground");
+        pylonLayer = LayerMask.GetMask("Pylon");
     }
 
     private void OnValidate()
@@ -66,7 +67,7 @@ public class TowerCreation : MonoBehaviour
         if (towerPrefabs.Count == towerPrefabAmount)
             return;
 
-        Debug.LogWarning("Stop that, the list tpwer prefabs should be exactly " + towerPrefabAmount + " elements!", this);
+        Debug.LogWarning("Stop that, the list tower prefabs should be exactly " + towerPrefabAmount + " elements!", this);
 
         while (towerPrefabs.Count < towerPrefabAmount)
         {
@@ -124,6 +125,14 @@ public class TowerCreation : MonoBehaviour
 
                 currentInteraction = InteractionState.DraggingFromPylon;
             }
+            else if (currentHit.collider.CompareTag("HubBud"))
+            {
+                activeBud = currentHit.collider.gameObject;
+                activeBud.SetActive(false);
+                selectionIndicator.enabled = true;
+
+                currentInteraction = InteractionState.DraggingFromHub;
+            }
         }
 
         if (dragStartPosition != Vector3.zero)
@@ -132,7 +141,59 @@ public class TowerCreation : MonoBehaviour
 
     private void DraggingFromHubState()
     {
+        bool canPlace;
 
+        currentHit = GetRayHit(placableLayers);
+
+        if (dragStartPosition == Vector3.zero)
+            dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
+
+        if (currentHit.collider is not null)
+        {
+            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+
+            float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+            bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
+
+            if (inPylonBuildRange && spaceToPlace && spaceForPylon)
+            {
+                canPlace = true;
+                selectionIndicator.color = Color.green;
+            }
+            else
+            {
+                canPlace = false;
+                selectionIndicator.color = Color.red;
+            }
+        }
+        else
+        {
+            canPlace = false;
+            selectionIndicator.color = Color.red;
+        }
+
+        selectionIndicator.rectTransform.position = mouseScreenPosition;
+
+        if (Input.GetKeyUp(interactKey))
+        {
+            if (canPlace)
+            {
+                selectionIndicator.color = Color.white;
+                selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
+
+                currentInteraction = InteractionState.PlacingPylon;
+            }
+            else
+            {
+                activeBud.SetActive(true);
+                activeBud = null;
+                selectionIndicator.color = Color.white;
+                selectionIndicator.enabled = false;
+                currentInteraction = InteractionState.None;
+            }
+        }
     }
 
     private void PlacingPylonState()
@@ -151,7 +212,7 @@ public class TowerCreation : MonoBehaviour
         bool canPlace;
         bool placingPylon = false;
 
-        currentHit = GetRayHit(groundLayer);
+        currentHit = GetRayHit(placableLayers);
 
         if (dragStartPosition == Vector3.zero)
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
@@ -195,16 +256,14 @@ public class TowerCreation : MonoBehaviour
         {
             if (canPlace)
             {
+                selectionIndicator.color = Color.white;
+                selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
+
+                placedFromPylon = true;
                 if (placingPylon)
-                {
-                    selectionIndicator.color = Color.white;
                     currentInteraction = InteractionState.PlacingPylon;
-                }
                 else
-                {
-                    selectionIndicator.color = Color.white;
                     currentInteraction = InteractionState.PlacingTower;
-                }
             }
             else
             {
@@ -259,9 +318,15 @@ public class TowerCreation : MonoBehaviour
 
     private void SpawnPylon()
     {
-        Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+
+        if (placedFromPylon)
+        {
+            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(pylonInstance.GetComponent<Pylon>());
+        }
 
         selectionIndicator.enabled = false;
+        selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
 
         currentInteraction = InteractionState.None;
         activeBud.SetActive(true);
@@ -270,10 +335,16 @@ public class TowerCreation : MonoBehaviour
 
     public void SpawnTower(int towerIndex)
     {
-        Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+
+        if (placedFromPylon)
+        {
+            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(towerInstance.GetComponent<Tower>());
+        }
 
         radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
+        selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
 
         currentInteraction = InteractionState.None;
         activeBud.SetActive(true);
