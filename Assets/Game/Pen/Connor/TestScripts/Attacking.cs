@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 public class Attacking : MonoBehaviour
 {
@@ -44,14 +45,24 @@ public class Attacking : MonoBehaviour
     #region Private Functions
     void CallAttackLogic(TempTower tower, TempEnemy enemy)
     {
+        //stop enemy from moving any more
+        
         StartCoroutine(Attack(tower, enemy));
     }
 
     IEnumerator Attack(TempTower tower, TempEnemy enemy)
     {
+        if (tower.isAlive == false)
+        {
+            enemy.target = null;
+            StopCoroutine(Attack(tower, enemy));
+        }
 
         tower.health -= enemy.attackDamage;
-
+        if(enemy.Ranged)
+        {
+            enemy.health--;
+        }
 
         yield return new WaitForSeconds(enemy.timeBetweenAttacks);
 
