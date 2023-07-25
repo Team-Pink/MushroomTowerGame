@@ -13,18 +13,19 @@ public class LochTestEnemy : MonoBehaviour
     public float health = 100;
     bool dead; // indicates availability to object pool
     // Start is called before the first frame update
-    public int priorityScoreModifier = 0;   
+    public int priorityScoreModifier = 0;
+    public float speed = 1;
     void Start()
     {
         startPos = transform.position;
         targetHeart = GameObject.Find("Heart").transform.position;
-        velocity = targetHeart - transform.position;
+        velocity = (targetHeart - transform.position).normalized;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(velocity * Time.deltaTime * 0.5f);
+        transform.Translate(velocity * Time.deltaTime * speed);
         if (health <= 0 && !dead) OnDeath();
     }
 
@@ -59,7 +60,8 @@ public class LochTestEnemy : MonoBehaviour
         dead = true;
         // get rid of this when alternative solution is implemented. // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         Debug.Log(this.gameObject.name + " is dead");
-        this.gameObject.SetActive(false);
+        velocity = velocity * 0;
+        this.gameObject.GetComponent<MeshRenderer>().enabled = false;
         // get rid of this when alternative solution is implemented. //
 
         
