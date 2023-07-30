@@ -311,7 +311,7 @@ public class TowerCreation : MonoBehaviour
         Vector3 capsuleTop = new(currentHit.point.x, currentHit.point.y + capsuleCheckBound, currentHit.point.z);
         Vector3 capsuleBottom = new(currentHit.point.x, currentHit.point.y - capsuleCheckBound, currentHit.point.z);
 
-        var targets = Physics.CapsuleCastAll(capsuleTop, capsuleBottom, detectionArea, Vector3.up, Mathf.Infinity, layerMask).ToList();
+        var targets = Physics.OverlapCapsule(capsuleTop, capsuleBottom, detectionArea, layerMask).ToList();
 
         return targets.Count == 0;
     }
