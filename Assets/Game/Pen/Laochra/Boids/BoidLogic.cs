@@ -1,5 +1,23 @@
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
+using Mono.Cecil;
+
+public struct BoidReference
+{
+    public GameObject gameObject;
+    public Transform transform;
+    public Rigidbody rigidbody;
+    public BoidLogic logic;
+
+    public BoidReference(GameObject GameObject, Transform Transform, Rigidbody Rigidbody, BoidLogic Logic)
+    {
+        gameObject = GameObject;
+        transform = Transform;
+        rigidbody = Rigidbody;
+        logic = Logic;
+    }
+}
+
 
 public class BoidLogic : MonoBehaviour
 {
@@ -7,28 +25,32 @@ public class BoidLogic : MonoBehaviour
     [SerializeField] float speed;
 
     private Vector3 targetPosition = new(0.0f, 0.0f, 0.0f);
-    private const float targettingStrength = 1.0f;
-
-    private const float alignmentRange = 9.0f;
-    private const float alignmentStrength = 0.2f;
-
-    private const float cohesionRange = 5.0f;
-    private const float cohesionStrength = 0.5f;
-
-    private const float seperationRange = 2.0f;
-    private const float seperationStrength = 1.0f;
+    [Header("Influences"), SerializeField, Range(0.0f, 1.0f)] private float targettingStrength = 0.2f;
+    [Space()]
+    [SerializeField] private float alignmentRange = 4.0f;
+    [SerializeField, Range(0.0f, 1.0f)] private float alignmentStrength = 0.1f;
+    [Space()]
+    [SerializeField] private float cohesionRange = 3.0f;
+    [SerializeField, Range(0.0f, 1.0f)] private float cohesionStrength = 0.2f;
+    [Space()]
+    [SerializeField] private float seperationRange = 2.0f;
+    [SerializeField, Range(0.0f, 1.0f)] private float seperationStrength = 1.0f;
 
     // Components
     private new Transform transform;
     private new Rigidbody rigidbody;
 
+    private LayerMask boidLayers;
+
     // References
-    [HideInInspector] public GameObjectList boidList;
+    [HideInInspector] public BoidList neighbourhood = new();
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
+
+        boidLayers = LayerMask.GetMask("Boid");
     }
 
     private void Update()
@@ -38,6 +60,21 @@ public class BoidLogic : MonoBehaviour
 
         // Targetting
         rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + targettingStrength * (targetPosition - transform.position).normalized).normalized;
+
+        // Get Boids in Neighbourhood
+        neighbourhood.Clear();
+        var boidColliderList = Physics.OverlapSphere(transform.position, 4, boidLayers);
+
+        foreach (var boidCollider in boidColliderList)
+        {
+            GameObject boidGameObject = boidCollider.gameObject;
+            Transform boidTransform = boidCollider.transform;
+            Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
+            BoidLogic boidLogic = boidCollider.GetComponent<BoidLogic>();
+
+            if (boidGameObject != gameObject)
+                neighbourhood.Add(new(boidGameObject, boidTransform, boidRigidbody, boidLogic));
+        }
 
         // Flocking
         Align();
@@ -53,22 +90,20 @@ public class BoidLogic : MonoBehaviour
             transform.forward = rigidbody.velocity;
     }
 
-    private bool BoidInRange(GameObject boid, float range)
+    private bool BoidInRange(Transform boidTransform, float range)
     {
-        return (boid.transform.position - transform.position).magnitude < range;
+        return (boidTransform.position - transform.position).sqrMagnitude < (range * range);
     }
 
     private void Align()
     {
-        Vector3 alignmentInfluence = new();
+        Vector3 alignmentInfluence = Vector3.zero;
 
-        foreach (GameObject boid in boidList)
+        foreach (BoidReference boid in neighbourhood)
         {
-            if (boid == gameObject) continue;
-
-            if (BoidInRange(boid, alignmentRange))
+            if (BoidInRange(boid.transform, alignmentRange))
             {
-                alignmentInfluence += boid.GetComponent<Rigidbody>().velocity * alignmentStrength;
+                alignmentInfluence += boid.rigidbody.velocity * alignmentStrength;
             }
         }
 
@@ -77,13 +112,11 @@ public class BoidLogic : MonoBehaviour
 
     private void Cohere()
     {
-        Vector3 cohesionInfluence = new();
+        Vector3 cohesionInfluence = Vector3.zero;
 
-        foreach (GameObject boid in boidList)
+        foreach (BoidReference boid in neighbourhood)
         {
-            if (boid == gameObject) continue;
-
-            if (BoidInRange(boid, cohesionRange))
+            if (BoidInRange(boid.transform, cohesionRange))
             {
                 cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized * cohesionStrength;
             }
@@ -94,13 +127,11 @@ public class BoidLogic : MonoBehaviour
 
     private void Seperate()
     {
-        Vector3 seperationInfluence = new();
+        Vector3 seperationInfluence = Vector3.zero;
 
-        foreach (GameObject boid in boidList)
+        foreach (BoidReference boid in neighbourhood)
         {
-            if (boid == gameObject) continue;
-
-            if (BoidInRange(boid, seperationRange))
+            if (BoidInRange(boid.transform, seperationRange))
             {
                 seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized * seperationStrength;
             }

@@ -1,4 +1,4 @@
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
 
 public class BoidCreator : MonoBehaviour
@@ -6,21 +6,15 @@ public class BoidCreator : MonoBehaviour
     [SerializeField] int amount;
     [SerializeField] GameObject boidPrefab;
 
-    private GameObjectList boidList = new();
+    private readonly BoidList boidList = new();
 
     private new Transform transform;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
-    }
 
-    private void Update()
-    {
-        if (boidList.Count < 100)
-        {
-            SpawnBoids();
-        }
+        SpawnBoids();
     }
 
     [ContextMenu("Spawn Boids")]
@@ -31,13 +25,12 @@ public class BoidCreator : MonoBehaviour
             Quaternion rotation = new(0, Random.Range(-1.0f, 1.0f), 0.0f, 0.0f);
             Vector3 position = transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f));
 
-            boidList.Add(Instantiate(boidPrefab, position, rotation, transform));
-        }
+            GameObject boidGameObject = Instantiate(boidPrefab, position, rotation, transform);
+            Transform boidTransform = boidGameObject.transform;
+            Rigidbody boidRigidbody = boidGameObject.GetComponent<Rigidbody>();
+            BoidLogic boidLogic = boidGameObject.GetComponent<BoidLogic>();
 
-        foreach (GameObject boid in boidList)
-        {
-            BoidLogic boidLogic = boid.GetComponent<BoidLogic>();
-            boidLogic.boidList = boidList;
+            boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
         }
     }
 }
