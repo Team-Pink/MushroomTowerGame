@@ -30,7 +30,8 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
-
+            bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
+            bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
 
     }
 
@@ -42,6 +43,8 @@ public class TurretController : MonoBehaviour
         {
             // rotate turret to targetted enemy
             RotateToTarget();
+            if (targetEnemy.dead)
+                PickPriorityTarget();
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
@@ -77,13 +80,13 @@ public class TurretController : MonoBehaviour
 
         if (barrelAlternate)
         {
-            bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
+            
             
             Instantiate(bullet, bulletSpawn1, Quaternion.identity);
         }
         else
         {
-            bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
+
             Instantiate(bullet, bulletSpawn2, Quaternion.identity);
         }
         barrelAlternate = !barrelAlternate;
