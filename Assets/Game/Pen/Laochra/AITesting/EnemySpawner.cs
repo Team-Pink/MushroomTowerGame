@@ -1,7 +1,7 @@
 using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
 
-public class BoidCreator : MonoBehaviour
+public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] int amount;
     [SerializeField] GameObject boidPrefab;
@@ -28,7 +28,7 @@ public class BoidCreator : MonoBehaviour
             GameObject boidGameObject = Instantiate(boidPrefab, position, rotation, transform);
             Transform boidTransform = boidGameObject.transform;
             Rigidbody boidRigidbody = boidGameObject.GetComponent<Rigidbody>();
-            BoidLogic boidLogic = boidGameObject.GetComponent<BoidLogic>();
+            EnemyLogic boidLogic = boidGameObject.GetComponent<EnemyLogic>();
 
             boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
         }

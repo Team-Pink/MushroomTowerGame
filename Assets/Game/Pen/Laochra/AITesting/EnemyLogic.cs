@@ -1,15 +1,14 @@
 using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
-using Mono.Cecil;
 
 public struct BoidReference
 {
     public GameObject gameObject;
     public Transform transform;
     public Rigidbody rigidbody;
-    public BoidLogic logic;
+    public EnemyLogic logic;
 
-    public BoidReference(GameObject GameObject, Transform Transform, Rigidbody Rigidbody, BoidLogic Logic)
+    public BoidReference(GameObject GameObject, Transform Transform, Rigidbody Rigidbody, EnemyLogic Logic)
     {
         gameObject = GameObject;
         transform = Transform;
@@ -19,7 +18,7 @@ public struct BoidReference
 }
 
 
-public class BoidLogic : MonoBehaviour
+public class EnemyLogic : MonoBehaviour
 {
     // Values
     [SerializeField] float speed;
@@ -70,7 +69,7 @@ public class BoidLogic : MonoBehaviour
             GameObject boidGameObject = boidCollider.gameObject;
             Transform boidTransform = boidCollider.transform;
             Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
-            BoidLogic boidLogic = boidCollider.GetComponent<BoidLogic>();
+            EnemyLogic boidLogic = boidCollider.GetComponent<EnemyLogic>();
 
             if (boidGameObject != gameObject)
                 neighbourhood.Add(new(boidGameObject, boidTransform, boidRigidbody, boidLogic));
