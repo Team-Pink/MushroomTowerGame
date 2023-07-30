@@ -28,25 +28,25 @@ public class TempTower : MonoBehaviour
         if(health <= 0)
         {
             isAlive = false;
-            Debug.Log(gameObject + " Deado");
         }
 
         foreach(var enemy in enemyList)
         {
-            if ((!isAlive || enemy.isDead) && enemy.target == this)
+            if (enemy.target != null && enemy.Ranged == true && Pylon == true)
             {
-                enemy.target = null;
-                enemy.isAttacking = false;
-                enemyList.Remove(enemy);
-
-                //allow enemy to keep moving towards the hub unless hub is destroyed.
-                Debug.Log(enemy + " Forgeto " + gameObject);
+                if(enemy.target.Pylon == false)
+                    enemy.target = null;
             }
-            else if (attacking.DistanceCheck(gameObject, enemy.gameObject, enemy.attackRange) && (enemy.target == null || enemy.target == this))
+
+            if (attacking.DistanceCheck(gameObject, enemy.gameObject, enemy.attackRange) && (enemy.target == null || enemy.target == this) && isAlive == true)
             {                
-                if((enemy.Ranged == true && Pylon == true) || Hub == true)
+                if(enemy.Ranged == true && Pylon == true)
                 {
-                    Debug.Log(enemy.gameObject + " met the requirements to attack " + gameObject);
+                    enemy.target = this;
+                    attacking.BasicEnemyDamageHeart(this, enemy);
+                }
+                else if (Hub == true)
+                {
                     enemy.target = this;
                     attacking.BasicEnemyDamageHeart(this, enemy);
                 }
@@ -55,8 +55,9 @@ public class TempTower : MonoBehaviour
 
         if (!isAlive)
         {
-            Debug.Log(gameObject + " Goneo");
             gameObject.SetActive(false);
+
+
 
             //Delete this eventually, used for testing purposes
             if (EditorApplication.isPlaying)
@@ -71,7 +72,11 @@ public class TempTower : MonoBehaviour
         if(other.GetComponent<TempEnemy>() != null)
         {
             TempEnemy enemy = other.GetComponent<TempEnemy>();
-            enemyList.Add(enemy);
+            if(!enemy.isDead)
+            {
+                enemyList.Add(enemy);
+                enemy.detected.Add(this);
+            }
         }
     }
 
@@ -80,9 +85,12 @@ public class TempTower : MonoBehaviour
         if (other.GetComponent<TempEnemy>() != null)
         {
             TempEnemy enemy = other.GetComponent<TempEnemy>();
-            if (enemy.target == this)
-                enemy.target = null;
-            enemyList.Remove(enemy);
+            if(enemyList.Contains(enemy))
+            {
+                if (enemy.target == this)
+                    enemy.target = null;
+                enemyList.Remove(enemy);
+            }
         }
     }
 

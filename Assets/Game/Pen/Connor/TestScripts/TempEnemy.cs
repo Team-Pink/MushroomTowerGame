@@ -18,6 +18,8 @@ public class TempEnemy : MonoBehaviour
     public bool Ranged = false;
     public bool Melee = false;
 
+    public List<TempTower> detected = new();
+
 
     //public Animation Animation;
 
@@ -27,7 +29,13 @@ public class TempEnemy : MonoBehaviour
         {
             gameObject.SetActive(false);
             isDead = true;
-            Debug.Log(gameObject.name + " has died!!!");
+            isAttacking = false;
+            target = null;
+
+            foreach (TempTower temp in detected)
+            {
+                temp.enemyList.Remove(this);
+            }
         }
     }
 
