@@ -115,7 +115,6 @@ public class TowerCreation : MonoBehaviour
         if (Input.GetKeyDown(interactKey))
         {
             currentHit = GetRayHit(budLayer);
-
             if (currentHit.collider is null)
                 return;
 

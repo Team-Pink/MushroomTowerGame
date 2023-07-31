@@ -26,6 +26,7 @@ public class TowerCreation : MonoBehaviour
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
     private LayerMask placableLayers;
+    private LayerMask budLayer;
     private bool placedFromPylon;
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
@@ -60,6 +61,7 @@ public class TowerCreation : MonoBehaviour
 
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
+        budLayer = LayerMask.GetMask("Bud");
     }
 
     private void OnValidate()
@@ -112,10 +114,12 @@ public class TowerCreation : MonoBehaviour
     {
         if (Input.GetKeyDown(interactKey))
         {
-            currentHit = GetRayHit();
+            currentHit = GetRayHit(budLayer);
 
             if (currentHit.collider is null)
                 return;
+
+            Debug.Log(currentHit.collider.tag);
 
             if (currentHit.collider.CompareTag("Bud"))
             {

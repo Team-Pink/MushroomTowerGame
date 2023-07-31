@@ -12,6 +12,7 @@ public class Hub : MonoBehaviour
     [SerializeField] int health = 10;
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
+    [SerializeField] Text hubHealthText;
 
     private void Update()
     {
@@ -25,6 +26,8 @@ public class Hub : MonoBehaviour
             else
                 RestartScene();
         }
+
+        hubHealthText.text = health.ToString();
 
         if (GetKey(KeyCode.Escape))
         {

@@ -67,7 +67,7 @@ MonoBehaviour:
   damage: 100
   firingInterval: 0.1
   firingClock: 2
-  turnSpeed: 20
+  turnSpeed: 200
   firingCone: 20
   lockedOn: 0
 --- !u!1 &4189855099873864384
@@ -291,7 +291,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5109823546609926887}
-  - component: {fileID: -4901419650392528337}
+  - component: {fileID: -580960206788277889}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -316,7 +316,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4901419650392528337
+--- !u!114 &-580960206788277889
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -325,7 +325,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5109823546609926884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d42e8d9ce93cb9a449f1cbdd1d94775c, type: 3}
+  m_Script: {fileID: 11500000, guid: 23cbdd097d57c7f4ebf48502456b6355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5109823547120926316
