@@ -429,14 +429,14 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: health
-      value: 1000
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -663,8 +663,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620548095}
-        m_TargetAssemblyTypeName: TowerCreation, Assembly-CSharp
+      - m_Target: {fileID: 620548097}
+        m_TargetAssemblyTypeName: TowerCreation, Prototype
         m_MethodName: SpawnTower
         m_Mode: 3
         m_Arguments:
@@ -1361,8 +1361,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620548095}
-        m_TargetAssemblyTypeName: TowerCreation, Assembly-CSharp
+      - m_Target: {fileID: 620548097}
+        m_TargetAssemblyTypeName: TowerCreation, Prototype
         m_MethodName: SpawnTower
         m_Mode: 3
         m_Arguments:
@@ -1577,8 +1577,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620548095}
-        m_TargetAssemblyTypeName: TowerCreation, Assembly-CSharp
+      - m_Target: {fileID: 620548097}
+        m_TargetAssemblyTypeName: TowerCreation, Prototype
         m_MethodName: SpawnTower
         m_Mode: 3
         m_Arguments:
@@ -1917,7 +1917,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 620548096}
-  - component: {fileID: 620548095}
+  - component: {fileID: 620548097}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1925,7 +1925,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &620548095
+--- !u!4 &620548096
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 620548094}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 815648652}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &620548097
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1934,7 +1949,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 620548094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37e8c76b4f02cfd42b3af28bdff805ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 25700f8950a9b6b45aa4f9483671e6c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetPlane: {fileID: 781113485}
@@ -1955,21 +1970,6 @@ MonoBehaviour:
   showCameraProjection: 0
   logCurrentInteraction: 0
   interactKey: 323
---- !u!4 &620548096
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 620548094}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 815648652}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &625156608 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -2849,26 +2849,10 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 1
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: health
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: showPath
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: showLevers
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: range.m_Bits
-      value: 4096
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: attackCooldown
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -3067,14 +3051,14 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: health
-      value: 1000
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -3218,8 +3202,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620548095}
-        m_TargetAssemblyTypeName: TowerCreation, Assembly-CSharp
+      - m_Target: {fileID: 620548097}
+        m_TargetAssemblyTypeName: TowerCreation, Prototype
         m_MethodName: SpawnTower
         m_Mode: 3
         m_Arguments:
@@ -3401,14 +3385,14 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: health
-      value: 1000
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -5304,6 +5288,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1768477436}
     m_Modifications:
+    - target: {fileID: 5932547466001727575, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932547466001727575, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -5353,27 +5345,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: speed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: health
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: showPath
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: showLevers
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: range.m_Bits
-      value: 4096
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-      propertyPath: attackCooldown
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -5415,6 +5387,14 @@ PrefabInstance:
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_TagString
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123252197031856545, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9123252197031856545, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -5477,6 +5457,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 8411860829937560677, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
+      propertyPath: gameOverText
+      value: 
+      objectReference: {fileID: 2105996608}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
 --- !u!114 &6811093020421632826 stripped

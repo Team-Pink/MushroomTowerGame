@@ -1,5 +1,7 @@
 using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -7,7 +9,6 @@ public class SplinePath : MonoBehaviour
 {
     float progress;
     [SerializeField] Transform[] splineTransforms;
-
     private int currentSpline = 0;
 
     private Vector3 position1;
@@ -40,9 +41,12 @@ public class SplinePath : MonoBehaviour
 
     private void Update()
     {
-        if (Application.isPlaying || EditorApplication.isPlaying)
+        if (Application.isPlaying)
             Playing();
-
+#if UNITY_EDITOR
+        else if (EditorApplication.isPlaying)
+            Playing();
+#endif
         DEBUG();
     }
 
