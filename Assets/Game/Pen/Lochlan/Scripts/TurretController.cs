@@ -27,8 +27,7 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
-            bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
-            bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
+
 
     }
 
@@ -77,12 +76,10 @@ public class TurretController : MonoBehaviour
         if (barrelAlternate)
         {
             
-            
             Instantiate(bullet, bulletSpawn1, Quaternion.identity);
         }
         else
         {
-
             Instantiate(bullet, bulletSpawn2, Quaternion.identity);
         }
         barrelAlternate = !barrelAlternate;

@@ -9,6 +9,7 @@ public class LochTestEnemy : MonoBehaviour
     Vector3 velocity;
     public float health = 100;
     public bool dead; // indicates availability to object pool
+    bool dead; // indicates availability to object pool
     // Start is called before the first frame update
     public int priorityScoreModifier = 0;
     public float speed = 1;
@@ -29,25 +30,26 @@ public class LochTestEnemy : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "Heart")
+            if (other.gameObject.name == "Heart")
             transform.position = startPos;
     }
 
     public void OnDeath()
     {
 
+    {        
+        
         // do a sphere cast for towers in range and remove this enemy from them
         Collider[] towers = Physics.OverlapSphere(this.transform.position, 0.2f, range);
-        foreach (Collider tower in towers)
         {
-            if (tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Contains(this.gameObject))
-            {
-                tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Remove(this.gameObject); //The Remove method returns false if item is not found in the Hashset.
             }
         }
+        }  
         // play death animation
 
         // increase global currency
 
+  
         //increase exp in closest Pylon
 
 
@@ -62,6 +64,7 @@ public class LochTestEnemy : MonoBehaviour
         // get rid of this when alternative solution is implemented. //
 
 
+        
     }
 
 
