@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9118983701591225477}
   - component: {fileID: 8069144855126208435}
   - component: {fileID: 5618153064500443797}
-  - component: {fileID: 510102572101811059}
+  - component: {fileID: 8950766675432189444}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -84,7 +84,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &510102572101811059
+--- !u!114 &8950766675432189444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2409255044357570341}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a63dfe09461a8824c9852bbf40aed769, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a1107b574adf9945926831d0dec5ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpeed: 20

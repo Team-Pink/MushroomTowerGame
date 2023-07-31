@@ -6,9 +6,9 @@ public class TurretController : MonoBehaviour
 
     // So how do I do this...
 
-    public HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
+    public HashSet<GameObject> inRangeEnemies = new();
     public GameObject targetGameObject;
-    protected LochTestEnemy targetEnemy;
+    protected Enemy targetEnemy;
     public GameObject bullet;
 
     Vector3 bulletSpawn1;
@@ -27,9 +27,8 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
-            bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
-            bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
-
+        bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
+        bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
     }
 
     // Update is called once per frame
@@ -40,7 +39,7 @@ public class TurretController : MonoBehaviour
         {
             // rotate turret to targetted enemy
             RotateToTarget();
-            if (targetEnemy.dead)
+            if (targetEnemy.Dead())
                 PickPriorityTarget();
 
             if (firingClock > firingInterval && lockedOn)
@@ -51,21 +50,21 @@ public class TurretController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        inRangeEnemies.Add(other.gameObject);
+        if (other.CompareTag("Enemy"))
+        {
+            inRangeEnemies.Add(other.gameObject);
+        }
 
-
-        if (!targetEnemy) PickPriorityTarget();
+        if (targetEnemy is null) PickPriorityTarget();
     }
 
     private void OnTriggerExit(Collider other)
     {
-
         inRangeEnemies.Remove(other.gameObject);
         if (targetGameObject == other.gameObject) // immediately remove object from the target if it is the current target.
         {
             targetGameObject = null;
             targetEnemy = null;
-
         }
         PickPriorityTarget();
     }
@@ -76,18 +75,15 @@ public class TurretController : MonoBehaviour
 
         if (barrelAlternate)
         {
-            
-            
             Instantiate(bullet, bulletSpawn1, Quaternion.identity);
         }
         else
         {
-
             Instantiate(bullet, bulletSpawn2, Quaternion.identity);
         }
         barrelAlternate = !barrelAlternate;
 
-        targetEnemy.health -= damage; Debug.Log(targetEnemy.gameObject.name + " has " + targetEnemy.health + " health remaining");
+        targetEnemy.health -= (int)damage;
         if (targetEnemy.health <= 0)
         {
             inRangeEnemies.Remove(targetEnemy.gameObject);
@@ -108,12 +104,12 @@ public class TurretController : MonoBehaviour
             return;
         }
         int bestScoreSoFar = -1;
-        GameObject bestTargetSoFar = new GameObject(); // I don't know why I have to assign this something but it doesn't work otherwise
+        GameObject bestTargetSoFar = new(); // I don't know why I have to assign this something but it doesn't work otherwise
         GameObject deleteThis = bestTargetSoFar; // so feel free to roll over this if you know how to do better.
 
         foreach (GameObject thisEnemy in inRangeEnemies)
         {
-            int thisScore = TargetingAlgorithm(thisEnemy);
+            int thisScore = TargetingAlgorithm();
             if (thisScore > bestScoreSoFar)
             {
                 bestScoreSoFar = thisScore;
@@ -122,13 +118,12 @@ public class TurretController : MonoBehaviour
         }
         Destroy(deleteThis);
         targetGameObject = bestTargetSoFar;
-        targetEnemy = bestTargetSoFar.GetComponent<LochTestEnemy>();
+        targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm(GameObject enemy)
+    int TargetingAlgorithm()
     {
-        int score = Random.Range(0, 10);
-        return score;
+        return Random.Range(0, 10);
     }
 
     void RotateToTarget()
