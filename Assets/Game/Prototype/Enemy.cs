@@ -1,6 +1,9 @@
 using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
+using Text = TMPro.TMP_Text;
 
 [ExecuteInEditMode]
 public class Enemy : MonoBehaviour
@@ -33,6 +36,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] bool showPath;
     [SerializeField] bool showLevers;
 
+    [Space()]
+    [SerializeField] Text healthText;
     // Move Points
     private Vector3 position1;
     private Vector3 lever1;
@@ -60,8 +65,12 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (Application.isPlaying || EditorApplication.isPlaying)
+        if (Application.isPlaying)
             Playing();
+#if UNITY_EDITOR
+        else if (EditorApplication.isPlaying)
+            Playing();
+#endif
 
         DEBUG();
     }
@@ -124,6 +133,8 @@ public class Enemy : MonoBehaviour
 
     private void Playing()
     {
+        healthText.text = health.ToString();
+
         if (attackMode)
         {
             if (!attackInProgress)

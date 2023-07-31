@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class TempTower : MonoBehaviour
@@ -54,14 +53,6 @@ public class TempTower : MonoBehaviour
         if (!isAlive)
         {
             gameObject.SetActive(false);
-
-
-
-            //Delete this eventually, used for testing purposes
-            if (EditorApplication.isPlaying)
-            {
-                EditorApplication.Beep();
-            }
         }
     }
 
