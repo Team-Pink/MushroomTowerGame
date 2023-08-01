@@ -329,6 +329,7 @@ public class TowerCreation : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
 
+        placedFromPylon = false;
         currentInteraction = InteractionState.None;
         activeBud.SetActive(true);
         activeBud = null;
@@ -347,6 +348,7 @@ public class TowerCreation : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
 
+        placedFromPylon = false;
         currentInteraction = InteractionState.None;
         activeBud.SetActive(true);
         activeBud = null;
