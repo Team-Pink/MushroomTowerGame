@@ -53,6 +53,8 @@ public class TowerCreation : MonoBehaviour
     private InteractionState currentInteraction = InteractionState.None;
     private RaycastHit currentHit;
 
+    private CurrencyManager currencyManager;
+
     private void Awake()
     {
         mainCamera = Camera.main;
@@ -62,6 +64,8 @@ public class TowerCreation : MonoBehaviour
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
         budLayer = LayerMask.GetMask("Bud");
+
+        currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
     }
 
     private void OnValidate()
@@ -199,9 +203,9 @@ public class TowerCreation : MonoBehaviour
 
     private void PlacingPylonState()
     {
-        if (!TargetIsPlane())
+        if (!TargetIsPlane() || !currencyManager.DecreaseCurrencyAmount(Pylon.cost))
         {
-            currentInteraction = InteractionState.None;
+            Cancel();
             return;
         }
 
@@ -349,6 +353,17 @@ public class TowerCreation : MonoBehaviour
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
 
         placedFromPylon = false;
+        currentInteraction = InteractionState.None;
+        activeBud.SetActive(true);
+        activeBud = null;
+    }
+
+    public void Cancel()
+    {
+        radialMenu.SetActive(false);
+        selectionIndicator.enabled = false;
+        selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
+
         currentInteraction = InteractionState.None;
         activeBud.SetActive(true);
         activeBud = null;

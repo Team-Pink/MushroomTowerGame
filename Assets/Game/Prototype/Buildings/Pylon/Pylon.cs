@@ -3,6 +3,8 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    public static int cost = 10;
+
     private BuildingList connectedBuildings = new();
 
     public void AddBuilding(Building building) => connectedBuildings.Add(building);

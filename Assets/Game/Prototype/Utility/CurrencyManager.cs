@@ -9,10 +9,12 @@ using UnityEditor;
 public class CurrencyManager : MonoBehaviour
 {
     [SerializeField] Text currencyText;
+    [SerializeField] int startingAmount = 20;
     int currencyAmount = 0;
 
     private void Start()
     {
+        currencyAmount = startingAmount;
         currencyText.text = currencyAmount.ToString();
     }
 
@@ -22,16 +24,17 @@ public class CurrencyManager : MonoBehaviour
         currencyText.text = currencyAmount.ToString();
     }
 
-    public void DecreaseCurrencyAmount(int amount)
+    public bool DecreaseCurrencyAmount(int amount)
     {
         if(currencyAmount < amount)
         {
             Debug.LogWarning("Cannot remove amount from currency total");
-            return;
+            return false;
         }
 
         currencyAmount -= amount;
         currencyText.text = currencyAmount.ToString();
+        return true;
     }
 
     public int GetCurrencyTotal()
@@ -41,13 +44,5 @@ public class CurrencyManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            IncreaseCurrencyAmount(1);
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            DecreaseCurrencyAmount(1);
-        }
     }
 }
