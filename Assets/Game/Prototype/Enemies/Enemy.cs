@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     public int health;
     public bool Dead()
     {
-        return health > 0;
+        return health <= 0;
     }
 
     [Header("Movement")]
@@ -74,7 +74,6 @@ public class Enemy : MonoBehaviour
         else if (EditorApplication.isPlaying)
             Playing();
 #endif
-
         DEBUG();
     }
 
@@ -138,9 +137,6 @@ public class Enemy : MonoBehaviour
     {
         healthText.text = health.ToString();
 
-        if (Dead())
-            OnDeath();
-
         if (attackMode)
         {
             if (!attackInProgress)
@@ -158,7 +154,7 @@ public class Enemy : MonoBehaviour
                     elapsedCooldown = 0;
                 }
             }
-
+           
             return;
         }
 
@@ -216,10 +212,25 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
         Debug.Log(gameObject.name + " is dead");
-        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void SpawnIn()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
+
+        //whatever else needs to be done before fully spawning in do within here
+
     }
 }

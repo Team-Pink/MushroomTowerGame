@@ -27,9 +27,6 @@ public class CurrencyManager : MonoBehaviour
         if(currencyAmount < amount)
         {
             Debug.LogWarning("Cannot remove amount from currency total");
-#if UNITY_EDITOR
-            EditorApplication.Beep();
-#endif
             return;
         }
 
