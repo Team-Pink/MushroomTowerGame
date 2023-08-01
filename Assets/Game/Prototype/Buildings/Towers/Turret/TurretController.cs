@@ -40,7 +40,10 @@ public class TurretController : MonoBehaviour
             // rotate turret to targetted enemy
             RotateToTarget();
             if (targetEnemy.Dead())
+            {
+                targetEnemy.OnDeath();
                 PickPriorityTarget();
+            }
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
