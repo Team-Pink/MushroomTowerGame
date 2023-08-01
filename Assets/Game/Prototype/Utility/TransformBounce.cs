@@ -22,6 +22,7 @@ public class TransformBounce : MonoBehaviour
     [SerializeField] float speed;
     private float startingHover;
     private Vector3 startingPulse;
+    private float T = 0;
 
     private void Awake()
     {
@@ -49,6 +50,8 @@ public class TransformBounce : MonoBehaviour
 
     private void Update()
     {
+        T += Time.deltaTime;
+
         switch (bounceType)
         {
             case TransformVector.Hover:
@@ -58,18 +61,18 @@ public class TransformBounce : MonoBehaviour
                         transform.position = new(startingHover + Mathf.Sin(Time.deltaTime * speed) * intensity, transform.position.y, transform.position.z);
                         break;
                     case HoverAxis.y:
-                        transform.position = new(transform.position.x, startingHover + Mathf.Sin(Time.time * speed) * intensity, transform.position.z);
+                        transform.position = new(transform.position.x, startingHover + Mathf.Sin(T * speed) * intensity, transform.position.z);
                         break;
                     case HoverAxis.z:
-                        transform.position = new(transform.position.x, transform.position.y, startingHover + Mathf.Sin(Time.time * speed) * intensity);
+                        transform.position = new(transform.position.x, transform.position.y, startingHover + Mathf.Sin(T * speed) * intensity);
                         break;
                 }
                 break;
             case TransformVector.Pulse:
                 transform.localScale = new(
-                    startingPulse.x*1.1f + Mathf.Sin(Time.time * speed) * intensity,
-                    startingPulse.y*1.1f + Mathf.Sin(Time.time * speed) * intensity,
-                    startingPulse.z*1.1f + Mathf.Sin(Time.time * speed) * intensity);
+                    startingPulse.x*1.1f + Mathf.Sin(T * speed) * intensity,
+                    startingPulse.y*1.1f + Mathf.Sin(T * speed) * intensity,
+                    startingPulse.z*1.1f + Mathf.Sin(T * speed) * intensity);
                 break;
         }
     }
