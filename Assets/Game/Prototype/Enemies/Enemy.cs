@@ -10,10 +10,12 @@ public class Enemy : MonoBehaviour
 {
     [Header("Health")]
     public int health;
+    
     public bool Dead()
     {
         return health <= 0;
     }
+    public bool dead = false; // this is specifically for the ondeath function. to replace the functionality of checking health in update and setting dead in Ondeath so it can only run once.
 
     [Header("Movement")]
     [SerializeField, Range(0.1f, 1.0f)] float speed = 0.5f;
@@ -38,6 +40,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Provides On Death")]
     [SerializeField] int bugBits = 2;
+    public int expValue = 1;
 
     [Space()]
     [SerializeField] Text healthText;
@@ -202,25 +205,19 @@ public class Enemy : MonoBehaviour
 
     public void OnDeath()
     {
-        // do a sphere cast for towers in range and remove this enemy from them
-        Collider[] towers = Physics.OverlapSphere(transform.position, 0.2f, range);
-        foreach (Collider tower in towers)
-        {
-            if (tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Contains(gameObject))
-            {
-                tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Remove(gameObject); //The Remove method returns false if item is not found in the Hashset.
-            }
-        }
+        if (dead) return; // don't increase currency twice.
+        dead = true; // object pool flag;
 
+        // death animation
+
+        // increment currency
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
         Debug.Log(gameObject.name + " is dead");
+
         
-        for(int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.SetActive(false);
-        }
+        
     }
 
     public void SpawnIn()
