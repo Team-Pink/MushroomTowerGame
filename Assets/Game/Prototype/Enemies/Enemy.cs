@@ -36,6 +36,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] bool showPath;
     [SerializeField] bool showLevers;
 
+    [Header("Provides On Death")]
+    [SerializeField] int bugBits = 2;
+
     [Space()]
     [SerializeField] Text healthText;
     // Move Points
@@ -135,6 +138,9 @@ public class Enemy : MonoBehaviour
     {
         healthText.text = health.ToString();
 
+        if (Dead())
+            OnDeath();
+
         if (attackMode)
         {
             if (!attackInProgress)
@@ -209,6 +215,10 @@ public class Enemy : MonoBehaviour
                 tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Remove(gameObject); //The Remove method returns false if item is not found in the Hashset.
             }
         }
+
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(bugBits);
+
         Debug.Log(gameObject.name + " is dead");
         gameObject.GetComponent<MeshRenderer>().enabled = false;
     }
