@@ -68,10 +68,10 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (Application.isPlaying)
+        if (Application.isPlaying && !Dead())
             Playing();
 #if UNITY_EDITOR
-        else if (EditorApplication.isPlaying)
+        else if (EditorApplication.isPlaying && !Dead())
             Playing();
 #endif
         DEBUG();
