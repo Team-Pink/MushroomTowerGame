@@ -45,7 +45,7 @@ public class Pylon : Building
     /// </summary>
     private void GenerateTowerList()
     {
-        buildingCount = connectedTowerList.Count;// set buildingcount.
+        buildingCount = connectedBuildings.Count;// set buildingcount.
 
         connectedTowerList.Clear(); // clobber the existing list
         // generate a list of towers

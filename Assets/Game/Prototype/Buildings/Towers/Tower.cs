@@ -4,7 +4,7 @@ using UnityEngine.PlayerLoop;
 
 public class Tower : Building
 {
-    public TurretController TowerController; // this  seems like a god place to leave a reference to the individual tower functionality.
+    public TurretController TowerController; // this  seems like a good place to leave a reference to the individual tower functionality.
     // should strip the tower controller for parts for this later.
 
 
