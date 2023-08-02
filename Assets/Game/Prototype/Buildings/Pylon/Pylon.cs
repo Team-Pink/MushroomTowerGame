@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
@@ -7,8 +8,36 @@ public class Pylon : Building
     private BuildingList connectedBuildings = new();
     private List<Tower> connectedTowerList = new();
     private int buildingCount;
+    private int EXPforLVLup = 2;
+    public int pylonLevel= 0;
 
-    public int PylonEXP;
+    private int pylonEXP;
+    public int EXP
+    {
+        get
+        {
+            return pylonEXP;
+        }
+        set
+        {
+            pylonEXP = value;
+            CheckIfEnhanced();
+        }
+    }
+
+
+
+
+
+    private void CheckIfEnhanced()
+    {
+        if (pylonEXP >= EXPforLVLup)
+        {
+            EXP -= EXPforLVLup;
+            pylonLevel++;
+            EXPforLVLup += 1;
+        }
+    }
 
     public void AddBuilding(Building building) => connectedBuildings.Add(building);
 
@@ -51,7 +80,7 @@ public class Pylon : Building
         // generate a list of towers
         foreach (Building building in connectedBuildings)
         {
-            if(building.gameObject.GetComponent<Tower>()) 
+            if (building.gameObject.GetComponent<Tower>())
             {
                 connectedTowerList.Add(building.gameObject.GetComponent<Tower>());
             }
@@ -63,8 +92,11 @@ public class Pylon : Building
             GenerateTowerList();
         foreach (Tower tower in connectedTowerList)
         {
-            PylonEXP += tower.TowerController.storedExperience;
+            if (tower.TowerController.storedExperience > 0)
+            { 
+            EXP += tower.TowerController.storedExperience;
             tower.TowerController.storedExperience = 0;
+            }
         }
     }
 }

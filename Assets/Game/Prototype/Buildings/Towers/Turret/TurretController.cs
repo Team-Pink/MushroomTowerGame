@@ -42,8 +42,8 @@ public class TurretController : MonoBehaviour
         if (targetEnemy)
         {
             // rotate turret to targetted enemy
-
             RotateToTarget();
+
             if (targetEnemy.Dead())
             {
                 // take enemy experience
@@ -55,7 +55,6 @@ public class TurretController : MonoBehaviour
                 inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
             }
-            
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
@@ -101,6 +100,8 @@ public class TurretController : MonoBehaviour
         targetEnemy.health -= (int)damage;
 
         firingClock = 0;
+
+
     }
 
 
