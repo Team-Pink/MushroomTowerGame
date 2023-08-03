@@ -6,58 +6,85 @@ using UnityEngine.UI;
 public enum InteractionState
 {
     None,
-    DraggingFromPylon,
-    PlacingTower,
-    DraggingFromHub,
-    PlacingPylon
+    BuildingInteraction,
+
+    PlacingFromHub,
+
+    PylonMenu,
+    PlacingFromPylon,
+
+    TowerSelection,
+    TowerMenu
 }
 
-public class TowerCreation : MonoBehaviour
+public class InteractionManager : MonoBehaviour
 {
-    private Camera mainCamera;
-
     [Header("Objects")]
-    [SerializeField] GameObject targetPlane;
-    [SerializeField] GameObject pylonPrefab;
-    [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
-    private const int towerPrefabAmount = 4;
+        [SerializeField] GameObject targetPlane;
+        [SerializeField] GameObject pylonPrefab;
+        [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
+        private Camera mainCamera;
+        private const int towerPrefabAmount = 4;
+
+    [Header("Building Selection")]
+        [SerializeField] LayerMask buildings;
+        private Building targetBuilding;
+        private float interactionDuration = 0.0f;
 
     [Header("Placement")]
-    [SerializeField] LayerMask placementBlockers;
-    private LayerMask pylonLayer;
-    private LayerMask placableLayers;
-    private LayerMask budLayer;
-    private bool placedFromPylon;
-    [SerializeField] float placementExclusionSize = 1;
-    [SerializeField] float maxDistanceFromPylon = 10;
-    private const float capsuleCheckBound = 5;
-    private Vector3 dragStartPosition;
+        [SerializeField] LayerMask placementBlockers;
+        private LayerMask pylonLayer;
+        private LayerMask placableLayers;
+        private LayerMask budLayer;
+
+        private GameObject activeBud;
+        private Vector3 dragStartPosition;
+
+        [SerializeField] float placementExclusionSize = 1;
+        [SerializeField] float maxDistanceFromPylon = 10;
+        private const float capsuleCheckBound = 5;
 
     [Header("UI")]
-    [SerializeField] GameObject radialMenu;
-    [SerializeField] Image selectionIndicator;
+        [SerializeField] GameObject radialMenu;
+        [SerializeField] Image selectionIndicator;
+
+    [Header("Interaction")]
+        [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
+        private Vector3 mouseScreenPosition;
+        private Vector3 mouseWorldPosition;
+
+        private InteractionState currentInteraction = InteractionState.None;
+        private InteractionState previousInteraction = InteractionState.None;
+        private InteractionState CurrentInteraction
+        {
+            get => currentInteraction;
+            set
+            {
+                if (logInteractionChange)
+                    Debug.Log(value);
+
+                previousInteraction = currentInteraction;
+                currentInteraction = value;
+            }
+        }
+        private RaycastHit currentHit;
+        private bool TargetIsPlane
+        {
+            get => currentHit.collider.gameObject == targetPlane;
+        }
 
     [Header("Debug")]
     [SerializeField] bool showMouseDirection;
     [SerializeField] bool showCameraProjection;
     private float screenWidth;
     private float screenHeight;
-    [SerializeField] bool logCurrentInteraction;
-
-    [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
-
-    private Vector3 mouseScreenPosition;
-    private Vector3 mouseWorldPosition;
-
-    private GameObject activeBud;
-    private InteractionState currentInteraction = InteractionState.None;
-    private RaycastHit currentHit;
+    [SerializeField] bool logInteractionChange;
 
     private void Awake()
     {
+        ResetInteraction();
+
         mainCamera = Camera.main;
-        radialMenu.SetActive(false);
-        selectionIndicator.enabled = false;
 
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
@@ -86,22 +113,31 @@ public class TowerCreation : MonoBehaviour
         mouseScreenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.1f);
         mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
 
-        switch(currentInteraction)
+        switch(CurrentInteraction)
         {
             case InteractionState.None:
                 DefaultState();
                 break;
-            case InteractionState.DraggingFromHub:
-                DraggingFromHubState();
+            case InteractionState.BuildingInteraction:
+                BuildingInteractionState();
                 break;
-            case InteractionState.PlacingPylon:
-                PlacingPylonState();
+
+            case InteractionState.PlacingFromHub:
+                PlacingFromHubState();
                 break;
-            case InteractionState.DraggingFromPylon:
-                DraggingFromPylonState();
+
+            case InteractionState.PylonMenu:
+                PylonMenuState();
                 break;
-            case InteractionState.PlacingTower:
-                PlacingTowerState();
+            case InteractionState.PlacingFromPylon:
+                PlacingFromPylonState();
+                break;
+
+            case InteractionState.TowerSelection:
+                TowerSelectionState();
+                break;
+            case InteractionState.TowerMenu:
+                TowerMenuState();
                 break;
         }
 
@@ -115,24 +151,34 @@ public class TowerCreation : MonoBehaviour
         if (Input.GetKeyDown(interactKey))
         {
             currentHit = GetRayHit(budLayer);
-            if (currentHit.collider is null)
+            if (currentHit.collider is not null)
+            {
+                if (currentHit.collider.CompareTag("Hub"))
+                {
+                    activeBud = currentHit.collider.gameObject;
+                    activeBud.SetActive(false);
+                    selectionIndicator.enabled = true;
+
+                    CurrentInteraction = InteractionState.PlacingFromHub;
+                }
+                else if (currentHit.collider.CompareTag("Pylon"))
+                {
+                    activeBud = currentHit.collider.gameObject;
+                    activeBud.SetActive(false);
+                    selectionIndicator.enabled = true;
+
+                    CurrentInteraction = InteractionState.PlacingFromPylon;
+                }
+
                 return;
-
-            if (currentHit.collider.CompareTag("Bud"))
-            {
-                activeBud = currentHit.collider.gameObject;
-                activeBud.SetActive(false);
-                selectionIndicator.enabled = true;
-
-                currentInteraction = InteractionState.DraggingFromPylon;
             }
-            else if (currentHit.collider.CompareTag("HubBud"))
-            {
-                activeBud = currentHit.collider.gameObject;
-                activeBud.SetActive(false);
-                selectionIndicator.enabled = true;
 
-                currentInteraction = InteractionState.DraggingFromHub;
+            currentHit = GetRayHit(buildings);
+            if (currentHit.collider is not null)
+            {
+                targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
+                CurrentInteraction = InteractionState.BuildingInteraction;
+                return;
             }
         }
 
@@ -140,15 +186,47 @@ public class TowerCreation : MonoBehaviour
             dragStartPosition = Vector3.zero;
     }
 
-    private void DraggingFromHubState()
+    private void BuildingInteractionState()
+    {
+        DisplayBuildingRadius(out GameObject radiusDisplay);
+        Debug.Log(interactionDuration);
+
+        if (Input.GetKeyDown(interactKey))
+        {
+            ResetInteraction(new GameObject[] { radiusDisplay });
+            return;
+        }
+
+        if (Input.GetKey(interactKey))
+        {
+            if (interactionDuration > 0.5f)
+            {
+                if (targetBuilding is Pylon)
+                {
+                    CurrentInteraction = InteractionState.PylonMenu;
+                    return;
+                }
+                else if (targetBuilding is Tower)
+                {
+                    CurrentInteraction = InteractionState.TowerMenu;
+                    return;
+                }
+            }
+            else
+                interactionDuration += Time.deltaTime;
+        }
+    }
+    private void PlacingFromHubState()
     {
         bool canPlace;
 
-        currentHit = GetRayHit(placableLayers);
+        targetBuilding = activeBud.transform.parent.GetComponent<Building>();
+        DisplayBuildingRadius(out GameObject radiusDisplay);
 
         if (dragStartPosition == Vector3.zero)
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
+        currentHit = GetRayHit(placableLayers);
         if (currentHit.collider is not null)
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
@@ -184,40 +262,33 @@ public class TowerCreation : MonoBehaviour
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
-                currentInteraction = InteractionState.PlacingPylon;
+                AttemptToSpawnPylon();
             }
             else
             {
-                activeBud.SetActive(true);
-                activeBud = null;
-                selectionIndicator.color = Color.white;
-                selectionIndicator.enabled = false;
-                currentInteraction = InteractionState.None;
+                ResetInteraction();
             }
+
+            radiusDisplay.SetActive(false);
         }
     }
 
-    private void PlacingPylonState()
+    private void PylonMenuState()
     {
-        if (!TargetIsPlane())
-        {
-            currentInteraction = InteractionState.None;
-            return;
-        }
 
-        SpawnPylon();
     }
-
-    private void DraggingFromPylonState()
+    private void PlacingFromPylonState()
     {
         bool canPlace;
         bool placingPylon = false;
 
-        currentHit = GetRayHit(placableLayers);
+        targetBuilding = activeBud.transform.parent.GetComponent<Building>();
+        DisplayBuildingRadius(out GameObject radiusDisplay);
 
         if (dragStartPosition == Vector3.zero)
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
+        currentHit = GetRayHit(placableLayers);
         if (currentHit.collider is not null)
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
@@ -260,33 +331,34 @@ public class TowerCreation : MonoBehaviour
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
-                placedFromPylon = true;
                 if (placingPylon)
-                    currentInteraction = InteractionState.PlacingPylon;
+                    AttemptToSpawnPylon();
                 else
-                    currentInteraction = InteractionState.PlacingTower;
+                    CurrentInteraction = InteractionState.TowerSelection;
             }
             else
             {
-                activeBud.SetActive(true);
-                activeBud = null;
-                selectionIndicator.color = Color.white;
-                selectionIndicator.enabled = false;
-                currentInteraction = InteractionState.None;
+                ResetInteraction();
             }
+
+            radiusDisplay.SetActive(false);
         }
     }
 
-    private void PlacingTowerState()
+    private void TowerSelectionState()
     {
-        if (!TargetIsPlane())
+        if (!TargetIsPlane)
         {
-            currentInteraction = InteractionState.None;
+            ResetInteraction();
             return;
         }
 
         if (radialMenu.activeSelf == false)
             radialMenu.SetActive(true);
+    }
+    private void TowerMenuState()
+    {
+
     }
 
 
@@ -302,11 +374,6 @@ public class TowerCreation : MonoBehaviour
         return hit;
     }
 
-    private bool TargetIsPlane()
-    {
-        return currentHit.collider.gameObject == targetPlane;
-    }
-
     private bool SpaceToPlace(float detectionArea, LayerMask layerMask)
     {
         Vector3 capsuleTop = new(currentHit.point.x, currentHit.point.y + capsuleCheckBound, currentHit.point.z);
@@ -317,41 +384,72 @@ public class TowerCreation : MonoBehaviour
         return targets.Count == 0;
     }
 
+    private void AttemptToSpawnPylon()
+    {
+        if (!TargetIsPlane)
+        {
+            ResetInteraction();
+            return;
+        }
+
+        SpawnPylon();
+    }
+
     private void SpawnPylon()
     {
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
 
-        if (placedFromPylon)
-        {
-            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(pylonInstance.GetComponent<Pylon>());
-        }
+        if (CurrentInteraction == InteractionState.PlacingFromPylon)
+            (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
 
-        selectionIndicator.enabled = false;
-        selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
-
-        placedFromPylon = false;
-        currentInteraction = InteractionState.None;
-        activeBud.SetActive(true);
-        activeBud = null;
+        ResetInteraction();
     }
 
     public void SpawnTower(int towerIndex)
     {
         GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
 
-        if (placedFromPylon)
-        {
-            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(towerInstance.GetComponent<Tower>());
-        }
+        if (previousInteraction == InteractionState.PlacingFromPylon)
+            (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
 
+        ResetInteraction();
+    }
+
+    private void DisplayBuildingRadius(out GameObject radiusDisplay)
+    {
+        radiusDisplay = targetBuilding.radiusDisplay;
+        if (!radiusDisplay.activeSelf)
+            radiusDisplay.SetActive(true);
+    }
+
+    public void ResetInteraction(GameObject[] extraObjects = null)
+    {
         radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
+        interactionDuration = 0.0f;
+        CurrentInteraction = InteractionState.None;
 
-        placedFromPylon = false;
-        currentInteraction = InteractionState.None;
-        activeBud.SetActive(true);
-        activeBud = null;
+        if (activeBud is not null)
+        {
+            activeBud.SetActive(true);
+            activeBud = null;
+        }
+
+        if (targetBuilding is not null)
+            targetBuilding = null;
+
+        if (extraObjects is not null)
+        {
+            for (int objectIndex = 0; objectIndex < extraObjects.Length; objectIndex++)
+            {
+                if (extraObjects[objectIndex] is not null)
+                {
+                    extraObjects[objectIndex].SetActive(false);
+                    extraObjects[objectIndex] = null;
+                }
+            }
+        }
     }
 
 
@@ -404,9 +502,6 @@ public class TowerCreation : MonoBehaviour
                 }
             }
         }
-
-        if (logCurrentInteraction)
-            Debug.Log(currentInteraction);
     }
 
     private RaycastHit DrawCameraProjectionRay(Vector3 screenPosition, Vector3 cameraPosition)
