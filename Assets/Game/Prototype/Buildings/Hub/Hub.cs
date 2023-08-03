@@ -7,7 +7,7 @@ using static UnityEngine.Input;
 using static UnityEngine.Application;
 using KeyCode = UnityEngine.KeyCode;
 
-public class Hub : MonoBehaviour
+public class Hub : Building
 {
     [SerializeField] int health = 10;
     [SerializeField] float gameOverDuration = 10;
