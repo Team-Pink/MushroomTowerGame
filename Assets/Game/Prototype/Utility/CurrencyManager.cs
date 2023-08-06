@@ -24,16 +24,19 @@ public class CurrencyManager : MonoBehaviour
         currencyText.text = currencyAmount.ToString();
     }
 
-    public bool DecreaseCurrencyAmount(int amount)
+    public void DecreaseCurrencyAmount(int amount)
     {
-        if(currencyAmount < amount)
+        currencyAmount -= amount;
+        currencyText.text = currencyAmount.ToString();
+    }
+
+    public bool CanDecreaseCurrencyAmount(int amount)
+    {
+        if (currencyAmount < amount)
         {
             Debug.LogWarning("Cannot remove amount from currency total");
             return false;
         }
-
-        currencyAmount -= amount;
-        currencyText.text = currencyAmount.ToString();
         return true;
     }
 

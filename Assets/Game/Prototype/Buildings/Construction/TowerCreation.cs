@@ -50,10 +50,11 @@ public class TowerCreation : MonoBehaviour
     private Vector3 mouseWorldPosition;
 
     private GameObject activeBud;
-    private InteractionState currentInteraction = InteractionState.None;
+    public InteractionState currentInteraction = InteractionState.None;
     private RaycastHit currentHit;
 
     private CurrencyManager currencyManager;
+    private int pylonNumber;
 
     private void Awake()
     {
@@ -203,7 +204,7 @@ public class TowerCreation : MonoBehaviour
 
     private void PlacingPylonState()
     {
-        if (!TargetIsPlane() || !currencyManager.DecreaseCurrencyAmount(Pylon.cost))
+        if (!TargetIsPlane())
         {
             Cancel();
             return;
@@ -323,11 +324,41 @@ public class TowerCreation : MonoBehaviour
 
     private void SpawnPylon()
     {
+        int cost = 0;
+        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        {
+            pylonNumber = 1;
+            cost = Pylon.GetPylonBaseCurrency();
+        }
+        else if (activeBud.transform.parent.GetComponent<Pylon>() != null)
+        {
+            Pylon ParentPylon = activeBud.transform.parent.GetComponent<Pylon>();
+            pylonNumber = ParentPylon.GetInstanceNumber() + 1;
+            cost = ParentPylon.GetPylonCost();
+        }
+        else
+        {
+            Debug.LogWarning("activeBud does not come from a hub nor pylon");
+            Cancel();
+            return;
+        }
+
+        if (!currencyManager.CanDecreaseCurrencyAmount(cost))
+        {
+            Cancel();
+            return;
+        }
+            
+
+        currencyManager.DecreaseCurrencyAmount(cost);
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+        Pylon newPylon = pylonInstance.GetComponent<Pylon>();
+        newPylon.SetInstanceNumber(pylonNumber);
 
         if (placedFromPylon)
         {
-            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(pylonInstance.GetComponent<Pylon>());
+            activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(newPylon);
+            
         }
 
         selectionIndicator.enabled = false;
@@ -341,11 +372,20 @@ public class TowerCreation : MonoBehaviour
 
     public void SpawnTower(int towerIndex)
     {
+        int cost = towerPrefabs[towerIndex].GetComponent<Tower>().cost;
+        if (!currencyManager.CanDecreaseCurrencyAmount(cost))
+        {
+            Cancel();
+            return;
+        }
+
         GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
 
         if (placedFromPylon)
         {
             activeBud.transform.parent.GetComponent<Pylon>().AddBuilding(towerInstance.GetComponent<Tower>());
+            
+            currencyManager.DecreaseCurrencyAmount(cost);
         }
 
         radialMenu.SetActive(false);

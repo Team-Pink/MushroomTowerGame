@@ -3,6 +3,8 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    //[HideInInspector]
+    [SerializeField] int instance = 0;
     public static int cost = 10;
 
     private BuildingList connectedBuildings = new();
@@ -30,4 +32,26 @@ public class Pylon : Building
             building.Reactivate();
         }
     }
+
+    public int GetPylonCost()
+    {
+        return cost * (instance + 1);
+    }
+    public int GetPylonCost(int instance)
+    {
+        return cost * (instance + 1);
+    }
+    public int GetInstanceNumber()
+    {
+        return instance;
+    }
+    public void SetInstanceNumber(int number)
+    {
+        instance = number;
+    }
+    public static int GetPylonBaseCurrency()
+    {
+        return cost;
+    }
+
 }
