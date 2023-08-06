@@ -4,7 +4,7 @@ Shader "Cutout"
 	{
 		Tags
 		{
-			"Queue" = "Geometry+1"
+			"Queue" = "Transparent+2"
 		}
 
 		Pass

@@ -1,84 +1,132 @@
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.UI;
+using FloatList = System.Collections.Generic.List<float>;
+
+using NonReorderable = UnityEngine.NonReorderableAttribute;
+using SerializeField = UnityEngine.SerializeField;
+using MonoBehaviour = UnityEngine.MonoBehaviour;
+using RectTransform = UnityEngine.RectTransform;
+using GameObject = UnityEngine.GameObject;
+using Physics = UnityEngine.Physics;
+using Header = UnityEngine.HeaderAttribute;
+using Camera = UnityEngine.Camera;
+using Image = UnityEngine.UI.Image;
+using Input = UnityEngine.Input;
+using Debug = UnityEngine.Debug;
+using Space = UnityEngine.SpaceAttribute;
+using Time = UnityEngine.Time;
+
+using Quaternion = UnityEngine.Quaternion;
+using RaycastHit = UnityEngine.RaycastHit;
+using LayerMask = UnityEngine.LayerMask;
+using KeyCode = UnityEngine.KeyCode;
+using Vector3 = UnityEngine.Vector3;
+using Vector2 = UnityEngine.Vector2;
+using Mathf = UnityEngine.Mathf;
+using Color = UnityEngine.Color;
+
+using static System.Linq.Enumerable;
 
 public enum InteractionState
 {
     None,
+
     BuildingInteraction,
+    PylonMenu,
+    TowerMenu,
+    DraggingBuilding,
 
     PlacingFromHub,
-
-    PylonMenu,
     PlacingFromPylon,
-
-    TowerSelection,
-    TowerMenu
+    TowerSelection
 }
 
 public class InteractionManager : MonoBehaviour
 {
     [Header("Objects")]
-        [SerializeField] GameObject targetPlane;
-        [SerializeField] GameObject pylonPrefab;
-        [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(4);
-        private Camera mainCamera;
-        private const int towerPrefabAmount = 4;
+    #region Object Variables
+    [SerializeField] GameObject targetPlane;
+    [SerializeField] GameObject pylonPrefab;
+    [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(5);
+    private Camera mainCamera;
+    private const int towerPrefabAmount = 5;
+    #endregion
 
     [Header("Building Selection")]
-        [SerializeField] LayerMask buildings;
-        private Building targetBuilding;
-        private float interactionDuration = 0.0f;
+    #region Building Selection Variables
+    [SerializeField] LayerMask buildingLayers;
+    private Building targetBuilding;
+    private float interactionDuration = 0.0f;
+    #endregion
 
     [Header("Placement")]
-        [SerializeField] LayerMask placementBlockers;
-        private LayerMask pylonLayer;
-        private LayerMask placableLayers;
-        private LayerMask budLayer;
+    #region Placement Variables
+    [SerializeField] LayerMask placementBlockers;
+    private LayerMask pylonLayer;
+    private LayerMask placableLayers;
+    private LayerMask budLayer;
 
-        private GameObject activeBud;
-        private Vector3 dragStartPosition;
+    private GameObject activeBud;
+    private Vector3 dragStartPosition;
 
-        [SerializeField] float placementExclusionSize = 1;
-        [SerializeField] float maxDistanceFromPylon = 10;
-        private const float capsuleCheckBound = 5;
+    [SerializeField] float placementExclusionSize = 1;
+    [SerializeField] float maxDistanceFromPylon = 10;
+    private const float capsuleCheckBound = 5;
+    #endregion
 
     [Header("UI")]
-        [SerializeField] GameObject radialMenu;
-        [SerializeField] Image selectionIndicator;
+    #region UI Variables
+    [SerializeField] private Color buttonBaseColour;
+    [SerializeField] private Color buttonHoverColour;
+
+    [SerializeField, Space()] Image selectionIndicator;
+    [SerializeField] private float radialExclusionZone = 10.0f;
+    private Vector2 startingMousePosition;
+
+    [SerializeField, Space()] GameObject pylonMenu;
+    [SerializeField, NonReorderable] Image[] pylonMenuButtons;
+
+    [SerializeField, Space()] GameObject towerMenu;
+    [SerializeField, NonReorderable] Image[] towerMenuButtons;
+
+    [SerializeField, Space()] GameObject towerSelectionMenu;
+    [SerializeField, NonReorderable] Image[] towerSelectionMenuButtons;
+    #endregion
 
     [Header("Interaction")]
-        [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
-        private Vector3 mouseScreenPosition;
-        private Vector3 mouseWorldPosition;
+    #region Interaction Variables
+    [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
+    private Vector3 mouseScreenPosition;
+    private Vector3 mouseWorldPosition;
 
-        private InteractionState currentInteraction = InteractionState.None;
-        private InteractionState previousInteraction = InteractionState.None;
-        private InteractionState CurrentInteraction
+    private InteractionState currentInteraction = InteractionState.None;
+    private InteractionState previousInteraction = InteractionState.None;
+    private InteractionState CurrentInteraction
+    {
+        get => currentInteraction;
+        set
         {
-            get => currentInteraction;
-            set
-            {
-                if (logInteractionChange)
-                    Debug.Log(value);
+            if (logInteractionChange)
+                Debug.Log(value);
 
-                previousInteraction = currentInteraction;
-                currentInteraction = value;
-            }
+            previousInteraction = currentInteraction;
+            currentInteraction = value;
         }
-        private RaycastHit currentHit;
-        private bool TargetIsPlane
-        {
-            get => currentHit.collider.gameObject == targetPlane;
-        }
+    }
+    private RaycastHit currentHit;
+    private bool TargetIsPlane
+    {
+        get => currentHit.collider.gameObject == targetPlane;
+    }
+    #endregion
 
     [Header("Debug")]
+    #region Debug Variables
     [SerializeField] bool showMouseDirection;
     [SerializeField] bool showCameraProjection;
     private float screenWidth;
     private float screenHeight;
     [SerializeField] bool logInteractionChange;
+    #endregion
 
     private void Awake()
     {
@@ -96,7 +144,7 @@ public class InteractionManager : MonoBehaviour
         if (towerPrefabs.Count == towerPrefabAmount)
             return;
 
-        Debug.LogWarning("Stop that, the list tower prefabs should be exactly " + towerPrefabAmount + " elements!", this);
+        Debug.LogWarning("Stop that, the list towerPrefabs should be exactly " + towerPrefabAmount + " elements!", this);
 
         while (towerPrefabs.Count < towerPrefabAmount)
         {
@@ -118,26 +166,28 @@ public class InteractionManager : MonoBehaviour
             case InteractionState.None:
                 DefaultState();
                 break;
+
             case InteractionState.BuildingInteraction:
                 BuildingInteractionState();
+                break;
+            case InteractionState.PylonMenu:
+                PylonMenuState();
+                break;
+            case InteractionState.TowerMenu:
+                TowerMenuState();
+                break;
+            case InteractionState.DraggingBuilding:
+                DraggingBuildingState();
                 break;
 
             case InteractionState.PlacingFromHub:
                 PlacingFromHubState();
                 break;
-
-            case InteractionState.PylonMenu:
-                PylonMenuState();
-                break;
             case InteractionState.PlacingFromPylon:
                 PlacingFromPylonState();
                 break;
-
             case InteractionState.TowerSelection:
                 TowerSelectionState();
-                break;
-            case InteractionState.TowerMenu:
-                TowerMenuState();
                 break;
         }
 
@@ -173,7 +223,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            currentHit = GetRayHit(buildings);
+            currentHit = GetRayHit(buildingLayers);
             if (currentHit.collider is not null)
             {
                 targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
@@ -189,26 +239,41 @@ public class InteractionManager : MonoBehaviour
     private void BuildingInteractionState()
     {
         DisplayBuildingRadius(out GameObject radiusDisplay);
-        Debug.Log(interactionDuration);
+
+        if (startingMousePosition == Vector2.zero)
+            startingMousePosition = mouseScreenPosition;
 
         if (Input.GetKeyDown(interactKey))
         {
             ResetInteraction(new GameObject[] { radiusDisplay });
+            DefaultState();
             return;
         }
 
         if (Input.GetKey(interactKey))
         {
+            if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
+            {
+                if (targetBuilding is not Hub)
+                {
+                    CurrentInteraction = InteractionState.DraggingBuilding;
+                    startingMousePosition = Vector2.zero;
+                    return;
+                }
+            }
+
             if (interactionDuration > 0.5f)
             {
                 if (targetBuilding is Pylon)
                 {
                     CurrentInteraction = InteractionState.PylonMenu;
+                    startingMousePosition = Vector2.zero;
                     return;
                 }
                 else if (targetBuilding is Tower)
                 {
                     CurrentInteraction = InteractionState.TowerMenu;
+                    startingMousePosition = Vector2.zero;
                     return;
                 }
             }
@@ -216,6 +281,105 @@ public class InteractionManager : MonoBehaviour
                 interactionDuration += Time.deltaTime;
         }
     }
+    private void PylonMenuState()
+    {
+        RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
+
+        if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
+        {
+            if (hoveredButtonIndex < 0)
+            {
+                ResetInteraction();
+                return;
+            }
+
+            Image hoveredButton = pylonMenuButtons[hoveredButtonIndex];
+
+            if (hoveredButtonIndex == 0)
+            {
+                if (!(targetBuilding as Pylon).Enhanced)
+                {
+                    (targetBuilding as Pylon).Enhance();
+                }
+                else
+                {
+                    hoveredButton.color = buttonBaseColour;
+                    ResetInteraction();
+                    return;
+                }
+
+            } // Force Enhance
+            else if (hoveredButtonIndex == 1)
+            {
+                (targetBuilding as Pylon).SellAll();
+            } // Sell All
+
+            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
+            hoveredButton.color = buttonBaseColour;
+
+            ResetInteraction();
+        }
+    }
+    private void TowerMenuState()
+    {
+        RadialMenu(towerMenu, towerMenuButtons, out int hoveredButtonIndex);
+
+        if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
+        {
+            if (hoveredButtonIndex < 0)
+            {
+                ResetInteraction();
+                return;
+            }
+
+            Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
+
+            if (!(targetBuilding as Tower).Upgraded)
+            {
+                (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
+            }
+
+            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
+            hoveredButton.color = buttonBaseColour;
+
+            ResetInteraction();
+        }
+    }
+    private void DraggingBuildingState()
+    {
+        currentHit = GetRayHit(buildingLayers);
+        Building heldBuilding = targetBuilding;
+
+        bool validSellPoint = false;
+
+        if (currentHit.collider is not null)
+        {
+            Building hoveredBuilding = currentHit.collider.GetComponent<Building>();
+
+            if (hoveredBuilding is Tower)
+                return;
+
+            if (hoveredBuilding is Hub)
+                validSellPoint = true;
+            else if (hoveredBuilding is Pylon)
+            {
+                if ((hoveredBuilding as Pylon).IsBuildingInList(heldBuilding))
+                    validSellPoint = true;
+            }
+        }
+
+        if (Input.GetKeyUp(interactKey))
+        {
+            if (validSellPoint)
+            {
+                heldBuilding.Sell();
+                ResetInteraction();
+            }
+            else
+                CurrentInteraction = InteractionState.BuildingInteraction;
+        }
+    }
+
     private void PlacingFromHubState()
     {
         bool canPlace;
@@ -271,11 +435,6 @@ public class InteractionManager : MonoBehaviour
 
             radiusDisplay.SetActive(false);
         }
-    }
-
-    private void PylonMenuState()
-    {
-
     }
     private void PlacingFromPylonState()
     {
@@ -344,7 +503,6 @@ public class InteractionManager : MonoBehaviour
             radiusDisplay.SetActive(false);
         }
     }
-
     private void TowerSelectionState()
     {
         if (!TargetIsPlane)
@@ -353,12 +511,27 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        if (radialMenu.activeSelf == false)
-            radialMenu.SetActive(true);
-    }
-    private void TowerMenuState()
-    {
+        RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
 
+        if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
+        {
+            if (hoveredButtonIndex < 0)
+            {
+                ResetInteraction();
+                return;
+            }
+
+            Debug.Log(hoveredButtonIndex);
+
+            Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
+
+            SpawnTower(hoveredButtonIndex);
+
+            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
+            hoveredButton.color = buttonBaseColour;
+
+            ResetInteraction();
+        }
     }
 
 
@@ -422,11 +595,61 @@ public class InteractionManager : MonoBehaviour
             radiusDisplay.SetActive(true);
     }
 
+    private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
+    {
+        hoveredButtonIndex = -1;
+
+        if (!radialMenu.activeSelf)
+            radialMenu.SetActive(true);
+
+        if (startingMousePosition == Vector2.zero)
+        {
+            startingMousePosition = mouseScreenPosition;
+            radialMenu.GetComponent<RectTransform>().position = mouseScreenPosition;
+        }
+
+        float buttonAngularSize = (360 - reservedDegrees) / radialButtons.Length;
+
+        if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
+        {
+            FloatList angles = new();
+
+            for (int angleIndex = 0; angleIndex < radialButtons.Length + 1; angleIndex++)
+            {
+                float angleToAdd = (reservedDegrees * 0.5f) + (angleIndex * buttonAngularSize);
+                angles.Add(angleToAdd);
+            }
+
+            Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
+            float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
+
+            for (int i = 0; i < radialButtons.Length; i++)
+            {
+                if (currentAngle >= angles[i] && currentAngle < angles[i+1])
+                {
+                    radialButtons[i].color = buttonHoverColour;
+                    hoveredButtonIndex = i;
+                }
+                else
+                {
+                    radialButtons[i].color = buttonBaseColour;
+                }
+            }
+        }
+        else
+        {
+            foreach (Image radialButton in radialButtons)
+            {
+                radialButton.color = buttonBaseColour;
+            }
+        }
+    }
+
     public void ResetInteraction(GameObject[] extraObjects = null)
     {
-        radialMenu.SetActive(false);
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
+        startingMousePosition = Vector2.zero;
         interactionDuration = 0.0f;
         CurrentInteraction = InteractionState.None;
 
@@ -437,7 +660,19 @@ public class InteractionManager : MonoBehaviour
         }
 
         if (targetBuilding is not null)
+        {
+            targetBuilding.radiusDisplay.SetActive(false);
             targetBuilding = null;
+        }
+
+        if (pylonMenu.activeSelf)
+            pylonMenu.SetActive(false);
+
+        if (towerMenu.activeSelf)
+            towerMenu.SetActive(false);
+
+        if (towerSelectionMenu.activeSelf)
+            towerSelectionMenu.SetActive(false);
 
         if (extraObjects is not null)
         {
