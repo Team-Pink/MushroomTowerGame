@@ -1,12 +1,7 @@
-<<<<<<< HEAD
+
 using System.Collections.Generic;
 using UnityEngine;
-<<<<<<< HEAD
-using static UnityEngine.Rendering.DebugUI;
-=======
-=======
->>>>>>> bd1fdbe35e0e26cdee5d69b7a12991881e13b72c
->>>>>>> Prototype
+
 using BuildingList = System.Collections.Generic.List<Building>;
 using ContextMenu = UnityEngine.ContextMenu;
 
@@ -14,15 +9,14 @@ using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
-<<<<<<< HEAD
+
     private BuildingList connectedBuildings = new();
     private List<Tower> connectedTowerList = new();
     private int buildingCount;
     private int EXPforLVLup = 2;
     [SerializeField] private bool enhanced;
-    public bool Enhanced { get { return enhanced; }}
+    public bool Enhanced { get; private set; }
 
-<<<<<<< HEAD
     [SerializeField] private int pylonEXP;
     public int EXP
     {
@@ -37,28 +31,17 @@ public class Pylon : Building
         }
     }
 
-
-
-
-
     private void CheckIfEnhanced()
     {
         if (pylonEXP >= EXPforLVLup)
         {
-            enhanced = true;
+            Enhance();
         }
     }
-=======
-    public int PylonEXP;
-=======
-    public bool Enhanced { get; private set; }
-    private readonly BuildingList connectedBuildings = new();
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
     }
->>>>>>> bd1fdbe35e0e26cdee5d69b7a12991881e13b72c
->>>>>>> Prototype
 
     private void Update()
     {
@@ -71,6 +54,7 @@ public class Pylon : Building
                     SellTower(building as Tower);
             }
         }
+        GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
     }
 
 
@@ -98,13 +82,6 @@ public class Pylon : Building
         {
             building.Reactivate();
         }
-    }
-
-<<<<<<< HEAD
-    private void Update()
-    {
-        // Move this to on wave end in the wave manager when it exists.
-        GetTowerEXP();
     }
 
     /// <summary>
@@ -136,12 +113,7 @@ public class Pylon : Building
             tower.TowerController.storedExperience = 0;
             }
         }
-    }
-}
-
-// sorry if my lack of knowledge regarding Context menus, regions and serialize field throw you off.
-// I'll make sure to comment on what is my code. _Lochlan_
-=======
+    } 
     public override void Sell()
     {
         DeactivateConnectedBuildings();
@@ -177,4 +149,6 @@ public class Pylon : Building
         base.Sell();
     }
 }
->>>>>>> bd1fdbe35e0e26cdee5d69b7a12991881e13b72c
+   
+
+
