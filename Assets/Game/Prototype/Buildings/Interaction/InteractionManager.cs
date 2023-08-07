@@ -1,28 +1,8 @@
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 using FloatList = System.Collections.Generic.List<float>;
 
-using NonReorderable = UnityEngine.NonReorderableAttribute;
-using SerializeField = UnityEngine.SerializeField;
-using MonoBehaviour = UnityEngine.MonoBehaviour;
-using RectTransform = UnityEngine.RectTransform;
-using GameObject = UnityEngine.GameObject;
-using Physics = UnityEngine.Physics;
-using Header = UnityEngine.HeaderAttribute;
-using Camera = UnityEngine.Camera;
-using Image = UnityEngine.UI.Image;
-using Input = UnityEngine.Input;
-using Debug = UnityEngine.Debug;
-using Space = UnityEngine.SpaceAttribute;
-using Time = UnityEngine.Time;
-
-using Quaternion = UnityEngine.Quaternion;
-using RaycastHit = UnityEngine.RaycastHit;
-using LayerMask = UnityEngine.LayerMask;
-using KeyCode = UnityEngine.KeyCode;
-using Vector3 = UnityEngine.Vector3;
-using Vector2 = UnityEngine.Vector2;
-using Mathf = UnityEngine.Mathf;
-using Color = UnityEngine.Color;
+using UnityEngine;
+using UnityEngine.UI;
 
 using static System.Linq.Enumerable;
 
