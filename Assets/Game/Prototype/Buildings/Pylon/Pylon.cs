@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +8,10 @@ using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
+    public int costMultiplier = 1;
+    public static int baseCost = 10;
+    [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
+    public int forceEnhanceCost = 20;
 
     private BuildingList connectedBuildings = new();
     private List<Tower> connectedTowerList = new();
@@ -84,6 +87,29 @@ public class Pylon : Building
         }
     }
 
+#region PYLON COST
+    public int GetPylonCost()
+    {
+        return baseCost * (costMultiplier);
+    }
+    public int GetPylonCost(int instance)
+    {
+        return baseCost * (instance);
+    }
+    public int GetMultiplier()
+    {
+        return costMultiplier;
+    }
+    public void SetMultiplier(int number)
+    {
+        costMultiplier = number;
+    }
+    public static int GetPylonBaseCurrency()
+    {
+        return baseCost;
+    }
+#endregion
+
     /// <summary>
     /// generate a list of Tower from the building list 
     /// </summary>
@@ -118,13 +144,16 @@ public class Pylon : Building
     {
         DeactivateConnectedBuildings();
 
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
         base.Sell();
     }
     public void SellTower(Tower tower)
     {
         Debug.Log("Sold Tower", tower);
         connectedBuildings.Remove(tower);
-        Destroy(tower.gameObject);
+        tower.Sell();
     }
     public void SellAll()
     {
@@ -146,9 +175,6 @@ public class Pylon : Building
             SellTower(sellList[buildingIndex] as Tower);
         }
 
-        base.Sell();
+        Sell();
     }
 }
-   
-
-

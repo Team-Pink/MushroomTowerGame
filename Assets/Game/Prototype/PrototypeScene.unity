@@ -370,7 +370,7 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
@@ -2133,7 +2133,7 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Enabled
@@ -2347,7 +2347,7 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
@@ -2592,7 +2592,7 @@ PrefabInstance:
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: speed
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: showPath
@@ -3025,6 +3025,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1501402540}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1545976202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5643471327555855207, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1553720515
 GameObject:
   m_ObjectHideFlags: 0
@@ -4292,6 +4303,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6811093020421632826}
     - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -4461,8 +4476,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1839026419}
     - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: currencyText
       value: 
+      objectReference: {fileID: 1545976202}
+    - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: startingAmount
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915131746, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name

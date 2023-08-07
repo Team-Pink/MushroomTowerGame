@@ -55,6 +55,9 @@ public class Enemy : MonoBehaviour
 
     private void Playing()
     {
+        if (dead)
+            return;
+        
         healthText.text = health.ToString();
 
         if (attackMode)
@@ -81,7 +84,8 @@ public class Enemy : MonoBehaviour
         if (progress < 1)
             progress += Time.deltaTime * speed;
 
-        gameObject.transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
+        if (currentPoint + 1 < points.Count)
+            gameObject.transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
 
         if (progress >= 1)
         {
@@ -108,10 +112,12 @@ public class Enemy : MonoBehaviour
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
-        Debug.Log(gameObject.name + " is dead");
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
 
-        
-        
+        Debug.Log(gameObject.name + " is dead");
     }
 
     public void SpawnIn()
@@ -120,6 +126,8 @@ public class Enemy : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(true);
         }
+
+        dead = true;
 
         //whatever else needs to be done before fully spawning in do within here
 
