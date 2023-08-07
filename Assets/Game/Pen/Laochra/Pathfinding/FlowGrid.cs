@@ -4,14 +4,22 @@ using UnityEngine;
 public class FlowGrid : MonoBehaviour
 {
     [Header("Grid Tiles")]
-    [SerializeField] private int xSubdivs = 50;
-    [SerializeField] private int zSubdivs = 50;
+    [SerializeField] int xSubdivs = 200;
+    [SerializeField] int zSubdivs = 200;
 
     private Vector2[,] tiles;
 
     [Header("Grid Scale")]
-    [SerializeField] private float width = 20;
-    [SerializeField] private float height = 20;
+    [SerializeField] float gridWidth = 500;
+    [SerializeField] float gridHeight = 500;
+    private float TileWidth()
+    {
+        return gridWidth / xSubdivs;
+    }
+    private float TileHeight()
+    {
+        return gridHeight / zSubdivs;
+    }
 
     private float xMin;
     private float xMax;
@@ -34,80 +42,80 @@ public class FlowGrid : MonoBehaviour
 
     private void Initialise()
     {
-        xMin = -width / 2;
-        xMax = width / 2;
+        xMin = -gridWidth * 0.5f;
+        xMax = gridWidth * 0.5f;
 
-        zMin = -height / 2;
-        zMax = height / 2;
+        zMin = -gridHeight * 0.5f;
+        zMax = gridHeight * 0.5f;
     }
 
     private void CreateGrid()
     {
         tiles = new Vector2[xSubdivs, zSubdivs];
 
-        for (int x = 0; x < xSubdivs; x++)
+        for (int xIndex = 0; xIndex < xSubdivs; xIndex++)
         {
-            float xProgress = ((float)x) / xSubdivs;
+            //float xProgress = (float)xIndex / xSubdivs;
 
-            for (int z = 0; z < zSubdivs; z++)
+            for (int zIndex = 0; zIndex < zSubdivs; zIndex++)
             {
-                float zProgress = ((float)z) / zSubdivs;
+                //float zProgress = (float)zIndex / zSubdivs;
 
-                float xPos = Mathf.Lerp(xMin, xMax, xProgress);
-                float zPos = Mathf.Lerp(zMin, zMax, zProgress);
+                //float xPos = Mathf.Lerp(xMin, xMax, xProgress);
+                //float zPos = Mathf.Lerp(zMin, zMax, zProgress);
 
-                tiles[x, z] = new Vector2(xPos, zPos);
+                //tiles[xIndex, zIndex] = new Vector2(xPos, zPos);
             }
         }
     }
 
-    public Vector3 SwizzleXZ(Vector2 vector2)
+    private Vector2 GetTilePos(float xCoord, float zCoord)
     {
-        return new Vector3(vector2.x, 0, vector2.y);
+        return new Vector2(xCoord, zCoord);
+    }
+
+    public Vector3 SwizzleXZY(float xCoord, float zCoord, float yCoord = 0)
+    {
+        return new Vector3(xCoord, yCoord, zCoord);
     }
 
     public void OnDrawGizmos()
     {
-        //Gizmos.DrawLine() Draw the grid
-        for (int x = 0; x < xSubdivs; x++)
+        // Draw the grid
+        for (int xIndex = 0; xIndex < xSubdivs+1; xIndex++)
         {
-            for(int z = 0; z < zSubdivs; z++)
-            {
-                if (x < xSubdivs - 1)
-                {
-                    Gizmos.DrawLine(SwizzleXZ(tiles[x, z]), SwizzleXZ(tiles[x + 1, z]));
-                }
-                else
-                {
-                    Gizmos.DrawLine(SwizzleXZ(tiles[x, z]), SwizzleXZ(new Vector2(xMax, tiles[x, z].y)));
-                }
+            float xCoord = TileWidth() * (xIndex - xSubdivs * 0.5f);
+            float nextXCoord = xCoord + TileWidth();
 
-                if (z < zSubdivs - 1)
-                {
-                    Gizmos.DrawLine(SwizzleXZ(tiles[x, z]), SwizzleXZ(tiles[x, z + 1]));
-                }
-                else
-                {
-                    Gizmos.DrawLine(SwizzleXZ(tiles[x, z]), SwizzleXZ(new Vector2(tiles[x, z].x, zMax)));
-                }
+            for(int zIndex = 0; zIndex < zSubdivs+1; zIndex++)
+            {
+                float zCoord = TileHeight() * (zIndex - zSubdivs * 0.5f);
+                float nextZCoord = zCoord + TileHeight();
+
+                if (xIndex < xSubdivs)
+                    Gizmos.DrawLine(SwizzleXZY(nextXCoord, zCoord), SwizzleXZY(xCoord, zCoord));
+                if (zIndex < zSubdivs)
+                    Gizmos.DrawLine(SwizzleXZY(xCoord, zCoord), SwizzleXZY(xCoord, nextZCoord));
             }
         }
 
         //Gizmos.DrawCube() Draw a cube in the tile that the mouse is over. Make use of GetTileCoords
     }
 
-    private void GetTileCoords(Vector3 position, out int xCoord, out int zCoord)
+    public void GetTileCoords(Vector3 position, out float xCoord, out float zCoord)
     {
-        //TODO
-        xCoord = 0;
-        zCoord = 0;
+        xCoord = position.x / TileWidth();
+        zCoord = position.z / TileHeight();
     }
 
 
     private Vector2 GetFlowAtPoint(Vector3 position)
     {
-        int xPos, zPos;
-        GetTileCoords(position, out xPos, out zPos);
-        return tiles[xPos, zPos];
+        GetTileCoords(position, out float xPos, out float zPos);
+
+        int xCoord = Mathf.RoundToInt(xPos + xSubdivs * 0.5f);
+        int zCoord = Mathf.RoundToInt(zPos + zSubdivs * 0.5f);
+
+        return tiles[xCoord, zCoord];
     }
 }

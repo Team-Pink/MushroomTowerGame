@@ -24,6 +24,13 @@ public class CurrencyManager : MonoBehaviour
         currencyText.text = currencyAmount.ToString();
     }
 
+    public void IncreaseCurrencyAmount(int amount, float sellPercent)
+    {
+        float alteredAmount = (float)amount * sellPercent;
+        currencyAmount += (int)alteredAmount;
+        currencyText.text = currencyAmount.ToString();
+    }
+
     public void DecreaseCurrencyAmount(int amount)
     {
         currencyAmount -= amount;
