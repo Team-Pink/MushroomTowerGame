@@ -1,28 +1,8 @@
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 using FloatList = System.Collections.Generic.List<float>;
 
-using NonReorderable = UnityEngine.NonReorderableAttribute;
-using SerializeField = UnityEngine.SerializeField;
-using MonoBehaviour = UnityEngine.MonoBehaviour;
-using RectTransform = UnityEngine.RectTransform;
-using GameObject = UnityEngine.GameObject;
-using Physics = UnityEngine.Physics;
-using Header = UnityEngine.HeaderAttribute;
-using Camera = UnityEngine.Camera;
-using Image = UnityEngine.UI.Image;
-using Input = UnityEngine.Input;
-using Debug = UnityEngine.Debug;
-using Space = UnityEngine.SpaceAttribute;
-using Time = UnityEngine.Time;
-
-using Quaternion = UnityEngine.Quaternion;
-using RaycastHit = UnityEngine.RaycastHit;
-using LayerMask = UnityEngine.LayerMask;
-using KeyCode = UnityEngine.KeyCode;
-using Vector3 = UnityEngine.Vector3;
-using Vector2 = UnityEngine.Vector2;
-using Mathf = UnityEngine.Mathf;
-using Color = UnityEngine.Color;
+using UnityEngine;
+using UnityEngine.UI;
 
 using static System.Linq.Enumerable;
 
@@ -71,6 +51,13 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
+    #endregion
+
+    [Header("Currency")]
+    #region Cost Of Placement
+    private int pylonMultiplier = 1;
+    private int placementCost = 0;
+    private CurrencyManager currencyManager;
     #endregion
 
     [Header("UI")]
@@ -137,6 +124,8 @@ public class InteractionManager : MonoBehaviour
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
         budLayer = LayerMask.GetMask("Bud");
+
+        currencyManager = gameObject.GetComponent<CurrencyManager>();
     }
 
     private void OnValidate()
@@ -297,8 +286,9 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                if (!(targetBuilding as Pylon).Enhanced)
+                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost))
                 {
+                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost);
                     (targetBuilding as Pylon).Enhance();
                 }
                 else
@@ -513,9 +503,13 @@ public class InteractionManager : MonoBehaviour
 
         RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
 
+        
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
-            if (hoveredButtonIndex < 0)
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
+            // If you want to make it so that towers you can't buy flash red when attempting to purchase or appear greyed out and unable to pick,
+            // just have currency check out of this if statement.
+            if (hoveredButtonIndex < 0 || !currencyManager.CanDecreaseCurrencyAmount(cost))
             {
                 ResetInteraction();
                 return;
@@ -524,6 +518,8 @@ public class InteractionManager : MonoBehaviour
             Debug.Log(hoveredButtonIndex);
 
             Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
+
+            placementCost = cost;
 
             SpawnTower(hoveredButtonIndex);
 
@@ -559,18 +555,42 @@ public class InteractionManager : MonoBehaviour
 
     private void AttemptToSpawnPylon()
     {
-        if (!TargetIsPlane)
+        int cost = 0;
+        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        {
+            pylonMultiplier = 1;
+            cost = Pylon.GetPylonBaseCurrency();
+        }
+        else if (activeBud.transform.parent.GetComponent<Pylon>() != null)
+        {
+            Pylon ParentPylon = activeBud.transform.parent.GetComponent<Pylon>();
+            pylonMultiplier = ParentPylon.GetMultiplier() + 1;
+            cost = ParentPylon.GetPylonCost(pylonMultiplier);
+        }
+        else
+        {
+            Debug.LogWarning("activeBud does not come from a hub nor pylon");
+            ResetInteraction();
+            return;
+        }
+
+        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost))
         {
             ResetInteraction();
             return;
         }
 
+        placementCost = cost;
         SpawnPylon();
     }
 
     private void SpawnPylon()
     {
+        currencyManager.DecreaseCurrencyAmount(placementCost);
+
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+
+        pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
 
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
@@ -580,6 +600,8 @@ public class InteractionManager : MonoBehaviour
 
     public void SpawnTower(int towerIndex)
     {
+        currencyManager.DecreaseCurrencyAmount(placementCost);
+        
         GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
 
         if (previousInteraction == InteractionState.PlacingFromPylon)

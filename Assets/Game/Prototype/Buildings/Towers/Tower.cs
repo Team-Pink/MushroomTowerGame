@@ -7,7 +7,11 @@ using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public class Tower : Building
 {
+    public int cost = 10;
+    [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f; 
+
     public TurretController TowerController;
+
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }
     public bool sellFlag;
@@ -31,6 +35,9 @@ public class Tower : Building
     public override void Sell()
     {
         sellFlag = true;
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
         Destroy(gameObject, 0.1f);
     }
+
 }
