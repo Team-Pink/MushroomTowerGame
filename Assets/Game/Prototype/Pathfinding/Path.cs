@@ -26,6 +26,15 @@ public class Path : MonoBehaviour
 
     private void Update()
     {
+        Transform[] transformsToAdd = new Transform[transform.childCount];
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transformsToAdd[i] = transform.GetChild(i);
+        }
+        splineTransforms = transformsToAdd;
+
+        GeneratePoints();
+
         if (showPath)
         {
             ShowPath();
@@ -34,12 +43,7 @@ public class Path : MonoBehaviour
 
     private void OnValidate()
     {
-        Transform[] transformsToAdd = new Transform[transform.childCount];
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transformsToAdd[i] = transform.GetChild(i);
-        }
-        splineTransforms = transformsToAdd;
+
     }
 
     public List<Vector3> GetPoints()
