@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6533875848915131746}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -48,21 +48,42 @@ MonoBehaviour:
   targetPlane: {fileID: 0}
   pylonPrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
   towerPrefabs:
-  - {fileID: 3326546651872150971, guid: 503c9c9b4fafa024c9110b746ef80354, type: 3}
   - {fileID: 2265242553184299378, guid: c01ef6ffb30809142ba32c31bcd3a5a3, type: 3}
-  - {fileID: 9205794196146980576, guid: 4633d8e6d0178774b83555d52de7e1dc, type: 3}
+  - {fileID: 3326546651872150971, guid: 503c9c9b4fafa024c9110b746ef80354, type: 3}
   - {fileID: 8260806039907879942, guid: 41bddf645ba123949b10ba4f81961319, type: 3}
-  placementBlockers:
+  - {fileID: 866012977369098966, guid: dce0aa3f2bb217b4e94c90b7e5d4ded2, type: 3}
+  - {fileID: 9205794196146980576, guid: 4633d8e6d0178774b83555d52de7e1dc, type: 3}
+  buildingLayers:
     serializedVersion: 2
     m_Bits: 448
+  placementBlockers:
+    serializedVersion: 2
+    m_Bits: 2496
   placementExclusionSize: 1.2
   maxDistanceFromPylon: 6
-  radialMenu: {fileID: 0}
+  buttonBaseColour: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
+  buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   selectionIndicator: {fileID: 0}
+  radialExclusionZone: 40
+  pylonMenu: {fileID: 0}
+  pylonMenuButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  towerMenu: {fileID: 0}
+  towerMenuButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  towerSelectionMenu: {fileID: 0}
+  towerSelectionMenuButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  interactKey: 323
   showMouseDirection: 0
   showCameraProjection: 0
-  logCurrentInteraction: 0
-  interactKey: 323
+  logInteractionChange: 0
 --- !u!114 &6533875848915124894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,7 +91,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6533875848915131746}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db8c72ba50f61a7439a1262b5faddc25, type: 3}
   m_Name: 
