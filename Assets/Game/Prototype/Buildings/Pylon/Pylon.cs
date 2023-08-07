@@ -9,9 +9,10 @@ public class Pylon : Building
     private List<Tower> connectedTowerList = new();
     private int buildingCount;
     private int EXPforLVLup = 2;
-    public int pylonLevel= 0;
+    [SerializeField] private bool enhanced;
+    public bool Enhanced { get { return enhanced; }}
 
-    private int pylonEXP;
+    [SerializeField] private int pylonEXP;
     public int EXP
     {
         get
@@ -33,9 +34,7 @@ public class Pylon : Building
     {
         if (pylonEXP >= EXPforLVLup)
         {
-            EXP -= EXPforLVLup;
-            pylonLevel++;
-            EXPforLVLup += 1;
+            enhanced = true;
         }
     }
 
