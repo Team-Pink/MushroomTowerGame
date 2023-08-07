@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField, Range(0.1f, 1.0f)] float speed = 0.5f;
-    [SerializeField] Path pathToFollow;
+    public Path pathToFollow;
 
     private float progress = 0.0f;
 
