@@ -1,10 +1,16 @@
+
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.PlayerLoop;  
 using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
-using UnityEngine;
+
 public class Tower : Building
 {
     public int cost = 10;
     [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f; 
+
+    public TurretController TowerController;
 
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }

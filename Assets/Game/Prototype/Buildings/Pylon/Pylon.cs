@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+
 using BuildingList = System.Collections.Generic.List<Building>;
 using ContextMenu = UnityEngine.ContextMenu;
 
@@ -10,9 +12,35 @@ public class Pylon : Building
     public static int baseCost = 10;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
     public int forceEnhanceCost = 20;
-    
+
+    private BuildingList connectedBuildings = new();
+    private List<Tower> connectedTowerList = new();
+    private int buildingCount;
+    private int EXPforLVLup = 2;
+    [SerializeField] private bool enhanced;
     public bool Enhanced { get; private set; }
-    private readonly BuildingList connectedBuildings = new();
+
+    [SerializeField] private int pylonEXP;
+    public int EXP
+    {
+        get
+        {
+            return pylonEXP;
+        }
+        set
+        {
+            pylonEXP = value;
+            CheckIfEnhanced();
+        }
+    }
+
+    private void CheckIfEnhanced()
+    {
+        if (pylonEXP >= EXPforLVLup)
+        {
+            Enhance();
+        }
+    }
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
@@ -29,6 +57,7 @@ public class Pylon : Building
                     SellTower(building as Tower);
             }
         }
+        GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
     }
 
 
@@ -81,6 +110,36 @@ public class Pylon : Building
     }
 #endregion
 
+    /// <summary>
+    /// generate a list of Tower from the building list 
+    /// </summary>
+    private void GenerateTowerList()
+    {
+        buildingCount = connectedBuildings.Count;// set buildingcount.
+
+        connectedTowerList.Clear(); // clobber the existing list
+        // generate a list of towers
+        foreach (Building building in connectedBuildings)
+        {
+            if (building.gameObject.GetComponent<Tower>())
+            {
+                connectedTowerList.Add(building.gameObject.GetComponent<Tower>());
+            }
+        }
+    }
+    public void GetTowerEXP()
+    {
+        if (buildingCount < connectedBuildings.Count)
+            GenerateTowerList();
+        foreach (Tower tower in connectedTowerList)
+        {
+            if (tower.TowerController.storedExperience > 0)
+            { 
+            EXP += tower.TowerController.storedExperience;
+            tower.TowerController.storedExperience = 0;
+            }
+        }
+    } 
     public override void Sell()
     {
         DeactivateConnectedBuildings();

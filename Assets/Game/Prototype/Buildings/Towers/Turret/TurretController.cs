@@ -6,21 +6,25 @@ public class TurretController : MonoBehaviour
 
     // So how do I do this...
 
+    //Enemy catalouging
     public HashSet<GameObject> inRangeEnemies = new();
     public GameObject targetGameObject;
     protected Enemy targetEnemy;
-    public GameObject bullet;
 
+    // bad firing animation
+    public GameObject bullet;
     Vector3 bulletSpawn1;
     Vector3 bulletSpawn2;
     bool barrelAlternate;
 
+    // pylon data
     public bool pylonActive = true;
+    public int storedExperience;
+
+    // tower values
     public float damage = 100;
     public float firingInterval = 3;
-    public float firingClock = 2;
-    //public float bulletSpeed;
-
+    private float firingClock = 2;
     public float turnSpeed = 2;
     public float firingCone = 20;
     public bool lockedOn = false;
@@ -39,15 +43,22 @@ public class TurretController : MonoBehaviour
         {
             // rotate turret to targetted enemy
             RotateToTarget();
+
             if (targetEnemy.Dead())
             {
+                // take enemy experience
+                storedExperience += targetEnemy.expValue;
+                targetEnemy.expValue = 0;
+                // run enemy death function
                 targetEnemy.OnDeath();
+                // remove it from targets and retarget
+                inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
             }
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
-        }
+        }    
     }
 
 
@@ -87,13 +98,10 @@ public class TurretController : MonoBehaviour
         barrelAlternate = !barrelAlternate;
 
         targetEnemy.health -= (int)damage;
-        if (targetEnemy.health <= 0)
-        {
-            inRangeEnemies.Remove(targetEnemy.gameObject);
-            PickPriorityTarget();
-        }
 
         firingClock = 0;
+
+
     }
 
 
