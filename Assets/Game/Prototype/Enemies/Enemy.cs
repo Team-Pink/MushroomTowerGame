@@ -20,10 +20,10 @@ public class Enemy : MonoBehaviour
     private float progress = 0.0f;
 
     [Header("Attacking")]
-    [SerializeField] float attackCooldown;
-    private float elapsedCooldown;
+    [SerializeField] protected float attackCooldown;
+    protected float elapsedCooldown;
     [HideInInspector] public bool attackMode { get; private set; }
-    private bool attackInProgress;
+    protected bool attackInProgress;
 
     [Header("Components")]
     [SerializeField] Hub hub;

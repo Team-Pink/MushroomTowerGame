@@ -9,13 +9,15 @@ using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
-
+    
     private BuildingList connectedBuildings = new();
     private List<Tower> connectedTowerList = new();
     private int buildingCount;
     private int EXPforLVLup = 2;
-    [SerializeField] private bool enhanced;
-    public bool Enhanced { get; private set; }
+    [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
+
+    [SerializeField] private int pylonHealth = 5;
+    public int PylonHealth { get { return pylonHealth; } set { pylonHealth = value; /**/ if (pylonHealth <= 0) DeactivateConnectedBuildings(); } }
 
     [SerializeField] private int pylonEXP;
     public int EXP
