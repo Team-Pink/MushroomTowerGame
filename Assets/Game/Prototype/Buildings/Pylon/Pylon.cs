@@ -9,8 +9,8 @@ using Debug = UnityEngine.Debug;
 public class Pylon : Building
 {
     
-    public int costMultiplier = 1;
-    public static int baseCost = 10;
+    private int costMultiplier = 1;
+    private static int baseCost = 10;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
     public int forceEnhanceCost = 20;
 
@@ -21,7 +21,7 @@ public class Pylon : Building
     [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
 
     [SerializeField] private int pylonHealth = 5;
-    public int PylonHealth { get { return pylonHealth; } set { pylonHealth = value; /**/ if (pylonHealth <= 0) DeactivateConnectedBuildings(); } }
+    public int PylonHealth { get { return pylonHealth; } set { pylonHealth = value; /**/ if (pylonHealth <= 0) Deactivate(); } }
 
     [SerializeField] private int pylonEXP;
     public int EXP

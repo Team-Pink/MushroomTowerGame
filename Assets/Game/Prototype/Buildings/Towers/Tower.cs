@@ -1,14 +1,14 @@
 
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.PlayerLoop;  
+using UnityEngine.PlayerLoop;
 using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public class Tower : Building
 {
     public int cost = 10;
-    [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f; 
+    [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
 
     public TurretController TowerController;
 
@@ -20,6 +20,9 @@ public class Tower : Building
 
     public void Upgrade(int upgradePath)
     {
+       // if (!Active) TowerController.enabled = false;
+       // else TowerController.enabled = true;
+            
         if (upgradePath >= 0 && upgradePath < upgradedTowerPrefabs.Count)
         {
             Transform transform = gameObject.transform;

@@ -8,7 +8,8 @@ public class PylonAttacker : Enemy
 
     private void Update()
     {
-
+        AttackPylon();
+        base.Playing();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -16,7 +17,14 @@ public class PylonAttacker : Enemy
         if (other.CompareTag("Pylon"))
         {
             target = other.GetComponent<Pylon>();
-
+            if(target.PylonHealth <= 0)
+            {
+                target = null;
+                return;
+            }
+            // stop movement
+            speed = 0;
+            // turn to face pylon
             Debug.Log("encountered" + other);
         }
     }
@@ -27,15 +35,16 @@ public class PylonAttacker : Enemy
         {
             if (!attackInProgress)
             {
-                // stop movement and turn to face pylon
-                // trigger pylon attack animation
-                target.PylonHealth -= 1;
                 if (target.PylonHealth <= 0)
                 {
                     target = null;
                     //turn back on the path
                     // resume travelling
+                    speed = 1;
+                    return;
                 }
+                // trigger pylon attack animation
+                target.PylonHealth -= 1;
                 attackInProgress = true;
             }
             else
@@ -48,12 +57,7 @@ public class PylonAttacker : Enemy
                     elapsedCooldown = 0;
                 }
             }
-
-
         }
-        else
-            return;
-
     }
 
     // if (pylon health =< 0) return to path
