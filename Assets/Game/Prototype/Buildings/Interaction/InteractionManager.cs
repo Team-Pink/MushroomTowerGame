@@ -395,7 +395,7 @@ public class InteractionManager : MonoBehaviour
 
             bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
 
-            if (inPylonBuildRange && spaceToPlace && spaceForPylon)
+            if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
             {
                 canPlace = true;
                 selectionIndicator.color = Color.green;
@@ -500,14 +500,7 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerSelectionState()
     {
-        if (!TargetIsPlane)
-        {
-            ResetInteraction();
-            return;
-        }
-
         RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
-
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
