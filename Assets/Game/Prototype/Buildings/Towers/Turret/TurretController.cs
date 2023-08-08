@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class TurretController : MonoBehaviour
 {
-
-    // So how do I do this...
+ // TODO: test if unity adds enemies colliding with it when it is instantiated to the inRangeEnemies or if I need to add them via sphere cast on start.
 
     //Enemy catalouging
-    public HashSet<GameObject> inRangeEnemies = new();
-    public GameObject targetGameObject;
-    protected Enemy targetEnemy;
+    private HashSet<GameObject> inRangeEnemies = new();
+    public GameObject targetGameObject; // change this to private when bullet script is no longer required.
+    private Enemy targetEnemy;
 
     // bad firing animation
     public GameObject bullet;
@@ -33,6 +32,8 @@ public class TurretController : MonoBehaviour
     {
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
+
+       
     }
 
     // Update is called once per frame
@@ -83,7 +84,7 @@ public class TurretController : MonoBehaviour
         PickPriorityTarget();
     }
 
-    private void Attack()
+    private void Attack() // this should be overridden in child classes
     {
         // do attack animation
 
@@ -132,12 +133,12 @@ public class TurretController : MonoBehaviour
         targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm()
+    int TargetingAlgorithm()  // this should be overridden in child classes
     {
         return Random.Range(0, 10);
     }
 
-    void RotateToTarget()
+    void RotateToTarget()  // this should be overridden in child classes
     {
         Vector3 lookDirection = (targetGameObject.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);

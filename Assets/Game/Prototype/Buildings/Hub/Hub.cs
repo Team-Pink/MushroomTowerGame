@@ -1,5 +1,6 @@
 using Text = TMPro.TMP_Text;
 using SerializeField = UnityEngine.SerializeField;
+using HideInInspector = UnityEngine.HideInInspector;
 using static UnityEngine.Time;
 using static UnityEngine.Input;
 using static UnityEngine.Application;
@@ -12,6 +13,9 @@ public class Hub : Building
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
     [SerializeField] Text hubHealthText;
+
+    [HideInInspector] 
+    public int pylonCount = 0;
 
     private void Update()
     {

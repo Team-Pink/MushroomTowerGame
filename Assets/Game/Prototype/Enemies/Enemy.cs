@@ -14,19 +14,19 @@ public class Enemy : MonoBehaviour
     public bool dead = false; // this is specifically for the ondeath function. to replace the functionality of checking health in update and setting dead in Ondeath so it can only run once.
 
     [Header("Movement")]
-    [SerializeField, Range(0.1f, 1.0f)] float speed = 0.5f;
+    [SerializeField, Range(1.0f, 5.0f)] float speed = 2.0f;
     public Path pathToFollow;
 
     private float progress = 0.0f;
 
     [Header("Attacking")]
-    [SerializeField] float attackCooldown;
-    private float elapsedCooldown;
+    [SerializeField] protected float attackCooldown;
+    protected float elapsedCooldown;
     [HideInInspector] public bool attackMode { get; private set; }
-    private bool attackInProgress;
+    protected bool attackInProgress;
 
     [Header("Components")]
-    [SerializeField] Hub hub;
+    public Hub hub;
     public LayerMask range;
 
     [Header("Debug")]
@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
         Playing();
     }
 
-    private void Playing()
+    protected void Playing()
     {
         if (dead)
             return;
@@ -127,7 +127,7 @@ public class Enemy : MonoBehaviour
             transform.GetChild(i).gameObject.SetActive(true);
         }
 
-        dead = true;
+        dead = false;
 
         //whatever else needs to be done before fully spawning in do within here
 

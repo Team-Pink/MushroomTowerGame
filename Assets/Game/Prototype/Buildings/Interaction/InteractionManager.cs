@@ -51,6 +51,11 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
+
+    [Space]
+    [SerializeField] int maxPylonsPerHub = 6;
+    [SerializeField] int maxTowersPerPylon = 5;
+    [SerializeField] int maxPylonsPerPylon = 2;
     #endregion
 
     [Header("Currency")]
@@ -500,9 +505,13 @@ public class InteractionManager : MonoBehaviour
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
             int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
+            bool notMaxTowers = false;
+
+            notMaxTowers = activeBud.transform.parent.GetComponent<Pylon>().towerCount < maxTowersPerPylon;
+
             // If you want to make it so that towers you can't buy flash red when attempting to purchase or appear greyed out and unable to pick,
             // just have currency check out of this if statement.
-            if (hoveredButtonIndex < 0 || !currencyManager.CanDecreaseCurrencyAmount(cost))
+            if (hoveredButtonIndex < 0 || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxTowers)
             {
                 ResetInteraction();
                 return;
@@ -549,16 +558,27 @@ public class InteractionManager : MonoBehaviour
     private void AttemptToSpawnPylon()
     {
         int cost = 0;
+        bool notMaxPylons = false;
+
         if (activeBud.transform.parent.GetComponent<Hub>() != null)
         {
             pylonMultiplier = 1;
             cost = Pylon.GetPylonBaseCurrency();
+            notMaxPylons = activeBud.transform.parent.GetComponent<Hub>().pylonCount < maxPylonsPerHub;
         }
         else if (activeBud.transform.parent.GetComponent<Pylon>() != null)
         {
             Pylon ParentPylon = activeBud.transform.parent.GetComponent<Pylon>();
             pylonMultiplier = ParentPylon.GetMultiplier() + 1;
             cost = ParentPylon.GetPylonCost(pylonMultiplier);
+            
+            notMaxPylons = activeBud.transform.parent.GetComponent<Pylon>().pylonCount < maxPylonsPerPylon;
+
+            if (!(targetBuilding as Pylon).Enhanced)
+            {
+                ResetInteraction();
+                return;
+            }
         }
         else
         {
@@ -567,7 +587,8 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost))
+
+        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
         {
             ResetInteraction();
             return;
@@ -581,9 +602,19 @@ public class InteractionManager : MonoBehaviour
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
+        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        {
+            (targetBuilding as Hub).pylonCount++;
+        }
+        else
+        {
+            (targetBuilding as Pylon).pylonCount++;
+        }
+
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
+        pylonInstance.GetComponent<Pylon>().parent = targetBuilding;
 
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
@@ -594,11 +625,16 @@ public class InteractionManager : MonoBehaviour
     public void SpawnTower(int towerIndex)
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
-        
+
         GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
 
+        towerInstance.GetComponent<Tower>().parent = targetBuilding;
+
         if (previousInteraction == InteractionState.PlacingFromPylon)
+        {
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
+            (targetBuilding as Pylon).towerCount++;
+        }  
 
         ResetInteraction();
     }

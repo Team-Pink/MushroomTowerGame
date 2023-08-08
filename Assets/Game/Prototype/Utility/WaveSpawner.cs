@@ -62,6 +62,8 @@ public class WaveSpawner : MonoBehaviour
     private int spawnedEnemies;
     private List<Enemy> aliveEnemies = new();
 
+    [SerializeField] Hub hub;
+
     private void Awake()
     {
         currentPath = paths[Random.Range(0, paths.Length - 1)];
@@ -117,7 +119,8 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.GetComponent<Enemy>().pathToFollow = currentPath;
+            enemy.pathToFollow = currentPath;
+            enemy.hub = hub;
             enemy.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
 
