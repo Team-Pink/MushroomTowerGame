@@ -1,7 +1,7 @@
 
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.PlayerLoop;  
+using UnityEngine.PlayerLoop;
 using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
@@ -23,6 +23,9 @@ public class Tower : Building
 
     public void Upgrade(int upgradePath)
     {
+       // if (!Active) TowerController.enabled = false;
+       // else TowerController.enabled = true;
+            
         if (upgradePath >= 0 && upgradePath < upgradedTowerPrefabs.Count)
         {
             Transform transform = gameObject.transform;
