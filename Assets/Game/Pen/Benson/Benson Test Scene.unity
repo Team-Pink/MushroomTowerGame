@@ -205,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.2490871
+      value: -2.35
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -213,7 +213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3459754
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -243,6 +243,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5034741519692704109, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4c535326e75733541af589762b776dbd, type: 2}
+    - target: {fileID: -5034741519692704109, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4c535326e75733541af589762b776dbd, type: 2}
     - target: {fileID: 919132149155446097, guid: 425633678f791ee4c97388b5fa9eccb0, type: 3}
       propertyPath: m_Name
       value: MSH_Pylon_Destroyer(Rigged)_Prototype
@@ -519,7 +527,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1022125361
 Transform:
   m_ObjectHideFlags: 0
@@ -528,7 +536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1022125360}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.2900553, y: 0, z: -5.8591766}
+  m_LocalPosition: {x: 6.19, y: 0, z: -7.879822}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -560,7 +568,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1053061545}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.64, y: 0, z: -10.45}
+  m_LocalPosition: {x: -0.24, y: 0, z: -7.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -675,7 +683,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d02c5310045f4e744a2322cd58b22e86, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1121886605991627108, guid: d02c5310045f4e744a2322cd58b22e86, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -811,6 +819,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MSH_Laser_Tower(Rigged)_Prototype
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 10a904dc69cea3c42b8c2d6c08c982bf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10a904dc69cea3c42b8c2d6c08c982bf, type: 3}
 --- !u!1 &1801943719 stripped
@@ -856,7 +868,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e0aa757a862201e42abca682478d0871, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.3922634
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e0aa757a862201e42abca682478d0871, type: 3}
       propertyPath: m_LocalPosition.y
@@ -864,7 +876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e0aa757a862201e42abca682478d0871, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.606576
+      value: -5.05
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e0aa757a862201e42abca682478d0871, type: 3}
       propertyPath: m_LocalRotation.w
@@ -902,6 +914,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MSH_Long_Wacky_tower_Unwrapped(Rigged)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e0aa757a862201e42abca682478d0871, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e0aa757a862201e42abca682478d0871, type: 3}
 --- !u!1001 &1910883857
@@ -917,7 +933,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.27144098
+      value: 1.67
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
       propertyPath: m_LocalPosition.y
@@ -925,7 +941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.396844
+      value: -6.28
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
       propertyPath: m_LocalRotation.w
@@ -962,6 +978,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
       propertyPath: m_Name
       value: MSH_Basic_Enemy_Prototype
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2f7b0df51a6bf343844c8df48ec0c63, type: 3}
@@ -1050,7 +1070,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 8
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -1076,7 +1096,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1957741297}
   m_LocalRotation: {x: 0, y: 0.92387956, z: -0.38268343, w: 0}
-  m_LocalPosition: {x: -0.14, y: 5.77, z: -0.96}
+  m_LocalPosition: {x: -0.14, y: 29.28, z: 22.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
