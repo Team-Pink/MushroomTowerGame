@@ -6,14 +6,16 @@ public class Enemy : MonoBehaviour
 {
     [Header("Health")]
     public int health;
+    
     public bool Dead()
     {
         return health <= 0;
     }
+    public bool dead = false; // this is specifically for the ondeath function. to replace the functionality of checking health in update and setting dead in Ondeath so it can only run once.
 
     [Header("Movement")]
     [SerializeField, Range(0.1f, 1.0f)] float speed = 0.5f;
-    [SerializeField] Path pathToFollow;
+    public Path pathToFollow;
 
     private float progress = 0.0f;
 
@@ -33,6 +35,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Provides On Death")]
     [SerializeField] int bugBits = 2;
+    public int expValue = 1;
 
     [Space()]
     [SerializeField] Text healthText;
@@ -52,6 +55,9 @@ public class Enemy : MonoBehaviour
 
     private void Playing()
     {
+        if (dead)
+            return;
+        
         healthText.text = health.ToString();
 
         if (attackMode)
@@ -78,7 +84,8 @@ public class Enemy : MonoBehaviour
         if (progress < 1)
             progress += Time.deltaTime * speed;
 
-        gameObject.transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
+        if (currentPoint + 1 < points.Count)
+            gameObject.transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
 
         if (progress >= 1)
         {
@@ -96,25 +103,21 @@ public class Enemy : MonoBehaviour
 
     public void OnDeath()
     {
-        // do a sphere cast for towers in range and remove this enemy from them
-        Collider[] towers = Physics.OverlapSphere(transform.position, 0.2f, range);
-        foreach (Collider tower in towers)
-        {
-            if (tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Contains(gameObject))
-            {
-                tower.gameObject.GetComponent<TurretController>().inRangeEnemies.Remove(gameObject); //The Remove method returns false if item is not found in the Hashset.
-            }
-        }
+        if (dead) return; // don't increase currency twice.
+        dead = true; // object pool flag;
 
+        // death animation
+
+        // increment currency
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
-        Debug.Log(gameObject.name + " is dead");
-        
-        for(int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
+
+        Debug.Log(gameObject.name + " is dead");
     }
 
     public void SpawnIn()
@@ -123,6 +126,8 @@ public class Enemy : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(true);
         }
+
+        dead = true;
 
         //whatever else needs to be done before fully spawning in do within here
 
