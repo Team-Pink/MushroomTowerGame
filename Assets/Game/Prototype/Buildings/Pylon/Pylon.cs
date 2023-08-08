@@ -139,7 +139,7 @@ public class Pylon : Building
     }
     public void GetTowerEXP()
     {
-        if (buildingCount < connectedBuildings.Count)
+        if (buildingCount != connectedBuildings.Count)
             GenerateTowerList();
         foreach (Tower tower in connectedTowerList)
         {

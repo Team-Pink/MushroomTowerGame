@@ -2,7 +2,7 @@ using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 using FloatList = System.Collections.Generic.List<float>;
 
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; 
 
 using static System.Linq.Enumerable;
 
@@ -306,8 +306,12 @@ public class InteractionManager : MonoBehaviour
             } // Force Enhance
             else if (hoveredButtonIndex == 1)
             {
+                targetBuilding.Sell();
+            } // Sell
+            else if (hoveredButtonIndex == 2)
+            {
                 (targetBuilding as Pylon).SellAll();
-            } // Sell All
+            }
 
             Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
@@ -329,7 +333,11 @@ public class InteractionManager : MonoBehaviour
 
             Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
 
-            if (!(targetBuilding as Tower).Upgraded)
+            if (hoveredButtonIndex == 1)
+            {
+                (targetBuilding as Tower).Sell();
+            }
+            else if (!(targetBuilding as Tower).Upgraded)
             {
                 (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
             }
