@@ -273,7 +273,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4319338923326572372}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -466,6 +466,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radiusDisplay: {fileID: 4319338923326572372}
+  costMultiplier: 1
+  sellReturnPercent: 0.5
+  forceEnhanceCost: 20
+  enhanced: 0
+  pylonEXP: 0
 --- !u!65 &8614919214301096660
 BoxCollider:
   m_ObjectHideFlags: 0
