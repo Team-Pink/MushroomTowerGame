@@ -3,24 +3,27 @@ using UnityEngine;
 
 public class TurretController : MonoBehaviour
 {
+ // TODO: test if unity adds enemies colliding with it when it is instantiated to the inRangeEnemies or if I need to add them via sphere cast on start.
 
-    // So how do I do this...
+    //Enemy catalouging
+    private HashSet<GameObject> inRangeEnemies = new();
+    public GameObject targetGameObject; // change this to private when bullet script is no longer required.
+    private Enemy targetEnemy;
 
-    public HashSet<GameObject> inRangeEnemies = new();
-    public GameObject targetGameObject;
-    protected Enemy targetEnemy;
+    // bad firing animation
     public GameObject bullet;
-
     Vector3 bulletSpawn1;
     Vector3 bulletSpawn2;
     bool barrelAlternate;
 
+    // pylon data
     public bool pylonActive = true;
+    public int storedExperience;
+
+    // tower values
     public float damage = 100;
     public float firingInterval = 3;
-    public float firingClock = 2;
-    //public float bulletSpeed;
-
+    private float firingClock = 2;
     public float turnSpeed = 2;
     public float firingCone = 20;
     public bool lockedOn = false;
@@ -29,6 +32,8 @@ public class TurretController : MonoBehaviour
     {
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
+
+       
     }
 
     // Update is called once per frame
@@ -39,12 +44,22 @@ public class TurretController : MonoBehaviour
         {
             // rotate turret to targetted enemy
             RotateToTarget();
+
             if (targetEnemy.Dead())
+            {
+                // take enemy experience
+                storedExperience += targetEnemy.expValue;
+                targetEnemy.expValue = 0;
+                // run enemy death function
+                targetEnemy.OnDeath();
+                // remove it from targets and retarget
+                inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
+            }
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
-        }
+        }    
     }
 
 
@@ -69,7 +84,7 @@ public class TurretController : MonoBehaviour
         PickPriorityTarget();
     }
 
-    private void Attack()
+    private void Attack() // this should be overridden in child classes
     {
         // do attack animation
 
@@ -84,13 +99,10 @@ public class TurretController : MonoBehaviour
         barrelAlternate = !barrelAlternate;
 
         targetEnemy.health -= (int)damage;
-        if (targetEnemy.health <= 0)
-        {
-            inRangeEnemies.Remove(targetEnemy.gameObject);
-            PickPriorityTarget();
-        }
 
         firingClock = 0;
+
+
     }
 
 
@@ -121,12 +133,12 @@ public class TurretController : MonoBehaviour
         targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm()
+    int TargetingAlgorithm()  // this should be overridden in child classes
     {
         return Random.Range(0, 10);
     }
 
-    void RotateToTarget()
+    void RotateToTarget()  // this should be overridden in child classes
     {
         Vector3 lookDirection = (targetGameObject.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
