@@ -8,14 +8,21 @@ using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
-    
-    private int costMultiplier = 1;
-    private static int baseCost = 10;
+    [HideInInspector] 
+    public int towerCount = 0;
+    [HideInInspector] 
+    public int pylonCount = 0;
+
+    [HideInInspector]
+    public Building parent = null;
+
+    public int costMultiplier = 1;
+    public static int baseCost = 10;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
     public int forceEnhanceCost = 20;
 
-    private BuildingList connectedBuildings = new();
-    private List<Tower> connectedTowerList = new();
+    [SerializeField] private BuildingList connectedBuildings = new();
+    [SerializeField] private List<Tower> connectedTowerList = new();
     private int buildingCount;
     private int EXPforLVLup = 2;
     [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
@@ -112,7 +119,7 @@ public class Pylon : Building
         return baseCost;
     }
 #endregion
-
+    
     /// <summary>
     /// generate a list of Tower from the building list 
     /// </summary>
@@ -150,6 +157,18 @@ public class Pylon : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
+        if (parent is not Hub)
+        {
+            (parent as Pylon).pylonCount--;
+            (parent as Pylon).connectedBuildings.Remove(this);
+        }
+        else
+        {
+            (parent as Hub).pylonCount--;
+        } 
+
+        
+
         base.Sell();
     }
     public void SellTower(Tower tower)
@@ -160,24 +179,19 @@ public class Pylon : Building
     }
     public void SellAll()
     {
-        BuildingList sellList = new();
-
-        for (int buildingIndex = 0; buildingIndex < connectedBuildings.Count; buildingIndex++)
+        for (int buildingIndex = connectedBuildings.Count - 1; buildingIndex >= 0; buildingIndex--)
         {
             Building building = connectedBuildings[buildingIndex];
-            if (building is Pylon)
-                (building as Pylon).SellAll();
-            else
+            if(building != null)
             {
-                sellList.Add(building);
+                if (building is Pylon)
+                    (building as Pylon).SellAll();
+                else
+                {
+                    SellTower(building as Tower);
+                }
             }
         }
-
-        for (int buildingIndex = 0; buildingIndex < sellList.Count; buildingIndex++)
-        {
-            SellTower(sellList[buildingIndex] as Tower);
-        }
-
         Sell();
     }
 }
