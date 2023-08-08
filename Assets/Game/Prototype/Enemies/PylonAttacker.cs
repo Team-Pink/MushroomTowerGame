@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class PylonAttacker : Enemy
 {
-    Pylon target;
+    [SerializeField] private Pylon target;
+    private Quaternion startingRotation;
+    private bool lockedOn = false;
+    public float firingCone = 10;
+    [SerializeField, Range(0.1f, 1.0f)] private float turnSpeed = 1;
 
     private void Update()
     {
@@ -17,14 +21,14 @@ public class PylonAttacker : Enemy
         if (other.CompareTag("Pylon"))
         {
             target = other.GetComponent<Pylon>();
-            if(target.PylonHealth <= 0)
+            if (target.PylonHealth <= 0)
             {
                 target = null;
                 return;
             }
+
             // stop movement
             speed = 0;
-            // turn to face pylon
             Debug.Log("encountered" + other);
         }
     }
@@ -33,12 +37,16 @@ public class PylonAttacker : Enemy
     {
         if (target)
         {
-            if (!attackInProgress)
+            // rotate to face pylon
+            RotateToTarget(GetRotationToTarget());
+            if (lockedOn && !attackInProgress)
             {
                 if (target.PylonHealth <= 0)
                 {
+                    lockedOn = false;
                     target = null;
-                    //turn back on the path
+                    //turn back on the path this should be corrected by the flocking/steering behavior when it's implemented
+                    transform.rotation = startingRotation;
                     // resume travelling
                     speed = 1;
                     return;
@@ -60,5 +68,15 @@ public class PylonAttacker : Enemy
         }
     }
 
-    // if (pylon health =< 0) return to path
+    void RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes
+    {
+        if (!lockedOn && Quaternion.Angle(transform.rotation, lookTarget) < firingCone)
+            lockedOn = true;
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookTarget, turnSpeed);
+    }
+
+    Quaternion GetRotationToTarget() => Quaternion.LookRotation((target.transform.position - transform.position).normalized);
+
+    
 }
