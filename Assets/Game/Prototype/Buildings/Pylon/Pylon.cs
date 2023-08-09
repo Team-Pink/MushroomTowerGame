@@ -84,6 +84,10 @@ Enhanced = true;
     {
         DeactivateConnectedBuildings();
 
+        transform.GetChild(3).gameObject.SetActive(true);
+        if (Enhanced) transform.GetChild(2).gameObject.SetActive(false);
+        else transform.GetChild(1).gameObject.SetActive(false);
+        transform.GetChild(4).gameObject.SetActive(false);
         base.Deactivate();
     }
     public void DeactivateConnectedBuildings()
@@ -95,6 +99,10 @@ Enhanced = true;
     }
     public override void Reactivate()
     {
+        transform.GetChild(3).gameObject.SetActive(false);
+        if(Enhanced) transform.GetChild(2).gameObject.SetActive(true);
+        else transform.GetChild(1).gameObject.SetActive(true);
+        transform.GetChild(4).gameObject.SetActive(true);
         base.Reactivate();
 
         foreach (Building building in connectedBuildings)
