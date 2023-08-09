@@ -7,6 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6010180596529164800, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    - target: {fileID: 6010180596529165053, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596529165053, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596529165053, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6010180596529165055, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -58,6 +74,10 @@ PrefabInstance:
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Name
       value: Enemy Pylon Attacker
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_TagString

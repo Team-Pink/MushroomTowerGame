@@ -71,13 +71,23 @@ public class Pylon : Building
     }
 
 
-    public void Enhance() => Enhanced = true;
+    public void Enhance()
+    {
+Enhanced = true;
+        transform.GetChild(2).gameObject.SetActive(true);
+        transform.GetChild(1).gameObject.SetActive(false);
+    }
+
     public void AddBuilding(Building building) => connectedBuildings.Add(building);
 
     [ContextMenu("Deactivate")] public override void Deactivate()
     {
         DeactivateConnectedBuildings();
 
+        transform.GetChild(3).gameObject.SetActive(true);
+        if (Enhanced) transform.GetChild(2).gameObject.SetActive(false);
+        else transform.GetChild(1).gameObject.SetActive(false);
+        transform.GetChild(4).gameObject.SetActive(false);
         base.Deactivate();
     }
     public void DeactivateConnectedBuildings()
@@ -89,6 +99,10 @@ public class Pylon : Building
     }
     public override void Reactivate()
     {
+        transform.GetChild(3).gameObject.SetActive(false);
+        if(Enhanced) transform.GetChild(2).gameObject.SetActive(true);
+        else transform.GetChild(1).gameObject.SetActive(true);
+        transform.GetChild(4).gameObject.SetActive(true);
         base.Reactivate();
 
         foreach (Building building in connectedBuildings)

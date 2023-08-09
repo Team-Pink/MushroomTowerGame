@@ -1,6 +1,7 @@
 using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
 using UnityEngine;
 using Text = TMPro.TMP_Text;
+using UnityEngine.UIElements;
 
 public class Enemy : MonoBehaviour
 {
@@ -60,6 +61,7 @@ public class Enemy : MonoBehaviour
         
         healthText.text = health.ToString();
 
+        
         if (attackMode)
         {
             if (!attackInProgress)
@@ -85,7 +87,10 @@ public class Enemy : MonoBehaviour
             progress += Time.deltaTime * speed;
 
         if (currentPoint + 1 < points.Count)
-            gameObject.transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
+        {
+            if (speed > 0) RotateToFaceTravelDirection();
+            transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
+        }
 
         if (progress >= 1)
         {
@@ -131,5 +136,11 @@ public class Enemy : MonoBehaviour
 
         //whatever else needs to be done before fully spawning in do within here
 
+    }
+
+    void RotateToFaceTravelDirection()
+    {
+        Vector3 lookDirection = (points[currentPoint + 1] - points[currentPoint]).normalized;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection), progress);
     }
 }
