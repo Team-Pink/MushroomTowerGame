@@ -71,7 +71,13 @@ public class Pylon : Building
     }
 
 
-    public void Enhance() => Enhanced = true;
+    public void Enhance()
+    {
+Enhanced = true;
+        transform.GetChild(2).gameObject.SetActive(true);
+        transform.GetChild(1).gameObject.SetActive(false);
+    }
+
     public void AddBuilding(Building building) => connectedBuildings.Add(building);
 
     [ContextMenu("Deactivate")] public override void Deactivate()
