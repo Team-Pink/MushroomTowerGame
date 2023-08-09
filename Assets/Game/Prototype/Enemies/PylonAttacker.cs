@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PylonAttacker : Enemy
 {
     [SerializeField] private Pylon target;
-    private Quaternion startingRotation;
     private bool lockedOn = false;
     public float firingCone = 10;
     [SerializeField, Range(0.1f, 1.0f)] private float turnSpeed = 1;
+
+    // garbage animation objects
+    [SerializeField] GameObject bullet;
+    [SerializeField, Range(0.1f, 1.0f)] private float bulletSpeed;
 
     private void Update()
     {
@@ -33,34 +37,37 @@ public class PylonAttacker : Enemy
         }
     }
 
-    void AttackPylon()
+    void AttackPylon() // The reason this is as terrible as it is is because I had to break up the order to add in FireBullet.
     {
         if (target)
         {
+            if (target.PylonHealth <= 0)
+            {
+
+                //turn back on the path this should be corrected by the flocking/steering behavior when it's implemented
+                // resume travelling
+                speed = 1;
+                lockedOn = false;
+                target = null;
+                return;
+            }
             // rotate to face pylon
             RotateToTarget(GetRotationToTarget());
             if (lockedOn && !attackInProgress)
             {
-                if (target.PylonHealth <= 0)
-                {
-                    lockedOn = false;
-                    target = null;
-                    //turn back on the path this should be corrected by the flocking/steering behavior when it's implemented
-                    transform.rotation = startingRotation;
-                    // resume travelling
-                    speed = 1;
-                    return;
-                }
-                // trigger pylon attack animation
+
+                // trigger pylon attack animation              
                 target.PylonHealth -= 1;
                 attackInProgress = true;
             }
             else
             {
                 elapsedCooldown += Time.deltaTime;
-
+                bullet.SetActive(lockedOn);
+                FireBullet();
                 if (elapsedCooldown >= attackCooldown)
                 {
+                    ResetBullet();
                     attackInProgress = false;
                     elapsedCooldown = 0;
                 }
@@ -78,5 +85,14 @@ public class PylonAttacker : Enemy
 
     Quaternion GetRotationToTarget() => Quaternion.LookRotation((target.transform.position - transform.position).normalized);
 
-    
+    void FireBullet()
+    {
+        bullet.transform.position = Vector3.Lerp(bullet.transform.position, target.transform.position + Vector3.up, Time.deltaTime * 2);
+    }
+
+    void ResetBullet()
+    {
+        bullet.transform.position = transform.position;
+        bullet.SetActive(false);
+    }
 }
