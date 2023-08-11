@@ -169,19 +169,7 @@ Enhanced = true;
         DeactivateConnectedBuildings();
 
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
-
-        if (parent is not Hub)
-        {
-            (parent as Pylon).pylonCount--;
-            (parent as Pylon).connectedBuildings.Remove(this);
-        }
-        else
-        {
-            (parent as Hub).pylonCount--;
-        } 
-
-        
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);        
 
         base.Sell();
     }
