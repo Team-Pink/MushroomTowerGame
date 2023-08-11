@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.SceneManagement.SceneManager;
+using Text = TMPro.TMP_Text;
 
 [System.Serializable]
 public struct EnemyTypes
@@ -60,9 +63,10 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] GameObject enemyPrefab;
     private int spawnedEnemies;
-    private List<Enemy> aliveEnemies = new();
+    private readonly List<Enemy> aliveEnemies = new();
 
     [SerializeField] Hub hub;
+    [SerializeField] Text wonText;
 
     private void Awake()
     {
@@ -147,8 +151,21 @@ public class WaveSpawner : MonoBehaviour
                 InitialiseNextWave();
             }
             else
+            {
+                wonText.enabled = true;
+
                 Debug.Log("Final Wave Defeated");
+
+                StartCoroutine(GameWon());
+            }
+
         }
+    }
+
+    private IEnumerator GameWon()
+    {
+        yield return new WaitForSeconds(5);
+        LoadScene(GetActiveScene().buildIndex);
     }
 
     private void InitialiseNextWave()
