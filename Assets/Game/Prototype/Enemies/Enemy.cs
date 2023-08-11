@@ -23,12 +23,25 @@ public class Enemy : MonoBehaviour
     [Header("Attacking")]
     [SerializeField] protected float attackCooldown;
     protected float elapsedCooldown;
-    [HideInInspector] public bool attackMode { get; private set; }
+    private bool attackMode;
+    [HideInInspector] public bool AttackMode
+    {
+        get
+        {
+            return attackMode;
+        }
+        private set
+        {
+            animator.SetBool("Attacking", value);
+            attackMode = value;
+        }
+    }
     protected bool attackInProgress;
 
     [Header("Components")]
     public Hub hub;
     public LayerMask range;
+    [SerializeField] Animator animator;
 
     [Header("Debug")]
     [SerializeField] bool showPath;
@@ -62,7 +75,7 @@ public class Enemy : MonoBehaviour
         healthText.text = health.ToString();
 
         
-        if (attackMode)
+        if (AttackMode)
         {
             if (!attackInProgress)
             {
@@ -100,10 +113,10 @@ public class Enemy : MonoBehaviour
                 currentPoint++;
             }
             else
-                attackMode = true;
+                AttackMode = true;
         }
         else
-            attackMode = false;
+            AttackMode = false;
     }
 
     public void OnDeath()
