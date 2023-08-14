@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI; 
 
 using static System.Linq.Enumerable;
+using System;
 
 public enum InteractionState
 {
@@ -13,7 +14,6 @@ public enum InteractionState
     BuildingInteraction,
     PylonMenu,
     TowerMenu,
-    DraggingBuilding,
 
     PlacingFromHub,
     PlacingFromPylon,
@@ -170,9 +170,6 @@ public class InteractionManager : MonoBehaviour
             case InteractionState.TowerMenu:
                 TowerMenuState();
                 break;
-            case InteractionState.DraggingBuilding:
-                DraggingBuildingState();
-                break;
 
             case InteractionState.PlacingFromHub:
                 PlacingFromHubState();
@@ -246,16 +243,6 @@ public class InteractionManager : MonoBehaviour
 
         if (Input.GetKey(interactKey))
         {
-            if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
-            {
-                if (targetBuilding is not Hub)
-                {
-                    CurrentInteraction = InteractionState.DraggingBuilding;
-                    startingMousePosition = Vector2.zero;
-                    return;
-                }
-            }
-
             if (interactionDuration > 0.5f)
             {
                 if (targetBuilding is Pylon)
@@ -306,12 +293,22 @@ public class InteractionManager : MonoBehaviour
             } // Force Enhance
             else if (hoveredButtonIndex == 1)
             {
-                targetBuilding.Sell();
+                if (!targetBuilding.Active) 
+                {
+                    ResetInteraction();
+                }
+
+                (targetBuilding as Pylon).Sell();
             } // Sell
             else if (hoveredButtonIndex == 2)
             {
+                if (!targetBuilding.Active)
+                {
+                    ResetInteraction();
+                }
+
                 (targetBuilding as Pylon).SellAll();
-            }
+            } // Sell All
 
             Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
@@ -346,40 +343,6 @@ public class InteractionManager : MonoBehaviour
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
-        }
-    }
-    private void DraggingBuildingState()
-    {
-        currentHit = GetRayHit(buildingLayers);
-        Building heldBuilding = targetBuilding;
-
-        bool validSellPoint = false;
-
-        if (currentHit.collider is not null)
-        {
-            Building hoveredBuilding = currentHit.collider.GetComponent<Building>();
-
-            if (hoveredBuilding is Tower)
-                return;
-
-            if (hoveredBuilding is Hub)
-                validSellPoint = true;
-            else if (hoveredBuilding is Pylon)
-            {
-                if ((hoveredBuilding as Pylon).IsBuildingInList(heldBuilding))
-                    validSellPoint = true;
-            }
-        }
-
-        if (Input.GetKeyUp(interactKey))
-        {
-            if (validSellPoint)
-            {
-                heldBuilding.Sell();
-                ResetInteraction();
-            }
-            else
-                CurrentInteraction = InteractionState.BuildingInteraction;
         }
     }
 
@@ -512,14 +475,19 @@ public class InteractionManager : MonoBehaviour
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
             bool notMaxTowers = false;
 
             notMaxTowers = activeBud.transform.parent.GetComponent<Pylon>().towerCount < maxTowersPerPylon;
 
-            // If you want to make it so that towers you can't buy flash red when attempting to purchase or appear greyed out and unable to pick,
-            // just have currency check out of this if statement.
-            if (hoveredButtonIndex < 0 || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxTowers)
+            if (hoveredButtonIndex < 0 || !notMaxTowers)
+            {
+                ResetInteraction();
+                return;
+            }
+
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
+
+            if (!currencyManager.CanDecreaseCurrencyAmount(cost))
             {
                 ResetInteraction();
                 return;
@@ -588,13 +556,6 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-        else
-        {
-            Debug.LogWarning("activeBud does not come from a hub nor pylon");
-            ResetInteraction();
-            return;
-        }
-
 
         if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
         {

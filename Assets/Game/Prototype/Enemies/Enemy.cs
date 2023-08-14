@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     public bool dead = false; // this is specifically for the ondeath function. to replace the functionality of checking health in update and setting dead in Ondeath so it can only run once.
 
     [Header("Movement")]
-    [Range(1.0f, 5.0f)] public float speed = 2.0f;
+    [SerializeField, Range(0.0f, 5.0f)] protected float speed = 2.0f;
     public Path pathToFollow;
 
     private float progress = 0.0f;
@@ -23,12 +23,25 @@ public class Enemy : MonoBehaviour
     [Header("Attacking")]
     [SerializeField] protected float attackCooldown;
     protected float elapsedCooldown;
-    [HideInInspector] public bool attackMode { get; private set; }
+    private bool attackMode;
+    [HideInInspector] public bool AttackMode
+    {
+        get
+        {
+            return attackMode;
+        }
+        private set
+        {
+            animator.SetBool("Attacking", value);
+            attackMode = value;
+        }
+    }
     protected bool attackInProgress;
 
     [Header("Components")]
     public Hub hub;
     public LayerMask range;
+    [SerializeField] Animator animator;
 
     [Header("Debug")]
     [SerializeField] bool showPath;
@@ -62,7 +75,7 @@ public class Enemy : MonoBehaviour
         healthText.text = health.ToString();
 
         
-        if (attackMode)
+        if (AttackMode)
         {
             if (!attackInProgress)
             {
@@ -100,10 +113,10 @@ public class Enemy : MonoBehaviour
                 currentPoint++;
             }
             else
-                attackMode = true;
+                AttackMode = true;
         }
         else
-            attackMode = false;
+            AttackMode = false;
     }
 
     public void OnDeath()

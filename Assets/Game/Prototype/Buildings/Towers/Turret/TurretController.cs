@@ -91,15 +91,19 @@ public class TurretController : MonoBehaviour
     {
         // do attack animation
 
+
+        GameObject bulletRef;
         if (barrelAlternate)
         {
-            Instantiate(bullet, bulletSpawn1, Quaternion.identity);
+            bulletRef = Instantiate(bullet, bulletSpawn1, Quaternion.identity);
         }
         else
         {
-            Instantiate(bullet, bulletSpawn2, Quaternion.identity);
+            bulletRef = Instantiate(bullet, bulletSpawn2, Quaternion.identity);
         }
         barrelAlternate = !barrelAlternate;
+
+        bulletRef.GetComponent<Bullet>().target = targetGameObject;
 
         targetEnemy.health -= (int)damage;
 

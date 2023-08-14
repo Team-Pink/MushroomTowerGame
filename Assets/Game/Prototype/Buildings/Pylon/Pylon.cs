@@ -166,24 +166,11 @@ Enhanced = true;
     } 
     public override void Sell()
     {
-        DeactivateConnectedBuildings();
-
+        if (!Active) { return; }
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
-        if (parent is not Hub)
-        {
-            (parent as Pylon).pylonCount--;
-            (parent as Pylon).connectedBuildings.Remove(this);
-        }
-        else
-        {
-            (parent as Hub).pylonCount--;
-        } 
-
-        
-
-        base.Sell();
+        Deactivate();
     }
     public void SellTower(Tower tower)
     {
@@ -206,6 +193,6 @@ Enhanced = true;
                 }
             }
         }
-        Sell();
+        base.Sell();
     }
 }
