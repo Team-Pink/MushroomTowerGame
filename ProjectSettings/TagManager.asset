@@ -3,22 +3,26 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - Hub
+  - Pylon
+  - Tower
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Tower
+  - Pylon
+  - Hub
+  - Boid
+  - Enemy
+  - NotPlaceable
+  - Range
+  - Bud
   - 
   - 
   - 
