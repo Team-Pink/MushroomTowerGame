@@ -24,7 +24,7 @@ public class Pylon : Building
     [SerializeField] private BuildingList connectedBuildings = new();
     [SerializeField] private List<Tower> connectedTowerList = new();
     private int buildingCount;
-    private int EXPforLVLup = 2;
+    [SerializeField] private int EXPforLVLup = 2;
     [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
 
     [SerializeField] private int pylonHealth = 5;

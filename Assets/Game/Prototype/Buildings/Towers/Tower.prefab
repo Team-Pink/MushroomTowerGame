@@ -65,8 +65,8 @@ MonoBehaviour:
   bullet: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
   pylonActive: 1
   storedExperience: 0
-  damage: 100
-  firingInterval: 0.1
+  damage: 50
+  firingInterval: 0.5
   turnSpeed: 200
   firingCone: 20
   lockedOn: 0
@@ -370,6 +370,7 @@ MonoBehaviour:
   radiusDisplay: {fileID: 2366948552776975683}
   cost: 10
   sellReturnPercent: 0.5
+  parent: {fileID: 0}
   TowerController: {fileID: 8232834602698138295}
   upgraded: 0
   sellFlag: 0
