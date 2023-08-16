@@ -8,24 +8,23 @@ using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
-    [HideInInspector] 
-    public int towerCount = 0;
-    [HideInInspector] 
-    public int pylonCount = 0;
+    private int counter = 0;
+    [HideInInspector]
+    public int towerCount = 0; //used to limit the number of placeable towers from a pylon.
+    [HideInInspector]
+    public int pylonCount = 0; //used to limit the number of placeable pylons from a pylon.
 
     [HideInInspector]
-    public Building parent = null;
+    public Building parent = null; // as far as I can tell this is only ever set in the interaction manager but never used.
 
-    public int costMultiplier = 1;
-    public static int baseCost = 10;
+    [SerializeField] private int costMultiplier = 1;
+    private static int baseCost = 10;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
-    public int forceEnhanceCost = 20;
+    [SerializeField] private int forceEnhanceCost = 20;
 
     [SerializeField] private BuildingList connectedBuildings = new();
-    [SerializeField] private List<Tower> connectedTowerList = new();
-    private int buildingCount;
     private int EXPforLVLup = 2;
-    [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
+    [SerializeField] private bool enhanced; public bool Enhanced { get; private set; }
 
     [SerializeField] private int pylonHealth = 5;
     public int PylonHealth { get { return pylonHealth; } set { pylonHealth = value; /**/ if (pylonHealth <= 0) Deactivate(); } }
@@ -58,29 +57,23 @@ public class Pylon : Building
 
     private void Update()
     {
-        for (int buildingIndex = 0; buildingIndex < connectedBuildings.Count; buildingIndex++)
-        {
-            Building building = connectedBuildings[buildingIndex];
-            if (building is Tower)
-            {
-                if ((building as Tower).sellFlag)
-                    SellTower(building as Tower);
-            }
-        }
         GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
+
     }
 
 
     public void Enhance()
     {
-Enhanced = true;
+        Enhanced = true;
         transform.GetChild(2).gameObject.SetActive(true);
         transform.GetChild(1).gameObject.SetActive(false);
     }
 
     public void AddBuilding(Building building) => connectedBuildings.Add(building);
+    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
 
-    [ContextMenu("Deactivate")] public override void Deactivate()
+    [ContextMenu("Deactivate")]
+    public override void Deactivate()
     {
         DeactivateConnectedBuildings();
 
@@ -100,18 +93,19 @@ Enhanced = true;
     public override void Reactivate()
     {
         transform.GetChild(3).gameObject.SetActive(false);
-        if(Enhanced) transform.GetChild(2).gameObject.SetActive(true);
+        if (Enhanced) transform.GetChild(2).gameObject.SetActive(true);
         else transform.GetChild(1).gameObject.SetActive(true);
         transform.GetChild(4).gameObject.SetActive(true);
-        base.Reactivate();
+        
 
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
+        base.Reactivate();
     }
 
-#region PYLON COST
+    #region PYLON COST
     public int GetPylonCost()
     {
         return baseCost * (costMultiplier);
@@ -119,6 +113,10 @@ Enhanced = true;
     public int GetPylonCost(int instance)
     {
         return baseCost * (instance);
+    }
+    public int GetForceEnhanceCost()
+    {
+        return forceEnhanceCost;
     }
     public int GetMultiplier()
     {
@@ -132,46 +130,43 @@ Enhanced = true;
     {
         return baseCost;
     }
-#endregion
-    
-    /// <summary>
-    /// generate a list of Tower from the building list 
-    /// </summary>
-    private void GenerateTowerList()
-    {
-        buildingCount = connectedBuildings.Count;// set buildingcount.
+    #endregion
 
-        connectedTowerList.Clear(); // clobber the existing list
-        // generate a list of towers
-        foreach (Building building in connectedBuildings)
-        {
-            if (building.gameObject.GetComponent<Tower>())
-            {
-                connectedTowerList.Add(building.gameObject.GetComponent<Tower>());
-            }
-        }
-    }
-    public void GetTowerEXP()
-    {
-        if (buildingCount < connectedBuildings.Count)
-            GenerateTowerList();
-        foreach (Tower tower in connectedTowerList)
-        {
-            if (tower.TowerController.storedExperience > 0)
-            { 
-            EXP += tower.TowerController.storedExperience;
-            tower.TowerController.storedExperience = 0;
-            }
-        }
-    } 
+
     public override void Sell()
     {
-        DeactivateConnectedBuildings();
+        Deactivate();
 
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);        
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
-        base.Sell();
+        if (connectedBuildings.Count <= 0)
+        {
+        if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).pylonCount--;
+        Destroy(gameObject);
+        }
+            
+        else
+            base.Sell();
+    }
+
+    public override int GetTowerEXP()
+    {
+        if (!enhanced && connectedBuildings.Count > 0)
+        {
+            int total = 0;
+            foreach (Building building in connectedBuildings)
+            {
+                total += building.GetTowerEXP();
+            }
+            if (total > 0) EXP += total;
+            counter++;
+        }
+
+        return base.GetTowerEXP();
     }
     public void SellTower(Tower tower)
     {
@@ -179,21 +174,26 @@ Enhanced = true;
         connectedBuildings.Remove(tower);
         tower.Sell();
     }
-    public void SellAll()
+    public override void SellAll()
     {
-        for (int buildingIndex = connectedBuildings.Count - 1; buildingIndex >= 0; buildingIndex--)
+        SellAllConnectedBuildings();
+
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
+                if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).pylonCount--;
+
+        base.SellAll();
+    }
+
+    public void SellAllConnectedBuildings()
+    {
+        foreach (Building building in connectedBuildings)
         {
-            Building building = connectedBuildings[buildingIndex];
-            if(building != null)
-            {
-                if (building is Pylon)
-                    (building as Pylon).SellAll();
-                else
-                {
-                    SellTower(building as Tower);
-                }
-            }
+            building.SellAll();
         }
-        Sell();
     }
 }
