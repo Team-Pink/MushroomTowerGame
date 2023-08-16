@@ -20,6 +20,7 @@ public class Pylon : Building
     public static int baseCost = 10;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
     public int forceEnhanceCost = 20;
+    bool sellFlag = false;
 
     [SerializeField] private BuildingList connectedBuildings = new();
     [SerializeField] private List<Tower> connectedTowerList = new();
@@ -170,6 +171,7 @@ Enhanced = true;
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
+        sellFlag = true;
         Deactivate();
     }
     public void SellTower(Tower tower)
@@ -193,6 +195,18 @@ Enhanced = true;
                 }
             }
         }
+
+        if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).pylonCount--;
+
+        if(!sellFlag)
+        {
+            CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+        }
+
         base.Sell();
     }
 }

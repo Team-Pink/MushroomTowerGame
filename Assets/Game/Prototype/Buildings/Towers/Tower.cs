@@ -59,10 +59,14 @@ public class Tower : Building
     {
         if (sellFlag)
             return;
+
         sellFlag = true;
+        
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
+
         (parent as Pylon).towerCount--;
+
         Destroy(gameObject, 0.1f);
     }
 

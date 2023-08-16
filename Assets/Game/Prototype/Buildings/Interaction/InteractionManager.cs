@@ -293,20 +293,10 @@ public class InteractionManager : MonoBehaviour
             } // Force Enhance
             else if (hoveredButtonIndex == 1)
             {
-                if (!targetBuilding.Active) 
-                {
-                    ResetInteraction();
-                }
-
                 (targetBuilding as Pylon).Sell();
             } // Sell
             else if (hoveredButtonIndex == 2)
             {
-                if (!targetBuilding.Active)
-                {
-                    ResetInteraction();
-                }
-
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
 
