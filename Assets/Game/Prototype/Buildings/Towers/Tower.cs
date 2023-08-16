@@ -23,20 +23,6 @@ public class Tower : Building
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
     }
 
-    public override void Deactivate()
-    {
-        base.Deactivate();
-
-        TowerController.gameObject.SetActive(false);
-    }
-
-    public override void Reactivate()
-    {
-        base.Reactivate();
-
-        TowerController?.gameObject.SetActive(true);
-    }
-
     public void Upgrade(int upgradePath)
     {
        // if (!Active) TowerController.enabled = false;
