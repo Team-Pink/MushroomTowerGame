@@ -1,7 +1,5 @@
 
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
@@ -20,6 +18,25 @@ public class Tower : Building
     public bool sellFlag;
 
     [SerializeField] GameObjectList upgradedTowerPrefabs;
+
+    private void Awake()
+    {
+        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+    }
+
+    public override void Deactivate()
+    {
+        base.Deactivate();
+
+        TowerController.gameObject.SetActive(false);
+    }
+
+    public override void Reactivate()
+    {
+        base.Reactivate();
+
+        TowerController?.gameObject.SetActive(true);
+    }
 
     public void Upgrade(int upgradePath)
     {
@@ -42,10 +59,14 @@ public class Tower : Building
     {
         if (sellFlag)
             return;
+
         sellFlag = true;
+        
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
+
         (parent as Pylon).towerCount--;
+
         Destroy(gameObject, 0.1f);
     }
 

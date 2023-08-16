@@ -2,9 +2,10 @@ using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 using FloatList = System.Collections.Generic.List<float>;
 
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; 
 
 using static System.Linq.Enumerable;
+using System;
 
 public enum InteractionState
 {
@@ -292,7 +293,7 @@ public class InteractionManager : MonoBehaviour
             } // Force Enhance
             else if (hoveredButtonIndex == 1)
             {
-                targetBuilding.Sell();
+                (targetBuilding as Pylon).Sell();
             } // Sell
             else if (hoveredButtonIndex == 2)
             {
@@ -318,9 +319,10 @@ public class InteractionManager : MonoBehaviour
             }
 
             Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
+
             if (hoveredButtonIndex == 1)
             {
-                targetBuilding.Sell();
+                (targetBuilding as Tower).Sell();
             }
             else if (!(targetBuilding as Tower).Upgraded)
             {
