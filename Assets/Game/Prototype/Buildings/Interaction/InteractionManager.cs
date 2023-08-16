@@ -277,9 +277,9 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost))
+                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost()))
                 {
-                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost);
+                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost());
                     (targetBuilding as Pylon).Enhance();
                 }
                 else

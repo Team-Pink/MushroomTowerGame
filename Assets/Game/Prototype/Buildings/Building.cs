@@ -25,9 +25,17 @@ public abstract class Building : MonoBehaviour
     public virtual void Deactivate() => Active = false;
     public virtual void Reactivate() => Active = true;
 
+    public virtual int GetTowerEXP() { return 0; }
+  
+
     public virtual void Sell()
     {
-        Debug.Log("Gain Money");
-        Destroy(gameObject, 0.1f);
+        Debug.Log("Sold",this);
+    }
+
+    public virtual void SellAll()
+    {
+        Debug.Log("Sold", this);
+        Destroy(gameObject);
     }
 }
