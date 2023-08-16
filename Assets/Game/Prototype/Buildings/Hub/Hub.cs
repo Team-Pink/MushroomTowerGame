@@ -32,10 +32,6 @@ public class Hub : Building
 
         hubHealthText.text = health.ToString();
 
-        if (GetKey(KeyCode.Escape))
-        {
-            Quit();
-        }
     }
 
     public void Damage(int damageAmount) => health -= damageAmount;
