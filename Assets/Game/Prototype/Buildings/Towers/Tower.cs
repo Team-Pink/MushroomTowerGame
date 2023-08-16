@@ -15,27 +15,12 @@ public class Tower : Building
 
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }
-    public bool sellFlag;
 
     [SerializeField] GameObjectList upgradedTowerPrefabs;
 
     private void Awake()
     {
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
-    }
-
-    public override void Deactivate()
-    {
-        base.Deactivate();
-
-        TowerController.gameObject.SetActive(false);
-    }
-
-    public override void Reactivate()
-    {
-        base.Reactivate();
-
-        TowerController?.gameObject.SetActive(true);
     }
 
     public void Upgrade(int upgradePath)
@@ -55,19 +40,41 @@ public class Tower : Building
         }
     }
 
+    public override void Deactivate()
+    {
+        TowerController.enabled = false;
+        base.Deactivate();
+    }
+
+    public override void Reactivate()
+    {
+        TowerController.enabled = true;
+        base.Reactivate();
+    }
+
     public override void Sell()
     {
-        if (sellFlag)
-            return;
-
-        sellFlag = true;
-        
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
 
-        (parent as Pylon).towerCount--;
+(parent as Pylon).towerCount--;
 
-        Destroy(gameObject, 0.1f);
+        base.SellAll();
     }
 
+    public override void SellAll()
+    {
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
+        
+        base.SellAll();
+    }
+
+    public override int GetTowerEXP()
+    {
+        if (!TowerController) return 0;
+        int exp = TowerController.storedExperience;
+        TowerController.storedExperience = 0;
+        return exp;
+    }
 }
