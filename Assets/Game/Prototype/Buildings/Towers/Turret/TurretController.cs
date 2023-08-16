@@ -17,7 +17,7 @@ public class TurretController : MonoBehaviour
     bool barrelAlternate;
 
     // pylon data
-    public bool pylonActive = true;
+    public bool towerActive = true;
     public int storedExperience;
 
     // tower values
@@ -39,6 +39,9 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!towerActive)
+            return;
+
         firingClock += Time.fixedDeltaTime;
         if (targetEnemy)
         {

@@ -141,7 +141,14 @@ public class Pylon : Building
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
         if (connectedBuildings.Count > 0)
+        {
+        if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).pylonCount--;
             base.SellAll();
+        }
+            
         else
             base.Sell();
     }
@@ -173,6 +180,11 @@ public class Pylon : Building
 
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
+                if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).pylonCount--;
 
         base.SellAll();
     }
