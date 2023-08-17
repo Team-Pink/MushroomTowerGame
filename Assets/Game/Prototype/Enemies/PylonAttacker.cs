@@ -25,7 +25,7 @@ public class PylonAttacker : Enemy
         if (other.CompareTag("Pylon"))
         {
             target = other.GetComponent<Pylon>();
-            if (target.PylonHealth <= 0)
+            if (target.CurrentHealth <= 0)
             {
                 target = null;
                 return;
@@ -41,7 +41,7 @@ public class PylonAttacker : Enemy
     {
         if (target)
         {
-            if (target.PylonHealth <= 0)
+            if (target.CurrentHealth <= 0)
             {
 
                 //turn back on the path this should be corrected by the flocking/steering behavior when it's implemented
@@ -57,7 +57,7 @@ public class PylonAttacker : Enemy
             {
 
                 // trigger pylon attack animation              
-                target.PylonHealth -= 1;
+                target.CurrentHealth -= 1;
                 attackInProgress = true;
             }
             else
