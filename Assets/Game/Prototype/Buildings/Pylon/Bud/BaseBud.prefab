@@ -11,9 +11,12 @@ GameObject:
   - component: {fileID: 1560123496164765164}
   - component: {fileID: 2452622969158705737}
   - component: {fileID: 427139176530171523}
-  m_Layer: 0
-  m_Name: MSH_BudPrototype_01
-  m_TagString: Untagged
+  - component: {fileID: 2497610405620010678}
+  - component: {fileID: 8555251113640901067}
+  - component: {fileID: 3364223425624795044}
+  m_Layer: 13
+  m_Name: BaseBud
+  m_TagString: Pylon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2228574422893360982}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.49, y: 6.25, z: -4.68}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,3 +86,49 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2497610405620010678
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228574422893360982}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1288562370995837304, guid: bf683dfb1211cf24da6c06a951fd28e6, type: 3}
+--- !u!114 &8555251113640901067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228574422893360982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61d884289ac0bc4ba7e9291b47599a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceType: 1
+  hoverAxis: 0
+  intensity: 0.001
+  speed: 1
+--- !u!114 &3364223425624795044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228574422893360982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61d884289ac0bc4ba7e9291b47599a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceType: 0
+  hoverAxis: 1
+  intensity: 0.15
+  speed: 0.5

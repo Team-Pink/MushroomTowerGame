@@ -1,6 +1,4 @@
-
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public class Tower : Building
@@ -57,17 +55,11 @@ public class Tower : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
 
-(parent as Pylon).towerCount--;
+        (parent as Pylon).connectedTowersCount--;
 
-        base.SellAll();
-    }
+        Destroy(gameObject);
 
-    public override void SellAll()
-    {
-        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
-        
-        base.SellAll();
+        base.Sell();
     }
 
     public override int GetTowerEXP()
