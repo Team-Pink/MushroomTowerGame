@@ -20,35 +20,35 @@ public abstract class Building : MonoBehaviour
     }
 
     public GameObject radiusDisplay;
-    //public MeshRenderer[] radiusDisplays;
+    public Material[] radiusMaterials;
 
     public virtual void Deactivate() => Active = false;
     public virtual void Reactivate() => Active = true;
 
     public virtual int GetTowerEXP() { return 0; }
   
-    /*public IEnumerator FadeRadiusDisplay(float fromAlpha, float toAlpha)
+    public IEnumerator FadeInRadiusDisplay()
     {
-        float radiusFadeDuration = 0.5f;
+        float radiusFadeDuration = 0.05f;
         float durationElapsed = 0.0f;
-        float durationProgress = 0;
 
         while (durationElapsed < radiusFadeDuration)
         {
-            durationProgress = durationElapsed / radiusFadeDuration;
+            float durationProgress = durationElapsed / radiusFadeDuration;
 
-            foreach(MeshRenderer radius in radiusDisplays)
+            foreach(Material radiusMaterial in radiusMaterials)
             {
-                Color radiusColor = radius.material.color;
-
-                float newAlpha = Mathf.Lerp(fromAlpha, toAlpha, durationProgress);
-
-                radius.material.color = new Color(radiusColor.r, radiusColor.g, radiusColor.b, newAlpha);
+                radiusMaterial.SetFloat("_Display_Amount", durationProgress);
             }
 
+            durationElapsed += Time.deltaTime;
             yield return new WaitForSeconds(Time.deltaTime);
         }
-    }*/
+        foreach (Material radiusMaterial in radiusMaterials)
+        {
+            radiusMaterial.SetFloat("_Display_Amount", 1);
+        }
+    }
 
     public virtual void Sell()
     {

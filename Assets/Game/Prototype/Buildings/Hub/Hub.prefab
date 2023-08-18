@@ -81,6 +81,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radiusDisplay: {fileID: 5371182023565522454}
+  radiusMaterials:
+  - {fileID: 2100000, guid: 7c1f3a2c96df59d45881e8ebe22fe2ee, type: 2}
   health: 100
   gameOverDuration: 5
   gameOverText: {fileID: 0}
@@ -274,15 +276,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.03
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.03
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.03
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -327,6 +329,10 @@ PrefabInstance:
     - target: {fileID: 2228574422893360982, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: m_Name
       value: EnhancedBud
+      objectReference: {fileID: 0}
+    - target: {fileID: 2228574422893360982, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
+      propertyPath: m_TagString
+      value: Hub
       objectReference: {fileID: 0}
     - target: {fileID: 3364223425624795044, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: speed

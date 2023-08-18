@@ -21,6 +21,7 @@ public class Pylon : Building
     [SerializeField] GameObject enhancedPylon;
     [SerializeField] GameObject enhancedBud;
     [SerializeField] GameObject deactivatedEnhancedPylon;
+    [SerializeField] GameObject pylonPlacementRange;
     [SerializeField] int XPEnhanceRequirement = 2;
     private int currentXP;
     public int CurrentXP
@@ -89,6 +90,9 @@ public class Pylon : Building
         Enhanced = true;
         enhancedPylon.SetActive(true);
         enhancedBud.SetActive(true);
+
+        pylonPlacementRange.SetActive(true);
+
         basePylon.SetActive(false);
         baseBud.SetActive(false);
     }

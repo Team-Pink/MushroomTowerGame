@@ -20,11 +20,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PylonPlacement(Hub)
+  m_Name: HubPlacementRange
   m_Shader: {fileID: -6465566751694194690, guid: cfbe3a7d689747d41a45aa94b5a87c01, type: 3}
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _ENUM_A
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -107,7 +108,10 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _Display_Amount: 1
+    - _Display_Radius: 1
     - _DstBlend: 10
+    - _ENUM: 0
     - _EnvironmentReflections: 1
     - _Fill_Transparency: 0.4
     - _GlossMapScale: 0
