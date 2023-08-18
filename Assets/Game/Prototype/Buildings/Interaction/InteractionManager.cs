@@ -207,7 +207,6 @@ public class InteractionManager : MonoBehaviour
             else
             {
                 targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
-                targetBuilding.radiusDisplay.SetActive(true);
 
                 CurrentInteraction = InteractionState.BuildingInteraction;
                 return;
@@ -261,6 +260,7 @@ public class InteractionManager : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
+            radiusDisplay.SetActive(false);
             if (targetBuilding is Pylon)
             {
                 Pylon targetPylon = targetBuilding as Pylon;
@@ -448,8 +448,10 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromPylonState()
     {
-        bool canPlace;
+        bool canPlace = false;
         bool placingPylon = false;
+
+        selectionIndicator.color = Color.red;
 
         targetBuilding = activeBud.transform.parent.GetComponent<Building>();
         DisplayBuildingRadius(out GameObject radiusDisplay);
@@ -468,27 +470,17 @@ public class InteractionManager : MonoBehaviour
             bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
             bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
 
-            if (inTowerBuildRange & spaceToPlace)
+            bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
+            bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
+
+            if (towerPlacementCriteria || pylonPlacementCriteria)
             {
                 canPlace = true;
                 selectionIndicator.color = Color.green;
+
+                if (pylonPlacementCriteria)
+                    placingPylon = true;
             }
-            else if (inPylonBuildRange && spaceToPlace && spaceForPylon)
-            {
-                placingPylon = true;
-                canPlace = true;
-                selectionIndicator.color = Color.green;
-            }
-            else
-            {
-                canPlace = false;
-                selectionIndicator.color = Color.red;
-            }
-        }
-        else
-        {
-            canPlace = false;
-            selectionIndicator.color = Color.red;
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
@@ -515,6 +507,8 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerSelectionState()
     {
+        targetBuilding.radiusDisplay.SetActive(false);
+
         RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
@@ -656,7 +650,10 @@ public class InteractionManager : MonoBehaviour
     {
         radiusDisplay = targetBuilding.radiusDisplay;
         if (!radiusDisplay.activeSelf)
+        {
             radiusDisplay.SetActive(true);
+            StartCoroutine(targetBuilding.FadeInRadiusDisplay());
+        }
     }
 
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)

@@ -100,7 +100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1706277145746896281
 Transform:
   m_ObjectHideFlags: 0
@@ -339,6 +339,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radiusDisplay: {fileID: 4319338923326572372}
+  radiusMaterials:
+  - {fileID: 2100000, guid: cbe8d64c6b3991144ae1a3296bbd9c17, type: 2}
+  - {fileID: 2100000, guid: 721faf7dece34f1479dcc13daece3b08, type: 2}
   costMultiplier: 1
   sellReturnPercent: 0.5
   basePylon: {fileID: 5145626201642588360}
@@ -348,6 +351,7 @@ MonoBehaviour:
   enhancedPylon: {fileID: 7520770244146163946}
   enhancedBud: {fileID: 102710932853449028}
   deactivatedEnhancedPylon: {fileID: 970294987681182204}
+  pylonPlacementRange: {fileID: 1826867427512401639}
   XPEnhanceRequirement: 2
   pylonHealth: 5
   pylonResidual: {fileID: 3591635762444012935}
