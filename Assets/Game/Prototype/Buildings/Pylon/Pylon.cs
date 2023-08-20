@@ -1,118 +1,166 @@
-using System.Collections.Generic;
 using UnityEngine;
-
 using BuildingList = System.Collections.Generic.List<Building>;
-using ContextMenu = UnityEngine.ContextMenu;
-
-using Debug = UnityEngine.Debug;
 
 public class Pylon : Building
 {
-    [HideInInspector] 
-    public int towerCount = 0;
-    [HideInInspector] 
-    public int pylonCount = 0;
-
-    [HideInInspector]
-    public Building parent = null;
-
-    public int costMultiplier = 1;
-    public static int baseCost = 10;
+    [Header("Purchasing and Selling")]
+    [SerializeField] int costMultiplier = 1;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
-    public int forceEnhanceCost = 20;
-    bool sellFlag = false;
+    [SerializeField] GameObject basePylon;
+    [SerializeField] GameObject baseBud;
+    [SerializeField] GameObject deactivatedBasePylon;
+    static readonly int baseCost = 10;
 
-    [SerializeField] private BuildingList connectedBuildings = new();
-    [SerializeField] private List<Tower> connectedTowerList = new();
-    private int buildingCount;
-    private int EXPforLVLup = 2;
-    [SerializeField] private bool enhanced;public bool Enhanced { get; private set; }
-
-    [SerializeField] private int pylonHealth = 5;
-    public int PylonHealth { get { return pylonHealth; } set { pylonHealth = value; /**/ if (pylonHealth <= 0) Deactivate(); } }
-
-    [SerializeField] private int pylonEXP;
-    public int EXP
+    [Header("Enhancement")]
+    [SerializeField] bool enhanced;
+    public bool Enhanced
     {
-        get
-        {
-            return pylonEXP;
-        }
+        get;
+        private set;
+    }
+    [SerializeField] GameObject enhancedPylon;
+    [SerializeField] GameObject enhancedBud;
+    [SerializeField] GameObject deactivatedEnhancedPylon;
+    [SerializeField] GameObject pylonPlacementRange;
+    [SerializeField] int XPEnhanceRequirement = 2;
+    private int currentXP;
+    public int CurrentXP
+    {
+        get => currentXP;
         set
         {
-            pylonEXP = value;
-            CheckIfEnhanced();
+            currentXP = value;
+
+            if (currentXP >= XPEnhanceRequirement)
+            {
+                Enhance();
+            }
         }
+    }
+    private int ForceEnhanceCost
+    {
+        get => 2 * costMultiplier * baseCost;
     }
 
-    private void CheckIfEnhanced()
+    [Header("Destruction")]
+    [SerializeField] int pylonHealth = 5;
+    public int MaxHealth
     {
-        if (pylonEXP >= EXPforLVLup)
+        get => pylonHealth;
+        private set { }
+    }
+    private int currentHealth;
+    public int CurrentHealth
+    {
+        get => currentHealth;
+        set
         {
-            Enhance();
+            currentHealth = value;
+            if (currentHealth <= 0)
+                Deactivate();
         }
     }
+    public GameObject pylonResidual;
+
+    [Header("Connections")]
+    [SerializeField] BuildingList connectedBuildings = new();
+    [HideInInspector] public int connectedTowersCount = 0;
+    [HideInInspector] public int connectedPylonsCount = 0;
+
+    [HideInInspector] public Building parent = null;
+
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
     }
 
+    private void Awake()
+    {
+        CurrentHealth = pylonHealth;
+    }
+
     private void Update()
     {
-        for (int buildingIndex = 0; buildingIndex < connectedBuildings.Count; buildingIndex++)
-        {
-            Building building = connectedBuildings[buildingIndex];
-            if (building is Tower)
-            {
-                if ((building as Tower).sellFlag)
-                    SellTower(building as Tower);
-            }
-        }
         GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
     }
 
 
     public void Enhance()
     {
-Enhanced = true;
-        transform.GetChild(2).gameObject.SetActive(true);
-        transform.GetChild(1).gameObject.SetActive(false);
+        Enhanced = true;
+        enhancedPylon.SetActive(true);
+        enhancedBud.SetActive(true);
+
+        pylonPlacementRange.SetActive(true);
+
+        basePylon.SetActive(false);
+        baseBud.SetActive(false);
     }
 
     public void AddBuilding(Building building) => connectedBuildings.Add(building);
+    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
 
-    [ContextMenu("Deactivate")] public override void Deactivate()
+    public override void Deactivate()
     {
-        DeactivateConnectedBuildings();
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(true);
+            enhancedPylon.SetActive(false);
+            enhancedBud.SetActive(false);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(true);
+            basePylon.SetActive(false);
+            baseBud.SetActive(false);
+        }
 
-        transform.GetChild(3).gameObject.SetActive(true);
-        if (Enhanced) transform.GetChild(2).gameObject.SetActive(false);
-        else transform.GetChild(1).gameObject.SetActive(false);
-        transform.GetChild(4).gameObject.SetActive(false);
-        base.Deactivate();
-    }
-    public void DeactivateConnectedBuildings()
-    {
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
         }
+        base.Deactivate();
     }
     public override void Reactivate()
     {
-        transform.GetChild(3).gameObject.SetActive(false);
-        if(Enhanced) transform.GetChild(2).gameObject.SetActive(true);
-        else transform.GetChild(1).gameObject.SetActive(true);
-        transform.GetChild(4).gameObject.SetActive(true);
-        base.Reactivate();
+        if (Enhanced)
+        {
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+            deactivatedEnhancedPylon.SetActive(false);
+        }
+        else
+        {
+            basePylon.SetActive(true);
+            baseBud.SetActive(true);
+            deactivatedBasePylon.SetActive(false);
+        }
+        
 
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
+        base.Reactivate();
     }
 
-#region PYLON COST
+    public void ToggleResidual(bool value)
+    {
+        if (Enhanced)
+        {
+            pylonResidual.SetActive(value);
+            enhancedPylon.SetActive(!value);
+            enhancedBud.SetActive(!value);
+        }
+        else
+        {
+            pylonResidual.SetActive(value);
+            basePylon.SetActive(!value);
+            baseBud.SetActive(!value);
+        }
+    }
+
+    #region PYLON COST
     public int GetPylonCost()
     {
         return baseCost * (costMultiplier);
@@ -120,6 +168,10 @@ Enhanced = true;
     public int GetPylonCost(int instance)
     {
         return baseCost * (instance);
+    }
+    public int GetForceEnhanceCost()
+    {
+        return ForceEnhanceCost;
     }
     public int GetMultiplier()
     {
@@ -133,80 +185,83 @@ Enhanced = true;
     {
         return baseCost;
     }
-#endregion
-    
-    /// <summary>
-    /// generate a list of Tower from the building list 
-    /// </summary>
-    private void GenerateTowerList()
-    {
-        buildingCount = connectedBuildings.Count;// set buildingcount.
+    #endregion
 
-        connectedTowerList.Clear(); // clobber the existing list
-        // generate a list of towers
-        foreach (Building building in connectedBuildings)
-        {
-            if (building.gameObject.GetComponent<Tower>())
-            {
-                connectedTowerList.Add(building.gameObject.GetComponent<Tower>());
-            }
-        }
-    }
-    public void GetTowerEXP()
-    {
-        if (buildingCount != connectedBuildings.Count)
-            GenerateTowerList();
-        foreach (Tower tower in connectedTowerList)
-        {
-            if (tower.TowerController.storedExperience > 0)
-            { 
-            EXP += tower.TowerController.storedExperience;
-            tower.TowerController.storedExperience = 0;
-            }
-        }
-    } 
+
     public override void Sell()
     {
-        if (!Active) { return; }
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
-        sellFlag = true;
-        Deactivate();
+        if (connectedBuildings.Count > 0)
+        {
+            ToggleResidual(true);
+        }
+        else
+        {
+            if (parent is Hub)
+                (parent as Hub).pylonCount--;
+            else if (parent is Pylon)
+            {
+                (parent as Pylon).RemoveBuilding(this);
+                (parent as Pylon).connectedPylonsCount--;
+            }
+
+            Destroy(gameObject);
+        }
+    }
+
+    public void SellAll()
+    {
+        SellAllConnectedBuildings();
+
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
+        if (parent is Hub)
+            (parent as Hub).pylonCount--;
+        else if (parent is Pylon)
+            (parent as Pylon).connectedPylonsCount--;
+
+        Sell();
+    }
+
+    public void SellAllConnectedBuildings()
+    {
+        while (connectedBuildings.Count > 0)
+        {
+            Building building = connectedBuildings[connectedBuildings.Count - 1];
+            connectedBuildings.Remove(building);
+            if (building is Pylon)
+            {
+                (building as Pylon).SellAll();
+            }
+            else
+            {
+                building.Sell();
+            }
+        }
+    }
+
+    public override int GetTowerEXP()
+    {
+        if (!enhanced && connectedBuildings.Count > 0)
+        {
+            int total = 0;
+            foreach (Building building in connectedBuildings)
+            {
+                total += building.GetTowerEXP();
+            }
+            if (total > 0)
+                CurrentXP += total;
+        }
+
+        return base.GetTowerEXP();
     }
     public void SellTower(Tower tower)
     {
         Debug.Log("Sold Tower", tower);
         connectedBuildings.Remove(tower);
         tower.Sell();
-    }
-    public void SellAll()
-    {
-        for (int buildingIndex = connectedBuildings.Count - 1; buildingIndex >= 0; buildingIndex--)
-        {
-            Building building = connectedBuildings[buildingIndex];
-            if(building != null)
-            {
-                if (building is Pylon)
-                    (building as Pylon).SellAll();
-                else
-                {
-                    SellTower(building as Tower);
-                }
-            }
-        }
-
-        if (parent is Hub)
-            (parent as Hub).pylonCount--;
-        else if (parent is Pylon)
-            (parent as Pylon).pylonCount--;
-
-        if(!sellFlag)
-        {
-            CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
-        }
-
-        base.Sell();
     }
 }
