@@ -14,7 +14,7 @@ public class Hub : Building
     [SerializeField] Text gameOverText;
     [SerializeField] Text hubHealthText;
 
-    [HideInInspector] 
+    [HideInInspector]
     public int pylonCount = 0;
 
     private void Update()

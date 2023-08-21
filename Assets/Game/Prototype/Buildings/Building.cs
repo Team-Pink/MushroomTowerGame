@@ -26,8 +26,13 @@ public abstract class Building : MonoBehaviour
     public virtual void Reactivate() => Active = true;
 
     public virtual int GetTowerEXP() { return 0; }
-  
-    public IEnumerator FadeInRadiusDisplay()
+
+    public virtual void Sell()
+    {
+        Debug.Log("Sold", this);
+    }
+
+    public IEnumerator ExpandRadiusDisplay()
     {
         float radiusFadeDuration = 0.05f;
         float durationElapsed = 0.0f;
@@ -48,10 +53,5 @@ public abstract class Building : MonoBehaviour
         {
             radiusMaterial.SetFloat("_Display_Amount", 1);
         }
-    }
-
-    public virtual void Sell()
-    {
-        Debug.Log("Sold",this);
     }
 }

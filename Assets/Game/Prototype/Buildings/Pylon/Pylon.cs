@@ -135,7 +135,7 @@ public class Pylon : Building
             baseBud.SetActive(true);
             deactivatedBasePylon.SetActive(false);
         }
-        
+
 
         foreach (Building building in connectedBuildings)
         {
