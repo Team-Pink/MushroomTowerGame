@@ -26,7 +26,7 @@ public abstract class Building : MonoBehaviour
     public virtual void Reactivate() => Active = true;
 
     public virtual int GetTowerEXP() { return 0; }
-  
+
     public IEnumerator FadeInRadiusDisplay()
     {
         float radiusFadeDuration = 0.05f;
@@ -36,7 +36,7 @@ public abstract class Building : MonoBehaviour
         {
             float durationProgress = durationElapsed / radiusFadeDuration;
 
-            foreach(Material radiusMaterial in radiusMaterials)
+            foreach (Material radiusMaterial in radiusMaterials)
             {
                 radiusMaterial.SetFloat("_Display_Amount", durationProgress);
             }
@@ -52,6 +52,6 @@ public abstract class Building : MonoBehaviour
 
     public virtual void Sell()
     {
-        Debug.Log("Sold",this);
+        Debug.Log("Sold", this);
     }
 }
