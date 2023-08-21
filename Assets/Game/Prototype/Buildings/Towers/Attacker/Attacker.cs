@@ -29,10 +29,3 @@ public class Attacker
         }
     }
 }
-
-// || temporary Target struct || DELETE IMMEDIATELY AFTER MERGE WITH REAL TARGET STRUCT ||
-public struct Target
-{
-    public Enemy enemy;
-    public Vector3 position;
-}

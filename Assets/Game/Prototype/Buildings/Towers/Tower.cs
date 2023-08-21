@@ -7,11 +7,6 @@ public struct Target
     public Enemy enemy;
 }
 
-public abstract class Attacker // Connor you remove this and replace with yours
-{
-    public abstract void Attack(HashSet<Target> targets);
-}
-
 public abstract class Targeter // Lochlan you remove this and replace with yours
 {
     public abstract HashSet<Target> AcquireTargets();
