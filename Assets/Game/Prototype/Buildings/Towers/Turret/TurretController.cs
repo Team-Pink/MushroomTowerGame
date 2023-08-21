@@ -17,7 +17,7 @@ public class TurretController : MonoBehaviour
     bool barrelAlternate;
 
     // pylon data
-    public bool pylonActive = true;
+    public bool towerActive = true;
     public int storedExperience;
 
     // tower values
@@ -39,6 +39,9 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!towerActive)
+            return;
+
         firingClock += Time.fixedDeltaTime;
         if (targetEnemy)
         {
@@ -67,7 +70,8 @@ public class TurretController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            inRangeEnemies.Add(other.gameObject);
+            if (!other.gameObject.GetComponent<Enemy>().dead)
+                inRangeEnemies.Add(other.gameObject);
         }
 
         if (targetEnemy is null) PickPriorityTarget();
@@ -124,8 +128,8 @@ public class TurretController : MonoBehaviour
         GameObject deleteThis = bestTargetSoFar; // so feel free to roll over this if you know how to do better.
 
         foreach (GameObject thisEnemy in inRangeEnemies)
-        {
-            int thisScore = TargetingAlgorithm();
+        {          
+            int thisScore = TargetingAlgorithm(thisEnemy);
             if (thisScore > bestScoreSoFar)
             {
                 bestScoreSoFar = thisScore;
@@ -137,8 +141,9 @@ public class TurretController : MonoBehaviour
         targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm()  // this should be overridden in child classes
+    int TargetingAlgorithm(GameObject enemy)  // this should be overridden in child classes
     {
+        
         return Random.Range(0, 10);
     }
 

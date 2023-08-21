@@ -29,7 +29,8 @@ public struct EnemyTypes
 [System.Serializable]
 public class Wave
 {
-    // \/ Implement this once we have multiple enemy types \/
+    public List<GameObject> enemyPrefabs;
+    // \/ Swap for this when implementing different chances for enemies \/
     //public EnemyTypes enemyTypes;
 
     public float durationInSeconds;
@@ -191,11 +192,12 @@ public class WaveSpawner : MonoBehaviour
 
     private GameObject SpawnEnemy()
     {
-        // \/ Implement this once we have multiple enemy types \/
+        GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
+        // \/ Swap for this when implementing different chances for enemies \/
         //GameObject[] enemyPool = currentWave.enemyTypes.enemyPrefabs.ToArray();
-        //GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
+        GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
 
-        GameObject enemyObject = Instantiate(enemyPrefab, currentSpawnPoint.position, Quaternion.identity);
+        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity);
 
         return enemyObject;
     }

@@ -1,8 +1,4 @@
-
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using Debug = UnityEngine.Debug;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public class Tower : Building
@@ -17,9 +13,13 @@ public class Tower : Building
 
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }
-    public bool sellFlag;
 
     [SerializeField] GameObjectList upgradedTowerPrefabs;
+
+    private void Awake()
+    {
+        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+    }
 
     public void Upgrade(int upgradePath)
     {
@@ -38,15 +38,35 @@ public class Tower : Building
         }
     }
 
-    public override void Sell()
+    public override void Deactivate()
     {
-        if (sellFlag)
-            return;
-        sellFlag = true;
-        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
-        (parent as Pylon).towerCount--;
-        Destroy(gameObject, 0.1f);
+        TowerController.enabled = false;
+        base.Deactivate();
     }
 
+    public override void Reactivate()
+    {
+        TowerController.enabled = true;
+        base.Reactivate();
+    }
+
+    public override void Sell()
+    {
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
+
+        (parent as Pylon).connectedTowersCount--;
+
+        Destroy(gameObject);
+
+        base.Sell();
+    }
+
+    public override int GetTowerEXP()
+    {
+        if (!TowerController) return 0;
+        int exp = TowerController.storedExperience;
+        TowerController.storedExperience = 0;
+        return exp;
+    }
 }
