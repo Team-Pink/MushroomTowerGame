@@ -1,72 +1,92 @@
+using System.Collections.Generic;
 using UnityEngine;
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+
+public struct Target
+{
+    public Vector3 position;
+    public Enemy enemy;
+}
+
+public abstract class Attacker // Connor you remove this and replace with yours
+{
+    public abstract void Attack(HashSet<Target> targets);
+}
+
+public abstract class Targeter // Lochlan you remove this and replace with yours
+{
+    public abstract HashSet<Target> AcquireTargets();
+}
 
 public class Tower : Building
 {
-    public int cost = 10;
-    [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f;
+    // Components
+    protected new Transform transform;
+    protected Animator animator;
+    private Attacker attackerComponent;
+    private Targeter targeterComponent;
 
-    [HideInInspector]
-    public Building parent = null;
+    // References
+    private HashSet<Target> targets;
 
-    public TurretController TowerController;
+    // Upgrading
+    [SerializeField] bool upgradeable;
+    public bool Upgradeable { get; private set; }
+    private GameObject upgradePrefabL;
+    public int upgradeCostL;
+    private GameObject upgradePrefabR;
+    public int upgradeCostR;
 
-    [SerializeField] bool upgraded;
-    public bool Upgraded { get; private set; }
+    // Purchasing
+    public int purchaseCost = 10;
+    [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    [SerializeField] GameObjectList upgradedTowerPrefabs;
+    // Remove this \/
+    [HideInInspector] public Building parent = null;
+    /*Remove this and its implementation ASAP. This should be managed through the parent instead*/
 
     private void Awake()
     {
-        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+        transform = gameObject.transform;
+    }
+
+    private void Update()
+    {
+        if (Active)
+        {
+            targets = targeterComponent.AcquireTargets();
+            attackerComponent.Attack(targets);
+        }
     }
 
     public void Upgrade(int upgradePath)
     {
-       // if (!Active) TowerController.enabled = false;
-       // else TowerController.enabled = true;
-            
-        if (upgradePath >= 0 && upgradePath < upgradedTowerPrefabs.Count)
+        if (upgradePath == 0 || upgradePath == 1)
         {
-            Transform transform = gameObject.transform;
-            Instantiate(upgradedTowerPrefabs[upgradePath], transform.position, transform.rotation, transform.parent);
+            GameObject selectedUpgradePrefab;
+
+            if (upgradePath == 1)
+                selectedUpgradePrefab = upgradePrefabL;
+            else
+                selectedUpgradePrefab = upgradePrefabR;
+
+            Instantiate(selectedUpgradePrefab, transform.position, transform.rotation, transform.parent);
             Destroy(gameObject);
         }
         else
         {
-            Debug.LogError("Upgrade only accepts an int value between 0 and its amount of possible upgrades (" + upgradedTowerPrefabs.Count + ").", this);
+            Debug.LogError("Upgrade only accepts an int value of 0 or 1", this);
         }
-    }
-
-    public override void Deactivate()
-    {
-        TowerController.enabled = false;
-        base.Deactivate();
-    }
-
-    public override void Reactivate()
-    {
-        TowerController.enabled = true;
-        base.Reactivate();
     }
 
     public override void Sell()
     {
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
+        currencyManager.IncreaseCurrencyAmount(purchaseCost, sellReturnPercent);
 
         (parent as Pylon).connectedTowersCount--;
 
         Destroy(gameObject);
 
         base.Sell();
-    }
-
-    public override int GetTowerEXP()
-    {
-        if (!TowerController) return 0;
-        int exp = TowerController.storedExperience;
-        TowerController.storedExperience = 0;
-        return exp;
     }
 }

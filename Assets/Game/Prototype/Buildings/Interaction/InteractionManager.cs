@@ -378,7 +378,7 @@ public class InteractionManager : MonoBehaviour
             {
                 (targetBuilding as Tower).Sell();
             }
-            else if (!(targetBuilding as Tower).Upgraded)
+            else if (!(targetBuilding as Tower).Upgradeable)
             {
                 (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
             }
@@ -523,7 +523,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
 
             if (!currencyManager.CanDecreaseCurrencyAmount(cost))
             {
@@ -652,7 +652,7 @@ public class InteractionManager : MonoBehaviour
         if (!radiusDisplay.activeSelf)
         {
             radiusDisplay.SetActive(true);
-            StartCoroutine(targetBuilding.FadeInRadiusDisplay());
+            StartCoroutine(targetBuilding.ExpandRadiusDisplay());
         }
     }
 
