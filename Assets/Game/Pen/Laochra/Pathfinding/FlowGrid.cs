@@ -1,5 +1,38 @@
 using UnityEngine;
 
+public class Tile
+{
+    public Vector2 FlowDirection { get; private set; }
+    public float InkThickness { get; private set; }
+    private readonly bool muddy;
+    public float SpeedMultiplier
+    {
+        get
+        {
+            if (muddy)
+                return 0.5f * (1 - InkThickness);
+            else
+                return 1 - InkThickness;
+        }
+    }
+
+    public Tile(Vector2 flowDirectionInit, bool muddyInit = false)
+    {
+        FlowDirection = flowDirectionInit;
+        muddy = muddyInit;
+    } // Constructor
+
+    public void ClearInk()
+    {
+        InkThickness = 0;
+    }
+
+    public void SetInkThickness(float inkThicknessInit)
+    {
+        InkThickness = inkThicknessInit;
+    }
+}
+
 [ExecuteInEditMode]
 public class FlowGrid : MonoBehaviour
 {
@@ -7,7 +40,7 @@ public class FlowGrid : MonoBehaviour
     [SerializeField] int xSubdivs = 200;
     [SerializeField] int zSubdivs = 200;
 
-    private Vector2[,] tiles;
+    private Tile[,] tiles;
 
     [Header("Grid Scale")]
     [SerializeField] float gridWidth = 500;
@@ -31,7 +64,7 @@ public class FlowGrid : MonoBehaviour
         Initialise();
 
         CreateGrid();
-        //populate the grid with values somehow...?
+        // populate the grid with values somehow...?
     }
 
     private void OnValidate()
@@ -51,7 +84,7 @@ public class FlowGrid : MonoBehaviour
 
     private void CreateGrid()
     {
-        tiles = new Vector2[xSubdivs, zSubdivs];
+        tiles = new Tile[xSubdivs, zSubdivs];
 
         for (int xIndex = 0; xIndex < xSubdivs; xIndex++)
         {
@@ -99,7 +132,7 @@ public class FlowGrid : MonoBehaviour
             }
         }
 
-        //Gizmos.DrawCube() Draw a cube in the tile that the mouse is over. Make use of GetTileCoords
+        // Gizmos.DrawCube() Draw a cube in the tile that the mouse is over. Make use of GetTileCoords
     }
 
     public void GetTileCoords(Vector3 position, out float xCoord, out float zCoord)
@@ -116,6 +149,6 @@ public class FlowGrid : MonoBehaviour
         int xCoord = Mathf.RoundToInt(xPos + xSubdivs * 0.5f);
         int zCoord = Mathf.RoundToInt(zPos + zSubdivs * 0.5f);
 
-        return tiles[xCoord, zCoord];
+        return tiles[xCoord, zCoord].FlowDirection;
     }
 }
