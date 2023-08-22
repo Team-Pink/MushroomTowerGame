@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,18 +15,26 @@ public class Attacker
 
     public virtual void Attack(HashSet<Target> targets)
     {
+        Debug.LogWarning("Use one of the other methods of attacking");
+    }
+    protected bool CheckCooldownTimer()
+    {
         if (cooldownTimer < attackCooldown)
         {
             cooldownTimer += Time.deltaTime * attackCooldown;
-            return;
+            return false;
         }
 
-        //Allow animation to play here or in another location through prompt
-        
+        return true;
+    }
+    protected bool CheckDelayTimer()
+    {
         if (delayTimer < attackDelay)
         {
             delayTimer += Time.deltaTime * attackDelay;
-            return;
+            return false;
         }
+
+        return true;
     }
 }

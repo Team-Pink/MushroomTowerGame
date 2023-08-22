@@ -7,20 +7,25 @@ public class AreaAttacker : Attacker
     float damageRadius;
 
     public override void Attack(HashSet<Target> targets)
-    { 
-        base.Attack(targets);
+    {
+        //Play attack animation here
 
-        if (delayTimer < attackDelay && cooldownTimer < attackCooldown) return;
+        if (!CheckDelayTimer()) return;
 
-        LayerMask mask = LayerMask.GetMask("Enemy");
-
-        foreach(var target in targets)
+        if (cooldownTimer == 0f)
         {
-            foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
+            LayerMask mask = LayerMask.GetMask("Enemy");
+
+            foreach (var target in targets)
             {
-                collision.GetComponent<Enemy>().health -= damage;
+                foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
+                {
+                    collision.GetComponent<Enemy>().health -= damage;
+                }
             }
         }
+
+        if (!CheckCooldownTimer()) return;
 
         cooldownTimer = 0f;
         delayTimer = 0f;

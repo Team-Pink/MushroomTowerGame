@@ -6,12 +6,17 @@ public class SingleAttacker : Attacker
 {
     public override void Attack(HashSet<Target> targets)
     {
-        base.Attack(targets);
+        //Play attack animation here
 
-        if (delayTimer < 1 && cooldownTimer < 1) return;
+        if (!CheckDelayTimer()) return;
 
-        foreach (var target in targets)
-            target.enemy.health -= damage;
+        if (cooldownTimer == 0f)
+        {
+            foreach (var target in targets)
+                target.enemy.health -= damage;
+        }
+
+        if (!CheckCooldownTimer()) return;
 
         delayTimer = 0;
         cooldownTimer = 0;

@@ -67,7 +67,7 @@ public class Pylon : Building
     [HideInInspector] public int connectedTowersCount = 0;
     [HideInInspector] public int connectedPylonsCount = 0;
 
-    [HideInInspector] public Building parent = null;
+    //[HideInInspector] public Building parent = null;
 
     public bool IsBuildingInList(Building building)
     {
@@ -97,8 +97,23 @@ public class Pylon : Building
         baseBud.SetActive(false);
     }
 
-    public void AddBuilding(Building building) => connectedBuildings.Add(building);
-    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
+    public void AddBuilding(Building building)
+    {
+        connectedBuildings.Add(building);
+        if (building is Tower)
+            connectedTowersCount++;
+        else
+            connectedPylonsCount++;
+    }
+
+    public void RemoveBuilding(Building building)
+    {
+        connectedBuildings.Remove(building);
+        if (building is Tower)
+            connectedTowersCount--;
+        else
+            connectedPylonsCount--;
+    }
 
     public override void Deactivate()
     {
@@ -199,14 +214,6 @@ public class Pylon : Building
         }
         else
         {
-            if (parent is Hub)
-                (parent as Hub).pylonCount--;
-            else if (parent is Pylon)
-            {
-                (parent as Pylon).RemoveBuilding(this);
-                (parent as Pylon).connectedPylonsCount--;
-            }
-
             Destroy(gameObject);
         }
     }
@@ -218,11 +225,6 @@ public class Pylon : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
-        if (parent is Hub)
-            (parent as Hub).pylonCount--;
-        else if (parent is Pylon)
-            (parent as Pylon).connectedPylonsCount--;
-
         Sell();
     }
 
@@ -232,6 +234,10 @@ public class Pylon : Building
         {
             Building building = connectedBuildings[connectedBuildings.Count - 1];
             connectedBuildings.Remove(building);
+
+            if (building == null)
+                continue;
+            
             if (building is Pylon)
             {
                 (building as Pylon).SellAll();

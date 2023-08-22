@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.TerrainTools;
 using UnityEngine;
 
 public struct Target
@@ -34,10 +36,6 @@ public class Tower : Building
     // Purchasing
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
-
-    // Remove this \/
-    [HideInInspector] public Building parent = null;
-    /*Remove this and its implementation ASAP. This should be managed through the parent instead*/
 
     private void Awake()
     {
@@ -78,10 +76,23 @@ public class Tower : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(purchaseCost, sellReturnPercent);
 
-        (parent as Pylon).connectedTowersCount--;
-
         Destroy(gameObject);
 
         base.Sell();
     }
 }
+
+#if UNITY_EDITOR
+namespace Editor
+{
+    using UnityEditor;
+    [CustomEditor(typeof(Tower))]
+    public class TowerEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        }
+    }
+}
+#endif
