@@ -8,13 +8,24 @@ public class Targeter : MonoBehaviour
     {
         public Vector3 position;
         public Enemy enemy;
+
+
+
+        public Target(Vector3 targetPos, Enemy targetEnemy= null)
+        {
+            position = targetPos;
+            enemy = targetEnemy;
+        }
     }
-    public float range;
+
+    public float range; // radius of range collider
     public float turnRate;
     protected HashSet<Target> targetsInRange;
 
-    protected virtual HashSet<Target> AcquireTargets(int numTargets = 1)
+
+
+    protected virtual HashSet<Target> AcquireTargets(int numTargets =1)
     {
-        return new HashSet<Target>();
+        return null;
     }
 }
