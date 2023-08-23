@@ -1,8 +1,12 @@
 using UnityEngine;
 
+// Will be working on this 24/08. Working on applying next best target and will work in directions after that.
+
 public class Tile
 {
-    public Vector2 FlowDirection { get; private set; }
+    public Tile bestNextTile;
+    public float distanceFromCentreTile;
+    //public Vector2 FlowDirection { get; private set; }
     public float InkThickness { get; private set; }
     private readonly bool muddy;
     public float SpeedMultiplier
@@ -16,11 +20,16 @@ public class Tile
         }
     }
 
-    public Tile(Vector2 flowDirectionInit, bool muddyInit = false)
+    public Tile(float distanceFromCentreTileInit = 0, bool muddyInit = false)
     {
-        FlowDirection = flowDirectionInit;
+        distanceFromCentreTile = distanceFromCentreTileInit;
         muddy = muddyInit;
     } // Constructor
+
+    /*public void ApplyDirection(Vector2 flowDirectionInit)
+    {
+        FlowDirection = flowDirectionInit;
+    }*/
 
     public void ClearInk()
     {
@@ -88,18 +97,28 @@ public class FlowGrid : MonoBehaviour
 
         for (int xIndex = 0; xIndex < xSubdivs; xIndex++)
         {
-            //float xProgress = (float)xIndex / xSubdivs;
-
             for (int zIndex = 0; zIndex < zSubdivs; zIndex++)
             {
-                //float zProgress = (float)zIndex / zSubdivs;
-
-                //float xPos = Mathf.Lerp(xMin, xMax, xProgress);
-                //float zPos = Mathf.Lerp(zMin, zMax, zProgress);
-
-                //tiles[xIndex, zIndex] = new Vector2(xPos, zPos);
+                tiles[xIndex, zIndex] = new Tile();
             }
         }
+
+        /*
+        int iterationCount = 1;
+
+        int xMidpoint = xSubdivs / 2;
+        int zMidpoint = zSubdivs / 2;
+
+        for (int xIndex = 0; xIndex < iterationCount; xIndex++)
+        {
+            int xFromCentre = xIndex - xMidpoint;
+            for (int zIndex = 0; zIndex < iterationCount; zIndex++)
+            {
+                int zFromCentre = zIndex - zMidpoint;
+                
+
+            }
+        }*/
     }
 
     private Vector2 GetTilePos(float xCoord, float zCoord)
