@@ -4,45 +4,60 @@ using UnityEngine;
 
 public class TrackTargeter : Targeter
 {
-    [SerializeField] private LayerMask layerMask;
+    public LayerMask layerMask;
     [SerializeField] private float minRange = 0.5f;
-    protected override HashSet<Target> AcquireTargets(int numTargets = 1)
+    public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets = new HashSet<Target>();
 
 
-        // Okay so 
+        targets = GenerateTargetsInRange(numTargets);
 
         return targets;
     }
 
 
+
     private bool OnTrack(Vector3 positionOfTarget)
     {
+        RaycastHit hit;
         // Raycast to see if the first thing hit is the path or if something (a trap, an enemy, the ground) is in the way
-        if (Physics.Raycast((positionOfTarget + (Vector3.up * 10)), Vector3.down, Mathf.Infinity, layerMask))
+        if (Physics.Raycast((positionOfTarget + (Vector3.up * 10)), Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
-            return true;
+            //if (hit.transform.)
+            return false;
         }
-        return false;
+        return true;
+        
+    }
+
+    public override void GetTargetsInRange()
+    {
+
     }
 
     private HashSet<Target> GenerateTargetsInRange(int attemptNum)
     {
-        Target target;
-        // get a random point in the bounds of the tower's range
-        Vector3 randpos = RandomPosition();
+        HashSet<Target> targets = new HashSet<Target>();
 
-        // check if on track
+        for (int i = 0; i < attemptNum; i++)
+        {
+            Vector3 randpos = RandomPosition();// get a random point in the bounds of the tower's range
+           if (OnTrack(randpos))// check if on track
+            {
+                targets.Add(new Target(randpos));
+                Debug.DrawLine(transform.position, randpos, Color.red, Mathf.Infinity);
+            }
 
-        // check to see if there is already a trap there
-        // if yes move it the least distance possible away and check if still OnTrack()
-        return target;
+        }
+
+        Debug.LogWarning("No function exists for checking pre-existing traps at target positions");
+        return targets;
     }
 
     private HashSet<Target> FindNumTargetsInRange(int TrapNum)
     {
-        Target target;
+        HashSet<Target> targets = new HashSet<Target>();
         // get a random point in the bounds of the tower's range
         Vector3 randpos = RandomPosition();
 
@@ -50,7 +65,7 @@ public class TrackTargeter : Targeter
 
         // check to see if there is already a trap there
         // if yes move it the least distance possible away and check if still OnTrack()
-        return target;
+        return targets;
     }
 
     private Vector3 RandomPosition()
@@ -58,7 +73,7 @@ public class TrackTargeter : Targeter
         float theta = Random.Range(0, 360);
         float radius = Random.Range(minRange, range);
 
-        Vector3 offset = new Vector3( radius * Mathf.Cos(theta), 0.0f, radius * Mathf.Sin(theta));
+        Vector3 offset = transform.position + new Vector3(radius * Mathf.Cos(theta), 0.0f, radius * Mathf.Sin(theta));
 
         return offset;
     }

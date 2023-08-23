@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
@@ -9,7 +10,11 @@ public class Tower : Building
     [HideInInspector]
     public Building parent = null;
 
+    // Tower Components
     public TurretController TowerController;
+    private Targeter targeter= new TrackTargeter();
+
+    // insert attacker here
 
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }
@@ -19,6 +24,16 @@ public class Tower : Building
     private void Awake()
     {
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+        targeter.transform = transform;
+        (targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable");
+        
+    }
+
+    private void Update()
+    {
+        //targeter.GetTargetsInRange();
+        targeter.AcquireTargets();
+        // update attacker.
     }
 
     public void Upgrade(int upgradePath)
@@ -69,4 +84,6 @@ public class Tower : Building
         TowerController.storedExperience = 0;
         return exp;
     }
+
+    
 }

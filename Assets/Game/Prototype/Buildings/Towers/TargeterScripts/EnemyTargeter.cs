@@ -5,8 +5,9 @@ using UnityEngine;
 
 public abstract class EnemyTargeter : Targeter
 {
-    protected override HashSet<Target> AcquireTargets(int numTargets = 1)
-    {        
+    [SerializeField] protected LayerMask enemyLayer;
+    public override HashSet<Target> AcquireTargets(int numTargets = 1)
+    {
         HashSet<Target> targets = new HashSet<Target>();
         if (targetsInRange.Count < numTargets) // early out if less targets than numTargets.
         {
@@ -34,6 +35,16 @@ public abstract class EnemyTargeter : Targeter
         return targets;
 
     }
+    public override void GetTargetsInRange()
+    {
+        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
+        targetsInRange.Clear(); // as far as I have tried, using remove to take out targets that have left the range is impossible to make work without minimum 3 loops.
+        foreach (Collider collider in enemyColliders)
+        {   
+            targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
+        }
+    }
+
     protected abstract bool PrioritiseTargets(Target targetInRange, Target storedTarget);
 }
 
@@ -42,9 +53,10 @@ public abstract class EnemyTargeter : Targeter
 /// </summary>
 public class CloseTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return base.AcquireTargets(numTargets); }
+    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
+        
         // if target in range distance is less swap
         return (Vector3.Distance(targetInRange.position, transform.position) < Vector3.Distance(storedTarget.position, transform.position)) ;
     }
@@ -54,13 +66,13 @@ public class CloseTargeter : EnemyTargeter
 /// </summary>
 public class ClusterTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return base.AcquireTargets(numTargets); }
+    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
-        Debug.Log("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
+        Debug.LogWarning("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
         // if neighboorhoud is bigger swap
         // return (targetInRange.enemy.neighbourhood.count > storedTarget.enemy.neighbourhood.count);
-        Debug.Log(LayerMask.GetMask("Enemy") + " is the target physics layermask");
+        Debug.Log(LayerMask.GetMask("Enemy") + " is the target physics layermask"); // for testing.
         // for now generate the neighbour hood myself using a layer mask which has been known to end badly
         return (Physics.OverlapSphere(targetInRange.position, 1.5f,LayerMask.GetMask("Enemy")).Length > Physics.OverlapSphere(storedTarget.position, 1.5f, LayerMask.GetMask("Enemy")).Length);
     }
@@ -70,7 +82,7 @@ public class ClusterTargeter : EnemyTargeter
 /// </summary>
 public class FastTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return base.AcquireTargets(numTargets); }
+    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
         return (targetInRange.enemy.Speed > storedTarget.enemy.Speed);
@@ -82,7 +94,7 @@ public class FastTargeter : EnemyTargeter
 /// </summary>
 public class StrongTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return base.AcquireTargets(numTargets); }
+    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
         return (targetInRange.enemy.health > storedTarget.enemy.health);

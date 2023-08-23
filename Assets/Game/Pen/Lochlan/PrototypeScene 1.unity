@@ -1734,14 +1734,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6422987444731372229, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7168535600212936339, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8382622300606681352, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Sell
@@ -1931,17 +1923,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4724247349760051052, guid: 892ed697c6f46af49a8cd024e9047498, type: 3}
   m_PrefabInstance: {fileID: 29258527}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &663692114 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7168535600212936339, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-  m_PrefabInstance: {fileID: 625561294}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &668575498
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5972,6 +5953,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MSH_Plane_01
       objectReference: {fileID: 0}
+    - target: {fileID: 4440660253516899245, guid: 5e81c967340ce35448525d0303992cca, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e81c967340ce35448525d0303992cca, type: 3}
 --- !u!4 &2222296323253078753 stripped
@@ -7084,10 +7069,6 @@ PrefabInstance:
       propertyPath: hub
       value: 
       objectReference: {fileID: 877326253}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: wonText
-      value: 
-      objectReference: {fileID: 663692114}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: enemyPrefab
       value: 
