@@ -5,10 +5,10 @@ using UnityEngine;
 public class Tile
 {
     public Tile bestNextTile;
-    public float distanceFromCentreTile;
+    public float distanceFromCentreTile = float.PositiveInfinity;
     //public Vector2 FlowDirection { get; private set; }
     public float InkThickness { get; private set; }
-    private readonly bool muddy;
+    public readonly bool muddy;
     public float SpeedMultiplier
     {
         get
@@ -20,9 +20,8 @@ public class Tile
         }
     }
 
-    public Tile(float distanceFromCentreTileInit = 0, bool muddyInit = false)
+    public Tile(bool muddyInit = false)
     {
-        distanceFromCentreTile = distanceFromCentreTileInit;
         muddy = muddyInit;
     } // Constructor
 
@@ -73,7 +72,8 @@ public class FlowGrid : MonoBehaviour
         Initialise();
 
         CreateGrid();
-        // populate the grid with values somehow...?
+        // Populate Grid Muddiness here
+        //PopulateGridDistances();
     }
 
     private void OnValidate()
@@ -102,23 +102,115 @@ public class FlowGrid : MonoBehaviour
                 tiles[xIndex, zIndex] = new Tile();
             }
         }
+    }
 
-        /*
-        int iterationCount = 1;
-
+    [ContextMenu("PopulateGridDistances")]
+    private void PopulateGridDistances()
+    {
         int xMidpoint = xSubdivs / 2;
         int zMidpoint = zSubdivs / 2;
 
-        for (int xIndex = 0; xIndex < iterationCount; xIndex++)
-        {
-            int xFromCentre = xIndex - xMidpoint;
-            for (int zIndex = 0; zIndex < iterationCount; zIndex++)
-            {
-                int zFromCentre = zIndex - zMidpoint;
-                
+        tiles[xMidpoint, zMidpoint].distanceFromCentreTile = 0;
 
+        // Dijkstra's Algorithm
+        for (int iterationCount = 1; iterationCount <= Mathf.Max(xMidpoint, zMidpoint); iterationCount++)
+        {
+            for (int xIndex = 0; xIndex < iterationCount + 2; xIndex++)
+            {
+                int xOffset = xIndex - iterationCount;
+                bool atXBound = Mathf.Abs(xOffset) == iterationCount;
+
+                for (int zIndex = 0; zIndex < iterationCount + 2; zIndex++)
+                {
+                    int zOffset = zIndex - iterationCount;
+                    bool atZBound = Mathf.Abs(zOffset) == iterationCount;
+
+                    if (!atXBound && !atZBound)
+                    {
+                        //Debug.Log("Tile[" + xIndex + ", " + zIndex + "] has already been set");
+                        continue;
+                    }
+
+
+                    int actualXIndex = xMidpoint + xOffset;
+                    int actualZIndex = zMidpoint + zOffset;
+
+                    Vector2Int[] targetIndicesToCheck;
+                    if (atXBound && atZBound)
+                    {
+                        int xOffsetDirection = (int)Mathf.Sign(xOffset);
+                        int previousXIndex = xMidpoint + (xOffset - 1 * xOffsetDirection);
+                        int zOffsetDirection = (int)Mathf.Sign(zOffset);
+                        int previousZIndex = zMidpoint + (zOffset - 1 * zOffsetDirection);
+
+                        targetIndicesToCheck = new Vector2Int[]
+                        {
+                            new Vector2Int(previousXIndex, actualZIndex),
+                            new Vector2Int(previousXIndex, previousZIndex),
+                            new Vector2Int(actualXIndex, previousZIndex)
+                        };
+
+                    }
+                    else if (atXBound)
+                    {
+                        if (zIndex > zMidpoint)
+                            continue;
+
+                        int xOffsetDirection = (int)Mathf.Sign(xOffset);
+                        int previousXIndex = xMidpoint + (xOffset - 1 * xOffsetDirection);
+
+
+                        targetIndicesToCheck = new Vector2Int[]
+                        {
+                            new Vector2Int(previousXIndex, actualZIndex - 1),
+                            new Vector2Int(previousXIndex, actualZIndex    ),
+                            new Vector2Int(previousXIndex, actualZIndex + 1)
+                        };
+                    }
+                    else
+                    {
+                        if (xIndex > xMidpoint)
+                            continue;
+
+                        int zOffsetDirection = (int)Mathf.Sign(zOffset);
+                        int previousZIndex = zMidpoint + (zOffset - 1 * zOffsetDirection);
+
+                        targetIndicesToCheck = new Vector2Int[]
+                        {
+                            new Vector2Int(actualXIndex - 1, previousZIndex),
+                            new Vector2Int(actualXIndex,     previousZIndex),
+                            new Vector2Int(actualXIndex + 1, previousZIndex)
+                        };
+                    }
+
+                    float currentBestDistance = float.PositiveInfinity;
+                    Vector2Int currentBestTileIndex = new Vector2Int();
+                    for (int tileIndex = 0; tileIndex < targetIndicesToCheck.Length; tileIndex++)
+                    {
+                        float potentialBestDistance = CalculateTileDistanceToCentre(new Vector2Int(actualXIndex, actualZIndex), targetIndicesToCheck[tileIndex]);
+                        if (potentialBestDistance < currentBestDistance)
+                        {
+                            currentBestTileIndex = targetIndicesToCheck[tileIndex];
+                            currentBestDistance = potentialBestDistance;
+                        }
+                    }
+                    tiles[actualXIndex, actualZIndex].distanceFromCentreTile = currentBestDistance;
+                    tiles[actualXIndex, actualZIndex].bestNextTile = tiles[currentBestTileIndex.x, currentBestTileIndex.y];
+
+                    Debug.Log("Tile[" + actualXIndex + ", " + actualZIndex + "]'s best next tile will be Tile[" +
+                        currentBestTileIndex.x + ", " + currentBestTileIndex.y + "]. Distance From Centre: " + currentBestDistance);
+                }
             }
-        }*/
+        }
+    }
+
+    private float CalculateTileDistanceToCentre(Vector2Int tileIndex, Vector2Int targetTileIndex)
+    {
+        float distanceToTarget = Mathf.Abs((targetTileIndex - tileIndex).magnitude);
+        if (tiles[targetTileIndex.x, targetTileIndex.y].muddy)
+            distanceToTarget *= 2;
+
+        return distanceToTarget + tiles[targetTileIndex.x, targetTileIndex.y].distanceFromCentreTile;
     }
 
     private Vector2 GetTilePos(float xCoord, float zCoord)
@@ -167,7 +259,7 @@ public class FlowGrid : MonoBehaviour
 
         int xCoord = Mathf.RoundToInt(xPos + xSubdivs * 0.5f);
         int zCoord = Mathf.RoundToInt(zPos + zSubdivs * 0.5f);
-
-        return tiles[xCoord, zCoord].FlowDirection;
+        return Vector2.zero;
+        //return tiles[xCoord, zCoord].FlowDirection;
     }
 }
