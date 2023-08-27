@@ -96,7 +96,7 @@ public class WaveSpawner : MonoBehaviour
         List<Enemy> enemiesToRemove = new();
         foreach (Enemy enemy in aliveEnemies)
         {
-            if (enemy.dead)
+            if (enemy.isDead)
             {
                 enemiesToRemove.Add(enemy);
             }

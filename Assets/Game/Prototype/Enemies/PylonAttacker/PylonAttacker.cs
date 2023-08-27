@@ -16,8 +16,8 @@ public class PylonAttacker : Enemy
 
     private void Update()
     {
-        AttackPylon();
-        base.Playing();
+        if (!isDead)
+            Playing();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -35,6 +35,12 @@ public class PylonAttacker : Enemy
             speed = 0;
             Debug.Log("encountered" + other);
         }
+    }
+
+    protected override void Playing()
+    {
+        AttackPylon();
+        base.Playing();
     }
 
     void AttackPylon() // The reason this is as terrible as it is is because I had to break up the order to add in FireBullet.

@@ -20,7 +20,7 @@ public class AreaAttacker : Attacker
             {
                 foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
                 {
-                    collision.GetComponent<Enemy>().health -= damage;
+                    collision.GetComponent<Enemy>().TakeDamage(damage);
                 }
             }
         }
