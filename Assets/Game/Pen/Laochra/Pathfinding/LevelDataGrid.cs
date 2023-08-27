@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,10 +36,10 @@ public class DijkstraTile
         currentBestNextTile = tile;
     }
 
-    public List<DijkstraTile> GetConnectedTiles(Tile[,] indexingReference)
+    public List<DijkstraTile> GetConnectedTiles(Tile[,] tilesReference)
     {
-        int xMax = indexingReference.GetLength(0) - 1;
-        int zMax = indexingReference.GetLength(1) - 1;
+        int xMax = tilesReference.GetLength(0) - 1;
+        int zMax = tilesReference.GetLength(1) - 1;
 
         bool canGetAbove = z != 0;
         bool canGetBelow = z != zMax;
@@ -71,19 +72,23 @@ public class DijkstraTile
         foreach (DijkstraTile tile in connectedTiles)
         {
             float distanceToTile;
-            if (Mathf.Abs(tile.x - x) + Mathf.Abs(tile.z - z) == 1)
+            if (Mathf.Abs(tile.x - x) + Mathf.Abs(tile.z - z) == 1) // Try caching Abs values before the if: https://www.jacksondunstan.com/articles/5361
                 distanceToTile = 1;
             else
                 distanceToTile = 1.41f;
 
-            if (indexingReference[x, z].muddy)
-                distanceToTile *= LevelDataGrid.mudCost; // This is causing things to chug?????
+            if (tilesReference[x, z].muddy)
+                distanceToTile *= LevelDataGrid.mudCost;
 
             tile.SetDistance(distanceToTile + distanceFromCentreTile);
             tile.SetNextTile(this);
         }
         return connectedTiles;
     }
+
+    public bool SharesCoordsWith(DijkstraTile otherTile) => x == otherTile.x && z == otherTile.z;
+
+    public override int GetHashCode() => HashCode.Combine(x, z);
 }
 
 public class Tile
@@ -189,6 +194,8 @@ public class LevelDataGrid : MonoBehaviour
 
     private readonly List<DijkstraTile> pendingList = new();
 
+    private readonly Dictionary<int, DijkstraTile> pendingDictionary = new();
+
     private int amountClosed = 0;
 
     // Debug
@@ -247,34 +254,24 @@ public class LevelDataGrid : MonoBehaviour
 
     public void PopulateGridDistances()
     {
+        float cachedTime = Time.realtimeSinceStartup;
         int xMidpoint = xSubdivs / 2;
         int zMidpoint = zSubdivs / 2;
 
         // Dijkstra's Algorithm
         DijkstraTile centreTile = new(xMidpoint, zMidpoint);
+        pendingDictionary.Add(centreTile.GetHashCode(), centreTile);
         pendingList.Add(centreTile);
         centreTile.SetDistance(0);
         tiles[xMidpoint, zMidpoint].tileStatus = TileStatus.Pending;
         
         while (pendingList.Count > 0)
         {
-            DijkstraTile currentCheapestTile = null;
-
-            foreach(DijkstraTile tile in pendingList)
-            {
-                if (currentCheapestTile == null)
-                    currentCheapestTile = tile;
-                else
-                {
-                    if (tile.distanceFromCentreTile < currentCheapestTile.distanceFromCentreTile)
-                        currentCheapestTile = tile;
-                }
-            }
-
-            AddToPendingList(currentCheapestTile.GetConnectedTiles(tiles));
-            Close(currentCheapestTile);
+            AddToPendingList(pendingList[0].GetConnectedTiles(tiles));
+            Close(pendingList[0]);
         }
-        Debug.Log("Successfully set " + amountClosed.ToString() + " tiles");
+        float duration = Mathf.Round((Time.realtimeSinceStartup - cachedTime) * 100) / 100;
+        Debug.Log("Successfully set " + amountClosed.ToString() + " tiles (" + duration + " seconds)");
     }
 
     private void Close(DijkstraTile tileToSet)
@@ -289,30 +286,31 @@ public class LevelDataGrid : MonoBehaviour
         }
 
         pendingList.Remove(tileToSet);
+        pendingDictionary.Remove(tileToSet.GetHashCode());
         amountClosed++;
     }
 
     private void SetPending(DijkstraTile tileToSet)
     {
-        //Debug.Log("Setting tile " + tileToSet.x + ", " + tileToSet.z + " to pending.");
         if (tiles[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Closed) return;
+
         if (tiles[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Unreached)
         {
-            pendingList.Add(tileToSet);
+            pendingDictionary.Add(tileToSet.GetHashCode(), tileToSet);
+            InsertInPendingList(tileToSet);
             tiles[tileToSet.x, tileToSet.z].tileStatus = TileStatus.Pending;
             return;
         }
-        foreach (DijkstraTile tile in pendingList)
+
+        DijkstraTile oldTile = pendingDictionary[tileToSet.GetHashCode()];
+        
+        if (tileToSet.distanceFromCentreTile < oldTile.distanceFromCentreTile)
         {
-            if (tile.x == tileToSet.x && tile.z == tileToSet.z)
-            {
-                if (tileToSet.distanceFromCentreTile < tile.distanceFromCentreTile)
-                {
-                    tile.SetDistance(tileToSet.distanceFromCentreTile);
-                    tile.SetNextTile(tileToSet.currentBestNextTile);
-                }
-                return;
-            }
+            pendingList.Remove(oldTile);
+            pendingDictionary.Remove(tileToSet.GetHashCode());
+
+            pendingDictionary.Add(tileToSet.GetHashCode(), tileToSet);
+            InsertInPendingList(tileToSet);
         }
 
     }
@@ -322,6 +320,72 @@ public class LevelDataGrid : MonoBehaviour
         {
             SetPending(tile);
         }
+    }
+
+    private void InsertInPendingList(DijkstraTile tile, int startingPoint = -1 /*'Null' default initialiser*/)
+    {
+        if (pendingList.Count <= 1)
+        {
+            pendingList.Add(tile);
+            return;
+        }
+
+        // Binary search to find index to slot in the element
+        int testingIndex;
+        int lastTestedIndex = -1; // 'Null' initialise
+
+        if (startingPoint >= 0)
+            testingIndex = startingPoint;
+        else
+            testingIndex = (pendingList.Count - 1) / 2;
+
+        while (tile.distanceFromCentreTile != pendingList[testingIndex].distanceFromCentreTile)
+        {
+            if (testingIndex == 0 || testingIndex == lastTestedIndex)
+            {
+                pendingList.Insert(testingIndex, tile);
+                return;
+            }
+
+            if (testingIndex == pendingList.Count - 1)
+            {
+                pendingList.Add(tile);
+                return;
+            }
+
+            if (lastTestedIndex >= 0) // 'Null' check
+            {
+                if (tile.distanceFromCentreTile < pendingList[testingIndex].distanceFromCentreTile)
+                {
+                    if (tile.distanceFromCentreTile > pendingList[lastTestedIndex].distanceFromCentreTile)
+                    {
+                        pendingList.Insert(testingIndex, tile);
+                        return;
+                    }
+                }
+                else
+                {
+                    if (tile.distanceFromCentreTile < pendingList[lastTestedIndex].distanceFromCentreTile)
+                    {
+                        pendingList.Insert(lastTestedIndex, tile);
+                        return;
+                    }
+                }
+            }
+            
+            if (tile.distanceFromCentreTile < pendingList[testingIndex].distanceFromCentreTile)
+            {
+                lastTestedIndex = testingIndex;
+                testingIndex -=  testingIndex / 2;
+            }
+            else
+            {
+                lastTestedIndex = testingIndex;
+                testingIndex += (pendingList.Count - 1 - testingIndex) / 2;
+            }
+        }
+
+        pendingList.Insert(testingIndex, tile);
     }
 
     public Vector3 SwizzleXZY(float xCoord, float zCoord, float yCoord = 0)
@@ -552,7 +616,14 @@ namespace Editor
                 dataGrid.GridWidth = gridWidth;
                 dataGrid.GridHeight = gridHeight;
 
-                dataGrid.TextureMap = textureMap;
+                if (dataGrid.XSubdivs != xSubdivs) dataGrid.XSubdivs = xSubdivs;
+                if (dataGrid.ZSubdivs != zSubdivs) dataGrid.ZSubdivs = zSubdivs;
+
+                if (dataGrid.TextureMap != textureMap)
+                {
+                    dataGrid.TextureMap = textureMap;
+                    dataGrid.InitialiseGrid();
+                }
 
                 if (textureMap != null)
                 {
@@ -560,9 +631,6 @@ namespace Editor
                 }
                 else
                 {
-                    if (xSubdivs > 0) dataGrid.XSubdivs = xSubdivs;
-                    if (zSubdivs > 0) dataGrid.ZSubdivs = zSubdivs;
-
                     if (initialiseGrid) dataGrid.InitialiseGrid();
                 }
 
