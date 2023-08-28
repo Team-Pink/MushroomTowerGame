@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 public enum TileStatus
 {
@@ -123,14 +124,6 @@ public class ClosedTile
 [CreateAssetMenu(fileName = "LevelData", menuName = "Mushroom Tower Game/Level Data")]
 public class LevelData : ScriptableObject
 {
-    // Grid Data
-    private float gridWidth = 120;
-    public float GridWidth { get => gridWidth; set => gridWidth = value; }
-    private float gridHeight = 120;
-    public float GridHeight { get => gridHeight; set => gridHeight = value; }
-    private float TileWidth { get => gridWidth / xSubdivs; }
-    private float TileHeight { get => gridHeight / zSubdivs; }
-
     // Tile Data
     public bool initialised = false;
     public bool generated = false;
@@ -184,10 +177,6 @@ public class LevelData : ScriptableObject
     private readonly Dictionary<int, PendingTile> pendingDictionary = new();
 
     private int amountClosed = 0;
-
-    // Debug
-    [NonSerialized] public bool drawGrid;
-    [NonSerialized] public bool drawFlowLines;
 
     private void OnEnable()
     {
@@ -273,46 +262,6 @@ public class LevelData : ScriptableObject
         WriteToTexture();
 
         generated = true;
-    }
-
-    private void WriteToTexture()
-    {
-        int columns = tiles.GetLength(0);
-        int rows = tiles.GetLength(1);
-
-        Texture2D texture = new Texture2D(columns, rows);
-
-        float muddy;
-        float flowDirectionX;
-        float flowDirectionZ;
-        Color color;
-
-        for (int x = 0; x < columns; x++)
-        {
-            for (int z = 0; z < rows; z++)
-            {
-                if (tiles[x, z].muddy)
-                    muddy = 1.0f;
-                else
-                    muddy = 0.0f;
-
-                flowDirectionX = tiles[x, z].FlowDirection.x;
-                flowDirectionZ = tiles[x, z].FlowDirection.y;
-
-                color = new(muddy, flowDirectionX, flowDirectionZ);
-
-                texture.SetPixel(x, z, color);
-            }
-        }
-
-        byte[] bytes = texture.EncodeToPNG();
-
-        var directory = Application.dataPath + "/Resources/";
-        if (!Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-        File.WriteAllBytes(directory + "Texture.png", bytes);
     }
 
     private void Close(PendingTile tileToSet)
@@ -429,79 +378,45 @@ public class LevelData : ScriptableObject
         pendingList.Insert(testingIndex, tile);
     }
 
-    public Vector3 SwizzleXZY(float xCoord, float zCoord, float yCoord = 0)
+    private void WriteToTexture()
     {
-        return new Vector3(xCoord, yCoord, zCoord);
-    }
+        int columns = tiles.GetLength(0);
+        int rows = tiles.GetLength(1);
 
-    public void OnDrawGizmos() // move into scene object
-    {
-        if (drawGrid)
+        Texture2D texture = new(columns, rows);
+
+        float muddy;
+        float flowDirectionX;
+        float flowDirectionZ;
+        Color color;
+
+        for (int x = 0; x < columns; x++)
         {
-            // Draw the grid
-            for (int xIndex = 0; xIndex < xSubdivs + 1; xIndex++)
+            for (int z = 0; z < rows; z++)
             {
-                float xCoord = TileWidth * (xIndex - xSubdivs * 0.5f);
-                float nextXCoord = xCoord + TileWidth;
+                if (tiles[x, z].muddy)
+                    muddy = 1.0f;
+                else
+                    muddy = 0.0f;
 
-                for (int zIndex = 0; zIndex < zSubdivs + 1; zIndex++)
-                {
-                    float zCoord = TileHeight * (zIndex - zSubdivs * 0.5f);
-                    float nextZCoord = zCoord + TileHeight;
+                flowDirectionX = tiles[x, z].FlowDirection.x;
+                flowDirectionZ = tiles[x, z].FlowDirection.y;
 
-                    if (xIndex < xSubdivs)
-                        Gizmos.DrawLine(SwizzleXZY(nextXCoord, zCoord), SwizzleXZY(xCoord, zCoord));
-                    if (zIndex < zSubdivs)
-                        Gizmos.DrawLine(SwizzleXZY(xCoord, zCoord), SwizzleXZY(xCoord, nextZCoord));
-                }
+                color = new(muddy, (flowDirectionX * 0.5f) + 0.5f, (-flowDirectionZ * 0.5f) + 0.5f);
+
+                texture.SetPixel(x, z, color);
             }
         }
 
-        if (drawFlowLines)
+        byte[] bytes = texture.EncodeToPNG();
+
+        var directory = Application.dataPath + "/Game/Production/Pathfinding/";
+        if (!Directory.Exists(directory))
         {
-            // Draw lines to next tiles
-            for (int x = 0; x < tiles.GetLength(0); x++)
-            {
-                for (int z = 0; z < tiles.GetLength(1); z++)
-                {
-                    ClosedTile currentTile = tiles[x, z];
-
-                    if (currentTile.bestNextTile != null)
-                    {
-                        if (tiles[x, z].bestNextTile.muddy)
-                            Gizmos.color = Color.yellow;
-                        else
-                            Gizmos.color = Color.magenta;
-
-                        Gizmos.DrawLine(TileToWorldSpace(x, z), TileToWorldSpace(currentTile.bestNextTile.x, currentTile.bestNextTile.z));
-                    }
-                }
-            }
+            Directory.CreateDirectory(directory);
         }
-
-        // Gizmos.DrawCube() Draw a cube in the tile that the mouse is over. Make use of GetTileCoords
-    }
-
-    public void GetTileAtCoords(Vector3 position, out int xCoord, out int zCoord)
-    {
-        xCoord = Mathf.RoundToInt((position.x + xSubdivs * 0.5f) / TileWidth);
-        zCoord = Mathf.RoundToInt((-position.z - zSubdivs * 0.5f) / TileHeight);
-    }
-
-    public Vector3 TileToWorldSpace(int xIndex, int zIndex)
-    {
-
-        return new Vector3((xIndex - xSubdivs * 0.5f) * TileWidth + TileWidth * 0.5f, 0,
-            (-zIndex + zSubdivs * 0.5f) * TileHeight - TileWidth * 0.5f);
-    }
-
-    private Vector2 GetFlowAtPoint(Vector3 position)
-    {
-        GetTileAtCoords(position, out int xPos, out int zPos);
-
-        int xCoord = Mathf.RoundToInt(xPos + xSubdivs * 0.5f);
-        int zCoord = Mathf.RoundToInt(zPos + zSubdivs * 0.5f);
-        return tiles[xCoord, zCoord].FlowDirection;
+        File.WriteAllBytes(directory + "LevelData.png", bytes);
+        AssetDatabase.Refresh();
     }
 }
 
@@ -530,28 +445,6 @@ namespace Editor
 
 
             GUI.Space(10);
-
-
-            GUI.LabelField("Grid Data", Stylesheet.Heading);
-
-            BeginHorizontal();
-            GUI.Space();
-            GUI.LabelField("Width", MaxWidth(60));
-            float gridWidth = GUI.FloatField(dataGrid.GridWidth, MaxWidth(40));
-            GUI.Space();
-            EndHorizontal();
-
-            GUI.Space();
-
-            BeginHorizontal();
-            GUI.Space();
-            GUI.LabelField("Height", MaxWidth(60));
-            float gridHeight = GUI.FloatField(dataGrid.GridHeight, MaxWidth(40));
-            GUI.Space();
-            EndHorizontal();
-
-
-            GUI.Space(20);
 
 
             GUI.LabelField("Tile Data", Stylesheet.Heading);
@@ -632,37 +525,12 @@ namespace Editor
             }
 
 
-            GUI.Space(40);
-
-
-            GUI.LabelField("Debug Options", Stylesheet.Heading);
-
-            BeginHorizontal();
-                GUI.Space();
-                GUI.LabelField("Display Grid Tiles", MaxWidth(110));
-                bool drawGrid = GUI.Toggle(dataGrid.drawGrid, MaxWidth(20));
-                GUI.Space();
-            EndHorizontal();
-
-            GUI.Space();
-
-            BeginHorizontal();
-                GUI.Space();
-                GUI.LabelField("Display Flow Lines", MaxWidth(110));
-                bool drawFlowLines = GUI.Toggle(dataGrid.drawFlowLines, MaxWidth(20));
-                GUI.Space();
-            EndHorizontal();
-
-
             GUI.Space(20);
 
 
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(target, "World Data Grid was modified");
-
-                dataGrid.GridWidth = gridWidth;
-                dataGrid.GridHeight = gridHeight;
 
                 if (dataGrid.XSubdivs != xSubdivs) dataGrid.XSubdivs = xSubdivs;
                 if (dataGrid.ZSubdivs != zSubdivs) dataGrid.ZSubdivs = zSubdivs;
@@ -683,9 +551,6 @@ namespace Editor
                 }
 
                 if (generateFlow) dataGrid.PopulateGridDistances();
-
-                dataGrid.drawGrid = drawGrid;
-                dataGrid.drawFlowLines = drawFlowLines;
 
                 SceneView.RepaintAll();
             } // If data is to be changed, log an undo screenshot, then change the data

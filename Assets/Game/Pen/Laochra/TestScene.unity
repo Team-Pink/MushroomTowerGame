@@ -7250,7 +7250,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6afa94948c5a1294e88749fcfa410b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelDataGrid: {fileID: 11400000, guid: 78303d4fd1e95ff44bc290d860176266, type: 2}
+  levelTexture: {fileID: 2800000, guid: cbf490f94ab79464d91a2974bab71a2a, type: 3}
+  gridWidth: 120
+  gridHeight: 120
+  drawGrid: 0
+  drawFlowLines: 1
 --- !u!4 &6593354657837421337 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2458736856050438749, guid: 10556f830c667324bbed03a7690442fc, type: 3}
