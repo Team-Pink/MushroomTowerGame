@@ -3199,7 +3199,7 @@ Transform:
   m_GameObject: {fileID: 1125190913}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6.4, y: 6.4000006, z: 0}
+  m_LocalScale: {x: 6.35, y: 6.35, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 815648652}
@@ -7247,12 +7247,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6533875848325091997}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45dffeb828bd3b34599ed1ce097ee07c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6afa94948c5a1294e88749fcfa410b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialised: 1
-  drawGrid: 0
-  drawFlowLines: 0
+  levelDataGrid: {fileID: 11400000, guid: 78303d4fd1e95ff44bc290d860176266, type: 2}
 --- !u!4 &6593354657837421337 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2458736856050438749, guid: 10556f830c667324bbed03a7690442fc, type: 3}
