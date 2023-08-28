@@ -1,26 +1,54 @@
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.TerrainTools;
 using UnityEngine;
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+
+public struct Target
+{
+    public Vector3 position;
+    public Enemy enemy;
+}
+
+public abstract class Attacker // Connor you remove this and replace with yours
+{
+    public abstract void Attack(HashSet<Target> targets);
+}
+
+public abstract class Targeter // Lochlan you remove this and replace with yours
+{
+    public abstract HashSet<Target> AcquireTargets();
+}
 
 public class Tower : Building
 {
 
     public int cost = 10;
     [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f;
+    // Components
+    protected new Transform transform;
+    protected Animator animator;
+    private Attacker attackerComponent;
+    private Targeter targeterComponent;
 
-    [HideInInspector]
-    public Building parent = null;
+    // References
+    private HashSet<Target> targets;
 
     // Tower Components
     public TurretController TowerController;
-    private Targeter targeter= new ClusterTargeter();
+    private Targeter targeter = new ClusterTargeter();
     // insert attacker here
     
+    // Upgrading
+    [SerializeField] bool upgradeable;
+    public bool Upgradeable { get; private set; }
+    private GameObject upgradePrefabL;
+    public int upgradeCostL;
+    private GameObject upgradePrefabR;
+    public int upgradeCostR;
 
-    [SerializeField] bool upgraded;
-    public bool Upgraded { get; private set; }
-
-    [SerializeField] GameObjectList upgradedTowerPrefabs;
+    // Purchasing
+    public int purchaseCost = 10;
+    [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
     private void Awake()
     {
@@ -29,63 +57,59 @@ public class Tower : Building
         targeter.enemyLayer = LayerMask.GetMask("Enemy");
         //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable");
         
+        transform = gameObject.transform;
     }
 
     private void Update()
     {
-        targeter.GetTargetsInRange();
-        targeter.AcquireTargets(1);
-        // update attacker.
+        if (Active)
+        {
+            targets = targeter.AcquireTargets();
+            attackerComponent.Attack(targets);
+        }
     }
 
     public void Upgrade(int upgradePath)
     {
-       // if (!Active) TowerController.enabled = false;
-       // else TowerController.enabled = true;
-            
-        if (upgradePath >= 0 && upgradePath < upgradedTowerPrefabs.Count)
+        if (upgradePath == 0 || upgradePath == 1)
         {
-            Transform transform = gameObject.transform;
-            Instantiate(upgradedTowerPrefabs[upgradePath], transform.position, transform.rotation, transform.parent);
+            GameObject selectedUpgradePrefab;
+
+            if (upgradePath == 1)
+                selectedUpgradePrefab = upgradePrefabL;
+            else
+                selectedUpgradePrefab = upgradePrefabR;
+
+            Instantiate(selectedUpgradePrefab, transform.position, transform.rotation, transform.parent);
             Destroy(gameObject);
         }
         else
         {
-            Debug.LogError("Upgrade only accepts an int value between 0 and its amount of possible upgrades (" + upgradedTowerPrefabs.Count + ").", this);
+            Debug.LogError("Upgrade only accepts an int value of 0 or 1", this);
         }
-    }
-
-    public override void Deactivate()
-    {
-        TowerController.enabled = false;
-        base.Deactivate();
-    }
-
-    public override void Reactivate()
-    {
-        TowerController.enabled = true;
-        base.Reactivate();
     }
 
     public override void Sell()
     {
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(cost, sellReturnPercent);
-
-        (parent as Pylon).connectedTowersCount--;
+        currencyManager.IncreaseCurrencyAmount(purchaseCost, sellReturnPercent);
 
         Destroy(gameObject);
 
         base.Sell();
     }
+}
 
-    public override int GetTowerEXP()
+#if UNITY_EDITOR
+namespace Editor
+{
+    using UnityEditor;
+    [CustomEditor(typeof(Tower))]
+    public class TowerEditor : Editor
     {
-        if (!TowerController) return 0;
-        int exp = TowerController.storedExperience;
-        TowerController.storedExperience = 0;
-        return exp;
-    }
-
-    
+        public override void OnInspectorGUI()
+        {
+            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        }
+    }    
 }

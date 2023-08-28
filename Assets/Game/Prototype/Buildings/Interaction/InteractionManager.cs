@@ -378,7 +378,7 @@ public class InteractionManager : MonoBehaviour
             {
                 (targetBuilding as Tower).Sell();
             }
-            else if (!(targetBuilding as Tower).Upgraded)
+            else if (!(targetBuilding as Tower).Upgradeable)
             {
                 (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
             }
@@ -523,7 +523,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
 
             if (!currencyManager.CanDecreaseCurrencyAmount(cost))
             {
@@ -574,21 +574,24 @@ public class InteractionManager : MonoBehaviour
         int cost = 0;
         bool notMaxPylons = false;
 
-        if (activeBud.transform.parent.GetComponent<Hub>() != null)
-        {
-            pylonMultiplier = 1;
-            cost = Pylon.GetPylonBaseCurrency();
-            notMaxPylons = activeBud.transform.parent.GetComponent<Hub>().pylonCount < maxPylonsPerHub;
-        }
-        else if (activeBud.transform.parent.GetComponent<Pylon>() != null)
-        {
-            Pylon ParentPylon = activeBud.transform.parent.GetComponent<Pylon>();
-            pylonMultiplier = ParentPylon.GetMultiplier() + 1;
-            cost = ParentPylon.GetPylonCost(pylonMultiplier);
-            
-            notMaxPylons = activeBud.transform.parent.GetComponent<Pylon>().connectedPylonsCount < maxPylonsPerPylon;
+        Building parent = activeBud.transform.parent.GetComponent<Building>();
 
-            if (!(targetBuilding as Pylon).Enhanced)
+        if (parent is Hub)
+        {
+            Hub parentHub = parent as Hub;
+            cost = Pylon.GetPylonBaseCurrency();
+            parentHub.ClearDestroyedPylons();
+            notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;
+        }
+        else if (parent is Pylon)
+        {
+            Pylon parentPylon = parent as Pylon;
+            pylonMultiplier = parentPylon.GetMultiplier() + 1;
+            cost = parentPylon.GetPylonCost(pylonMultiplier);
+            
+            notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
+
+            if (!parentPylon.Enhanced)
             {
                 ResetInteraction();
                 return;
@@ -621,10 +624,11 @@ public class InteractionManager : MonoBehaviour
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
-        pylonInstance.GetComponent<Pylon>().parent = targetBuilding;
 
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
+        else
+            (targetBuilding as Hub).AddPylon(pylonInstance.GetComponent<Pylon>());
 
         ResetInteraction();
     }
@@ -634,8 +638,6 @@ public class InteractionManager : MonoBehaviour
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
         GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
-
-        towerInstance.GetComponent<Tower>().parent = targetBuilding;
 
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
@@ -652,7 +654,7 @@ public class InteractionManager : MonoBehaviour
         if (!radiusDisplay.activeSelf)
         {
             radiusDisplay.SetActive(true);
-            StartCoroutine(targetBuilding.FadeInRadiusDisplay());
+            StartCoroutine(targetBuilding.ExpandRadiusDisplay());
         }
     }
 
