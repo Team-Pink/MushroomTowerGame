@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class Targeter
 {
-    public struct Target
-    {
-        public Vector3 position;
-        public Enemy enemy;
-
-
-
-        public Target(Vector3 targetPos, Enemy targetEnemy = null)
-        {
-            position = targetPos;
-            enemy = targetEnemy;
-        }
-    }
-
 
     public float range = 10; // radius of range collider
     public float turnRate;
@@ -29,7 +15,7 @@ public class Targeter
     public void GetTargetsInRange()
     {
         Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
-        if (enemyColliders.Length <= 0) return;
+        if (enemyColliders == null) return;
         if (targetsInRange != null) targetsInRange.Clear(); // as far as I have tried, using remove to take out targets that have left the range is impossible to make work without minimum 3 loops.
         foreach (Collider collider in enemyColliders)
         {

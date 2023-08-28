@@ -45,10 +45,10 @@ public abstract class EnemyTargeter : Targeter
             }
 
         }
-        //foreach (Target target in targets)
-        //{
-        //    Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
-        //}
+        foreach (Target target in targets)
+        {
+            Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+        }
         return targets;
 
     }

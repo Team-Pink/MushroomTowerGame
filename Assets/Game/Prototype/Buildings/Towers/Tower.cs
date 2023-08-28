@@ -7,6 +7,12 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+
+    public Target(Vector3 targetPos, Enemy targetEnemy = null)
+    {
+        position = targetPos;
+        enemy = targetEnemy;
+    }
 }
 
 public abstract class Attacker // Connor you remove this and replace with yours
@@ -14,16 +20,9 @@ public abstract class Attacker // Connor you remove this and replace with yours
     public abstract void Attack(HashSet<Target> targets);
 }
 
-public abstract class Targeter // Lochlan you remove this and replace with yours
-{
-    public abstract HashSet<Target> AcquireTargets();
-}
-
 public class Tower : Building
 {
 
-    public int cost = 10;
-    [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f;
     // Components
     protected new Transform transform;
     protected Animator animator;
@@ -35,7 +34,7 @@ public class Tower : Building
 
     // Tower Components
     public TurretController TowerController;
-    private Targeter targeter = new ClusterTargeter();
+    private Targeter targeter = new CloseTargeter();
     // insert attacker here
     
     // Upgrading
@@ -55,7 +54,7 @@ public class Tower : Building
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
         targeter.transform = transform;
         targeter.enemyLayer = LayerMask.GetMask("Enemy");
-        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable");
+        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
         
         transform = gameObject.transform;
     }
@@ -113,3 +112,4 @@ namespace Editor
         }
     }    
 }
+#endif
