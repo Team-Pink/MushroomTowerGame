@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public enum TileStatus
 {
     Unreached,
@@ -39,7 +36,7 @@ public class PendingTile
         currentBestNextTile = tile;
     }
 
-    public List<PendingTile> GetConnectedTiles(Tile[,] tilesReference)
+    public List<PendingTile> GetConnectedTiles(ClosedTile[,] tilesReference)
     {
         int xMax = tilesReference.GetLength(0) - 1;
         int zMax = tilesReference.GetLength(1) - 1;
@@ -95,53 +92,31 @@ public class PendingTile
 }
 
 [Serializable]
-public class Tile
+public class ClosedTile
 {
     public int x { get; private set; }
     public int z { get; private set; }
 
     [NonSerialized] public TileStatus tileStatus = TileStatus.Unreached;
-    public Tile bestNextTile;
+    public ClosedTile bestNextTile;
     [SerializeField] private Vector2 flowDirection;
     public Vector2 FlowDirection { get => flowDirection; private set => flowDirection = value; }
-    public float InkThickness { get; private set; }
     public bool muddy;
 
-    public float SpeedMultiplier
-    {
-        get
-        {
-            if (muddy)
-                return 0.5f * (1 - InkThickness);
-            else
-                return 1 - InkThickness;
-        }
-    }
-
-    public Tile()
+    public ClosedTile()
     {
 
     }
 
-    public Tile(int xIndex, int zIndex)
+    public ClosedTile(int xIndex, int zIndex)
     {
         x = xIndex;
         z = zIndex;
     }
 
-    public void ClearInk()
-    {
-        InkThickness = 0;
-    }
-
     public void ApplyDirection(Vector2 direction)
     {
         FlowDirection = direction;
-    }
-
-    public void SetInkThickness(float inkThicknessInit)
-    {
-        InkThickness = inkThicknessInit;
     }
 }
 
@@ -202,9 +177,7 @@ public class LevelData : ScriptableObject
         }
     }
 
-    private Tile[,] tilesGrid = new Tile[0, 0];
-    public Tile[] tilesArray;
-    public int tileColumns;
+    private ClosedTile[,] tiles = new ClosedTile[0, 0];
 
     private readonly List<PendingTile> pendingList = new();
 
@@ -232,9 +205,9 @@ public class LevelData : ScriptableObject
 
     private void Clear()
     {
-        if (tilesGrid != null)
+        if (tiles != null)
         {
-            foreach (Tile tile in tilesGrid)
+            foreach (ClosedTile tile in tiles)
             {
                 tile.tileStatus = TileStatus.Unreached;
                 tile.bestNextTile = null;
@@ -249,13 +222,13 @@ public class LevelData : ScriptableObject
 
     private void CreateGrid()
     {
-        tilesGrid = new Tile[xSubdivs, zSubdivs];
+        tiles = new ClosedTile[xSubdivs, zSubdivs];
 
         for (int xIndex = 0; xIndex < xSubdivs; xIndex++)
         {
             for (int zIndex = 0; zIndex < zSubdivs; zIndex++)
             {
-                tilesGrid[xIndex, zIndex] = new Tile(xIndex, zIndex);
+                tiles[xIndex, zIndex] = new ClosedTile(xIndex, zIndex);
             }
         }
     }
@@ -265,12 +238,12 @@ public class LevelData : ScriptableObject
         if (TextureMap == null)
             return;
 
-        for (int x = 0; x < tilesGrid.GetLength(0); x++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
         {
-            for (int z = 0; z < tilesGrid.GetLength(1); z++)
+            for (int z = 0; z < tiles.GetLength(1); z++)
             {
                 if (textureMap.GetPixel(x, z).r == float.Epsilon + 1)
-                    tilesGrid[x, z].muddy = true;
+                    tiles[x, z].muddy = true;
             }
         }
     }
@@ -286,33 +259,70 @@ public class LevelData : ScriptableObject
         pendingDictionary.Add(centreTile.GetHashCode(), centreTile);
         pendingList.Add(centreTile);
         centreTile.SetDistance(0);
-        tilesGrid[xMidpoint, zMidpoint].tileStatus = TileStatus.Pending;
+        tiles[xMidpoint, zMidpoint].tileStatus = TileStatus.Pending;
         
         while (pendingList.Count > 0)
         {
-            AddToPendingList(pendingList[0].GetConnectedTiles(tilesGrid));
+            AddToPendingList(pendingList[0].GetConnectedTiles(tiles));
             Close(pendingList[0]);
         }
         float duration = Mathf.Round((Time.realtimeSinceStartup - cachedTime) * 100) / 100;
 
         Debug.Log("Successfully set " + amountClosed.ToString() + " tiles (" + duration + " seconds)");
 
-        generated = true;
+        WriteToTexture();
 
-        tilesArray = FlattenArray(tilesGrid);
-        tileColumns = tilesGrid.GetLength(0);
-        EditorUtility.SetDirty(this);
-        AssetDatabase.SaveAssetIfDirty(this);
+        generated = true;
+    }
+
+    private void WriteToTexture()
+    {
+        int columns = tiles.GetLength(0);
+        int rows = tiles.GetLength(1);
+
+        Texture2D texture = new Texture2D(columns, rows);
+
+        float muddy;
+        float flowDirectionX;
+        float flowDirectionZ;
+        Color color;
+
+        for (int x = 0; x < columns; x++)
+        {
+            for (int z = 0; z < rows; z++)
+            {
+                if (tiles[x, z].muddy)
+                    muddy = 1.0f;
+                else
+                    muddy = 0.0f;
+
+                flowDirectionX = tiles[x, z].FlowDirection.x;
+                flowDirectionZ = tiles[x, z].FlowDirection.y;
+
+                color = new(muddy, flowDirectionX, flowDirectionZ);
+
+                texture.SetPixel(x, z, color);
+            }
+        }
+
+        byte[] bytes = texture.EncodeToPNG();
+
+        var directory = Application.dataPath + "/Resources/";
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+        File.WriteAllBytes(directory + "Texture.png", bytes);
     }
 
     private void Close(PendingTile tileToSet)
     {
-        Tile tile = tilesGrid[tileToSet.x, tileToSet.z];
+        ClosedTile tile = tiles[tileToSet.x, tileToSet.z];
 
         tile.tileStatus = TileStatus.Closed;
         if (tileToSet.currentBestNextTile != null)
         {
-            tile.bestNextTile = tilesGrid[tileToSet.currentBestNextTile.x, tileToSet.currentBestNextTile.z];
+            tile.bestNextTile = tiles[tileToSet.currentBestNextTile.x, tileToSet.currentBestNextTile.z];
             tile.ApplyDirection(new Vector2(tile.bestNextTile.x - tile.x, tile.bestNextTile.z - tile.z).normalized);
         }
 
@@ -323,13 +333,13 @@ public class LevelData : ScriptableObject
 
     private void SetPending(PendingTile tileToSet)
     {
-        if (tilesGrid[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Closed) return;
+        if (tiles[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Closed) return;
 
-        if (tilesGrid[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Unreached)
+        if (tiles[tileToSet.x, tileToSet.z].tileStatus == TileStatus.Unreached)
         {
             pendingDictionary.Add(tileToSet.GetHashCode(), tileToSet);
             InsertInPendingList(tileToSet);
-            tilesGrid[tileToSet.x, tileToSet.z].tileStatus = TileStatus.Pending;
+            tiles[tileToSet.x, tileToSet.z].tileStatus = TileStatus.Pending;
             return;
         }
 
@@ -419,23 +429,6 @@ public class LevelData : ScriptableObject
         pendingList.Insert(testingIndex, tile);
     }
 
-    private Tile[] FlattenArray(Tile[,] gridArray)
-    {
-        var flatArray = new Tile[gridArray.Length];
-
-        int currentElement = 0;
-        for (int x = 0; x < gridArray.GetLength(0); x++)
-        {
-            for (int z = 0; z < gridArray.GetLength(1); z++)
-            {
-                flatArray[currentElement] = gridArray[x, z];
-                currentElement++;
-            }
-        }
-
-        return flatArray;
-    }
-
     public Vector3 SwizzleXZY(float xCoord, float zCoord, float yCoord = 0)
     {
         return new Vector3(xCoord, yCoord, zCoord);
@@ -467,15 +460,15 @@ public class LevelData : ScriptableObject
         if (drawFlowLines)
         {
             // Draw lines to next tiles
-            for (int x = 0; x < tilesGrid.GetLength(0); x++)
+            for (int x = 0; x < tiles.GetLength(0); x++)
             {
-                for (int z = 0; z < tilesGrid.GetLength(1); z++)
+                for (int z = 0; z < tiles.GetLength(1); z++)
                 {
-                    Tile currentTile = tilesGrid[x, z];
+                    ClosedTile currentTile = tiles[x, z];
 
                     if (currentTile.bestNextTile != null)
                     {
-                        if (tilesGrid[x, z].bestNextTile.muddy)
+                        if (tiles[x, z].bestNextTile.muddy)
                             Gizmos.color = Color.yellow;
                         else
                             Gizmos.color = Color.magenta;
@@ -508,7 +501,7 @@ public class LevelData : ScriptableObject
 
         int xCoord = Mathf.RoundToInt(xPos + xSubdivs * 0.5f);
         int zCoord = Mathf.RoundToInt(zPos + zSubdivs * 0.5f);
-        return tilesGrid[xCoord, zCoord].FlowDirection;
+        return tiles[xCoord, zCoord].FlowDirection;
     }
 }
 

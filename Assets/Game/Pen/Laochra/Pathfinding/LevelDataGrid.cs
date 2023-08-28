@@ -1,38 +1,81 @@
-using System.Collections;
 using UnityEngine;
+using System.Collections;
+
+public struct Tile
+{
+    public readonly Vector2 flowDirection;
+    public readonly bool muddy;
+
+    private float inkLevel;
+
+    public Tile(Vector2 flowDirectionInit, bool muddyInit)
+    {
+        flowDirection = flowDirectionInit;
+        muddy = muddyInit;
+
+        inkLevel = 0;
+    }
+
+    public float SpeedMultiplier
+    {
+        get
+        {
+            if (muddy)
+                return 0.5f;
+            else
+                return 1.0f - inkLevel;
+        }
+    }
+
+    public bool GetFlow() => flowDirection != Vector2.zero;
+    public bool GetFlow(out Vector2 direction, out float speedMultiplier)
+    {
+        speedMultiplier = SpeedMultiplier;
+        direction = flowDirection;
+
+        return flowDirection != Vector2.zero;
+    }
+
+    public void ClearInk() => inkLevel = 0;
+
+    public void SetInkLevel(float newInkLevel) => inkLevel = newInkLevel;
+}
 
 public class LevelDataGrid : MonoBehaviour
 {
-    private LevelData levelDataGrid;
-    private Tile[,] tiles = new Tile[0, 0];
+    public Texture2D levelTexture;
+    private Tile[,] tiles;
 
     private void Awake()
     {
-        levelDataGrid = Resources.Load("LevelData") as LevelData;
-        StartCoroutine(LoadLevelData());
+        StartCoroutine(ReadFromTexture());
     }
 
-    private void OnDrawGizmos()
+    private IEnumerator ReadFromTexture()
     {
-        if (levelDataGrid != null) levelDataGrid.OnDrawGizmos();
-    }
+        tiles = new Tile[levelTexture.width, levelTexture.height];
 
-    private IEnumerator LoadLevelData()
-    {
-        int columns = levelDataGrid.tileColumns;
-        int rows = levelDataGrid.tilesArray.Length / levelDataGrid.tileColumns;
+        bool muddy;
+        Vector2 flowDirection;
+        Color color;
 
-        tiles = new Tile[rows, columns];
-        for (int x = 0; x < rows; x++)
+        for (int x = 0; x < levelTexture.width; x++)
         {
-            for (int z = 0; z < columns; z++)
+            for (int z = 0; z < levelTexture.height; z++)
             {
-                tiles[x, z] = levelDataGrid.tilesArray[(columns * x) + z];
+                color = levelTexture.GetPixel(x, z);
+
+                if (color.r > 0.5f)
+                    muddy = true;
+                else
+                    muddy = false;
+
+                flowDirection = new Vector2(color.g, color.b);
+
+                tiles[x, z] = new Tile(flowDirection, muddy);
+
+                yield return null;
             }
-            yield return null;
         }
-        
-        Resources.UnloadAsset(levelDataGrid);
-        levelDataGrid = null;
     }
 }
