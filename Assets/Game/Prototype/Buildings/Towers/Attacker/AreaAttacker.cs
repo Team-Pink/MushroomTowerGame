@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AreaAttacker : Attacker
 {
-    float damageRadius;
+    float damageRadius = 3f;
 
     public override void Attack(HashSet<Target> targets)
     {
@@ -16,11 +17,16 @@ public class AreaAttacker : Attacker
         {
             LayerMask mask = LayerMask.GetMask("Enemy");
 
+            Debug.Log("Area Attack");
+
             foreach (var target in targets)
             {
                 foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
                 {
-                    collision.GetComponent<Enemy>().TakeDamage(damage);
+                    Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                    if (enemy is null)
+                        continue;
+                    enemy.TakeDamage(damage);
                 }
             }
         }

@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class Attacker
 {
-    public int damage;
+    public int damage = 3;
 
-    public float attackCooldown;
-    protected float cooldownTimer = 1f;
+    public float attackCooldown = 3;
+    protected float cooldownTimer = 0f;
 
-    public float attackDelay;
+    public float attackDelay = 2;
     protected float delayTimer = 0f;
 
     public virtual void Attack(HashSet<Target> targets)
@@ -21,20 +21,18 @@ public class Attacker
     {
         if (cooldownTimer < attackCooldown)
         {
-            cooldownTimer += Time.deltaTime * attackCooldown;
+            cooldownTimer += Time.deltaTime;
             return false;
         }
-
         return true;
     }
     protected bool CheckDelayTimer()
     {
         if (delayTimer < attackDelay)
         {
-            delayTimer += Time.deltaTime * attackDelay;
+            delayTimer += Time.deltaTime;
             return false;
         }
-
         return true;
     }
 }

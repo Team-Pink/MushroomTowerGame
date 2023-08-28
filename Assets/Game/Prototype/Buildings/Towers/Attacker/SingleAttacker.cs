@@ -13,7 +13,9 @@ public class SingleAttacker : Attacker
         if (cooldownTimer == 0f)
         {
             foreach (var target in targets)
-                target.enemy.TakeDamage(damage);
+                if (target.enemy is not null)
+                    target.enemy.TakeDamage(damage);
+                
         }
 
         if (!CheckCooldownTimer()) return;

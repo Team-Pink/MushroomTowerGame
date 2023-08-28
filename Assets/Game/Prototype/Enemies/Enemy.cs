@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(true);
         }
-
+        GetComponent<Rigidbody>().detectCollisions = true;
         isDead = false;
 
         //whatever else needs to be done before fully spawning in do within here
@@ -83,8 +83,7 @@ public class Enemy : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
-
-        Debug.Log(gameObject.name + " is dead");
+        GetComponent<Rigidbody>().detectCollisions = false;
     }
 
     #endregion
@@ -94,10 +93,10 @@ public class Enemy : MonoBehaviour
     [SerializeField, Range(0.0f, 5.0f)]
     protected float speed = 2.0f;
     public Path pathToFollow;
-    private float progress = 0.0f;
 
-    private int currentPoint;
-    private Vector3List points = new();
+    float progress = 0.0f;
+    int currentPoint;
+    Vector3List points = new();
 
     protected void Travel()
     {

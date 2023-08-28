@@ -621,7 +621,7 @@ public class InteractionManager : MonoBehaviour
             (targetBuilding as Pylon).connectedPylonsCount++;
         }
 
-        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
 
@@ -637,7 +637,7 @@ public class InteractionManager : MonoBehaviour
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
-        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
