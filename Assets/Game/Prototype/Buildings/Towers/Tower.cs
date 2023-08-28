@@ -51,12 +51,13 @@ public class Tower : Building
 
     private void Awake()
     {
+        transform = gameObject.transform;
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
         targeter.transform = transform;
         targeter.enemyLayer = LayerMask.GetMask("Enemy");
         //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
         
-        transform = gameObject.transform;
+        
     }
 
     private void Update()
@@ -64,7 +65,7 @@ public class Tower : Building
         if (Active)
         {
             targets = targeter.AcquireTargets();
-            attackerComponent.Attack(targets);
+            //attackerComponent.Attack(targets);
         }
     }
 
@@ -106,10 +107,10 @@ namespace Editor
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
     {
-        public override void OnInspectorGUI()
-        {
-            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-        }
+        //public override void OnInspectorGUI()
+        //{
+        //    GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        //}
     }    
 }
 #endif
