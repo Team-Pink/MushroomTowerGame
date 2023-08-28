@@ -7,6 +7,12 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+
+    public Target(Vector3 targetPos, Enemy targetEnemy = null)
+    {
+        position = targetPos;
+        enemy = targetEnemy;
+    }
 }
 
 public abstract class Attacker // Connor you remove this and replace with yours
@@ -14,13 +20,9 @@ public abstract class Attacker // Connor you remove this and replace with yours
     public abstract void Attack(HashSet<Target> targets);
 }
 
-public abstract class Targeter // Lochlan you remove this and replace with yours
-{
-    public abstract HashSet<Target> AcquireTargets();
-}
-
 public class Tower : Building
 {
+
     // Components
     protected new Transform transform;
     protected Animator animator;
@@ -30,6 +32,11 @@ public class Tower : Building
     // References
     private HashSet<Target> targets;
 
+    // Tower Components
+    public TurretController TowerController;
+    private Targeter targeter = new CloseTargeter();
+    // insert attacker here
+    
     // Upgrading
     [SerializeField] bool upgradeable;
     public bool Upgradeable { get; private set; }
@@ -45,14 +52,20 @@ public class Tower : Building
     private void Awake()
     {
         transform = gameObject.transform;
+        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+        targeter.transform = transform;
+        targeter.enemyLayer = LayerMask.GetMask("Enemy");
+        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
+        
+        
     }
 
     private void Update()
     {
         if (Active)
         {
-            targets = targeterComponent.AcquireTargets();
-            attackerComponent.Attack(targets);
+            targets = targeter.AcquireTargets();
+            //attackerComponent.Attack(targets);
         }
     }
 
@@ -94,10 +107,10 @@ namespace Editor
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
     {
-        public override void OnInspectorGUI()
-        {
-            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-        }
-    }
+        //public override void OnInspectorGUI()
+        //{
+        //    GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        //}
+    }    
 }
 #endif

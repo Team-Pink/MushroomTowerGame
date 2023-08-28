@@ -4895,6 +4895,11 @@ Transform:
   m_Father: {fileID: 439026258}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1697896202 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5813711578803633495, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1718890450
 GameObject:
   m_ObjectHideFlags: 0
@@ -5947,6 +5952,10 @@ PrefabInstance:
     - target: {fileID: 4440660253516899245, guid: 5e81c967340ce35448525d0303992cca, type: 3}
       propertyPath: m_Name
       value: MSH_Plane_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4440660253516899245, guid: 5e81c967340ce35448525d0303992cca, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e81c967340ce35448525d0303992cca, type: 3}
@@ -7173,6 +7182,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3816155427975274195}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: residualMenu
+      value: 
+      objectReference: {fileID: 1697896202}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: selectionIndicator
       value: 
       objectReference: {fileID: 6952983}
@@ -7242,7 +7255,7 @@ PrefabInstance:
       objectReference: {fileID: 1545976202}
     - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: startingAmount
-      value: 2000
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915131746, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
@@ -7281,6 +7294,10 @@ PrefabInstance:
     - target: {fileID: 5165019349388587318, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5371182023565522454, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6811093020081216666, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
       propertyPath: m_RootOrder
