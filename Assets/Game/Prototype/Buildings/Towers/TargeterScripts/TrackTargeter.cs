@@ -11,7 +11,8 @@ public class TrackTargeter : Targeter
         HashSet<Target> targets = new HashSet<Target>();
 
 
-        targets = GenerateTargetsInRange(numTargets);
+        targets = GenerateTargetsInRange(100);
+        //targets = FindNumTargetsInRange(5);
 
         return targets;
     }
@@ -27,14 +28,11 @@ public class TrackTargeter : Targeter
             //if (hit.transform.)
             return false;
         }
-        return true;
-        
+        return true;    
     }
 
-    public override void GetTargetsInRange()
-    {
+  
 
-    }
 
     private HashSet<Target> GenerateTargetsInRange(int attemptNum)
     {
@@ -46,7 +44,7 @@ public class TrackTargeter : Targeter
            if (OnTrack(randpos))// check if on track
             {
                 targets.Add(new Target(randpos));
-                Debug.DrawLine(transform.position, randpos, Color.red, Mathf.Infinity);
+                Debug.DrawLine(transform.position, randpos, Color.red, 0.02f);
             }
 
         }
@@ -57,11 +55,25 @@ public class TrackTargeter : Targeter
 
     private HashSet<Target> FindNumTargetsInRange(int TrapNum)
     {
+        int attemptNum = 1000;
         HashSet<Target> targets = new HashSet<Target>();
+        int TargetNum = 0;
         // get a random point in the bounds of the tower's range
-        Vector3 randpos = RandomPosition();
 
-        // check if on track
+        for (int i = 0; i < attemptNum; i++)
+        {
+            Vector3 randpos = RandomPosition();// get a random point in the bounds of the tower's range
+            if (OnTrack(randpos))// check if on track
+            {
+                targets.Add(new Target(randpos));
+                Debug.DrawLine(transform.position, randpos, Color.blue, 0.02f);
+                TargetNum++;
+                
+            }
+            if (TargetNum >= TrapNum)
+                    break;
+        }
+
 
         // check to see if there is already a trap there
         // if yes move it the least distance possible away and check if still OnTrack()

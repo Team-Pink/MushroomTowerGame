@@ -5,11 +5,12 @@ using UnityEngine;
 
 public abstract class EnemyTargeter : Targeter
 {
-    [SerializeField] protected LayerMask enemyLayer;
+
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets = new HashSet<Target>();
-        if (targetsInRange.Count < numTargets) // early out if less targets than numTargets.
+        GetTargetsInRange();
+        if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
             targets = targetsInRange;
             return targets;
@@ -21,30 +22,36 @@ public abstract class EnemyTargeter : Targeter
                 targets.Add(target);
             else
             {
+                Target toRemove = target;
+                bool swap = false;
                 foreach (Target storedTarget in targets)
                 {
-
-                    if (PrioritiseTargets(target,storedTarget))
+                    if (PrioritiseTargets(toRemove, storedTarget))
                     {
-                        targets.Remove(storedTarget);
-                        targets.Add(target);
+                        toRemove = storedTarget;
+                        swap = true;
+
                     }
+
+
                 }
+
+                if (swap)
+                {
+                    targets.Remove(toRemove);
+                    targets.Add(target);
+                }
+
             }
+
         }
+        //foreach (Target target in targets)
+        //{
+        //    Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+        //}
         return targets;
 
     }
-    public override void GetTargetsInRange()
-    {
-        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
-        targetsInRange.Clear(); // as far as I have tried, using remove to take out targets that have left the range is impossible to make work without minimum 3 loops.
-        foreach (Collider collider in enemyColliders)
-        {   
-            targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
-        }
-    }
-
     protected abstract bool PrioritiseTargets(Target targetInRange, Target storedTarget);
 }
 
@@ -53,12 +60,11 @@ public abstract class EnemyTargeter : Targeter
 /// </summary>
 public class CloseTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
-        
+
         // if target in range distance is less swap
-        return (Vector3.Distance(targetInRange.position, transform.position) < Vector3.Distance(storedTarget.position, transform.position)) ;
+        return (Vector3.Distance(targetInRange.position, transform.position) < Vector3.Distance(storedTarget.position, transform.position));
     }
 }
 /// <summary>
@@ -66,7 +72,6 @@ public class CloseTargeter : EnemyTargeter
 /// </summary>
 public class ClusterTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
         Debug.LogWarning("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
@@ -74,7 +79,7 @@ public class ClusterTargeter : EnemyTargeter
         // return (targetInRange.enemy.neighbourhood.count > storedTarget.enemy.neighbourhood.count);
         Debug.Log(LayerMask.GetMask("Enemy") + " is the target physics layermask"); // for testing.
         // for now generate the neighbour hood myself using a layer mask which has been known to end badly
-        return (Physics.OverlapSphere(targetInRange.position, 1.5f,LayerMask.GetMask("Enemy")).Length > Physics.OverlapSphere(storedTarget.position, 1.5f, LayerMask.GetMask("Enemy")).Length);
+        return (Physics.OverlapSphere(targetInRange.position, 1.5f, enemyLayer).Length > Physics.OverlapSphere(storedTarget.position, 1.5f, enemyLayer).Length);
     }
 }
 /// <summary>
@@ -82,7 +87,6 @@ public class ClusterTargeter : EnemyTargeter
 /// </summary>
 public class FastTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
         return (targetInRange.enemy.Speed > storedTarget.enemy.Speed);
@@ -94,7 +98,6 @@ public class FastTargeter : EnemyTargeter
 /// </summary>
 public class StrongTargeter : EnemyTargeter
 {
-    protected HashSet<Target> GetTargets(int numTargets = 1) { return AcquireTargets(numTargets); }
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
         return (targetInRange.enemy.health > storedTarget.enemy.health);

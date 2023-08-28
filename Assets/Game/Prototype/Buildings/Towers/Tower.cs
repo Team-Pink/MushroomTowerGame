@@ -4,6 +4,7 @@ using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public class Tower : Building
 {
+
     public int cost = 10;
     [SerializeField, Range(0,1)] float sellReturnPercent = 0.5f;
 
@@ -12,9 +13,9 @@ public class Tower : Building
 
     // Tower Components
     public TurretController TowerController;
-    private Targeter targeter= new TrackTargeter();
-
+    private Targeter targeter= new ClusterTargeter();
     // insert attacker here
+    
 
     [SerializeField] bool upgraded;
     public bool Upgraded { get; private set; }
@@ -25,14 +26,15 @@ public class Tower : Building
     {
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
         targeter.transform = transform;
-        (targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable");
+        targeter.enemyLayer = LayerMask.GetMask("Enemy");
+        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable");
         
     }
 
     private void Update()
     {
-        //targeter.GetTargetsInRange();
-        targeter.AcquireTargets();
+        targeter.GetTargetsInRange();
+        targeter.AcquireTargets(1);
         // update attacker.
     }
 
