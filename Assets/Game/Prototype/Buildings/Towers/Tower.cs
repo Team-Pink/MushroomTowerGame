@@ -3,28 +3,34 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.TerrainTools;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
-}
 
-public abstract class Targeter // Lochlan you remove this and replace with yours
-{
-    public abstract HashSet<Target> AcquireTargets();
+    public Target(Vector3 targetPos, Enemy targetEnemy = null)
+    {
+        position = targetPos;
+        enemy = targetEnemy;
+    }
 }
 
 public class Tower : Building
 {
+
     // Components
     protected new Transform transform;
     protected Animator animator;
     [SerializeField] private Attacker attackerComponent;
-    private Targeter targeterComponent;
+    [SerializeField] private Targeter targeterComponent;
 
     // References
     private HashSet<Target> targets = new HashSet<Target>();
+
+    // Tower Components
+    public TurretController TowerController;
 
     // Upgrading
     [SerializeField] bool upgradeable;
@@ -38,53 +44,24 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    //Misc/Testing (delete when targetting is set up)
-    [SerializeField]
-    Transform testObject;
-    public enum AttackType
-    {
-        SingleAttacker,
-        AreaAttacker,
-        TrapAttacker
-    }
-    [SerializeField]
-    AttackType attackType;
-    //End Delete
-
     private void Awake()
     {
         transform = gameObject.transform;
+        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
 
-        //remove here
-        testObject = GameObject.Find("TestObject").transform;
-        switch (attackType)
-        {
-            case AttackType.SingleAttacker:
-                attackerComponent = new SingleAttacker();
-                break;
-            case AttackType.AreaAttacker:
-                attackerComponent = new AreaAttacker();
-                break;
-            case AttackType.TrapAttacker:
-                attackerComponent = new TrapAttacker();
-                break;
-        }
-        //end remove
+        targeterComponent.transform = transform;
+        targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
+
+        if (targeterComponent is TrackTargeter)
+            (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
     }
 
     private void Update()
     {
         if (Active)
         {
-            //targets = targeterComponent.AcquireTargets();
-
-            //delete all when targetting system's all good
-            Target newTarget = new Target();
-            newTarget.position = testObject.transform.position;
-            targets.Add(newTarget);
+            targets = targeterComponent.AcquireTargets();
             attackerComponent.Attack(targets);
-            targets.Clear();
-            //end delete
         }
     }
 
@@ -126,10 +103,10 @@ namespace Editor
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
     {
-        //public override void OnInspectorGUI()
-        //{
-        //    GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-        //}
+        public override void OnInspectorGUI()
+        {
+            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        }
     }
 }
 #endif

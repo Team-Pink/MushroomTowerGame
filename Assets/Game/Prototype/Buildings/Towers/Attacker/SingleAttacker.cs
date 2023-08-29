@@ -12,6 +12,7 @@ public class SingleAttacker : Attacker
 
         if (cooldownTimer == 0f)
         {
+            Debug.Log("Single Attack");
             foreach (var target in targets)
                 if (target.enemy is not null)
                     target.enemy.TakeDamage(damage);

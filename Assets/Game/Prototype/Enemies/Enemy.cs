@@ -1,7 +1,6 @@
 using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
 using UnityEngine;
 using Text = TMPro.TMP_Text;
-using UnityEngine.UIElements;
 
 public class Enemy : MonoBehaviour
 {
@@ -33,7 +32,11 @@ public class Enemy : MonoBehaviour
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
-    protected int health;
+    public int health
+    {
+        get;
+        protected set;
+    }
     public bool isDead
     {
         get;
@@ -91,7 +94,16 @@ public class Enemy : MonoBehaviour
     #region MOVEMENT
     [Header("Movement")]
     [SerializeField, Range(0.0f, 5.0f)]
-    protected float speed = 2.0f;
+    protected float speed = 2f;
+
+    [HideInInspector]
+    public float Speed
+    {
+        get
+        {
+            return speed;
+        }
+    }
     public Path pathToFollow;
 
     float progress = 0.0f;

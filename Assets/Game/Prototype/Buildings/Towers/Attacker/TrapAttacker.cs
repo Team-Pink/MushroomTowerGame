@@ -25,6 +25,8 @@ public class TrapAttacker : Attacker
 
         if (cooldownTimer == 0f)
         {
+            Debug.Log("Trap Attacker");
+            
             foreach (var targetPos in targets)
             {
                 if (traps.Count == placedTraps) continue;

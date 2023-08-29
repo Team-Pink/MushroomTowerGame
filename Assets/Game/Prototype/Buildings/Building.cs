@@ -41,7 +41,7 @@ public abstract class Building : MonoBehaviour
         {
             float durationProgress = durationElapsed / radiusFadeDuration;
 
-            foreach(Material radiusMaterial in radiusMaterials)
+            foreach (Material radiusMaterial in radiusMaterials)
             {
                 radiusMaterial.SetFloat("_Display_Amount", durationProgress);
             }

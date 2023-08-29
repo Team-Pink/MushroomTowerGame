@@ -531,7 +531,6 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            Debug.Log(hoveredButtonIndex);
 
             Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
 
@@ -539,7 +538,6 @@ public class InteractionManager : MonoBehaviour
 
             SpawnTower(hoveredButtonIndex);
 
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
