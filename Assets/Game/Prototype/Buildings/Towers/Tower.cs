@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.TerrainTools;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -25,6 +22,10 @@ public class Tower : Building
     protected Animator animator;
     [SerializeField] private Attacker attackerComponent;
     [SerializeField] private Targeter targeterComponent;
+
+    public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
+
+    public Targeter TargeterComponent { get => targeterComponent; set => targeterComponent = value; }
 
     // References
     private HashSet<Target> targets = new HashSet<Target>();
@@ -95,18 +96,3 @@ public class Tower : Building
         base.Sell();
     }
 }
-
-#if UNITY_EDITOR
-namespace Editor
-{
-    using UnityEditor;
-    [CustomEditor(typeof(Tower))]
-    public class TowerEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-        }
-    }
-}
-#endif
