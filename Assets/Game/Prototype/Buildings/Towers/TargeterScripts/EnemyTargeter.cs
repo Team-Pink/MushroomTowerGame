@@ -5,6 +5,19 @@ using UnityEngine;
 
 public abstract class EnemyTargeter : Targeter
 {
+    public float turnRate = 5;
+    public float firingCone = 20;
+
+    public void GetTargetsInRange()
+    {
+        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
+        if (enemyColliders == null) return;
+        if (targetsInRange != null) targetsInRange.Clear(); // as far as I have tried, using remove to take out targets that have left the range is impossible to make work without minimum 3 loops.
+        foreach (Collider collider in enemyColliders)
+        {
+            targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
+        }
+    }
 
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
@@ -13,7 +26,9 @@ public abstract class EnemyTargeter : Targeter
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
             targets = targetsInRange;
+            if(CheckRotation(targets))
             return targets;
+            return null;
         }
 
         foreach (Target target in targetsInRange)
@@ -45,12 +60,45 @@ public abstract class EnemyTargeter : Targeter
             }
 
         }
+        //foreach (Target target in targets) // for testing
+        //{
+        //    Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+        //}
+
+        if(CheckRotation(targets))
+        return targets;
+        return null;
+
+    }
+
+    protected bool CheckRotation(HashSet<Target> targets)
+    {
+        // get the average position of the targets
+        Vector3 enemyPosAverage = Vector3.zero;
         foreach (Target target in targets)
         {
-            Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+            enemyPosAverage += target.position;
         }
-        return targets;
+        enemyPosAverage /= targets.Count;
+        enemyPosAverage.y = 0;
 
+        // get the transform.positon in 2D
+        Vector3 tempTransform = transform.position;
+        tempTransform.y = 0;
+        
+        // Calculate difference between rotation to target and current rotation.
+            Vector3 lookDirection = (enemyPosAverage - tempTransform).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+            if (Quaternion.Angle(transform.rotation, lookRotation) < firingCone) return true;
+            
+            else // rotate to target
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * turnRate);
+            return false;
+        }
+
+            
+        
     }
     protected abstract bool PrioritiseTargets(Target targetInRange, Target storedTarget);
 }

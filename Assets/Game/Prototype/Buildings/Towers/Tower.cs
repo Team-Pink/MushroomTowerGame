@@ -24,13 +24,18 @@ public class Tower : Building
     protected new Transform transform;
     protected Animator animator;
     [SerializeField] private Attacker attackerComponent;
+
+    // Targeter
     [SerializeField] private Targeter targeterComponent;
+    [SerializeField] private float TurnRate;
+    [SerializeField] private float FiringCone;
 
     // References
     private HashSet<Target> targets = new HashSet<Target>();
 
-    // Tower Components
-    public TurretController TowerController;
+
+    // Pylon Data
+    public int storedExperience;
 
     // Upgrading
     [SerializeField] bool upgradeable;
@@ -47,13 +52,19 @@ public class Tower : Building
     private void Awake()
     {
         transform = gameObject.transform; // must be at top.
-        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
 
         targeterComponent.transform = transform;
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
         if (targeterComponent is TrackTargeter)
+        {
             (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
+        }
+        else
+        {
+            (targeterComponent as EnemyTargeter).turnRate = TurnRate;
+            (targeterComponent as EnemyTargeter).firingCone = FiringCone;
+        }
     }
 
     private void Update()
@@ -61,7 +72,27 @@ public class Tower : Building
         if (Active)
         {
             targets = targeterComponent.AcquireTargets();
-            attackerComponent.Attack(targets);
+            if (targets != null)
+            {
+                attackerComponent.Attack(targets);
+                // rotate tower to targetted enemy
+                foreach (Target targetEnemy in targets)
+                {
+                    if (targetEnemy.enemy.isDead)
+                    {
+                        // take enemy experience
+                        storedExperience += targetEnemy.enemy.expValue;
+                        targetEnemy.enemy.expValue = 0;
+
+                        // remove it from targets and retarget
+
+                    }
+                }
+            }
+
+
+
+
         }
     }
 
@@ -93,6 +124,13 @@ public class Tower : Building
         Destroy(gameObject);
 
         base.Sell();
+    }
+
+    public override int GetTowerEXP()
+    {
+        int tempExp = storedExperience;
+        storedExperience = 0;
+        return tempExp;
     }
 }
 
