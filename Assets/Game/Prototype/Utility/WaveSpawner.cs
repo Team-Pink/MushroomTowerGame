@@ -96,7 +96,7 @@ public class WaveSpawner : MonoBehaviour
         List<Enemy> enemiesToRemove = new();
         foreach (Enemy enemy in aliveEnemies)
         {
-            if (enemy.dead)
+            if (enemy.isDead)
             {
                 enemiesToRemove.Add(enemy);
             }
@@ -190,6 +190,7 @@ public class WaveSpawner : MonoBehaviour
         return waves[waveIndex];
     }
 
+    int enemyNumber = 0;
     private GameObject SpawnEnemy()
     {
         GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
@@ -197,7 +198,10 @@ public class WaveSpawner : MonoBehaviour
         //GameObject[] enemyPool = currentWave.enemyTypes.enemyPrefabs.ToArray();
         GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
 
-        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity);
+        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, GameObject.Find("----|| Enemies ||----").transform);
+
+        enemyObject.name = "Enemy " + enemyNumber;
+        enemyNumber++;
 
         return enemyObject;
     }

@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.TerrainTools;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -15,28 +17,21 @@ public struct Target
     }
 }
 
-public abstract class Attacker // Connor you remove this and replace with yours
-{
-    public abstract void Attack(HashSet<Target> targets);
-}
-
 public class Tower : Building
 {
 
     // Components
     protected new Transform transform;
     protected Animator animator;
-    private Attacker attackerComponent;
-    private Targeter targeterComponent;
+    [SerializeField] private Attacker attackerComponent;
+    [SerializeField] private Targeter targeterComponent;
 
     // References
-    private HashSet<Target> targets;
+    private HashSet<Target> targets = new HashSet<Target>();
 
     // Tower Components
     public TurretController TowerController;
-    private Targeter targeter = new CloseTargeter();
-    // insert attacker here
-    
+
     // Upgrading
     [SerializeField] bool upgradeable;
     public bool Upgradeable { get; private set; }
@@ -53,19 +48,20 @@ public class Tower : Building
     {
         transform = gameObject.transform;
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
-        targeter.transform = transform;
-        targeter.enemyLayer = LayerMask.GetMask("Enemy");
-        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
-        
-        
+
+        targeterComponent.transform = transform;
+        targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
+
+        if (targeterComponent is TrackTargeter)
+            (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
     }
 
     private void Update()
     {
         if (Active)
         {
-            targets = targeter.AcquireTargets();
-            //attackerComponent.Attack(targets);
+            targets = targeterComponent.AcquireTargets();
+            attackerComponent.Attack(targets);
         }
     }
 
@@ -107,10 +103,10 @@ namespace Editor
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
     {
-        //public override void OnInspectorGUI()
-        //{
-        //    GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-        //}
-    }    
+        public override void OnInspectorGUI()
+        {
+            GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
+        }
+    }
 }
 #endif
