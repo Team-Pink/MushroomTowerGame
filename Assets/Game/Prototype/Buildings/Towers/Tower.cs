@@ -51,11 +51,11 @@ public class Tower : Building
 
     private void Awake()
     {
-        transform = gameObject.transform;
+        transform = gameObject.transform; // must be at top.
         TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
         targeter.transform = transform;
         targeter.enemyLayer = LayerMask.GetMask("Enemy");
-        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
+        //(targeter as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the track targeter to differentiate path
         
         
     }

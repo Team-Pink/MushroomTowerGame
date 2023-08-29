@@ -710,7 +710,7 @@ public class InteractionManager : MonoBehaviour
 
     public void ResetInteraction(GameObject[] extraObjects = null)
     {
-        selectionIndicator.enabled = false; // broke here
+        selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
         CurrentInteraction = InteractionState.None;
