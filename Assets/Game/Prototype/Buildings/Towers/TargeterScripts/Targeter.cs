@@ -21,7 +21,6 @@ public class Targeter
         {
             targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
         }
-        Debug.Log(targetsInRange.Count + " enemies in range of", transform);
     }
 
 

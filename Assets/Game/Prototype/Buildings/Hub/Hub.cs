@@ -12,9 +12,9 @@ public class Hub : Building
     [SerializeField] Text gameOverText;
     [SerializeField] Text hubHealthText;
 
-    [HideInInspector]
+    
     public PylonList connectedPylons;
-    public int pylonCount = 0;
+    [HideInInspector] public int pylonCount = 0;
 
     private void Update()
     {

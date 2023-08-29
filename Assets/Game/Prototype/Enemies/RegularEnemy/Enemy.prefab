@@ -245,7 +245,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6010180596776883328}
-  - component: {fileID: 6010180596776883329}
+  - component: {fileID: 5260649266670035442}
   - component: {fileID: 8127478780079288209}
   - component: {fileID: 1160273145050062997}
   m_Layer: 10
@@ -272,7 +272,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6010180596776883329
+--- !u!114 &5260649266670035442
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -281,11 +281,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6010180596776884094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53566630ec805284bbe2eedb8f29c5de, type: 3}
+  m_Script: {fileID: 11500000, guid: d06f9b2115c5d4f428d88c000c2d69c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 500
-  dead: 0
+  healthText: {fileID: 5932547466001727575}
+  bugBits: 2
+  expValue: 1
   speed: 1
   pathToFollow: {fileID: 0}
   attackCooldown: 1
@@ -296,9 +297,6 @@ MonoBehaviour:
   animator: {fileID: 4375617594067858861}
   showPath: 1
   showLevers: 0
-  bugBits: 2
-  expValue: 1
-  healthText: {fileID: 5932547466001727575}
 --- !u!135 &8127478780079288209
 SphereCollider:
   m_ObjectHideFlags: 0

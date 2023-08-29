@@ -531,7 +531,6 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            Debug.Log(hoveredButtonIndex);
 
             Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
 
@@ -539,7 +538,6 @@ public class InteractionManager : MonoBehaviour
 
             SpawnTower(hoveredButtonIndex);
 
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
@@ -621,7 +619,7 @@ public class InteractionManager : MonoBehaviour
             (targetBuilding as Pylon).connectedPylonsCount++;
         }
 
-        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
 
@@ -637,7 +635,7 @@ public class InteractionManager : MonoBehaviour
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
-        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
