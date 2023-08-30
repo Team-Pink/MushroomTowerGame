@@ -5,8 +5,7 @@ using UnityEngine;
 
 public abstract class EnemyTargeter : Targeter
 {
-    public float turnRate = 5;
-    public float firingCone = 20;
+
 
     public void GetTargetsInRange()
     {
