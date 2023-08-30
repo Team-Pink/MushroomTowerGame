@@ -14,21 +14,51 @@ public struct Target
     }
 }
 
+[Serializable] public enum TargeterType
+{
+    Close,
+    Cluster,
+    Fast,
+    Strong,
+    Track
+} // For Editor Use Only
+[Serializable] public enum AttackerType
+{
+    Area,
+    Single,
+    Trap
+} // For Editor Use Only
+
+[Serializable] public struct Details
+{
+    public string name;
+    public TargeterType targeterType;
+    public AttackerType attackerType;
+
+    public Details(string nameInit, TargeterType targeterInit, AttackerType attackerInit)
+    {
+        name = nameInit;
+        targeterType = targeterInit;
+        attackerType = attackerInit;
+    }
+} // For Editor Use Only
+
 public class Tower : Building
 {
 
     // Components
     protected new Transform transform;
     protected Animator animator;
-    [SerializeField] private Attacker attackerComponent;
-    [SerializeField] private Targeter targeterComponent;
+    [SerializeReference] private Attacker attackerComponent;
+    [SerializeReference] private Targeter targeterComponent;
+    public Details details; // For Editor Use Only
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
     public Targeter TargeterComponent { get => targeterComponent; set => targeterComponent = value; }
 
     // References
-    private HashSet<Target> targets = new HashSet<Target>();
+    private HashSet<Target> targets = new();
 
     // Tower Components
     public TurretController TowerController;
@@ -48,7 +78,7 @@ public class Tower : Building
     private void Awake()
     {
         transform = gameObject.transform;
-        TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
+        //TowerController = transform.GetChild(2).gameObject.GetComponent<TurretController>();
 
         targeterComponent.transform = transform;
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");

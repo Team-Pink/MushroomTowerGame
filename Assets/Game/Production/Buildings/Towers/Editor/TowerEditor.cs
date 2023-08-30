@@ -1,15 +1,15 @@
-using UnityEngine;
-
-namespace Editor
+namespace EditorScripts
 {
-    using UnityEditor;
-    using static GUILayout;
+    using static UnityEngine.GUILayout;
     using GUI = UnityEditor.EditorGUILayout;
+    using UnityEditor;
 
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
     {
         Tower tower;
+
+        string towerName;
 
         float attackRadius;
         float turnRate;
@@ -18,34 +18,52 @@ namespace Editor
 
         bool upgradable;
 
-        public enum TargeterType
+        TargeterType targeterType = TargeterType.Close;
+        AttackerType attackerType = AttackerType.Area;
+
+        public void OnEnable()
         {
-            Close,
-            Cluster,
-            Fast,
-            Strong,
-            Track
-        } TargeterType targeterType = TargeterType.Close;
-        public enum AttackerType
-        {
-            Area,
-            Single,
-            Trap
-        } AttackerType attackerType = AttackerType.Area;
+            tower = target as Tower;
+
+            {
+                if (tower.TargeterComponent is CloseTargeter)
+                    targeterType = TargeterType.Close;
+                else if (tower.TargeterComponent is ClusterTargeter)
+                    targeterType = TargeterType.Cluster;
+                else if (tower.TargeterComponent is FastTargeter)
+                    targeterType = TargeterType.Fast;
+                else if (tower.TargeterComponent is StrongTargeter)
+                    targeterType = TargeterType.Strong;
+                else if (tower.TargeterComponent is TrackTargeter)
+                    targeterType = TargeterType.Track;
+                else
+                    targeterType = TargeterType.Close;
+
+                if (tower.AttackerComponent is AreaAttacker)
+                    attackerType = AttackerType.Area;
+                else if (tower.AttackerComponent is SingleAttacker)
+                    attackerType = AttackerType.Single;
+                else if (tower.AttackerComponent is TrapAttacker)
+                    attackerType = AttackerType.Trap;
+                else
+                    attackerType = AttackerType.Single;
+            } // Get Existing Components
+
+            SetComponents();
+        }
 
         public override void OnInspectorGUI()
         {
-            tower = target as Tower;
-            SetComponents();
+            EditorGUI.BeginChangeCheck();
 
             BeginHorizontal("box", ExpandWidth(true), Height(35));
-                GUI.Space(); GUI.TextField("Tower Name", Stylesheet.TitleTextField, MaxWidth(120), Height(25)); GUI.Space();
+                GUI.Space(); towerName = GUI.TextField(tower.details.name, Stylesheet.TitleTextField, MaxWidth(200), Height(25)); GUI.Space();
             EndHorizontal();
 
             GUI.Space();
 
             BeginVertical("box", ExpandWidth(true));
-                GUI.LabelField("Tower Values", Stylesheet.TitleLabel);
+                GUI.LabelField("Tower Values", Stylesheet.TitleLabel); 
                 BeginHorizontal();
                     GUI.Space(); GUI.LabelField("Attack Radius", Stylesheet.RightLabel, MaxWidth(100));
                     attackRadius = GUI.FloatField(tower.TargeterComponent.range, Stylesheet.CentreText, MaxWidth(35));
@@ -152,63 +170,70 @@ namespace Editor
                 GUI.Space();
             EndVertical();
 
-            SaveChanges();
-
-            //base.OnInspectorGUI();
+            if (EditorGUI.EndChangeCheck())
+                SaveChanges();
+            //base.OnInspectorGUI(); 
         }
 
-        private void SaveChanges()
+        private void SaveChanges() 
         {
+            Undo.RecordObject(tower, "Modified Tower Values");
+
             SetComponents();
+
+            tower.details = new(towerName, targeterType, attackerType);
 
             tower.TargeterComponent.range = attackRadius;
             tower.TargeterComponent.turnRate = turnRate;
             tower.AttackerComponent.attackCooldown = attackCooldown;
             tower.AttackerComponent.attackDelay = damageDelay;
+
+            EditorUtility.SetDirty(tower);
         }
 
-        private void SetComponents()
-        {
-            if (tower.TargeterComponent is null)
+        private void SetComponents(bool checkType = false)
+        { 
+
+            if (tower.TargeterComponent is null || tower.TargeterComponent.GetType() == typeof(Targeter) || !checkType)
                 switch (targeterType)
-                {
-                    case TargeterType.Close:
-                        if (tower.TargeterComponent is not CloseTargeter)
-                            tower.TargeterComponent = new CloseTargeter();
-                        break;
-                    case TargeterType.Cluster:
-                        if (tower.TargeterComponent is not ClusterTargeter)
-                            tower.TargeterComponent = new ClusterTargeter();
-                        break;
-                    case TargeterType.Fast:
-                        if (tower.TargeterComponent is not FastTargeter)
-                            tower.TargeterComponent = new FastTargeter();
-                        break;
-                    case TargeterType.Strong:
-                        if (tower.TargeterComponent is not StrongTargeter)
-                            tower.TargeterComponent = new StrongTargeter();
-                        break;
-                    case TargeterType.Track:
-                        if (tower.TargeterComponent is not TrackTargeter)
-                            tower.TargeterComponent = new TrackTargeter();
-                        break;
-                }
-            if (tower.AttackerComponent is null)
+            {
+                case TargeterType.Close:
+                    if (tower.TargeterComponent is not CloseTargeter)
+                        tower.TargeterComponent = new CloseTargeter();
+                    break;
+                case TargeterType.Cluster:
+                    if (tower.TargeterComponent is not ClusterTargeter)
+                        tower.TargeterComponent = new ClusterTargeter();
+                    break;
+                case TargeterType.Fast:
+                    if (tower.TargeterComponent is not FastTargeter)
+                        tower.TargeterComponent = new FastTargeter();
+                    break;
+                case TargeterType.Strong:
+                    if (tower.TargeterComponent is not StrongTargeter)
+                        tower.TargeterComponent = new StrongTargeter();
+                    break;
+                case TargeterType.Track:
+                    if (tower.TargeterComponent is not TrackTargeter)
+                        tower.TargeterComponent = new TrackTargeter();
+                    break;
+            }
+            if (tower.AttackerComponent is null || tower.AttackerComponent.GetType() == typeof(Attacker) || !checkType)
                 switch (attackerType)
-                {
-                    case AttackerType.Area:
-                        if (tower.AttackerComponent is not AreaAttacker)
-                            tower.AttackerComponent = new AreaAttacker();
-                        break;
-                    case AttackerType.Single:
-                        if (tower.AttackerComponent is not SingleAttacker)
-                            tower.AttackerComponent = new SingleAttacker();
-                        break;
-                    case AttackerType.Trap:
-                        if (tower.AttackerComponent is not TrapAttacker)
-                            tower.AttackerComponent = new TrapAttacker();
-                        break;
-                }
+            {
+                case AttackerType.Area:
+                    if (tower.AttackerComponent is not AreaAttacker)
+                        tower.AttackerComponent = new AreaAttacker();
+                    break;
+                case AttackerType.Single:
+                    if (tower.AttackerComponent is not SingleAttacker)
+                        tower.AttackerComponent = new SingleAttacker();
+                    break;
+                case AttackerType.Trap:
+                    if (tower.AttackerComponent is not TrapAttacker)
+                        tower.AttackerComponent = new TrapAttacker();
+                    break;
+            }
         }
     }
 }

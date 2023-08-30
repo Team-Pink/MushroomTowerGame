@@ -421,7 +421,7 @@ public class LevelData : ScriptableObject
 }
 
 #if UNITY_EDITOR
-namespace Editor
+namespace EditorScripts
 {
     using UnityEditor;
     using static UnityEngine.GUILayout;

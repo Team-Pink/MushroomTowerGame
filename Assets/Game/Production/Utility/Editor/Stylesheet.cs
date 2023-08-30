@@ -1,5 +1,4 @@
-#if UNITY_EDITOR
-namespace Editor
+namespace EditorScripts
 {
     using UnityEngine;
 
@@ -63,4 +62,3 @@ namespace Editor
         }
     }
 }
-#endif
