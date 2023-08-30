@@ -2,23 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: replace implementations of OnTrack with NotOnTrap.
 public class TrackTargeter : Targeter
 {
+    public float trapRadius = 1;
+    public bool findNumberOfTargets;
     public LayerMask layerMask;
+    
     [SerializeField] private float minRange = 0.5f;
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets = new HashSet<Target>();
 
-
-        targets = GenerateTargetsInRange(100);
-        //targets = FindNumTargetsInRange(5);
+        if(findNumberOfTargets)targets = FindNumTargetsInRange(numTargets); 
+        else targets = GenerateTargetsInRange(1000);
+        
 
         return targets;
     }
 
 
-
+    /// <summary>
+    /// Get the state of the Flow Field Tile at target position and return true if Tile is path.
+    /// </summary>
+    /// <param name="positionOfTarget"></param>
+    /// <returns></returns>
     private bool OnTrack(Vector3 positionOfTarget)
     {
         RaycastHit hit;
@@ -29,6 +37,27 @@ public class TrackTargeter : Targeter
             return false;
         }
         return true;    
+    }
+
+    /// <summary>
+    /// Check if the target is on track and then compare it against all given targets to check if they overlap
+    /// </summary>
+    /// <param name="targets"></param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private bool NotOnTrap(HashSet<Target> targets, Vector3 target)
+    {
+        bool posClear = false;
+        
+         if(OnTrack(target))
+        {
+            foreach(Target t in targets)
+            {
+                posClear = (Vector3.Distance(target, t.position) > trapRadius);
+            }
+        }    
+
+        return posClear;
     }
 
   
@@ -54,13 +83,12 @@ public class TrackTargeter : Targeter
     }
 
     private HashSet<Target> FindNumTargetsInRange(int TrapNum)
-    {
-        int attemptNum = 1000;
+    {        
         HashSet<Target> targets = new HashSet<Target>();
         int TargetNum = 0;
         // get a random point in the bounds of the tower's range
 
-        for (int i = 0; i < attemptNum; i++)
+        for (int i = 0; i < 100; i++)
         {
             Vector3 randpos = RandomPosition();// get a random point in the bounds of the tower's range
             if (OnTrack(randpos))// check if on track

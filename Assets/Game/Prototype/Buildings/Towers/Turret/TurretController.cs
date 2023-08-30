@@ -30,6 +30,8 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
+        this.enabled = false;
+
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
 
@@ -103,7 +105,7 @@ public class TurretController : MonoBehaviour
         }
         barrelAlternate = !barrelAlternate;
 
-        bulletRef.GetComponent<Bullet>().target = targetGameObject;
+        //bulletRef.GetComponent<Bullet>().target = targetGameObject;
 
         targetEnemy.TakeDamage((int)damage);
 
