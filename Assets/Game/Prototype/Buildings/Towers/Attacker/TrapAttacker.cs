@@ -4,9 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class TrapAttacker : Attacker
+// From Lochlan: I don't think there should be a trap attacker I think enemies should deal with traps in their own scripts based
+// on the state of the Flow field tile they are standing on.
+public class TrapAttacker : Attacker 
 {
-    HashSet<Transform> traps;
+    HashSet<Transform> traps; 
     [SerializeField] GameObject trapPrefab;
 
     int placedTraps;

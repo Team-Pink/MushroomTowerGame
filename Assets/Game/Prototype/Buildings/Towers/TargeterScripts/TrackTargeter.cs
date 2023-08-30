@@ -5,18 +5,17 @@ using UnityEngine;
 // TODO: replace implementations of OnTrack with NotOnTrap.
 public class TrackTargeter : Targeter
 {
-    int numTargets = 0;
-    int numAttempts = 100;
-    float trapRadius;
+    public float trapRadius = 1;
+    public bool findNumberOfTargets;
     public LayerMask layerMask;
-    bool findNumberOfTargets;
+    
     [SerializeField] private float minRange = 0.5f;
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets = new HashSet<Target>();
 
         if(findNumberOfTargets)targets = FindNumTargetsInRange(numTargets); 
-        else targets = GenerateTargetsInRange(numAttempts);
+        else targets = GenerateTargetsInRange(1000);
         
 
         return targets;
@@ -89,7 +88,7 @@ public class TrackTargeter : Targeter
         int TargetNum = 0;
         // get a random point in the bounds of the tower's range
 
-        for (int i = 0; i < numAttempts; i++)
+        for (int i = 0; i < 100; i++)
         {
             Vector3 randpos = RandomPosition();// get a random point in the bounds of the tower's range
             if (OnTrack(randpos))// check if on track
