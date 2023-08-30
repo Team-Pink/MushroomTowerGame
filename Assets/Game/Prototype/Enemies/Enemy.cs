@@ -4,9 +4,16 @@ using Text = TMPro.TMP_Text;
 
 public class Enemy : MonoBehaviour
 {
+    protected virtual void CustomAwakeEvents()
+    {
+
+    }
+
     private void Awake()
     {
         points = pathToFollow.GetPoints();
+
+        CustomAwakeEvents();
     }
 
     private void Update()
@@ -32,11 +39,7 @@ public class Enemy : MonoBehaviour
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
-    public int health
-    {
-        get;
-        protected set;
-    }
+    public int health;
     public bool isDead
     {
         get;
@@ -49,7 +52,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         health -= damage;
         if(CheckIfDead()) OnDeath();
@@ -96,6 +99,14 @@ public class Enemy : MonoBehaviour
     [SerializeField, Range(0.0f, 5.0f)]
     protected float speed = 2f;
 
+    [SerializeField] protected LayerMask range;
+
+    public float mass
+    {
+        get;
+        protected set;
+    }
+
     [HideInInspector]
     public float Speed
     {
@@ -131,8 +142,6 @@ public class Enemy : MonoBehaviour
             else
                 AttackMode = true;
         }
-        else
-            AttackMode = false;
     }
 
     private void RotateToFaceTravelDirection()
@@ -144,50 +153,59 @@ public class Enemy : MonoBehaviour
 
     #region Attacking
     [Header("Attacking")]
-    [SerializeField] protected float attackCooldown;
-    [HideInInspector] protected bool AttackMode
-    {
-        get
-        {
-            return attackMode;
-        }
-        private set
-        {
-            animator.SetBool("Attacking", value);
-            attackMode = value;
-        }
-    }
-    protected float elapsedCooldown;
-    protected bool attackInProgress;
-    private bool attackMode;
+    [SerializeField] protected int damage;
+    
+    [SerializeField] protected float attackCooldown = 0;
+    [SerializeField] protected float attackDelay = 0; //would be really nice if we could automatically set the attackDelay to the time of a specific keyframe in an animation clip.
+    protected float elapsedCooldown = 0;
+    protected float elapsedDelay = 0;
 
-    protected void AttackHub()
+    protected bool AttackMode;
+    protected bool attackInProgress = false;
+    protected bool attackCoolingDown = false;
+
+    //there are areas I can further optimise and clean up but that will be a later thing
+    protected virtual void AttackHub()
     {
-        if (!attackInProgress)
+        if(elapsedCooldown == 0 && elapsedDelay == 0)
         {
-            hub.Damage(1);
+            animator.SetBool("Attacking", true);
             attackInProgress = true;
         }
+        
+        if (elapsedDelay < attackDelay)
+        {
+            elapsedDelay += Time.deltaTime;
+
+            if (elapsedDelay >= attackDelay)
+            {
+                hub.Damage(damage);
+                attackInProgress = false;
+            }
+        }            
         else
         {
+            if (elapsedCooldown == 0)
+                attackCoolingDown = true;
+
             elapsedCooldown += Time.deltaTime;
 
             if (elapsedCooldown >= attackCooldown)
             {
-                attackInProgress = false;
+                elapsedDelay = 0;
                 elapsedCooldown = 0;
+                attackCoolingDown = false;
+                animator.SetBool("Attacking", false);
             }
         }
     }
     #endregion
 
     #region MISC
-    [Header("Components")]
-    public Hub hub;
-    [SerializeField] protected LayerMask range;
+    [Space]
+    [HideInInspector] public Hub hub;
     [SerializeField] protected Animator animator;
     #endregion
-    //move to different location if there is a better spot for these variables
 
     #region DEBUG
     [Header("Debug")]
