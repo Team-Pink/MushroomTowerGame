@@ -5,75 +5,60 @@ namespace Editor
 
     public static class Stylesheet
     {
-        private static bool initialised;
-
-        // Field Styles
-        private static GUIStyle titleStyle = null;
-        public static GUIStyle Title
+        // Label Field Styles
+        public static GUIStyle TitleLabel
         {
-            get
-            {
-                if (!initialised)
-                    Initialise();
-
-                return titleStyle;
-            }
-            private set
-            {
-                titleStyle = value;
-            }
-        }
-        private static GUIStyle headingStyle = null;
-        public static GUIStyle Heading
-        {
-            get
-            {
-                if (!initialised)
-                    Initialise();
-
-                return headingStyle;
-            }
-            private set
-            {
-                headingStyle = value;
-            }
-        }
-        private static GUIStyle noteStyle = null;
-        public static GUIStyle Note
-        {
-            get
-            {
-                if (!initialised)
-                    Initialise();
-
-                return noteStyle;
-            }
-            private set
-            {
-                noteStyle = value;
-            }
-        }
-
-        private static void Initialise()
-        {
-            titleStyle = new GUIStyle(GUI.skin.label)
+            get => new(GUI.skin.label)
             {
                 fontSize = 16,
                 fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter
+                alignment = TextAnchor.MiddleCenter,
+                padding = new RectOffset(0, 0, -5, -5)
             };
-            headingStyle = new GUIStyle(GUI.skin.label)
+        }
+        public static GUIStyle HeadingLabel
+        {
+            get => new(GUI.skin.label)
             {
                 fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.UpperCenter
             };
-            noteStyle = new GUIStyle(GUI.skin.label)
+        }
+        public static GUIStyle NoteLabel
+        {
+            get => new(GUI.skin.label)
             {
                 fontSize = 12,
                 fontStyle = FontStyle.Italic,
                 alignment = TextAnchor.MiddleCenter,
                 wordWrap = true
+            };
+        }
+        public static GUIStyle RightLabel
+        {
+            get => new(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleRight,
+            };
+        }
+
+        // Text Field Styles
+        public static GUIStyle TitleTextField
+        {
+            get => new(GUI.skin.textField)
+            {
+                fontSize = 14,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(0, 0, 5, 5)
+            };
+        }
+        public static GUIStyle CentreText
+        {
+            get => new(GUI.skin.textField)
+            {
+                alignment = TextAnchor.MiddleCenter
             };
         }
     }

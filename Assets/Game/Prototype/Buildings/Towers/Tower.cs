@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.TerrainTools;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -33,6 +30,10 @@ public class Tower : Building
     // Trap targeter values
     [SerializeField] float TrapRadius = 1;
     [SerializeField] bool FindNumberOfTargets = false;
+
+    public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
+
+    public Targeter TargeterComponent { get => targeterComponent; set => targeterComponent = value; }
 
     // References
     private HashSet<Target> targets = new HashSet<Target>();
