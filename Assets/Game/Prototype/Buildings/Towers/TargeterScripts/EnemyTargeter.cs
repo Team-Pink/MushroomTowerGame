@@ -6,14 +6,30 @@ using UnityEngine;
 public abstract class EnemyTargeter : Targeter
 {
 
+
+    public void GetTargetsInRange()
+    {
+        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
+        if (enemyColliders == null) return;
+        targetsInRange.Clear();
+        foreach (Collider collider in enemyColliders)
+        {
+            targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
+        }
+    }
+
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets = new HashSet<Target>();
         GetTargetsInRange();
+        if (targetsInRange.Count == 0 || targetsInRange == null) 
+            return null;
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
+            
             targets = targetsInRange;
-            return targets;
+            if (CheckRotation(targets))
+                return targets;
         }
 
         foreach (Target target in targetsInRange)
@@ -45,11 +61,45 @@ public abstract class EnemyTargeter : Targeter
             }
 
         }
+        //foreach (Target target in targets) // for testing
+        //{
+        //    Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+        //}
+
+        if (CheckRotation(targets))
+            return targets;
+        return null;
+
+    }
+
+    protected bool CheckRotation(HashSet<Target> targets)
+    {
+        // get the average position of the targets
+        Vector3 enemyPosAverage = Vector3.zero;
         foreach (Target target in targets)
         {
-            Debug.DrawLine(transform.position, target.position, Color.red, 0.02f);
+            enemyPosAverage += target.position;
         }
-        return targets;
+        enemyPosAverage /= targets.Count; // beware of divide by zero if targets is initialized empty.
+        enemyPosAverage.y = 0;
+
+        // get the transform.positon in 2D
+        Vector3 tempTransform = transform.position;
+        tempTransform.y = 0;
+
+        // Calculate difference between rotation to target and current rotation.
+        Vector3 lookDirection = (enemyPosAverage - tempTransform).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
+        if (Quaternion.Angle(transform.rotation, lookRotation) < firingCone)
+            return true;
+
+        else // rotate to target
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * turnRate);
+            return false;
+        }
+
+
 
     }
     protected abstract bool PrioritiseTargets(Target targetInRange, Target storedTarget);
@@ -77,8 +127,7 @@ public class ClusterTargeter : EnemyTargeter
         Debug.LogWarning("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
         // if neighboorhoud is bigger swap
         // return (targetInRange.enemy.neighbourhood.count > storedTarget.enemy.neighbourhood.count);
-        Debug.Log(LayerMask.GetMask("Enemy") + " is the target physics layermask"); // for testing.
-        // for now generate the neighbour hood myself using a layer mask which has been known to end badly
+        // for now generate the neighbour hood myself using a layer mask and overlap sphere which has been known to end badly
         return (Physics.OverlapSphere(targetInRange.position, 1.5f, enemyLayer).Length > Physics.OverlapSphere(storedTarget.position, 1.5f, enemyLayer).Length);
     }
 }

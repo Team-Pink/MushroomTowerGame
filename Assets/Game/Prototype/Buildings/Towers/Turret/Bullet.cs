@@ -2,18 +2,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public GameObject target;
-    public float bulletSpeed = 1;
+    public float timeToTarget;
+    float timeElapsed;
+    public Target target;
     Vector3 directionToTarget;
+    Vector3 previousPos;
 
+    
     void Update()
     {
-        directionToTarget = (target.transform.position - transform.position).normalized;
-        transform.Translate(directionToTarget * (Time.deltaTime * bulletSpeed));
 
-        if (Vector3.Distance(target.transform.position, transform.position) < 0.2f)
+
+        transform.position = Vector3.Lerp(transform.position, target.position, timeElapsed / timeToTarget);
+
+        
+        previousPos = transform.position;
+        if (timeElapsed >= timeToTarget)
         {
             Destroy(gameObject);
         }
+        timeElapsed += Time.deltaTime;
     }
 }
