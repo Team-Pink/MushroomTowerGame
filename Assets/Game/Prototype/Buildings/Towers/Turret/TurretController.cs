@@ -30,6 +30,8 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
+        this.enabled = false;
+
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
 
@@ -48,13 +50,12 @@ public class TurretController : MonoBehaviour
             // rotate turret to targetted enemy
             RotateToTarget();
 
-            if (targetEnemy.Dead())
+            if (targetEnemy.Dead)
             {
                 // take enemy experience
                 storedExperience += targetEnemy.expValue;
                 targetEnemy.expValue = 0;
-                // run enemy death function
-                targetEnemy.OnDeath();
+                
                 // remove it from targets and retarget
                 inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
@@ -70,7 +71,7 @@ public class TurretController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            if (!other.gameObject.GetComponent<Enemy>().dead)
+            if (!other.gameObject.GetComponent<Enemy>().Dead)
                 inRangeEnemies.Add(other.gameObject);
         }
 
@@ -104,9 +105,9 @@ public class TurretController : MonoBehaviour
         }
         barrelAlternate = !barrelAlternate;
 
-        bulletRef.GetComponent<Bullet>().target = targetGameObject;
+        //bulletRef.GetComponent<Bullet>().target = targetGameObject;
 
-        targetEnemy.health -= (int)damage;
+        //targetEnemy.TakeDamage((int)damage);
 
         firingClock = 0;
 
