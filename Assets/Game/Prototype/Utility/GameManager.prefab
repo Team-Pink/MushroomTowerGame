@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6533875848915124892}
   - component: {fileID: 6533875848915124893}
   - component: {fileID: 6533875848915124894}
+  - component: {fileID: 2029106839798511778}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -61,6 +62,9 @@ MonoBehaviour:
     m_Bits: 2496
   placementExclusionSize: 1.2
   maxDistanceFromPylon: 6
+  maxPylonsPerHub: 6
+  maxTowersPerPylon: 5
+  maxPylonsPerPylon: 2
   buttonBaseColour: {r: 0.90588236, g: 0.90588236, b: 0.90588236, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   selectionIndicator: {fileID: 0}
@@ -69,8 +73,14 @@ MonoBehaviour:
   pylonMenuButtons:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  residualMenu: {fileID: 0}
+  residualMenuButtons:
+  - {fileID: 0}
+  - {fileID: 0}
   towerMenu: {fileID: 0}
   towerMenuButtons:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   towerSelectionMenu: {fileID: 0}
@@ -91,9 +101,57 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6533875848915131746}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db8c72ba50f61a7439a1262b5faddc25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currencyText: {fileID: 0}
+  startingAmount: 200
+--- !u!114 &2029106839798511778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6533875848915131746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf2c7b46357f7446840d36b7672b637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paths:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  waves:
+  - enemyPrefabs:
+    - {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    durationInSeconds: 20
+    enemyCount: 10
+  - enemyPrefabs:
+    - {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    durationInSeconds: 20
+    enemyCount: 16
+  - enemyPrefabs:
+    - {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+    durationInSeconds: 20
+    enemyCount: 24
+  - enemyPrefabs:
+    - {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+    durationInSeconds: 20
+    enemyCount: 28
+  - enemyPrefabs:
+    - {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+    durationInSeconds: 20
+    enemyCount: 32
+  secondsBetweenWaves: 6
+  enemyPrefab: {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+  hub: {fileID: 0}
+  wonText: {fileID: 0}

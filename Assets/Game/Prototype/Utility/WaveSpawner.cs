@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.SceneManagement.SceneManager;
+using Text = TMPro.TMP_Text;
 
 [System.Serializable]
 public struct EnemyTypes
@@ -26,7 +29,8 @@ public struct EnemyTypes
 [System.Serializable]
 public class Wave
 {
-    // \/ Implement this once we have multiple enemy types \/
+    public List<GameObject> enemyPrefabs;
+    // \/ Swap for this when implementing different chances for enemies \/
     //public EnemyTypes enemyTypes;
 
     public float durationInSeconds;
@@ -60,7 +64,10 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] GameObject enemyPrefab;
     private int spawnedEnemies;
-    private List<Enemy> aliveEnemies = new();
+    private readonly List<Enemy> aliveEnemies = new();
+
+    [SerializeField] Hub hub;
+    [SerializeField] Text wonText;
 
     private void Awake()
     {
@@ -89,7 +96,7 @@ public class WaveSpawner : MonoBehaviour
         List<Enemy> enemiesToRemove = new();
         foreach (Enemy enemy in aliveEnemies)
         {
-            if (enemy.dead)
+            if (enemy.isDead)
             {
                 enemiesToRemove.Add(enemy);
             }
@@ -117,7 +124,8 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.GetComponent<Enemy>().pathToFollow = currentPath;
+            enemy.pathToFollow = currentPath;
+            enemy.hub = hub;
             enemy.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
 
@@ -144,8 +152,21 @@ public class WaveSpawner : MonoBehaviour
                 InitialiseNextWave();
             }
             else
+            {
+                wonText.enabled = true;
+
                 Debug.Log("Final Wave Defeated");
+
+                StartCoroutine(GameWon());
+            }
+
         }
+    }
+
+    private IEnumerator GameWon()
+    {
+        yield return new WaitForSeconds(5);
+        LoadScene(GetActiveScene().buildIndex);
     }
 
     private void InitialiseNextWave()
@@ -169,13 +190,18 @@ public class WaveSpawner : MonoBehaviour
         return waves[waveIndex];
     }
 
+    int enemyNumber = 0;
     private GameObject SpawnEnemy()
     {
-        // \/ Implement this once we have multiple enemy types \/
+        GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
+        // \/ Swap for this when implementing different chances for enemies \/
         //GameObject[] enemyPool = currentWave.enemyTypes.enemyPrefabs.ToArray();
-        //GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
+        GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
 
-        GameObject enemyObject = Instantiate(enemyPrefab, currentSpawnPoint.position, Quaternion.identity);
+        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, GameObject.Find("----|| Enemies ||----").transform);
+
+        enemyObject.name = "Enemy " + enemyNumber;
+        enemyNumber++;
 
         return enemyObject;
     }

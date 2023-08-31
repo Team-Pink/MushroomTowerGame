@@ -1,10 +1,8 @@
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
-using FloatList = System.Collections.Generic.List<float>;
-
 using UnityEngine;
 using UnityEngine.UI;
-
 using static System.Linq.Enumerable;
+using FloatList = System.Collections.Generic.List<float>;
+using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
 
 public enum InteractionState
 {
@@ -12,8 +10,8 @@ public enum InteractionState
 
     BuildingInteraction,
     PylonMenu,
+    ResidualMenu,
     TowerMenu,
-    DraggingBuilding,
 
     PlacingFromHub,
     PlacingFromPylon,
@@ -35,7 +33,7 @@ public class InteractionManager : MonoBehaviour
     #region Building Selection Variables
     [SerializeField] LayerMask buildingLayers;
     private Building targetBuilding;
-    private float interactionDuration = 0.0f;
+    //private float interactionDuration = 0.0f;
     #endregion
 
     [Header("Placement")]
@@ -51,6 +49,11 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
+
+    [Space]
+    [SerializeField] int maxPylonsPerHub = 6;
+    [SerializeField] int maxTowersPerPylon = 5;
+    [SerializeField] int maxPylonsPerPylon = 2;
     #endregion
 
     [Header("Currency")]
@@ -71,6 +74,9 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject pylonMenu;
     [SerializeField, NonReorderable] Image[] pylonMenuButtons;
+
+    [SerializeField, Space()] GameObject residualMenu;
+    [SerializeField, NonReorderable] Image[] residualMenuButtons;
 
     [SerializeField, Space()] GameObject towerMenu;
     [SerializeField, NonReorderable] Image[] towerMenuButtons;
@@ -162,11 +168,11 @@ public class InteractionManager : MonoBehaviour
             case InteractionState.PylonMenu:
                 PylonMenuState();
                 break;
+            case InteractionState.ResidualMenu:
+                ResidualMenuState();
+                break;
             case InteractionState.TowerMenu:
                 TowerMenuState();
-                break;
-            case InteractionState.DraggingBuilding:
-                DraggingBuildingState();
                 break;
 
             case InteractionState.PlacingFromHub:
@@ -187,6 +193,26 @@ public class InteractionManager : MonoBehaviour
 
     private void DefaultState()
     {
+        currentHit = GetRayHit(budLayer);
+
+        if (currentHit.collider is null)
+        {
+            currentHit = GetRayHit(buildingLayers);
+
+            if (currentHit.collider is null)
+            {
+                if (targetBuilding is not null)
+                    ResetInteraction();
+            }
+            else
+            {
+                targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
+
+                CurrentInteraction = InteractionState.BuildingInteraction;
+                return;
+            }
+        }
+
         if (Input.GetKeyDown(interactKey))
         {
             currentHit = GetRayHit(budLayer);
@@ -211,14 +237,6 @@ public class InteractionManager : MonoBehaviour
 
                 return;
             }
-
-            currentHit = GetRayHit(buildingLayers);
-            if (currentHit.collider is not null)
-            {
-                targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
-                CurrentInteraction = InteractionState.BuildingInteraction;
-                return;
-            }
         }
 
         if (dragStartPosition != Vector3.zero)
@@ -227,6 +245,14 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        currentHit = GetRayHit(buildingLayers);
+
+        if (currentHit.collider is null)
+        {
+            ResetInteraction();
+            return;
+        }
+
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
         if (startingMousePosition == Vector2.zero)
@@ -234,47 +260,37 @@ public class InteractionManager : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
-            ResetInteraction(new GameObject[] { radiusDisplay });
-            DefaultState();
-            return;
-        }
-
-        if (Input.GetKey(interactKey))
-        {
-            if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
+            radiusDisplay.SetActive(false);
+            if (targetBuilding is Pylon)
             {
-                if (targetBuilding is not Hub)
-                {
-                    CurrentInteraction = InteractionState.DraggingBuilding;
-                    startingMousePosition = Vector2.zero;
-                    return;
-                }
-            }
-
-            if (interactionDuration > 0.5f)
-            {
-                if (targetBuilding is Pylon)
+                Pylon targetPylon = targetBuilding as Pylon;
+                if (!targetPylon.pylonResidual.activeSelf)
                 {
                     CurrentInteraction = InteractionState.PylonMenu;
-                    startingMousePosition = Vector2.zero;
-                    return;
                 }
-                else if (targetBuilding is Tower)
+                else
                 {
-                    CurrentInteraction = InteractionState.TowerMenu;
-                    startingMousePosition = Vector2.zero;
-                    return;
+                    CurrentInteraction = InteractionState.ResidualMenu;
                 }
+                startingMousePosition = Vector2.zero;
+            }
+            else if (targetBuilding is Tower)
+            {
+                CurrentInteraction = InteractionState.TowerMenu;
+                startingMousePosition = Vector2.zero;
             }
             else
-                interactionDuration += Time.deltaTime;
+            {
+                ResetInteraction(new GameObject[] { radiusDisplay });
+                DefaultState();
+            }
         }
     }
     private void PylonMenuState()
     {
         RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
 
-        if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
+        if (Input.GetKeyDown(interactKey))
         {
             if (hoveredButtonIndex < 0)
             {
@@ -286,9 +302,9 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost))
+                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost()))
                 {
-                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).forceEnhanceCost);
+                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost());
                     (targetBuilding as Pylon).Enhance();
                 }
                 else
@@ -299,6 +315,40 @@ public class InteractionManager : MonoBehaviour
                 }
 
             } // Force Enhance
+            else if (hoveredButtonIndex == 1)
+            {
+                targetBuilding.Sell();
+            } // Sell
+            else if (hoveredButtonIndex == 2)
+            {
+                (targetBuilding as Pylon).SellAll();
+            } // Sell All
+            hoveredButton.color = buttonBaseColour;
+
+            ResetInteraction();
+        }
+    }
+    private void ResidualMenuState()
+    {
+        RadialMenu(residualMenu, residualMenuButtons, out int hoveredButtonIndex);
+
+        Pylon targetPylon = targetBuilding as Pylon;
+
+        if (Input.GetKeyDown(interactKey))
+        {
+            if (hoveredButtonIndex < 0)
+            {
+                ResetInteraction();
+                return;
+            }
+
+            Image hoveredButton = pylonMenuButtons[hoveredButtonIndex];
+
+            if (hoveredButtonIndex == 0)
+            {
+                targetPylon.CurrentHealth = targetPylon.MaxHealth;
+                targetPylon.ToggleResidual(false);
+            } // Repair
             else if (hoveredButtonIndex == 1)
             {
                 (targetBuilding as Pylon).SellAll();
@@ -314,7 +364,7 @@ public class InteractionManager : MonoBehaviour
     {
         RadialMenu(towerMenu, towerMenuButtons, out int hoveredButtonIndex);
 
-        if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
+        if (Input.GetKeyDown(interactKey))
         {
             if (hoveredButtonIndex < 0)
             {
@@ -324,7 +374,11 @@ public class InteractionManager : MonoBehaviour
 
             Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
 
-            if (!(targetBuilding as Tower).Upgraded)
+            if (hoveredButtonIndex == 1)
+            {
+                (targetBuilding as Tower).Sell();
+            }
+            else if (!(targetBuilding as Tower).Upgradeable)
             {
                 (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
             }
@@ -333,40 +387,6 @@ public class InteractionManager : MonoBehaviour
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
-        }
-    }
-    private void DraggingBuildingState()
-    {
-        currentHit = GetRayHit(buildingLayers);
-        Building heldBuilding = targetBuilding;
-
-        bool validSellPoint = false;
-
-        if (currentHit.collider is not null)
-        {
-            Building hoveredBuilding = currentHit.collider.GetComponent<Building>();
-
-            if (hoveredBuilding is Tower)
-                return;
-
-            if (hoveredBuilding is Hub)
-                validSellPoint = true;
-            else if (hoveredBuilding is Pylon)
-            {
-                if ((hoveredBuilding as Pylon).IsBuildingInList(heldBuilding))
-                    validSellPoint = true;
-            }
-        }
-
-        if (Input.GetKeyUp(interactKey))
-        {
-            if (validSellPoint)
-            {
-                heldBuilding.Sell();
-                ResetInteraction();
-            }
-            else
-                CurrentInteraction = InteractionState.BuildingInteraction;
         }
     }
 
@@ -390,7 +410,7 @@ public class InteractionManager : MonoBehaviour
 
             bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
 
-            if (inPylonBuildRange && spaceToPlace && spaceForPylon)
+            if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
             {
                 canPlace = true;
                 selectionIndicator.color = Color.green;
@@ -428,8 +448,10 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromPylonState()
     {
-        bool canPlace;
+        bool canPlace = false;
         bool placingPylon = false;
+
+        selectionIndicator.color = Color.red;
 
         targetBuilding = activeBud.transform.parent.GetComponent<Building>();
         DisplayBuildingRadius(out GameObject radiusDisplay);
@@ -448,27 +470,17 @@ public class InteractionManager : MonoBehaviour
             bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
             bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
 
-            if (inTowerBuildRange & spaceToPlace)
+            bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
+            bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
+
+            if (towerPlacementCriteria || pylonPlacementCriteria)
             {
                 canPlace = true;
                 selectionIndicator.color = Color.green;
+
+                if (pylonPlacementCriteria)
+                    placingPylon = true;
             }
-            else if (inPylonBuildRange && spaceToPlace && spaceForPylon)
-            {
-                placingPylon = true;
-                canPlace = true;
-                selectionIndicator.color = Color.green;
-            }
-            else
-            {
-                canPlace = false;
-                selectionIndicator.color = Color.red;
-            }
-        }
-        else
-        {
-            canPlace = false;
-            selectionIndicator.color = Color.red;
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
@@ -495,27 +507,30 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerSelectionState()
     {
-        if (!TargetIsPlane)
-        {
-            ResetInteraction();
-            return;
-        }
+        targetBuilding.radiusDisplay.SetActive(false);
 
         RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
-
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().cost;
-            // If you want to make it so that towers you can't buy flash red when attempting to purchase or appear greyed out and unable to pick,
-            // just have currency check out of this if statement.
-            if (hoveredButtonIndex < 0 || !currencyManager.CanDecreaseCurrencyAmount(cost))
+            bool atTowerLimit;
+
+            atTowerLimit = activeBud.transform.parent.GetComponent<Pylon>().connectedTowersCount >= maxTowersPerPylon;
+
+            if (hoveredButtonIndex < 0 || atTowerLimit)
             {
                 ResetInteraction();
                 return;
             }
 
-            Debug.Log(hoveredButtonIndex);
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
+
+            if (!currencyManager.CanDecreaseCurrencyAmount(cost))
+            {
+                ResetInteraction();
+                return;
+            }
+
 
             Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
 
@@ -523,7 +538,6 @@ public class InteractionManager : MonoBehaviour
 
             SpawnTower(hoveredButtonIndex);
 
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
@@ -556,25 +570,33 @@ public class InteractionManager : MonoBehaviour
     private void AttemptToSpawnPylon()
     {
         int cost = 0;
-        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        bool notMaxPylons = false;
+
+        Building parent = activeBud.transform.parent.GetComponent<Building>();
+
+        if (parent is Hub)
         {
-            pylonMultiplier = 1;
+            Hub parentHub = parent as Hub;
             cost = Pylon.GetPylonBaseCurrency();
+            parentHub.ClearDestroyedPylons();
+            notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;
         }
-        else if (activeBud.transform.parent.GetComponent<Pylon>() != null)
+        else if (parent is Pylon)
         {
-            Pylon ParentPylon = activeBud.transform.parent.GetComponent<Pylon>();
-            pylonMultiplier = ParentPylon.GetMultiplier() + 1;
-            cost = ParentPylon.GetPylonCost(pylonMultiplier);
-        }
-        else
-        {
-            Debug.LogWarning("activeBud does not come from a hub nor pylon");
-            ResetInteraction();
-            return;
+            Pylon parentPylon = parent as Pylon;
+            pylonMultiplier = parentPylon.GetMultiplier() + 1;
+            cost = parentPylon.GetPylonCost(pylonMultiplier);
+            
+            notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
+
+            if (!parentPylon.Enhanced)
+            {
+                ResetInteraction();
+                return;
+            }
         }
 
-        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost))
+        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
         {
             ResetInteraction();
             return;
@@ -588,12 +610,23 @@ public class InteractionManager : MonoBehaviour
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
-        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity);
+        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        {
+            (targetBuilding as Hub).pylonCount++;
+        }
+        else
+        {
+            (targetBuilding as Pylon).connectedPylonsCount++;
+        }
+
+        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
 
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
+        else
+            (targetBuilding as Hub).AddPylon(pylonInstance.GetComponent<Pylon>());
 
         ResetInteraction();
     }
@@ -601,11 +634,14 @@ public class InteractionManager : MonoBehaviour
     public void SpawnTower(int towerIndex)
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
-        
-        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity);
+
+        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         if (previousInteraction == InteractionState.PlacingFromPylon)
+        {
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
+            (targetBuilding as Pylon).connectedTowersCount++;
+        }  
 
         ResetInteraction();
     }
@@ -614,7 +650,10 @@ public class InteractionManager : MonoBehaviour
     {
         radiusDisplay = targetBuilding.radiusDisplay;
         if (!radiusDisplay.activeSelf)
+        {
             radiusDisplay.SetActive(true);
+            StartCoroutine(targetBuilding.ExpandRadiusDisplay());
+        }
     }
 
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
@@ -672,7 +711,6 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
-        interactionDuration = 0.0f;
         CurrentInteraction = InteractionState.None;
 
         if (activeBud is not null)
@@ -689,6 +727,9 @@ public class InteractionManager : MonoBehaviour
 
         if (pylonMenu.activeSelf)
             pylonMenu.SetActive(false);
+
+        if (residualMenu.activeSelf)
+            residualMenu.SetActive(false);
 
         if (towerMenu.activeSelf)
             towerMenu.SetActive(false);
