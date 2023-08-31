@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,8 +14,10 @@ public class SingleAttacker : Attacker
             Debug.Log("Single Attack");
             foreach (var target in targets)
                 if (target.enemy is not null)
-                    target.enemy.TakeDamage(damage);
-                
+                {
+                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
+                    AnimateAttack(target);
+                }
         }
 
         if (!CheckCooldownTimer()) return;

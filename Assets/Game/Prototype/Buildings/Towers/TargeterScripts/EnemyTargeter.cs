@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class EnemyTargeter : Targeter
@@ -26,7 +24,6 @@ public abstract class EnemyTargeter : Targeter
             return null;
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
-            
             targets = targetsInRange;
             if (CheckRotation(targets))
                 return targets;
@@ -46,10 +43,7 @@ public abstract class EnemyTargeter : Targeter
                     {
                         toRemove = storedTarget;
                         swap = true;
-
                     }
-
-
                 }
 
                 if (swap)
@@ -57,9 +51,7 @@ public abstract class EnemyTargeter : Targeter
                     targets.Remove(toRemove);
                     targets.Add(target);
                 }
-
             }
-
         }
         //foreach (Target target in targets) // for testing
         //{
@@ -124,7 +116,7 @@ public class ClusterTargeter : EnemyTargeter
 {
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
-        Debug.LogWarning("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
+        //Debug.LogWarning("this Targeter cannot be implemented efficiently without the neighbourhood of flocking behaviour");
         // if neighboorhoud is bigger swap
         // return (targetInRange.enemy.neighbourhood.count > storedTarget.enemy.neighbourhood.count);
         // for now generate the neighbour hood myself using a layer mask and overlap sphere which has been known to end badly
@@ -149,6 +141,6 @@ public class StrongTargeter : EnemyTargeter
 {
     protected override bool PrioritiseTargets(Target targetInRange, Target storedTarget)
     {
-        return (targetInRange.enemy.health > storedTarget.enemy.health);
+        return (targetInRange.enemy.MaxHealth > storedTarget.enemy.MaxHealth);
     }
 }

@@ -13,6 +13,9 @@ public class Attacker
     public float attackDelay = 2;
     protected float delayTimer = 0f;
 
+    public Transform transform;
+    public GameObject bulletPrefab;
+
     public virtual void Attack(HashSet<Target> targets)
     {
         Debug.LogWarning("Use one of the other methods of attacking");
@@ -34,5 +37,15 @@ public class Attacker
             return false;
         }
         return true;
+    }
+
+    public void AnimateAttack(Target target)
+    {
+        GameObject bulletRef;
+
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity);
+
+        bulletRef.GetComponent<Bullet>().timeToTarget = attackDelay;
+        bulletRef.GetComponent<Bullet>().target = target;
     }
 }

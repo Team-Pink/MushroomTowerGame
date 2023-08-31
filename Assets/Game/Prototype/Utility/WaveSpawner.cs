@@ -5,33 +5,9 @@ using static UnityEngine.SceneManagement.SceneManager;
 using Text = TMPro.TMP_Text;
 
 [System.Serializable]
-public struct EnemyTypes
-{
-    public List<GameObject> enemyPrefabs;
-    [SerializeField] List<float> chanceToAppear;
-
-    public float GetChance(GameObject prefab)
-    {
-        int prefabIndex = -1;
-        if (enemyPrefabs.Contains(prefab))
-            prefabIndex = enemyPrefabs.IndexOf(prefab);
-
-        if (prefabIndex > 0)
-            return chanceToAppear[prefabIndex];
-        else
-        {
-            Debug.LogError("The list does not contain a prefab for " + prefab.name, prefab);
-            return -1;
-        }
-    }
-}
-
-[System.Serializable]
 public class Wave
 {
     public List<GameObject> enemyPrefabs;
-    // \/ Swap for this when implementing different chances for enemies \/
-    //public EnemyTypes enemyTypes;
 
     public float durationInSeconds;
     public int enemyCount;
@@ -126,7 +102,7 @@ public class WaveSpawner : MonoBehaviour
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
             enemy.pathToFollow = currentPath;
             enemy.hub = hub;
-            enemy.gameObject.SetActive(true);
+            enemy.transform.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
 
             cooldownElapsed = 0.0f;
@@ -194,9 +170,7 @@ public class WaveSpawner : MonoBehaviour
     private GameObject SpawnEnemy()
     {
         GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
-        // \/ Swap for this when implementing different chances for enemies \/
-        //GameObject[] enemyPool = currentWave.enemyTypes.enemyPrefabs.ToArray();
-        GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length - 1)];
+        GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length)];
 
         GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, GameObject.Find("----|| Enemies ||----").transform);
 

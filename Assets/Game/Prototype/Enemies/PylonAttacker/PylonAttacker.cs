@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PylonAttacker : Enemy
@@ -55,6 +52,7 @@ public class PylonAttacker : Enemy
                 speed = 1;
                 lockedOn = false;
                 target = null;
+                ResetBullet();
                 return;
             }
             // rotate to face pylon

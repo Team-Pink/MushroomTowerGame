@@ -90,6 +90,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5260649266670035442, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260649266670035442, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: maxHealth
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6010180596529164800, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -178,8 +186,33 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 3623149293886159787, guid: ac424feb60f2ee24f83e082bb6bc1440, type: 3}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: bugBits
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 6305718611643300989}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: expValue
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: bulletSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8841086878755895078, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: range.m_Bits
+      value: 4096
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6010180596776883329, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+    - {fileID: 5260649266670035442, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
 --- !u!114 &3787705941191005968 stripped
 MonoBehaviour:
@@ -209,11 +242,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3f80e98acc3da43a7f02f043f0d485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 500
-  dead: 0
-  speed: 1
+  healthText: {fileID: 3787705941191005968}
+  maxHealth: 8
+  bugBits: 3
+  expValue: 2
+  speed: 1.5
   pathToFollow: {fileID: 0}
-  attackCooldown: 1
+  attackCooldown: 1.5
   hub: {fileID: 0}
   range:
     serializedVersion: 2
@@ -221,9 +256,6 @@ MonoBehaviour:
   animator: {fileID: 6305718611643300989}
   showPath: 0
   showLevers: 0
-  bugBits: 3
-  expValue: 2
-  healthText: {fileID: 3787705941191005968}
   target: {fileID: 0}
   firingCone: 10
   turnSpeed: 1

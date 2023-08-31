@@ -13,6 +13,8 @@ namespace EditorScripts
 
         float attackRadius;
         float turnRate;
+
+        int damage;
         float attackCooldown;
         float damageDelay;
 
@@ -74,6 +76,12 @@ namespace EditorScripts
                     GUI.Space(); GUI.LabelField("Turn Rate", Stylesheet.RightLabel, MaxWidth(100));
                     turnRate = GUI.FloatField(tower.TargeterComponent.turnRate, Stylesheet.CentreText, MaxWidth(35));
                     GUI.LabelField("° per Second", MaxWidth(100)); GUI.Space();
+                EndHorizontal();
+                GUI.Space(10);
+                BeginHorizontal();
+                    GUI.Space(); GUI.LabelField("Damage", Stylesheet.RightLabel, MaxWidth(100));
+                    damage = GUI.IntField(tower.AttackerComponent.damage, Stylesheet.CentreText, MaxWidth(35));
+                    GUI.LabelField("Hitpoints", MaxWidth(100)); GUI.Space();
                 EndHorizontal();
                 GUI.Space();
                 BeginHorizontal();
@@ -185,6 +193,8 @@ namespace EditorScripts
 
             tower.TargeterComponent.range = attackRadius;
             tower.TargeterComponent.turnRate = turnRate;
+
+            tower.AttackerComponent.damage = damage;
             tower.AttackerComponent.attackCooldown = attackCooldown;
             tower.AttackerComponent.attackDelay = damageDelay;
 

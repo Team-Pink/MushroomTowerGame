@@ -90,7 +90,7 @@ public class Tower : Building
     {
         transform = gameObject.transform;
         targeterComponent.transform = transform;
-
+        attackerComponent.transform = transform;
         
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
@@ -106,7 +106,9 @@ public class Tower : Building
             (targeterComponent as EnemyTargeter).firingCone = FiringCone;
         }
 
-            
+        attackerComponent.bulletPrefab = bulletPrefab;
+
+        radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
     }
 
     private void Update()
@@ -121,23 +123,13 @@ public class Tower : Building
                 // rotate tower to targetted enemy
                 foreach (Target targetEnemy in targets)
                 {
-                    
-                    if (targetEnemy.enemy.isDead)
-                    {
-                        // take enemy experience
-                        storedExperience += targetEnemy.enemy.expValue;
-                        targetEnemy.enemy.expValue = 0;
+                    // take enemy experience
+                    storedExperience += targetEnemy.enemy.expValue;
+                    targetEnemy.enemy.expValue = 0;
 
-                        // remove it from targets and retarget
-
-                    }
-                    else AnimateAttack(targetEnemy);
+                    // remove it from targets and retarget
                 }
             }
-
-
-
-
         }
     }
 
@@ -176,18 +168,6 @@ public class Tower : Building
         int tempExp = storedExperience;
         storedExperience = 0;
         return tempExp;
-    }
-
-    public void AnimateAttack(Target target)
-    {
-        GameObject bulletRef;
-
-      
-        bulletRef = Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity);
-
-        bulletRef.GetComponent<Bullet>().timeToTarget = attackerComponent.attackDelay;
-        bulletRef.GetComponent<Bullet>().target = target;
-
     }
 }
 

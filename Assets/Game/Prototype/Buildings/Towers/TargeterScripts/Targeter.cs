@@ -16,7 +16,6 @@ public class Targeter
 
     public virtual HashSet<Target> AcquireTargets(int numTargets = 1)
     {
-
         return null;
     }
 }

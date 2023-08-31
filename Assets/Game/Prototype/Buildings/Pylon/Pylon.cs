@@ -57,7 +57,7 @@ public class Pylon : Building
         {
             currentHealth = value;
             if (currentHealth <= 0)
-                Deactivate();
+                ToggleResidual(true);
         }
     }
     public GameObject pylonResidual;

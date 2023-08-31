@@ -1,12 +1,14 @@
 using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
 using UnityEngine;
 using Text = TMPro.TMP_Text;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
     private void Awake()
     {
         points = pathToFollow.GetPoints();
+        health = maxHealth;
     }
 
     private void Update()
@@ -18,7 +20,7 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
 
-        healthText.text = health.ToString();
+        healthText.text = CurrentHealth.ToString();
 
         if (AttackMode)
         {
@@ -32,10 +34,17 @@ public class Enemy : MonoBehaviour
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
-    public int health
+    [SerializeField] int maxHealth;
+    private int health;
+    public int CurrentHealth
     {
-        get;
-        protected set;
+        get => health;
+        protected set => health = value;
+    }
+    public int MaxHealth
+    {
+        get => maxHealth;
+        private set { }
     }
     public bool isDead
     {
@@ -49,9 +58,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public void TakeDamage(int damage)
+    public IEnumerator TakeDamage(int damage, float delay)
     {
-        health -= damage;
+        yield return new WaitForSeconds(delay);
+        CurrentHealth -= damage;
         if(CheckIfDead()) OnDeath();
     }
     public void SpawnIn()
@@ -69,7 +79,7 @@ public class Enemy : MonoBehaviour
 
     private bool CheckIfDead()
     {
-        return health <= 0;
+        return CurrentHealth <= 0;
     }
     private void OnDeath()
     {

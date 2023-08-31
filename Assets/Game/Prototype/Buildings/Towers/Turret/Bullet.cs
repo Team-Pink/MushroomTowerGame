@@ -3,20 +3,23 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float timeToTarget;
-    float timeElapsed;
+    private float timeElapsed;
+    private Vector3 startPosition;
     public Target target;
-    Vector3 directionToTarget;
-    Vector3 previousPos;
+    private Vector3 targetPosition;
 
-    
+    private void Awake()
+    {
+        startPosition = transform.position;
+    }
+
     void Update()
     {
+        if (target.enemy != null)
+            targetPosition = target.enemy.transform.position;
 
-
-        transform.position = Vector3.Lerp(transform.position, target.position, timeElapsed / timeToTarget);
-
+        transform.position = Vector3.Lerp(startPosition, targetPosition, timeElapsed / timeToTarget);
         
-        previousPos = transform.position;
         if (timeElapsed >= timeToTarget)
         {
             Destroy(gameObject);

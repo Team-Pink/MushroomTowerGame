@@ -24,8 +24,9 @@ public class AreaAttacker : Attacker
                     Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                     if (enemy is null)
                         continue;
-                    enemy.TakeDamage(damage);
+                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
                 }
+                AnimateAttack(target);
             }
         }
 

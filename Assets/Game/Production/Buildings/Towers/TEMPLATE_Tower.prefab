@@ -134,26 +134,43 @@ MonoBehaviour:
   radiusMaterials:
   - {fileID: 2100000, guid: d956dcf30ef35df429e9dfbe809aebcb, type: 2}
   attackerComponent:
-    damage: 3
-    attackCooldown: 3
-    attackDelay: 2
+    rid: 4335502593997406208
   targeterComponent:
-    range: 10
-    turnRate: 0
-    transform: {fileID: 0}
-    enemyLayer:
-      serializedVersion: 2
-      m_Bits: 0
+    rid: 4335502593997406209
   details:
     name: Template
     targeterType: 0
     attackerType: 0
-  TowerController: {fileID: 0}
+  TurnRate: 5
+  FiringCone: 10
+  TrapRadius: 1
+  FindNumberOfTargets: 0
+  storedExperience: 0
   upgradeable: 0
   upgradeCostL: 0
   upgradeCostR: 0
   purchaseCost: 10
   sellReturnPercent: 0.5
+  bulletPrefab: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4335502593997406208
+      type: {class: SingleAttacker, ns: , asm: Assembly-CSharp}
+      data:
+        damage: 3
+        attackCooldown: 3
+        attackDelay: 2
+    - rid: 4335502593997406209
+      type: {class: CloseTargeter, ns: , asm: Assembly-CSharp}
+      data:
+        turnRate: 5
+        firingCone: 20
+        range: 10
+        transform: {fileID: 0}
+        enemyLayer:
+          serializedVersion: 2
+          m_Bits: 0
 --- !u!136 &7386576921632069825
 CapsuleCollider:
   m_ObjectHideFlags: 0

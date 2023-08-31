@@ -107,7 +107,7 @@ public class TurretController : MonoBehaviour
 
         //bulletRef.GetComponent<Bullet>().target = targetGameObject;
 
-        targetEnemy.TakeDamage((int)damage);
+        //targetEnemy.TakeDamage((int)damage);
 
         firingClock = 0;
 
