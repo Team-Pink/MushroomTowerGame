@@ -92,19 +92,25 @@ public class LevelDataGrid : MonoBehaviour
         yield return null;
     }
 
-    public Vector2 GetFlowAtPoint(Vector3 position)
+    public Vector3 GetFlowAtPoint(Vector3 position)
     {
-        GetTileAtCoords(position, out int xPos, out int zPos);
+        WorldToTileSpace(position, out int xCoord, out int zCoord);
 
-        int xCoord = Mathf.RoundToInt(xPos + tilesWidth * 0.5f);
-        int zCoord = Mathf.RoundToInt(zPos + tilesHeight * 0.5f);
-        return tiles[xCoord, zCoord].flowDirection;
+        Vector2 flowDirection = tiles[xCoord, zCoord].flowDirection;
+
+        return new Vector3(flowDirection.x, 0, flowDirection.y);
     }
 
-    private void GetTileAtCoords(Vector3 position, out int xCoord, out int zCoord)
+    private void WorldToTileSpace(Vector3 position, out int xCoord, out int zCoord)
     {
-        xCoord = Mathf.RoundToInt((position.x + tilesWidth * 0.5f) / TileWidth);
-        zCoord = Mathf.RoundToInt((-position.z - tilesHeight * 0.5f) / TileHeight);
+        float x = (position.x - TileWidth * 0.5f) / TileWidth + tilesWidth * 0.5f;
+        float z = (-position.z + TileHeight * 0.5f) / TileHeight + tilesHeight * 0.5f;
+
+        float xClamped = Mathf.Clamp(x, 0, tiles.GetLength(0)-1);
+        float zClamped = Mathf.Clamp(z, 0, tiles.GetLength(1)-1);
+
+        xCoord = Mathf.RoundToInt(xClamped);
+        zCoord = Mathf.RoundToInt(zClamped);
     }
 
     public void OnDrawGizmos()
@@ -153,8 +159,9 @@ public class LevelDataGrid : MonoBehaviour
     }
     public Vector3 TileToWorldSpace(int xIndex, int zIndex)
     {
+        float x = (xIndex - tilesWidth * 0.5f) * TileWidth + TileWidth * 0.5f;
+        float z = (-zIndex + tilesHeight * 0.5f) * TileHeight - TileHeight * 0.5f;
 
-        return new Vector3((xIndex - tilesWidth * 0.5f) * TileWidth + TileWidth * 0.5f, 0,
-            (-zIndex + tilesHeight * 0.5f) * TileHeight - TileWidth * 0.5f);
+        return new Vector3(x, 0, z);
     }
 }

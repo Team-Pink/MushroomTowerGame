@@ -49,14 +49,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617e408a30300584db328b5f1d612fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1000
-  targettingStrength: 0.05
+  speed: 10
+  targetingStrength: 0.5
   alignmentRange: 4
   alignmentStrength: 0.05
   cohesionRange: 3
   cohesionStrength: 0.2
   seperationRange: 2
   seperationStrength: 1
+  levelData: {fileID: 0}
 --- !u!33 &1892399166391520278
 MeshFilter:
   m_ObjectHideFlags: 0

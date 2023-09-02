@@ -9,10 +9,12 @@ public class EnemySpawner : MonoBehaviour
     private readonly BoidList boidList = new();
 
     private new Transform transform;
+    private LevelDataGrid levelData;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
+        levelData = GetComponent<LevelDataGrid>();
 
         SpawnBoids();
     }
@@ -23,12 +25,14 @@ public class EnemySpawner : MonoBehaviour
         for (int boidIndex = 0; boidIndex < amount; boidIndex++)
         {
             Quaternion rotation = new(0, Random.Range(-1.0f, 1.0f), 0.0f, 0.0f);
-            Vector3 position = transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f));
+            Vector3 position = transform.position + new Vector3(Random.Range(-120.0f, 120.0f), 0.0f, Random.Range(-120.0f, 120.0f));
 
             GameObject boidGameObject = Instantiate(boidPrefab, position, rotation, transform);
             Transform boidTransform = boidGameObject.transform;
             Rigidbody boidRigidbody = boidGameObject.GetComponent<Rigidbody>();
             EnemyLogic boidLogic = boidGameObject.GetComponent<EnemyLogic>();
+
+            boidLogic.levelData = levelData;
 
             boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
         }

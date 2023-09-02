@@ -23,8 +23,7 @@ public class EnemyLogic : MonoBehaviour
     // Values
     [SerializeField] float speed;
 
-    private Vector3 targetPosition = new(0.0f, 0.0f, 0.0f);
-    [Header("Influences"), SerializeField, Range(0.0f, 1.0f)] private float targettingStrength = 0.2f;
+    [Header("Influences"), SerializeField, Range(0.0f, 1.0f)] private float targetingStrength = 0.2f;
     [Space()]
     [SerializeField] private float alignmentRange = 4.0f;
     [SerializeField, Range(0.0f, 1.0f)] private float alignmentStrength = 0.1f;
@@ -34,10 +33,10 @@ public class EnemyLogic : MonoBehaviour
     [Space()]
     [SerializeField] private float seperationRange = 2.0f;
     [SerializeField, Range(0.0f, 1.0f)] private float seperationStrength = 1.0f;
-
     // Components
     private new Transform transform;
     private new Rigidbody rigidbody;
+    public LevelDataGrid levelData;
 
     private LayerMask boidLayers;
 
@@ -54,11 +53,10 @@ public class EnemyLogic : MonoBehaviour
 
     private void Update()
     {
-        // Reset Velocity
-        rigidbody.velocity = speed * Time.deltaTime * transform.forward;
+        Vector3 newVelocity = Vector3.zero;
 
         // Targetting
-        rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + targettingStrength * (targetPosition - transform.position).normalized).normalized;
+        newVelocity += targetingStrength * levelData.GetFlowAtPoint(transform.position);
 
         // Get Boids in Neighbourhood
         neighbourhood.Clear();
@@ -76,13 +74,11 @@ public class EnemyLogic : MonoBehaviour
         }
 
         // Flocking
-        Align();
-        Cohere();
-        Seperate();
+        newVelocity += Align();
+        newVelocity += Cohere();
+        newVelocity += Seperate();
 
-        // Blocking
-        if ((targetPosition - transform.position).magnitude > 100)
-            rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + targettingStrength * 5 * (targetPosition - transform.position).normalized).normalized;
+        rigidbody.velocity = speed * newVelocity.normalized;
 
         // Face Direction of Movement
         if (rigidbody.velocity != Vector3.zero)
@@ -94,7 +90,7 @@ public class EnemyLogic : MonoBehaviour
         return (boidTransform.position - transform.position).sqrMagnitude < (range * range);
     }
 
-    private void Align()
+    private Vector3 Align()
     {
         Vector3 alignmentInfluence = Vector3.zero;
 
@@ -102,14 +98,14 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, alignmentRange))
             {
-                alignmentInfluence += boid.rigidbody.velocity * alignmentStrength;
+                alignmentInfluence += boid.rigidbody.velocity;
             }
         }
 
-        rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + alignmentInfluence).normalized;
+        return alignmentInfluence.normalized * alignmentStrength;
     }
 
-    private void Cohere()
+    private Vector3 Cohere()
     {
         Vector3 cohesionInfluence = Vector3.zero;
 
@@ -117,14 +113,14 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, cohesionRange))
             {
-                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized * cohesionStrength;
+                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized;
             }
         }
 
-        rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + cohesionInfluence).normalized;
+        return cohesionInfluence.normalized * cohesionStrength;
     }
 
-    private void Seperate()
+    private Vector3 Seperate()
     {
         Vector3 seperationInfluence = Vector3.zero;
 
@@ -132,10 +128,10 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, seperationRange))
             {
-                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized * seperationStrength;
+                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized;
             }
         }
 
-        rigidbody.velocity = speed * Time.deltaTime * (rigidbody.velocity + seperationInfluence).normalized;
+        return seperationInfluence.normalized * seperationStrength;
     }
 }
