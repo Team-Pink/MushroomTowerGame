@@ -22,21 +22,28 @@ public class EnemyLogic : MonoBehaviour
 {
     // Values
     [SerializeField] float speed;
+    [SerializeField] float steeringForce;
+    [SerializeField] float rotateSpeed;
 
-    [Header("Influences"), SerializeField, Range(0.0f, 1.0f)] private float targetingStrength = 0.2f;
+    [Header("Influences"), SerializeField, Range(0.0f, 5.0f)] private float targetingStrength = 0.2f;
     [Space()]
     [SerializeField] private float alignmentRange = 4.0f;
-    [SerializeField, Range(0.0f, 1.0f)] private float alignmentStrength = 0.1f;
+    [SerializeField, Range(0.0f, 5.0f)] private float alignmentStrength = 0.1f;
     [Space()]
     [SerializeField] private float cohesionRange = 3.0f;
-    [SerializeField, Range(0.0f, 1.0f)] private float cohesionStrength = 0.2f;
+    [SerializeField, Range(0.0f, 5.0f)] private float cohesionStrength = 0.2f;
     [Space()]
     [SerializeField] private float seperationRange = 2.0f;
-    [SerializeField, Range(0.0f, 1.0f)] private float seperationStrength = 1.0f;
+    [SerializeField, Range(0.0f, 5.0f)] private float seperationStrength = 1.0f;
+
+    private float NeighbourhoodRange
+    {
+        get => Mathf.Max(alignmentRange, cohesionStrength, seperationRange);
+    }
     // Components
     private new Transform transform;
     private new Rigidbody rigidbody;
-    public LevelDataGrid levelData;
+    [HideInInspector] public LevelDataGrid levelData;
 
     private LayerMask boidLayers;
 
@@ -60,9 +67,9 @@ public class EnemyLogic : MonoBehaviour
 
         // Get Boids in Neighbourhood
         neighbourhood.Clear();
-        var boidColliderList = Physics.OverlapSphere(transform.position, 4, boidLayers);
+        var boidColliderList = Physics.OverlapSphere(transform.position, NeighbourhoodRange, boidLayers);
 
-        foreach (var boidCollider in boidColliderList)
+        foreach (Collider boidCollider in boidColliderList)
         {
             GameObject boidGameObject = boidCollider.gameObject;
             Transform boidTransform = boidCollider.transform;
@@ -78,11 +85,15 @@ public class EnemyLogic : MonoBehaviour
         newVelocity += Cohere();
         newVelocity += Seperate();
 
-        rigidbody.velocity = speed * newVelocity.normalized;
+        rigidbody.velocity = speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
 
         // Face Direction of Movement
         if (rigidbody.velocity != Vector3.zero)
-            transform.forward = rigidbody.velocity;
+        {
+            transform.forward = rigidbody.velocity.normalized;
+            //Quaternion toRotation = Quaternion.LookRotation(rigidbody.velocity.normalized, Vector3.up);
+            //transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotateSpeed * Time.deltaTime);
+        }
     }
 
     private bool BoidInRange(Transform boidTransform, float range)
@@ -98,7 +109,8 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, alignmentRange))
             {
-                alignmentInfluence += boid.rigidbody.velocity;
+                alignmentInfluence += boid.rigidbody.velocity
+                    / (boid.transform.position - transform.position).magnitude;
             }
         }
 
@@ -113,7 +125,8 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, cohesionRange))
             {
-                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized;
+                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized
+                    / (boid.transform.position - transform.position).magnitude;
             }
         }
 
@@ -128,7 +141,8 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, seperationRange))
             {
-                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized;
+                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized
+                    / (boid.transform.position - transform.position).magnitude;
             }
         }
 

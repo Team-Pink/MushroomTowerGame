@@ -488,7 +488,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &82407690
 Transform:
   m_ObjectHideFlags: 0
@@ -3189,7 +3189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1125190914
 Transform:
   m_ObjectHideFlags: 0
@@ -3198,7 +3198,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125190913}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 6.35, y: 6.35, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3245,9 +3245,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: ca5fcf17d43a25e44a7c5114260c4ea7, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2627451, g: 0.2509804, b: 0.36078432, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3370,7 +3370,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -7270,7 +7270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6afa94948c5a1294e88749fcfa410b9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelTexture: {fileID: 2800000, guid: cbf490f94ab79464d91a2974bab71a2a, type: 3}
+  levelTexture: {fileID: 2800000, guid: c9466c5c273c35647960ae6e295bf920, type: 3}
   gridWidth: 120
   gridHeight: 120
   drawGrid: 0
@@ -7287,7 +7287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddf328a2b60c2f4d901b257a64ef8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 30
+  amount: 500
   boidPrefab: {fileID: 3484178329749052489, guid: c54e2be9fe86c5b4a853b8a54fa869ab, type: 3}
 --- !u!4 &6593354657837421337 stripped
 Transform:
@@ -7482,6 +7482,10 @@ PrefabInstance:
     - target: {fileID: 5578491130426171287, guid: 10556f830c667324bbed03a7690442fc, type: 3}
       propertyPath: m_Name
       value: MSH_LevelMesh_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5578491130426171287, guid: 10556f830c667324bbed03a7690442fc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10556f830c667324bbed03a7690442fc, type: 3}
