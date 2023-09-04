@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,7 +48,7 @@ public class TrackTargeter : Targeter
     {
         bool posClear = false;
         
-         if(OnTrack(target))
+        if(OnTrack(target))
         {
             foreach(Target t in targets)
             {

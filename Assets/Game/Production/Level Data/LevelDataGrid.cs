@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
 [System.Serializable]
 public struct Tile
@@ -163,5 +165,44 @@ public class LevelDataGrid : MonoBehaviour
         float z = (-zIndex + tilesHeight * 0.5f) * TileHeight - TileHeight * 0.5f;
 
         return new Vector3(x, 0, z);
+    }
+
+    public void InkTiles(float inkLevel, Vector3 position, int radius)
+    {
+        WorldToTileSpace(position, out int xCoord, out int zCoord);
+
+        // Initialise Values
+        int left = xCoord - radius;
+        int right = xCoord + radius;
+        int top = zCoord + radius;
+        int bottom = zCoord - radius;
+
+        int radiusSqr = radius * radius;
+
+        // Clamp Values to Valid Range
+        if (left < 0) left = 0;
+        if (right > tiles.GetLength(0)) right = tiles.GetLength(0);
+        if (top > tiles.GetLength(1)) top = tiles.GetLength(1);
+        if (bottom < 0) bottom = 0;
+
+        for (int x = left; x <= right; x++)
+        {
+            int relativeXSqr = (xCoord - x) * (xCoord - x);
+
+            for (int z = bottom; z <= top; z++)
+            {
+                int relativeZSqr = (zCoord - z) * (zCoord - z);
+
+                if (relativeXSqr + relativeZSqr > radiusSqr) continue; // Ensure fill area is a circle
+                if (tiles[x, z].muddy) continue; // Ensure ink isn't being put on mud
+
+                tiles[x, z].SetInkLevel(inkLevel);
+            }
+        }
+    }
+
+    public void ClearInk(Vector3 position, int radius)
+    {
+        InkTiles(0, position, radius);
     }
 }
