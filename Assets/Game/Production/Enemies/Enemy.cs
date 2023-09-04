@@ -55,6 +55,7 @@ public class Enemy : MonoBehaviour
 
     public IEnumerator TakeDamage(int damage, float delay)
     {
+        
         yield return new WaitForSeconds(delay);
         CurrentHealth -= damage;
         if(CheckIfDead()) OnDeath();
@@ -72,7 +73,7 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private bool CheckIfDead()
+    public bool CheckIfDead()
     {
         return CurrentHealth <= 0;
     }

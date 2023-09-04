@@ -52,8 +52,9 @@ public class Tower : Building
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-    
+
     // Enemy targeter values
+
     [SerializeField] private float FiringCone = 10;
     // Trap targeter values
     [SerializeField] float TrapRadius = 1;
@@ -85,6 +86,18 @@ public class Tower : Building
     // Temp Variables
     [SerializeField] GameObject bulletPrefab;
 
+    // Tags from Lochlan
+    //Multitarget
+    [SerializeField] private bool multiTarget = false;
+    [SerializeField] private int numTargets = 1;
+    //Accelerate
+    [SerializeField] private bool accelerate = true;
+    private bool accelerated = false;
+    [SerializeField] private float accelTimeMax = 1.2f;
+    private float accelTimer = 0;
+    [SerializeField] private float accelSpeedMod = 5; // how man times faster than base.
+    private float accelModInv;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -107,7 +120,7 @@ public class Tower : Building
         }
 
         attackerComponent.bulletPrefab = bulletPrefab;
-
+        accelModInv = accelModInv / 100;
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
     }
 
@@ -115,20 +128,32 @@ public class Tower : Building
     {
         if (Active)
         {
-            targets = targeterComponent.AcquireTargets();
+            if (multiTarget) targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
                 attackerComponent.Attack(targets);
+                
                 
                 // rotate tower to targetted enemy
                 foreach (Target targetEnemy in targets)
                 {
                     // take enemy experience
-                    storedExperience += targetEnemy.enemy.expValue;
-                    targetEnemy.enemy.expValue = 0;
-
-                    // remove it from targets and retarget
+                    //if (targetEnemy.enemy.CheckIfDead()) // currently can't check if dead
+                    {
+                        storedExperience += targetEnemy.enemy.expValue;
+                        targetEnemy.enemy.expValue = 0;
+                        if (accelerate)
+                        {
+                            accelerated = true; // this could be called from elsewhere if neccesary
+                            accelTimer = 0;
+                            attackerComponent.attackDelay *= accelSpeedMod;// modify attack delay
+                        }
+                    }
+                    
                 }
+                // Attack tags
+                AccelerateTag();
             }
         }
     }
@@ -168,6 +193,20 @@ public class Tower : Building
         int tempExp = storedExperience;
         storedExperience = 0;
         return tempExp;
+    }
+
+    public void AccelerateTag()
+    {
+        if (accelerated)
+        {
+            accelTimer += Time.deltaTime;
+            if (accelTimer > accelTimeMax)
+            {
+                accelerated = false;
+                attackerComponent.attackDelay *= accelModInv;// modify attack delay
+                
+            }
+        }
     }
 }
 
