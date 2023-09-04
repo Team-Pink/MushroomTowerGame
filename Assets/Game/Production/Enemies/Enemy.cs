@@ -5,10 +5,22 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
+    protected virtual void CustomAwakeEvents()
+    {
+
+    }
+
     private void Awake()
     {
         points = pathToFollow.GetPoints();
+
         health = maxHealth;
+
+        CustomAwakeEvents();
+    }
+
+    private void Update()
+    {
     }
 
     protected virtual void Playing()
@@ -29,8 +41,9 @@ public class Enemy : MonoBehaviour
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
+    public int health;
+    public bool isDead;
     [SerializeField] int maxHealth;
-    private int health;
     public int CurrentHealth
     {
         get => health;
@@ -53,11 +66,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public IEnumerator TakeDamage(int damage, float delay)
+    public virtual IEnumerator TakeDamage(int damage, float delay)
     {
         
         yield return new WaitForSeconds(delay);
-        CurrentHealth -= damage;
+        health -= damage;
         if(CheckIfDead()) OnDeath();
     }
     public void SpawnIn()
@@ -102,6 +115,14 @@ public class Enemy : MonoBehaviour
     [SerializeField, Range(0.0f, 5.0f)]
     protected float speed = 2f;
 
+    [SerializeField] protected LayerMask range;
+
+    public float mass
+    {
+        get;
+        protected set;
+    }
+
     [HideInInspector]
     public float Speed
     {
@@ -137,8 +158,6 @@ public class Enemy : MonoBehaviour
             else
                 AttackMode = true;
         }
-        else
-            AttackMode = false;
     }
 
     private void RotateToFaceTravelDirection()
@@ -150,7 +169,12 @@ public class Enemy : MonoBehaviour
 
     #region Attacking
     [Header("Attacking")]
-    [SerializeField] protected float attackCooldown;
+    [SerializeField] protected int damage;
+    
+    [SerializeField] protected float attackCooldown = 0;
+    [SerializeField] protected float attackDelay = 0;
+    protected float elapsedCooldown = 0;
+    protected float elapsedDelay = 0;
     [HideInInspector] protected bool AttackMode
     {
         get
@@ -162,38 +186,52 @@ public class Enemy : MonoBehaviour
             attackMode = value;
         }
     }
-    protected float elapsedCooldown;
-    protected bool attackInProgress;
     private bool attackMode;
 
-    protected void AttackHub()
+    protected bool attackInProgress = false;
+    protected bool attackCoolingDown = false;
+
+    //there are areas I can further optimise and clean up but that will be a later thing
+    protected virtual void AttackHub()
     {
-        if (!attackInProgress)
+        if(elapsedCooldown == 0 && elapsedDelay == 0)
         {
             animator.SetTrigger("Attack");
-            hub.Damage(1);
             attackInProgress = true;
         }
+        
+        if (elapsedDelay < attackDelay)
+        {
+            elapsedDelay += Time.deltaTime;
+
+            if (elapsedDelay >= attackDelay)
+            {
+                hub.Damage(damage);
+                attackInProgress = false;
+            }
+        }            
         else
         {
+            if (elapsedCooldown == 0)
+                attackCoolingDown = true;
+
             elapsedCooldown += Time.deltaTime;
 
             if (elapsedCooldown >= attackCooldown)
             {
-                attackInProgress = false;
+                elapsedDelay = 0;
                 elapsedCooldown = 0;
+                attackCoolingDown = false;
             }
         }
     }
     #endregion
 
     #region MISC
-    [Header("Components")]
-    public Hub hub;
-    [SerializeField] protected LayerMask range;
+    [Space]
+    [HideInInspector] public Hub hub;
     [SerializeField] protected Animator animator;
     #endregion
-    //move to different location if there is a better spot for these variables
 
     #region DEBUG
     [Header("Debug")]
