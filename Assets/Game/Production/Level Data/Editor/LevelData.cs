@@ -421,7 +421,7 @@ public class LevelData : ScriptableObject
 }
 
 #if UNITY_EDITOR
-namespace Editor
+namespace EditorScripts
 {
     using UnityEditor;
     using static UnityEngine.GUILayout;
@@ -437,7 +437,7 @@ namespace Editor
             if (!dataGrid.initialised || !dataGrid.generated)
             {
                 BeginVertical("box");
-                    GUI.LabelField("Your changes have not been saved", Stylesheet.Note);
+                    GUI.LabelField("Your changes have not been saved", Stylesheet.NoteLabel);
                 EndVertical();
             }
 
@@ -447,7 +447,7 @@ namespace Editor
             GUI.Space(10);
 
 
-            GUI.LabelField("Tile Data", Stylesheet.Heading);
+            GUI.LabelField("Tile Data", Stylesheet.HeadingLabel);
 
             BeginHorizontal();
                 GUI.Space();
@@ -495,7 +495,7 @@ namespace Editor
                 BeginHorizontal();
                     GUI.Space();
                     BeginVertical("box", MaxWidth(400));
-                        GUI.LabelField("Assigning a Tile Map will automatically populate subdivisions", Stylesheet.Note);
+                        GUI.LabelField("Assigning a Tile Map will automatically populate subdivisions", Stylesheet.NoteLabel);
                     EndVertical();
                     GUI.Space();
                 EndHorizontal();
