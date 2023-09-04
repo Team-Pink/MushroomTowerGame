@@ -17,6 +17,17 @@ public class Attacker
     public GameObject bulletPrefab;
     public Animator animator;
 
+    #region TAGS
+    [Header("Spray Tag")]
+    public bool spray = false;
+    public int sprayDamage = 1;
+    public float additionalSprayRange = 2;
+
+    [Header("Strikethrough Tag")]
+    public bool strikethrough;
+    public int strikethroughDamage;
+    #endregion
+
     public virtual void Attack(HashSet<Target> targets)
     {
         Debug.LogWarning("Use one of the other methods of attacking");
