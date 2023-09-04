@@ -2,27 +2,28 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    GameObject target;
-    public float bulletSpeed = 1;
-    Vector3 directionToTarget;
-    private void Start()
+    public float timeToTarget;
+    private float timeElapsed;
+    private Vector3 startPosition;
+    public Target target;
+    private Vector3 targetPosition;
+
+    private void Awake()
     {
-        target = Physics.OverlapSphere(transform.position, 0.2f, LayerMask.GetMask("Range"))[0].gameObject.GetComponent<TurretController>().targetGameObject;
-        if (target == null) Destroy(gameObject);
+        startPosition = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //transform.LookAt(turretController.targetGameObject.transform.position);
-        
-        directionToTarget = (target.transform.position - transform.position).normalized;
-        transform.Translate(directionToTarget * (Time.deltaTime * bulletSpeed));
+        if (target.enemy != null)
+            targetPosition = target.enemy.transform.position;
 
-        if (Vector3.Distance(target.transform.position, transform.position) < 0.2f)
+        transform.position = Vector3.Lerp(startPosition, targetPosition, timeElapsed / timeToTarget);
+        
+        if (timeElapsed >= timeToTarget)
         {
             Destroy(gameObject);
         }
+        timeElapsed += Time.deltaTime;
     }
-
 }

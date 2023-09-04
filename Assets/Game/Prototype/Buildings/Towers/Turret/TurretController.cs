@@ -3,48 +3,67 @@ using UnityEngine;
 
 public class TurretController : MonoBehaviour
 {
+ // TODO: test if unity adds enemies colliding with it when it is instantiated to the inRangeEnemies or if I need to add them via sphere cast on start.
 
-    // So how do I do this...
+    //Enemy catalouging
+    private HashSet<GameObject> inRangeEnemies = new();
+    public GameObject targetGameObject; // change this to private when bullet script is no longer required.
+    private Enemy targetEnemy;
 
-    public HashSet<GameObject> inRangeEnemies = new();
-    public GameObject targetGameObject;
-    protected Enemy targetEnemy;
+    // bad firing animation
     public GameObject bullet;
-
     Vector3 bulletSpawn1;
     Vector3 bulletSpawn2;
     bool barrelAlternate;
 
-    public bool pylonActive = true;
+    // pylon data
+    public bool towerActive = true;
+    public int storedExperience;
+
+    // tower values
     public float damage = 100;
     public float firingInterval = 3;
-    public float firingClock = 2;
-    //public float bulletSpeed;
-
+    private float firingClock = 2;
     public float turnSpeed = 2;
     public float firingCone = 20;
     public bool lockedOn = false;
 
     void Start()
     {
+        this.enabled = false;
+
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
+
+       
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!towerActive)
+            return;
+
         firingClock += Time.fixedDeltaTime;
         if (targetEnemy)
         {
             // rotate turret to targetted enemy
             RotateToTarget();
-            if (targetEnemy.Dead())
+
+            if (targetEnemy.Dead)
+            {
+                // take enemy experience
+                storedExperience += targetEnemy.expValue;
+                targetEnemy.expValue = 0;
+                
+                // remove it from targets and retarget
+                inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
+            }
 
             if (firingClock > firingInterval && lockedOn)
                 Attack();
-        }
+        }    
     }
 
 
@@ -52,7 +71,8 @@ public class TurretController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            inRangeEnemies.Add(other.gameObject);
+            if (!other.gameObject.GetComponent<Enemy>().Dead)
+                inRangeEnemies.Add(other.gameObject);
         }
 
         if (targetEnemy is null) PickPriorityTarget();
@@ -69,28 +89,29 @@ public class TurretController : MonoBehaviour
         PickPriorityTarget();
     }
 
-    private void Attack()
+    private void Attack() // this should be overridden in child classes
     {
         // do attack animation
 
+
+        GameObject bulletRef;
         if (barrelAlternate)
         {
-            Instantiate(bullet, bulletSpawn1, Quaternion.identity);
+            bulletRef = Instantiate(bullet, bulletSpawn1, Quaternion.identity);
         }
         else
         {
-            Instantiate(bullet, bulletSpawn2, Quaternion.identity);
+            bulletRef = Instantiate(bullet, bulletSpawn2, Quaternion.identity);
         }
         barrelAlternate = !barrelAlternate;
 
-        targetEnemy.health -= (int)damage;
-        if (targetEnemy.health <= 0)
-        {
-            inRangeEnemies.Remove(targetEnemy.gameObject);
-            PickPriorityTarget();
-        }
+        //bulletRef.GetComponent<Bullet>().target = targetGameObject;
+
+        //targetEnemy.TakeDamage((int)damage);
 
         firingClock = 0;
+
+
     }
 
 
@@ -108,8 +129,8 @@ public class TurretController : MonoBehaviour
         GameObject deleteThis = bestTargetSoFar; // so feel free to roll over this if you know how to do better.
 
         foreach (GameObject thisEnemy in inRangeEnemies)
-        {
-            int thisScore = TargetingAlgorithm();
+        {          
+            int thisScore = TargetingAlgorithm(thisEnemy);
             if (thisScore > bestScoreSoFar)
             {
                 bestScoreSoFar = thisScore;
@@ -121,12 +142,13 @@ public class TurretController : MonoBehaviour
         targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm()
+    int TargetingAlgorithm(GameObject enemy)  // this should be overridden in child classes
     {
+        
         return Random.Range(0, 10);
     }
 
-    void RotateToTarget()
+    void RotateToTarget()  // this should be overridden in child classes
     {
         Vector3 lookDirection = (targetGameObject.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
