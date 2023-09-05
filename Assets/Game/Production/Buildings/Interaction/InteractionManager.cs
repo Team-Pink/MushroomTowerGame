@@ -612,7 +612,7 @@ public class InteractionManager : MonoBehaviour
 
         if (activeBud.transform.parent.GetComponent<Hub>() != null)
         {
-            (targetBuilding as Hub).pylonCount++;
+            activeBud.transform.parent.GetComponent<Hub>().ClearDestroyedPylons();
         }
 
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
