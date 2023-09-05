@@ -15,8 +15,8 @@ public class SingleAttacker : Attacker
             foreach (var target in targets)
                 if (target.enemy is not null)
                 {
-                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
-                    AnimateAttack(target);
+                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage));
+                    // AnimateAttack(target); // moved to Tower.GenerateAttackObject
                 }
         }
 

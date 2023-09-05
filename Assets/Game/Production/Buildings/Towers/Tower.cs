@@ -14,7 +14,8 @@ public struct Target
     }
 }
 
-[Serializable] public enum TargeterType
+[Serializable]
+public enum TargeterType
 {
     Close,
     Cluster,
@@ -22,14 +23,16 @@ public struct Target
     Strong,
     Track
 } // For Editor Use Only
-[Serializable] public enum AttackerType
+[Serializable]
+public enum AttackerType
 {
     Area,
     Single,
     Trap
 } // For Editor Use Only
 
-[Serializable] public struct Details
+[Serializable]
+public struct Details
 {
     public string name;
     public TargeterType targeterType;
@@ -83,20 +86,24 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    // Temp Variables
+    // prefabs
     [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject attackObjectPrefab;
 
     // Tags from Lochlan
     //Multitarget
-    [SerializeField] private bool multiTarget = false;
-    [SerializeField] private int numTargets = 1;
+    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private int numTargets; // number of targets if the above is true.
+
     //Accelerate
-    [SerializeField] private bool accelerate = true;
-    private bool accelerated = false;
-    [SerializeField] private float accelTimeMax = 1.2f;
-    private float accelTimer = 0;
-    [SerializeField] private float accelSpeedMod = 5; // how man times faster than base.
-    private float accelModInv;
+    private bool accelerate = false;
+    public bool accelerated = false; // determines if a tower is currently accelerated
+    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
+    public float accelTimer = 0; // timer to keep track of the above.
+    public readonly float accelSpeedMod = 0.5f; // on kill multiply the attack delay by this basically increase by 50%
+    public readonly float decreaseAccel = 1.25f; //acceleration decreases by 25% if the tower fails a kill.
+    private float baseDelay; // the original starting delay of the tower
+    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     private void Awake()
     {
@@ -105,7 +112,7 @@ public class Tower : Building
         transform = gameObject.transform;
         targeterComponent.transform = transform;
         attackerComponent.transform = transform;
-        
+
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
         if (targeterComponent is TrackTargeter)
@@ -120,8 +127,10 @@ public class Tower : Building
         }
 
         attackerComponent.bulletPrefab = bulletPrefab;
-        accelModInv = accelModInv / 100;
+
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
+
+        if (accelerate) baseDelay = attackerComponent.attackDelay;
     }
 
     private void Update()
@@ -133,28 +142,29 @@ public class Tower : Building
             if (targets != null)
             {
                 attackerComponent.Attack(targets);
-                
-                
-                // rotate tower to targetted enemy
-                foreach (Target targetEnemy in targets)
-                {
-                    // take enemy experience
-                    //if (targetEnemy.enemy.CheckIfDead()) // currently can't check if dead
-                    {
-                        storedExperience += targetEnemy.enemy.expValue;
-                        targetEnemy.enemy.expValue = 0;
-                        if (accelerate)
-                        {
-                            accelerated = true; // this could be called from elsewhere if neccesary
-                            accelTimer = 0;
-                            attackerComponent.attackDelay *= accelSpeedMod;// modify attack delay
-                        }
-                    }
-                    
-                }
+
+                GenerateAttackObject(); // creates an object defining attack parameters.
+
+
+
                 // Attack tags
                 AccelerateTag();
             }
+        }
+    }
+
+    /// <summary>
+    /// Instantiates an AttackObject assigns it's values and animates an attack.
+    /// </summary>
+    private void GenerateAttackObject()
+    {
+        AttackObject attackInProgress = Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
+        attackInProgress.delayToTarget = AttackerComponent.attackDelay;
+        attackInProgress.originTower = this;
+        attackInProgress.targetEnemy = targets;
+        foreach (Target target in targets)
+        {
+            AttackerComponent.AnimateAttack(target);
         }
     }
 
@@ -200,11 +210,11 @@ public class Tower : Building
         if (accelerated)
         {
             accelTimer += Time.deltaTime;
-            if (accelTimer > accelTimeMax)
+            if (accelTimer > accelTimeMax || AttackerComponent.attackDelay > baseDelay)
             {
                 accelerated = false;
-                attackerComponent.attackDelay *= accelModInv;// modify attack delay
-                
+                attackerComponent.attackDelay = baseDelay;// return attack delay to normal
+                accelTimer = 0; // Reset timer
             }
         }
     }
