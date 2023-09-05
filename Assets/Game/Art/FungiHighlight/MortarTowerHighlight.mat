@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FungiHighlight
+  m_Name: MortarTowerHighlight
   m_Shader: {fileID: -6465566751694194690, guid: dd6ba2ea10020874fa05f38de721ea3c, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -21,15 +21,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseColour:
-        m_Texture: {fileID: 2800000, guid: a37c9f2a9a441ba489965e7a1fce1df4, type: 3}
+        m_Texture: {fileID: 2800000, guid: a0978da7f67b15d4bba1a5fb51c5040b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: c7486b11b08e86b4ca93419a9f3573b6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4931a5286a07e5e4186ae270182ec053, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Smoothness:
-        m_Texture: {fileID: 2800000, guid: 33aee079f8fdf2142a7de17dc96bdf47, type: 3}
+        m_Texture: {fileID: 2800000, guid: f233dbce330603646b862304ba237178, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -47,7 +47,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Highlight_Amount: 2
-    - _Highlight_Strength: 1.6
+    - _Highlight_Strength: 2.31
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
