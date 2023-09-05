@@ -1,21 +1,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class TrapDetails
+{
+    public float inkLevel;
+    public int damage;
+    public float damageRate;
+    public bool poisonous;
+    public bool sticky;
+
+    public TrapDetails()
+    {
+        inkLevel = 0;
+        damage = 0;
+        damageRate = 0;
+        poisonous = false;
+        sticky = false;
+    }
+
+    public TrapDetails(float inkLevelInit,
+        int damageInit, float damageRateInit,
+        bool poisonousInit = false, bool stickyInit = false)
+    {
+        inkLevel = inkLevelInit;
+        damage = damageInit;
+        damageRate = damageRateInit;
+        poisonous = poisonousInit;
+        sticky = stickyInit;
+    }
+}
+
 // From Lochlan: I don't think there should be a trap attacker I think enemies should deal with traps in their own scripts based
 // on the state of the Flow field tile they are standing on.
 public class TrapAttacker : Attacker 
 {
-    HashSet<Transform> traps; 
+    private HashSet<Transform> trapPositions; // make this vector 3 for the tech implementation and make a new set for the prefabs to clean up
     [SerializeField] GameObject trapPrefab;
 
-    int placedTraps;
-    float bufferDistance = 0.5f;
+    private int maxTrapCount;
+    private float bufferDistance = 0.5f;
 
     //dunno where to put this
     float trapTickSpeed = 1f;
 
+    public TrapDetails inkDetails = new();
 
-    //handles trap placement not trap behaviour
     public override void Attack(HashSet<Target> targets)
     {
         //Play attack animation here
@@ -26,23 +56,25 @@ public class TrapAttacker : Attacker
         {
             Debug.Log("Trap Attacker");
             
-            foreach (var targetPos in targets)
+            foreach (Target targetPos in targets)
             {
-                if (traps.Count == placedTraps) continue;
+                if (trapPositions.Count >= maxTrapCount) break;  //Changed this from 'continue' -Finn
 
                 bool failedCheck = false;
-                foreach (var trap in traps)
+                foreach (Transform trap in trapPositions)
                 {
-                    //this is the Euclidean Distance Equation... used for getting the distance between 2 points
-                    float distance = Mathf.Sqrt(Mathf.Pow(targetPos.position.x - trap.position.x, 2) + Mathf.Pow(targetPos.position.z - trap.position.z, 2));
-                    if (distance < bufferDistance) failedCheck = true;
+                    if ((targetPos.position - trap.position).sqrMagnitude < bufferDistance * bufferDistance)    //If we find a trap in range of this attempted placement...
+                    {
+                        failedCheck = true; //Abandon the placement
+                        break;
+                    }
                 }
                 if (failedCheck) continue;
 
                 Trap spawnedTrap = Object.Instantiate(trapPrefab, targetPos.position, Quaternion.identity).AddComponent<Trap>();
                 spawnedTrap.Construct(damage, trapTickSpeed);
 
-                traps.Add(spawnedTrap.transform);
+                trapPositions.Add(spawnedTrap.transform);
             }
         }
 
@@ -54,12 +86,11 @@ public class TrapAttacker : Attacker
 
     void CleanUp()
     {
-        foreach (var trap in traps)
+        foreach (Transform trap in trapPositions)
         {
             Object.Destroy(trap);
         }
-        traps.Clear();
-        //Ratilda was here
+        trapPositions.Clear();
     }
 }
 

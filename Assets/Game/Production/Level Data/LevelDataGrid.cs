@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 
 [System.Serializable]
 public struct Tile
@@ -9,14 +7,14 @@ public struct Tile
     public readonly Vector2 flowDirection;
     public readonly bool muddy;
 
-    private float inkLevel;
+    private TrapDetails details;
 
     public Tile(Vector2 flowDirectionInit, bool muddyInit)
     {
         flowDirection = flowDirectionInit;
         muddy = muddyInit;
 
-        inkLevel = 0;
+        details = new();
     }
 
     public float SpeedMultiplier
@@ -26,7 +24,7 @@ public struct Tile
             if (muddy)
                 return 0.5f;
             else
-                return 1.0f - inkLevel;
+                return 1.0f - details.inkLevel;
         }
     }
 
@@ -39,9 +37,18 @@ public struct Tile
         return flowDirection != Vector2.zero;
     }
 
-    public void ClearInk() => inkLevel = 0;
-
-    public void SetInkLevel(float newInkLevel) => inkLevel = newInkLevel;
+    public TrapDetails GetInkDetails()
+    {
+        return details;
+    }
+    public void SetInkDetails(float newInkLevel, int damage, float damageRate, bool poisonous = false, bool sticky = false)
+    {
+        details = new(newInkLevel, damage, damageRate, poisonous, sticky);
+    }
+    public void SetInkDetails(TrapDetails detailsInit)
+    {
+        details = detailsInit;
+    }
 }
 
 public class LevelDataGrid : MonoBehaviour
@@ -167,7 +174,7 @@ public class LevelDataGrid : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 
-    public void InkTiles(float inkLevel, Vector3 position, int radius)
+    public void InkTiles(TrapDetails inkDetails, Vector3 position, int radius)
     {
         WorldToTileSpace(position, out int xCoord, out int zCoord);
 
@@ -196,13 +203,13 @@ public class LevelDataGrid : MonoBehaviour
                 if (relativeXSqr + relativeZSqr > radiusSqr) continue; // Ensure fill area is a circle
                 if (tiles[x, z].muddy) continue; // Ensure ink isn't being put on mud
 
-                tiles[x, z].SetInkLevel(inkLevel);
+                tiles[x, z].SetInkDetails(inkDetails);
             }
         }
     }
 
     public void ClearInk(Vector3 position, int radius)
     {
-        InkTiles(0, position, radius);
+        InkTiles(new TrapDetails(), position, radius);
     }
 }
