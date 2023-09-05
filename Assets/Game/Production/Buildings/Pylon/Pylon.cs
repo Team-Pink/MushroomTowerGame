@@ -89,8 +89,6 @@ public class Pylon : Building
         private set { }
     }
 
-    //[HideInInspector] public Building parent = null;
-
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);

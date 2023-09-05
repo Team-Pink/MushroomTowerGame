@@ -26,6 +26,8 @@ public class Attacker
     [Header("Strikethrough Tag")]
     public bool strikethrough;
     public int strikethroughDamage;
+    public int strikethroughReach;
+    public int strikethroughBeamWidth;
     #endregion
 
     public virtual void Attack(HashSet<Target> targets)
