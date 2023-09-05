@@ -234,7 +234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Name
-      value: Dissolvesp
+      value: DissolvespEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_IsActive
@@ -309,16 +309,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthText: {fileID: 3787705941191005968}
-  maxHealth: 8
+  health: 0
+  isDead: 0
+  maxHealth: 12
   bugBits: 3
   expValue: 2
   speed: 1.5
-  pathToFollow: {fileID: 0}
-  attackCooldown: 1.5
-  hub: {fileID: 0}
   range:
     serializedVersion: 2
     m_Bits: 4096
+  pathToFollow: {fileID: 0}
+  damage: 2
+  attackCooldown: 1.5
+  attackDelay: 1
+  hub: {fileID: 0}
   animator: {fileID: 6708249941602146778}
   showPath: 0
   showLevers: 0
