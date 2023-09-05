@@ -157,16 +157,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthText: {fileID: 1029074555382802679}
-  maxHealth: 12
+  health: 0
+  isDead: 0
+  maxHealth: 20
   bugBits: 10
   expValue: 4
   speed: 0.5
-  pathToFollow: {fileID: 0}
-  attackCooldown: 3
-  hub: {fileID: 0}
   range:
     serializedVersion: 2
     m_Bits: 4096
+  pathToFollow: {fileID: 0}
+  damage: 4
+  attackCooldown: 3
+  attackDelay: 1
+  hub: {fileID: 0}
   animator: {fileID: 6382702797799955622}
   showPath: 0
   showLevers: 0
