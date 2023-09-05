@@ -17,7 +17,7 @@ public class TurretController : MonoBehaviour
     bool barrelAlternate;
 
     // pylon data
-    public bool pylonActive = true;
+    public bool towerActive = true;
     public int storedExperience;
 
     // tower values
@@ -30,6 +30,8 @@ public class TurretController : MonoBehaviour
 
     void Start()
     {
+        this.enabled = false;
+
         bulletSpawn1 = transform.GetChild(1).transform.localToWorldMatrix.GetPosition();
         bulletSpawn2 = transform.GetChild(2).transform.localToWorldMatrix.GetPosition();
 
@@ -39,19 +41,21 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!towerActive)
+            return;
+
         firingClock += Time.fixedDeltaTime;
         if (targetEnemy)
         {
             // rotate turret to targetted enemy
             RotateToTarget();
 
-            if (targetEnemy.Dead())
+            if (targetEnemy.Dead)
             {
                 // take enemy experience
                 storedExperience += targetEnemy.expValue;
                 targetEnemy.expValue = 0;
-                // run enemy death function
-                targetEnemy.OnDeath();
+                
                 // remove it from targets and retarget
                 inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
@@ -67,7 +71,8 @@ public class TurretController : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            inRangeEnemies.Add(other.gameObject);
+            if (!other.gameObject.GetComponent<Enemy>().Dead)
+                inRangeEnemies.Add(other.gameObject);
         }
 
         if (targetEnemy is null) PickPriorityTarget();
@@ -100,9 +105,9 @@ public class TurretController : MonoBehaviour
         }
         barrelAlternate = !barrelAlternate;
 
-        bulletRef.GetComponent<Bullet>().target = targetGameObject;
+        //bulletRef.GetComponent<Bullet>().target = targetGameObject;
 
-        targetEnemy.health -= (int)damage;
+        //targetEnemy.TakeDamage((int)damage);
 
         firingClock = 0;
 
@@ -124,8 +129,8 @@ public class TurretController : MonoBehaviour
         GameObject deleteThis = bestTargetSoFar; // so feel free to roll over this if you know how to do better.
 
         foreach (GameObject thisEnemy in inRangeEnemies)
-        {
-            int thisScore = TargetingAlgorithm();
+        {          
+            int thisScore = TargetingAlgorithm(thisEnemy);
             if (thisScore > bestScoreSoFar)
             {
                 bestScoreSoFar = thisScore;
@@ -137,8 +142,9 @@ public class TurretController : MonoBehaviour
         targetEnemy = bestTargetSoFar.GetComponent<Enemy>();
     }
 
-    int TargetingAlgorithm()  // this should be overridden in child classes
+    int TargetingAlgorithm(GameObject enemy)  // this should be overridden in child classes
     {
+        
         return Random.Range(0, 10);
     }
 

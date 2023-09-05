@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetGameObject: {fileID: 0}
   bullet: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
-  pylonActive: 1
+  towerActive: 1
   storedExperience: 0
   damage: 50
   firingInterval: 0.5
@@ -368,13 +368,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radiusDisplay: {fileID: 2366948552776975683}
-  cost: 10
+  radiusMaterials:
+  - {fileID: 2100000, guid: d956dcf30ef35df429e9dfbe809aebcb, type: 2}
+  TurnRate: 5
+  FiringCone: 10
+  TrapRadius: 1
+  FindNumberOfTargets: 0
+  storedExperience: 0
+  upgradeable: 0
+  upgradeCostL: 0
+  upgradeCostR: 0
+  purchaseCost: 10
   sellReturnPercent: 0.5
-  parent: {fileID: 0}
-  TowerController: {fileID: 8232834602698138295}
-  upgraded: 0
-  sellFlag: 0
-  upgradedTowerPrefabs: []
+  bulletPrefab: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
 --- !u!136 &7386576921632069825
 CapsuleCollider:
   m_ObjectHideFlags: 0
