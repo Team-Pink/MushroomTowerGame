@@ -64,8 +64,30 @@ public class Pylon : Building
 
     [Header("Connections")]
     [SerializeField] BuildingList connectedBuildings = new();
-    [HideInInspector] public int connectedTowersCount = 0;
-    [HideInInspector] public int connectedPylonsCount = 0;
+    public int connectedTowersCount
+    {
+        get
+        {
+            int towers = 0;
+            foreach (var building in connectedBuildings)
+                if (building is Tower)
+                    towers++;
+            return towers;
+        }
+        private set { }
+    }
+    public int connectedPylonsCount
+    {
+        get
+        {
+            int pylons = 0;
+            foreach (var building in connectedBuildings)
+                if (building is Pylon)
+                    pylons++;
+            return pylons;
+        }
+        private set { }
+    }
 
     //[HideInInspector] public Building parent = null;
 
@@ -100,19 +122,11 @@ public class Pylon : Building
     public void AddBuilding(Building building)
     {
         connectedBuildings.Add(building);
-        if (building is Tower)
-            connectedTowersCount++;
-        else
-            connectedPylonsCount++;
     }
 
     public void RemoveBuilding(Building building)
     {
         connectedBuildings.Remove(building);
-        if (building is Tower)
-            connectedTowersCount--;
-        else
-            connectedPylonsCount--;
     }
 
     public override void Deactivate()

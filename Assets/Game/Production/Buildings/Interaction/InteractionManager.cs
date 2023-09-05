@@ -614,10 +614,6 @@ public class InteractionManager : MonoBehaviour
         {
             (targetBuilding as Hub).pylonCount++;
         }
-        else
-        {
-            (targetBuilding as Pylon).connectedPylonsCount++;
-        }
 
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
@@ -640,7 +636,6 @@ public class InteractionManager : MonoBehaviour
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
-            (targetBuilding as Pylon).connectedTowersCount++;
         }  
 
         ResetInteraction();
