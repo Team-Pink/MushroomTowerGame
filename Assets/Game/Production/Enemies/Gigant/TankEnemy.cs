@@ -31,11 +31,11 @@ public class TankEnemy : Enemy
         base.AttackHub();
     }
 
-    public override IEnumerator TakeDamage(int damage)
+    public override void TakeDamage(int damage)
     {
         if (hasArmour)
         {
-            StartCoroutine(base.TakeDamage(damage - damageReduction));
+            base.TakeDamage(damage - damageReduction);
 
             if (health <= halfHealthMark)
             {
@@ -44,8 +44,7 @@ public class TankEnemy : Enemy
         }
         else
         {
-            StartCoroutine(base.TakeDamage(damage));
+            base.TakeDamage(damage);
         }
-        yield return null;
     }
 }

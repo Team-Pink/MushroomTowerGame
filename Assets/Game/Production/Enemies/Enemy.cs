@@ -66,11 +66,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public virtual IEnumerator TakeDamage(int damage)
-    {
-        //yield return new WaitForSeconds(delay);
+    public virtual void TakeDamage(int damage) // this doesn't need to be a coroutine any more.
+    {       
         health -= damage;
-        yield return null;
     }
     public void SpawnIn()
     {

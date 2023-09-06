@@ -2,71 +2,69 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// An object responsible for carrying out the effects of an attack on an enemy from the time after an attack is launched to when it resolves.
+/// </summary>
 public class AttackObject : MonoBehaviour
 {
+    public int damage; // damage dealt to target
     public float delayToTarget; // time until the attack reaches the target
-    public HashSet<Target> targetEnemy; // targets of the attack
+    public Target target; // targets of the attack
     public Tower originTower; // origin of the attack
+    public HashSet<Enemy> areaHitTargets;
 
     // private Animator
 
-
-    // Update is called once per frame
-    void Update()
+    public IEnumerator CommenceAttack()
     {
-        if (delayToTarget > 0) delayToTarget -= Time.deltaTime; // check time to target only attack after the delay time is complete.
-        else
-        {
+        yield return new WaitForSeconds(delayToTarget); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
+        
+            // play impact animation
 
+            //originTower.AttackerComponent.Attack(targetEnemy);// Do attack on target
+            target.enemy.TakeDamage(damage);
 
-
-
-            foreach (Target target in targetEnemy)
+            if (target.enemy.CheckIfDead())
             {
-                // play impact animation
+                // extract exp
+                originTower.storedExperience += target.enemy.expValue;
+                target.enemy.expValue = 0;
 
-                originTower.AttackerComponent.Attack(targetEnemy);// Do attack on target
-
-                if (target.enemy.CheckIfDead())
+                if (originTower.GetAccelerate()) // Accelerate logic
                 {
-                    // extract exp
-                    originTower.storedExperience += target.enemy.expValue;
-                    target.enemy.expValue = 0;
-
-                    if (originTower.GetAccelerate()) // Accelerate logic
+                    if (!target.enemy.Dead)
                     {
-                        if (!target.enemy.Dead)
-                        {
-                            originTower.accelerated = true; // this could be called from elsewhere if neccesary
-                            originTower.accelTimer = 0;
-                            originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
-                        }
-                        else
-                        {
-                            originTower.AttackerComponent.attackDelay *= originTower.decreaseAccel;// modify attack delay
-                        }
+                        originTower.accelerated = true; // this could be called from elsewhere if neccesary
+                        originTower.accelTimer = 0;
+                        originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
                     }
-                    target.enemy.OnDeath(); // enemy on death               
-                }
-
-                if (originTower.AttackerComponent is AreaAttacker)
-                {
-                    // get everything hit by the attack
-                    foreach (Enemy EnemyHit in (originTower.AttackerComponent as AreaAttacker).affectedEnemies)
+                    else
                     {
-                        if (target.enemy.CheckIfDead())
-                        {
-                            // extract exp
-                            originTower.storedExperience += target.enemy.expValue;
-                            target.enemy.expValue = 0;
-                            target.enemy.OnDeath(); // enemy on death               
-                        }
+                        originTower.AttackerComponent.attackDelay *= originTower.decreaseAccel;// modify attack delay
+                    }
+                }
+                target.enemy.OnDeath(); // enemy on death               
+           
+
+            if (originTower.AttackerComponent is AreaAttacker)
+            {
+                // get everything hit by the attack
+                foreach (Enemy enemyHit in areaHitTargets)
+                {
+                    enemyHit.TakeDamage(damage);
+                    if (enemyHit.CheckIfDead())
+                    {
+                        // extract exp
+                        originTower.storedExperience += target.enemy.expValue;
+                        target.enemy.expValue = 0;
+                        target.enemy.OnDeath(); // enemy on death               
                     }
                 }
             }
-            Destroy(gameObject);
-            // Destroy this
         }
+        Destroy(gameObject);
+        // Destroy this
+
     }
 }
 

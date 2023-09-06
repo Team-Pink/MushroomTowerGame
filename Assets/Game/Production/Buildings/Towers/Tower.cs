@@ -127,6 +127,8 @@ public class Tower : Building
         }
 
         attackerComponent.bulletPrefab = bulletPrefab;
+        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
+        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead.
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
@@ -141,32 +143,15 @@ public class Tower : Building
             else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
-                attackerComponent.Attack(targets);
-
-                GenerateAttackObject(); // creates an object defining attack parameters.
-
-
-
+                attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+             
                 // Attack tags
                 AccelerateTag();
             }
         }
     }
 
-    /// <summary>
-    /// Instantiates an AttackObject assigns it's values and animates an attack.
-    /// </summary>
-    private void GenerateAttackObject()
-    {
-        AttackObject attackInProgress = Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
-        attackInProgress.delayToTarget = AttackerComponent.attackDelay;
-        attackInProgress.originTower = this;
-        attackInProgress.targetEnemy = targets;
-        foreach (Target target in targets)
-        {
-            AttackerComponent.AnimateAttack(target);
-        }
-    }
+
 
     public void Upgrade(int upgradePath)
     {

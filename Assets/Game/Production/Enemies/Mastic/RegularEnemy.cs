@@ -26,7 +26,7 @@ public class RegularEnemy : Enemy
     {
         if (!attackInProgress && !attackCoolingDown)
         {
-            StartCoroutine(TakeDamage(damage));
+            TakeDamage(damage);
             if(CheckIfDead()) OnDeath();
         }
 

@@ -21,15 +21,18 @@ public class AreaAttacker : Attacker
 
             foreach (var target in targets)
             {
+                AttackObject areaAttack = GenerateAttackObject(target);
+                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
                 foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
                 {
                     Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                     if (enemy is null)
                         continue;
-                    enemy.StartCoroutine(target.enemy.TakeDamage(damage));
-                    affectedEnemies.Add(enemy); // <- this is bad but the only way I can see to replace it would be to gut this and turn it into a targeter type.
+                    //enemy.StartCoroutine(target.enemy.TakeDamage(damage)); //create an attack object instead                  
+                    affectedEnemies.Add(enemy); // grabs references to all hit enemies which really should be done by a targeter.
                 }
-                //AnimateAttack(target); // moved to Tower.GenerateAttackObject
+                areaAttack.areaHitTargets = affectedEnemies;
+                AnimateAttack(target); 
             }
         }
 
