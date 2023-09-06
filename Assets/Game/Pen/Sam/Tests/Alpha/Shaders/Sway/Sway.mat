@@ -44,8 +44,10 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Strength: 1.57
-    m_Colors: []
+    - _Strength: 5.5
+    - _Wind_Strength: 1
+    m_Colors:
+    - _Wind_Movement: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &5156458075758530460
 MonoBehaviour:
