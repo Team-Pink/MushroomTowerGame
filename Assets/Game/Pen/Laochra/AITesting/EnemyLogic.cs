@@ -55,7 +55,7 @@ public class EnemyLogic : MonoBehaviour
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
 
-        boidLayers = LayerMask.GetMask("Boid");
+        boidLayers = LayerMask.GetMask("Enemy");
     }
 
     private void Update()

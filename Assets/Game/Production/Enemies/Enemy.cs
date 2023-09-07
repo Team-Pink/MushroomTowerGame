@@ -1,10 +1,46 @@
-using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
 using UnityEngine;
 using Text = TMPro.TMP_Text;
 using System.Collections;
+using System;
+using System.Collections.Generic;
+
+public enum ConditionType
+{
+    None,
+    Infection,
+    Poison,
+    Slow,
+    Stagger,
+    Vulnerability
+}
+
+public class Condition
+{
+    public ConditionType type;
+    public float value;
+    public float duration;
+
+    public Condition(ConditionType typeInit, float valueInit, float durationInit)
+    {
+        type = typeInit;
+        value = valueInit;
+        duration = durationInit;
+    }
+
+    public bool Duration()
+    {
+        if (duration < 0)
+            return true;
+
+        duration -= Time.deltaTime;
+        return false;
+    }
+}
 
 public class Enemy : MonoBehaviour
 {
+    List<Condition> activeConditions;
+
     protected virtual void CustomAwakeEvents()
     {
 
@@ -38,13 +74,40 @@ public class Enemy : MonoBehaviour
         Travel();
     }
 
+
+    public void ApplyConditions(Condition[] conditions)
+    {
+        for(int newIndex = 0; newIndex < conditions.Length; newIndex++)
+        {
+            bool shouldApply = true;
+            for (int activeIndex = 0; activeIndex < activeConditions.Count; activeIndex++)
+            {
+                if (conditions[newIndex].type != activeConditions[activeIndex].type)
+                    continue;
+
+                if (conditions[newIndex].value > activeConditions[activeIndex].value)
+                {
+                    activeConditions.RemoveAt(activeIndex); break;
+                }
+                else
+                {
+                    shouldApply = false; continue;
+                }
+            }
+
+            if (shouldApply)
+                activeConditions.Add(conditions[newIndex]);
+        }
+    }
+
+
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
-    public int health;
+    public float health;
     public bool isDead;
     [SerializeField] int maxHealth;
-    public int CurrentHealth
+    public float CurrentHealth
     {
         get => health;
         protected set => health = value;
@@ -66,7 +129,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public virtual IEnumerator TakeDamage(int damage, float delay)
+    public virtual IEnumerator TakeDamage(float damage, float delay = 0)
     {
         yield return new WaitForSeconds(delay);
         health -= damage;
@@ -134,7 +197,7 @@ public class Enemy : MonoBehaviour
 
     float progress = 0.0f;
     int currentPoint;
-    Vector3List points = new();
+    List<Vector3> points = new();
 
     protected void Travel()
     {

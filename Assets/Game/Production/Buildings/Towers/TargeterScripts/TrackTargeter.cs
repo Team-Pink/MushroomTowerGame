@@ -7,7 +7,7 @@ public class TrackTargeter : Targeter
     private const int maxTargets = 1000;
     public LayerMask layerMask;
     
-    [SerializeField] private float minRange = 0.5f;
+    [SerializeField] private float minRange = 2.0f;
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         HashSet<Target> targets;
@@ -25,7 +25,7 @@ public class TrackTargeter : Targeter
         {
             Vector3 randpos = RandomPosition();
             targets.Add(new Target(randpos));
-            Debug.DrawLine(transform.position, randpos, Color.red, 0.02f);
+            //Debug.DrawLine(transform.position, randpos, Color.red, 0.02f);
 
         }
         return targets;

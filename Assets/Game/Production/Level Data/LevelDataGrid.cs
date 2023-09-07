@@ -7,25 +7,15 @@ public struct Tile
     public readonly Vector2 flowDirection;
     public readonly bool muddy;
 
-    private TrapDetails details;
-
     public Tile(Vector2 flowDirectionInit, bool muddyInit)
     {
         flowDirection = flowDirectionInit;
         muddy = muddyInit;
-
-        details = new();
     }
 
     public float SpeedMultiplier
     {
-        get
-        {
-            if (muddy)
-                return 0.5f;
-            else
-                return 1.0f - details.inkLevel;
-        }
+        get => muddy ? LevelDataGrid.MuddySpeedMultiplier : 1.0f;
     }
 
     public bool GetFlow() => flowDirection != Vector2.zero;
@@ -35,19 +25,6 @@ public struct Tile
         direction = flowDirection;
 
         return flowDirection != Vector2.zero;
-    }
-
-    public TrapDetails GetInkDetails()
-    {
-        return details;
-    }
-    public void SetInkDetails(float newInkLevel, int damage, float damageRate, bool poisonous = false, bool sticky = false)
-    {
-        details = new(newInkLevel, damage, damageRate, poisonous, sticky);
-    }
-    public void SetInkDetails(TrapDetails detailsInit)
-    {
-        details = detailsInit;
     }
 }
 
@@ -61,6 +38,9 @@ public class LevelDataGrid : MonoBehaviour
 
     private int tilesWidth;
     private int tilesHeight;
+
+    [SerializeField] private float muddySpeedMultiplier;
+    public static float MuddySpeedMultiplier;
 
     [Header("Debug")]
     [SerializeField] bool drawGrid;
@@ -172,44 +152,5 @@ public class LevelDataGrid : MonoBehaviour
         float z = (-zIndex + tilesHeight * 0.5f) * TileHeight - TileHeight * 0.5f;
 
         return new Vector3(x, 0, z);
-    }
-
-    public void InkTiles(TrapDetails inkDetails, Vector3 position, int radius)
-    {
-        WorldToTileSpace(position, out int xCoord, out int zCoord);
-
-        // Initialise Values
-        int left = xCoord - radius;
-        int right = xCoord + radius;
-        int top = zCoord + radius;
-        int bottom = zCoord - radius;
-
-        int radiusSqr = radius * radius;
-
-        // Clamp Values to Valid Range
-        if (left < 0) left = 0;
-        if (right > tiles.GetLength(0)) right = tiles.GetLength(0);
-        if (top > tiles.GetLength(1)) top = tiles.GetLength(1);
-        if (bottom < 0) bottom = 0;
-
-        for (int x = left; x <= right; x++)
-        {
-            int relativeXSqr = (xCoord - x) * (xCoord - x);
-
-            for (int z = bottom; z <= top; z++)
-            {
-                int relativeZSqr = (zCoord - z) * (zCoord - z);
-
-                if (relativeXSqr + relativeZSqr > radiusSqr) continue; // Ensure fill area is a circle
-                if (tiles[x, z].muddy) continue; // Ensure ink isn't being put on mud
-
-                tiles[x, z].SetInkDetails(inkDetails);
-            }
-        }
-    }
-
-    public void ClearInk(Vector3 position, int radius)
-    {
-        InkTiles(new TrapDetails(), position, radius);
     }
 }

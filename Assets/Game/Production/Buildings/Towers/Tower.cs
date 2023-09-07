@@ -45,7 +45,6 @@ public struct Target
 
 public class Tower : Building
 {
-
     // Components
     protected new Transform transform;
     protected Animator animator;
@@ -107,8 +106,11 @@ public class Tower : Building
                 foreach (Target targetEnemy in targets)
                 {
                     // take enemy experience
-                    storedExperience += targetEnemy.enemy.expValue;
-                    targetEnemy.enemy.expValue = 0;
+                    if (targetEnemy.enemy != null)
+                    {
+                        storedExperience += targetEnemy.enemy.expValue;
+                        targetEnemy.enemy.expValue = 0;
+                    }
 
                     // remove it from targets and retarget
                 }
