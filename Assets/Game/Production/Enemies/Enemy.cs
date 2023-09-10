@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
         health -= damage;
         if(CheckIfDead()) OnDeath();
     }
-    public void SpawnIn()
+    public virtual void SpawnIn()
     {
         for (int i = 0; i < transform.childCount; i++)
         {
