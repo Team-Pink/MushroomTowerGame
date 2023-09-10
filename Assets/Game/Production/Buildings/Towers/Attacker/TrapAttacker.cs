@@ -1,77 +1,111 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-// From Lochlan: I don't think there should be a trap attacker I think enemies should deal with traps in their own scripts based
-// on the state of the Flow field tile they are standing on.
-public class TrapAttacker : Attacker 
+[System.Serializable]
+public class TrapDetails
 {
-    HashSet<Transform> traps; 
+    public float inkLevel;
+    public float dps;
+    public float startupTime;
+    public Condition[] conditions;
+
+    public TrapDetails()
+    {
+        inkLevel = 0;
+        dps = 0;
+        startupTime = 0;
+        conditions = new Condition[0];
+    }
+
+    public TrapDetails(float inkLevelInit, float dpsInit, float startupTimeInit,
+        Condition[] conditionsInit)
+    {
+        inkLevel = inkLevelInit;
+        dps = dpsInit;
+        startupTime = startupTimeInit;
+        conditions = conditionsInit;
+    }
+}
+
+public class TrapAttacker : Attacker
+{
+    private List<Target> targets;
+    private readonly List<GameObject> placedTraps = new();
     [SerializeField] GameObject trapPrefab;
 
-    int placedTraps;
-    float bufferDistance = 0.5f;
+    [SerializeField] private int maxTrapCount;
+    [SerializeField] private float bufferDistance = 1f;
 
-    //dunno where to put this
-    float trapTickSpeed = 1f;
+    public TrapDetails inkDetails = new();
+    private int inkPlacementIndex;
+    private LayerMask obstacles = 0;
 
-
-    //handles trap placement not trap behaviour
-    public override void Attack(HashSet<Target> targets)
+    public override void Attack(HashSet<Target> newTargets)
     {
-        //Play attack animation here
-
-        if (!CheckDelayTimer()) return;
-
-        if (cooldownTimer == 0f)
+        if (!attacking)
         {
+            AnimateAttack();
+
             Debug.Log("Trap Attacker");
-            
-            foreach (var targetPos in targets)
-            {
-                if (traps.Count == placedTraps) continue;
 
-                bool failedCheck = false;
-                foreach (var trap in traps)
-                {
-                    //this is the Euclidean Distance Equation... used for getting the distance between 2 points
-                    float distance = Mathf.Sqrt(Mathf.Pow(targetPos.position.x - trap.position.x, 2) + Mathf.Pow(targetPos.position.z - trap.position.z, 2));
-                    if (distance < bufferDistance) failedCheck = true;
-                }
-                if (failedCheck) continue;
+            TrapManager.trapAttackers.Add(this);
 
-                Trap spawnedTrap = Object.Instantiate(trapPrefab, targetPos.position, Quaternion.identity).AddComponent<Trap>();
-                spawnedTrap.Construct(damage, trapTickSpeed);
-
-                traps.Add(spawnedTrap.transform);
-            }
+            targets = newTargets.ToList();
+            attacking = true;
         }
 
         if (!CheckCooldownTimer()) return;
+
         CleanUp();
         delayTimer = 0f;
         cooldownTimer = 0f;
+        attacking = false;
+    }
+
+    public bool PlaceTrap()
+    {
+        if (obstacles == 0) obstacles = LayerMask.GetMask("Trap", "Tower", "Pylon", "Hub"); 
+
+        if (placedTraps.Count >= maxTrapCount || inkPlacementIndex >= targets.Count)
+        {
+            inkPlacementIndex = 0;
+            TrapManager.trapAttackers.Remove(this);
+            return true;
+        }
+
+        if (inkPlacementIndex >= targets.Count)
+        {
+            inkPlacementIndex = 0;
+            TrapManager.trapAttackers.Remove(this);
+            return false;
+        }
+
+        if (Physics.OverlapSphere(targets[inkPlacementIndex].position, bufferDistance, obstacles).Length > 0)
+        {
+            inkPlacementIndex++;
+            return PlaceTrap();
+        }
+
+        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].position, Quaternion.identity);
+        TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
+
+        trapScript.details.inkLevel = inkDetails.inkLevel;
+        trapScript.details.dps = damage;
+        trapScript.details.startupTime = attackDelay;
+        trapScript.details.conditions = inkDetails.conditions;
+
+        placedTraps.Add(newTrap);
+        inkPlacementIndex++;
+        return true;
     }
 
     void CleanUp()
     {
-        foreach (var trap in traps)
+        foreach (GameObject trap in placedTraps)
         {
             Object.Destroy(trap);
         }
-        traps.Clear();
-        //Ratilda was here
-    }
-}
-
-//dud class delete when Trap class Exists
-public class Trap : MonoBehaviour
-{
-    int damage = 0;
-    float attackDelay = 0f;
-
-    public void Construct(int damageToSet, float tickDelayToSet)
-    {
-        damage = damageToSet;
-        attackDelay = tickDelayToSet;
+        placedTraps.Clear();
     }
 }
