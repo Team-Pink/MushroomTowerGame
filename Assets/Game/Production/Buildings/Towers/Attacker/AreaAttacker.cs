@@ -3,16 +3,15 @@ using UnityEngine;
 
 public class AreaAttacker : Attacker
 {
-    float damageRadius = 3f;
+    [SerializeField] float damageRadius = 3f;
 
     public override void Attack(HashSet<Target> targets)
     {
-        //Play attack animation here
-
-        if (!CheckDelayTimer()) return;
-
-        if (cooldownTimer == 0f)
+        if (!attacking)
         {
+            AnimateAttack();
+            attacking = true;
+
             LayerMask mask = LayerMask.GetMask("Enemy");
 
             Debug.Log("Area Attack");
@@ -22,11 +21,13 @@ public class AreaAttacker : Attacker
                 foreach (var collision in Physics.OverlapSphere(target.position, damageRadius, mask))
                 {
                     Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                    if (enemy is null)
-                        continue;
-                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
+
+                    if (enemy is null) continue;
+
+                    enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
                 }
-                AnimateAttack(target);
+
+                targetsToShoot.Add(target);
             }
         }
 
@@ -34,5 +35,7 @@ public class AreaAttacker : Attacker
 
         cooldownTimer = 0f;
         delayTimer = 0f;
+        attacking = false;
+        targetsToShoot.Clear();
     }
 }

@@ -231,7 +231,7 @@ public class LevelData : ScriptableObject
         {
             for (int z = 0; z < tiles.GetLength(1); z++)
             {
-                if (textureMap.GetPixel(x, z).r == float.Epsilon + 1)
+                if (textureMap.GetPixel(x, z).r > 0.05f)
                     tiles[x, z].muddy = true;
             }
         }
@@ -410,7 +410,7 @@ public class LevelData : ScriptableObject
 
         byte[] bytes = texture.EncodeToPNG();
 
-        var directory = Application.dataPath + "/Game/Production/Pathfinding/";
+        var directory = Application.dataPath + "/Game/Production/Level Data/";
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
