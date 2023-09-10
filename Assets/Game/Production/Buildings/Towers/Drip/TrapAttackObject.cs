@@ -24,9 +24,6 @@ public class TrapAttackObject : MonoBehaviour
 
         // Detection
         enemies = LayerMask.GetMask("Enemy");
-
-        // Start the delay here instead of in TrapAttacker so the ink has time to spray out.
-        // (until animation is done just enable mesh and collider after delay)
     }
 
     private void Update()

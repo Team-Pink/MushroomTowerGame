@@ -5,24 +5,27 @@ public class SingleAttacker : Attacker
 {
     public override void Attack(HashSet<Target> targets)
     {
-        if (cooldownTimer == 0.0f)
+        if (!attacking)
         {
             AnimateAttack();
-
-            if (!CheckDelayTimer()) return;
+            attacking = true;
 
             Debug.Log("Single Attack");
             foreach (var target in targets)
+            {
                 if (target.enemy is not null)
                 {
                     target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
-                    AnimateProjectile(target);
+                    targetsToShoot.Add(target);
                 }
+            }
         }
 
         if (!CheckCooldownTimer()) return;
 
         delayTimer = 0;
         cooldownTimer = 0;
+        attacking = false;
+        targetsToShoot.Clear();
     }
 }

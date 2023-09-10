@@ -43,7 +43,7 @@ public class TrapAttacker : Attacker
 
     public override void Attack(HashSet<Target> newTargets)
     {
-        if (cooldownTimer == 0.0f)
+        if (!attacking)
         {
             AnimateAttack();
 
@@ -52,12 +52,15 @@ public class TrapAttacker : Attacker
             TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
+            attacking = true;
         }
+
         if (!CheckCooldownTimer()) return;
-        if (!CheckDelayTimer()) return; // Just here to keep synced with intended duration. Delay is managed in traps.
+
         CleanUp();
         delayTimer = 0f;
         cooldownTimer = 0f;
+        attacking = false;
     }
 
     public bool PlaceTrap()
