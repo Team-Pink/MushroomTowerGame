@@ -3,14 +3,26 @@ using UnityEngine;
 [RequireComponent(typeof(CapsuleCollider))]
 public class TrapAttackObject : MonoBehaviour
 {
+    private bool active;
+
+    // Data
     public TrapDetails details = new TrapDetails();
+
+    // Components
     private new Transform transform;
+    [SerializeField] MeshRenderer meshRenderer;
+
+    // Detection
     private LayerMask enemies;
     private const string groundedEnemy = "Enemy";
 
     private void Awake()
     {
+        // Components
         transform = gameObject.transform;
+        meshRenderer.enabled = false;
+
+        // Detection
         enemies = LayerMask.GetMask("Enemy");
 
         // Start the delay here instead of in TrapAttacker so the ink has time to spray out.
@@ -19,10 +31,20 @@ public class TrapAttackObject : MonoBehaviour
 
     private void Update()
     {
-        if (details.startupTime > 0)
+        if (!active)
         {
-            details.startupTime -= Time.deltaTime; return;
+            if (details.startupTime > 0)
+            {
+                details.startupTime -= Time.deltaTime; return;
+            }
+            else
+            {
+                meshRenderer.enabled = true;
+                active = true; return;
+            }
         }
+
+
         Collider[] hits = Physics.OverlapSphere(transform.position, transform.localScale.x * 0.5f, enemies);
 
         foreach (Collider hit in hits)

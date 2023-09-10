@@ -33,7 +33,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackDelay
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
@@ -122,7 +122,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441039].animator
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1011849591911351348}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441026].transform
       value: 
@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441039].attackDelay
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441039].bulletPrefab
@@ -243,6 +243,14 @@ PrefabInstance:
       propertyPath: managedReferences[4951535851181441039].inkDetails.damageRate
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441039].inkDetails.startupTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441039].inkDetails.conditions.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5109823546609926884, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: m_Name
       value: Drip Tower
@@ -295,5 +303,88 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 77309868c34c6fa4f9918ae5e11e9332, type: 2}
+    - target: {fileID: 5109823547120926316, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+--- !u!4 &4934701682232051942 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5109823546609926887, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+  m_PrefabInstance: {fileID: 185255037942516225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7860030475742913362
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4934701682232051942}
+    m_Modifications:
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8061397241797465412, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: m_Name
+      value: DripTowerArt
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+--- !u!95 &1011849591911351348 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7142356912060147558, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+  m_PrefabInstance: {fileID: 7860030475742913362}
+  m_PrefabAsset: {fileID: 0}

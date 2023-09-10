@@ -31,7 +31,7 @@ public class TrapDetails
 public class TrapAttacker : Attacker
 {
     private List<Target> targets;
-    private List<GameObject> placedTraps = new();
+    private readonly List<GameObject> placedTraps = new();
     [SerializeField] GameObject trapPrefab;
 
     [SerializeField] private int maxTrapCount;
@@ -43,20 +43,18 @@ public class TrapAttacker : Attacker
 
     public override void Attack(HashSet<Target> newTargets)
     {
-        //Play attack animation here
-
-        if (!CheckDelayTimer()) return;
-
-        if (cooldownTimer <= float.Epsilon)
+        if (cooldownTimer == 0.0f)
         {
+            AnimateAttack();
+
             Debug.Log("Trap Attacker");
 
             TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
         }
-
         if (!CheckCooldownTimer()) return;
+        if (!CheckDelayTimer()) return; // Just here to keep synced with intended duration. Delay is managed in traps.
         CleanUp();
         delayTimer = 0f;
         cooldownTimer = 0f;
@@ -87,9 +85,14 @@ public class TrapAttacker : Attacker
         }
 
         GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].position, Quaternion.identity);
-        newTrap.GetComponent<TrapAttackObject>().details = inkDetails;
-        placedTraps.Add(newTrap);
+        TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
 
+        trapScript.details.inkLevel = inkDetails.inkLevel;
+        trapScript.details.dps = damage;
+        trapScript.details.startupTime = attackDelay;
+        trapScript.details.conditions = inkDetails.conditions;
+
+        placedTraps.Add(newTrap);
         inkPlacementIndex++;
         return true;
     }

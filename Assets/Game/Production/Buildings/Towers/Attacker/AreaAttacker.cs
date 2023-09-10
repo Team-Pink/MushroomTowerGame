@@ -7,12 +7,12 @@ public class AreaAttacker : Attacker
 
     public override void Attack(HashSet<Target> targets)
     {
-        //Play attack animation here
-
-        if (!CheckDelayTimer()) return;
-
-        if (cooldownTimer == 0f)
+        if (cooldownTimer == 0.0f)
         {
+            AnimateAttack();
+
+            if (!CheckDelayTimer()) return;
+
             LayerMask mask = LayerMask.GetMask("Enemy");
 
             Debug.Log("Area Attack");
@@ -26,7 +26,7 @@ public class AreaAttacker : Attacker
                         continue;
                     target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
                 }
-                AnimateAttack(target);
+                AnimateProjectile(target);
             }
         }
 

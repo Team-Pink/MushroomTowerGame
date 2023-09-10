@@ -14,6 +14,7 @@ public enum ConditionType
     Vulnerability
 }
 
+[Serializable]
 public class Condition
 {
     public ConditionType type;

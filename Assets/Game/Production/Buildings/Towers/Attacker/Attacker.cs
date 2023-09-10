@@ -40,7 +40,7 @@ public class Attacker
         return true;
     }
 
-    public void AnimateAttack(Target target)
+    public void AnimateProjectile(Target target)
     {
         Bullet bulletRef;
 
@@ -48,8 +48,11 @@ public class Attacker
 
         bulletRef.timeToTarget = attackDelay;
         bulletRef.target = target;
+    }
+    public void AnimateAttack()
+    {
+        if (animator == null) return;
 
-        if (animator != null)
-            animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack");
     }
 }
