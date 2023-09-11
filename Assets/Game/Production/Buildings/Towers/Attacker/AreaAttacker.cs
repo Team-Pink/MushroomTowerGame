@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class AreaAttacker : Attacker
 {
-    [SerializeField] float damageRadius = 3f;
+    public float damageRadius = 3f;
+    public HashSet<Enemy> affectedEnemies = new HashSet<Enemy>();
 
-    public override void Attack(HashSet<Target> targets)
+    public override void Attack(HashSet<Target> targets) //  I need a way to get references to the things hit by the aoe out.
     {
         if (!attacking)
         {
+            affectedEnemies.Clear();
             AnimateAttack();
             attacking = true;
 
@@ -18,17 +20,24 @@ public class AreaAttacker : Attacker
 
             foreach (var target in targets)
             {
+                AttackObject areaAttack = GenerateAttackObject(target);
+                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
+
                 Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                 foreach (var collision in mainCollisions)
                 {
                     Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                     if (enemy is null) continue;
-                    enemy.StartCoroutine(enemy.TakeDamage(damage, attackDelay));
+                    affectedEnemies.Add(enemy); // grabs references to all hit enemies which really should be done by a targeter.
                 }
+                areaAttack.areaHitTargets = affectedEnemies;
 
                 #region Tag Applications
                 if (spray)
                 {
+                    HashSet<Enemy> sprayTargets = new HashSet<Enemy>();
+                    areaAttack.tagSpecificDamage = sprayDamage;
+
                     foreach (var sprayCollision in Physics.OverlapSphere(target.position, damageRadius + additionalSprayRange, mask))
                     {
                         bool isMainCollision = false;
@@ -41,8 +50,12 @@ public class AreaAttacker : Attacker
                         }
 
                         if (!isMainCollision)
-                            enemy.StartCoroutine(enemy.TakeDamage(sprayDamage, attackDelay));
+                        {
+                            sprayTargets.Add(enemy);
+                        }
+                            
                     }
+                    areaAttack.tagSpecificEnemiesHit = sprayTargets;
                 }
                 #endregion
 

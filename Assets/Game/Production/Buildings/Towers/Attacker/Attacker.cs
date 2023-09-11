@@ -15,6 +15,8 @@ public class Attacker
 
     public Transform transform;
     public GameObject bulletPrefab;
+    public GameObject attackObjectPrefab;
+    public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
     #region TAGS
@@ -24,10 +26,11 @@ public class Attacker
     public float additionalSprayRange = 2;
 
     [Header("Strikethrough Tag")]
-    public bool strikethrough;
-    public int strikethroughDamage;
-    public int strikethroughReach;
-    public int strikethroughBeamWidth;
+    public bool strikethrough = true;
+    public int strikethroughDamage = 1;
+    public int strikethroughReach = 10;
+    public int strikethroughBeamWidth = 4;
+    public Matrix4x4 strikethroughMatrix;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -59,6 +62,20 @@ public class Attacker
             bulletRef.target = target;
         }
     }
+
+    /// <summary>
+    /// Instantiates an AttackObject assigns it's values and animates an attack.
+    /// </summary>
+    protected AttackObject GenerateAttackObject(Target enemy)
+    {
+        AttackObject attackInProgress = MonoBehaviour.Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
+        attackInProgress.damage = damage;
+        attackInProgress.delayToTarget = attackDelay;
+        attackInProgress.originTower = originReference;
+        attackInProgress.target = enemy;
+        return attackInProgress;
+    }
+
     public void AnimateAttack()
     {
         if (animator == null) return;

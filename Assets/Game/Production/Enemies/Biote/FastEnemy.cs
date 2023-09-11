@@ -34,17 +34,15 @@ public class FastEnemy : Enemy
         base.Playing();
     }
 
-    public override IEnumerator TakeDamage(float damage, float delay)
+    public override void TakeDamage(float damage)
     {
-        StartCoroutine(base.TakeDamage(damage, delay));
+        base.TakeDamage(damage);
 
         if (!damaged && !Dead)
         {
             damaged = true;
             StartCoroutine(ChangeSpeed());
         }
-
-        yield return null;
     }
 
     protected override void AttackHub()
@@ -54,7 +52,7 @@ public class FastEnemy : Enemy
         if (!attackInProgress && !attackCoolingDown)
         {
             //Explosion logic goes here
-            StartCoroutine(TakeDamage(CurrentHealth, attackDelay));
+            TakeDamage(CurrentHealth);
         }    
     }
 

@@ -27,18 +27,29 @@ public class SingleAttacker : Attacker
                         Vector3 centerPosition = transform.position + direction * medianReach;
                         Vector3 scale = new Vector3(strikethroughBeamWidth / 2, 1000, medianReach / 2); // test what is width vs length
 
+                        Matrix4x4 matrix = Matrix4x4.TRS(centerPosition, rotation, scale);
+
                         Collider[] collisions = Physics.OverlapBox(centerPosition, scale, rotation, mask);
+
+                        AttackObject StrikethroughHit = GenerateAttackObject(target);
+                        StrikethroughHit.tagSpecificDamage = strikethroughDamage;
+
+                        HashSet<Enemy> hitEnemies = new HashSet<Enemy>();
 
                         foreach (Collider collision in collisions)
                         {
                             Enemy enemy = collision.GetComponent<Enemy>();
-                            enemy.StartCoroutine(enemy.TakeDamage(strikethroughDamage, attackDelay));
+                            Target targetEnemy;
+                            targetEnemy.enemy = enemy;
+                            hitEnemies.Add(enemy);
                         }
-
+                        StrikethroughHit.tagSpecificEnemiesHit = hitEnemies;
                     }
                     #endregion
 
-                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
+                    //target.enemy.StartCoroutine(target.enemy.TakeDamage(damage)); // swap this with generate attack object
+                    AttackObject singleAttack =GenerateAttackObject(target);
+                    singleAttack.StartCoroutine(singleAttack.CommenceAttack());
 
                     targetsToShoot.Add(target);
                 }
