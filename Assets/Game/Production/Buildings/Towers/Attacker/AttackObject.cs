@@ -69,7 +69,7 @@ public class AttackObject : MonoBehaviour
 }
 
 //Rundown of current functionality
-// runs a clock that works off of the attack delay to delay damage until the attack has reached the target  // Could be replaced with a coroutine that waits.
+// runs a coroutine that waits to delay damage until the attack has reached the target
 // when it does reach the target
 // deal damage to the given targets
 // if the target dies modify exp and accelerate and then call the enemy's OnDeath()

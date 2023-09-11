@@ -55,6 +55,8 @@ public class Tower : Building
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
 
+
+
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
     public Targeter TargeterComponent { get => targeterComponent; set => targeterComponent = value; }
@@ -78,24 +80,36 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
+
     // prefabs
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] GameObject attackObjectPrefab;
 
     // Tags from Lochlan
+
+
     //Multitarget
     private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
     private int numTargets; // number of targets if the above is true.
 
     //Accelerate
     private bool accelerate = false;
-    public bool accelerated = false; // determines if a tower is currently accelerated
+    [SerializeField] public bool accelerated = false; // determines if a tower is currently accelerated
     readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
     public float accelTimer = 0; // timer to keep track of the above.
     public readonly float accelSpeedMod = 0.5f; // on kill multiply the attack delay by this basically increase by 50%
     public readonly float decreaseAccel = 1.25f; //acceleration decreases by 25% if the tower fails a kill.
     private float baseDelay; // the original starting delay of the tower
     public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
+
+    //Lock On
+    private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    private float lockOnDuration = 1.5f;
+    private List<LockOnTarget> lockOnTargets;
+
+    //Continuous
+    private bool continuous;
+    private bool targetLocked;
 
     private void Awake()
     {
@@ -124,10 +138,18 @@ public class Tower : Building
             else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
-                attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
-             
+                if (lockOn) // this is terrible code
+                {
+                    LockOnTag();
+                }
+                else
+                    attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+
+
+
                 // Attack tags
                 AccelerateTag();
+
             }
         }
     }
@@ -184,20 +206,89 @@ public class Tower : Building
             }
         }
     }
+
+    /// <summary>
+    /// Personally I think this is a bad tag, I could understand if the Idea was to have the attacker play a lock on animation that uses the attackDelay as the lockOnTime
+    /// but to have the tower hold off on attacking and 
+    /// </summary>
+    private void LockOnTag()
+    {
+
+        /* Lock on loop PsuedoCode
+         
+        new local hashset of marked targets 
+        marked = targets
+        
+        for each targetLock in lockOnTargets
+            check if targetLlock is in targets
+            if it's in there, fix the timer, and remove that enemy to the marked targets hash
+            if it isn't in there, remove it
+            
+
+        for each target in marked
+            add it to lockOnTargets
+
+         */
+
+        HashSet<Target> marked = new HashSet<Target>;   //Right now this is just creating another reference to the same thing
+        marked = targets;
+
+        foreach (LockOnTarget targetLock in lockOnTargets)
+        {
+
+                if (targets.Contains(targetLock.target))
+            {
+                targetLock.IncrementLockTimer(); 
+            }
+                    lockOnTargets.Remove(targetLock);
+                else
+                    
+
+                if(targetLock.target.enemy == target.enemy)addTarget = false;
+
+        }
+
+
+
+
+        //if (lockOnTargets != targets)
+        {
+            lockOnTargets = targets;
+            lockOnProgress = 0;
+            targetLocked = false;
+        }
+        else if (targetLocked)
+        {
+            attackerComponent.Attack(lockOnTargets);
+        }
+        else
+        {
+            lockOnProgress += Time.deltaTime;
+            if (lockOnProgress > lockOnDuration)
+            {
+                attackerComponent.Attack(lockOnTargets);
+                lockOnProgress = 0;
+            }
+
+            if (continuous) targetLocked = true;
+        }
+    }
+
+    // I hate that this is neccesary
+    struct LockOnTarget
+    {
+        public Target target;
+        public float lockOnProgress;
+
+        public void IncrementLockTimer()
+        {
+            lockOnProgress += Time.deltaTime;
+        }
+    }
 }
 
-// if you aren't going to implement it functionally don't add it to alpha.
-//#if UNITY_EDITOR
-//namespace Editor
-//{
-//    using UnityEditor;
-//    [CustomEditor(typeof(Tower))]
-//    public class TowerEditor : Editor
-//    {
-//       // public override void OnInspectorGUI()
-//        {
-//           // GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-//        }
-//    }
-//}
-//#endif
+// I wish that C# had function pointers because then rather than having if checks I could just generate a list of function pointers in Awake and run through them in update.
+// Otherwise I'll have to create a switch with different logic packages or something equally heinous
+// Maybe a Tag class with a RunLogic(Tower tower) function? Then a list of Tag variants that get assigned in awake and run in update
+
+
