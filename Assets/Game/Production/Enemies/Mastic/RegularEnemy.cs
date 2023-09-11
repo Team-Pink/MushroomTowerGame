@@ -26,7 +26,8 @@ public class RegularEnemy : Enemy
     {
         if (!attackInProgress && !attackCoolingDown)
         {
-            StartCoroutine(TakeDamage(damage, attackDelay));
+            TakeDamage(damage);
+            if(CheckIfDead()) OnDeath();
         }
 
         base.AttackHub();
