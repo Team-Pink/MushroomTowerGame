@@ -34,7 +34,7 @@ public class FastEnemy : Enemy
         base.Playing();
     }
 
-    public override IEnumerator TakeDamage(int damage, float delay)
+    public override IEnumerator TakeDamage(float damage, float delay)
     {
         StartCoroutine(base.TakeDamage(damage, delay));
 

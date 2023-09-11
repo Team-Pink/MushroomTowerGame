@@ -7,10 +7,9 @@ public class Targeter
 {
 
     public float turnRate = 5;
-    public float firingCone = 20;
-    public float range = 10; // radius of range collider
+    public float range = 10;
     public Transform transform;
-    protected HashSet<Target> targetsInRange = new HashSet<Target>();
+    protected HashSet<Target> targetsInRange = new();
     public LayerMask enemyLayer;
 
 

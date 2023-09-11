@@ -5,14 +5,14 @@ public class SingleAttacker : Attacker
 {
     public override void Attack(HashSet<Target> targets)
     {
-        //Play attack animation here
-
-        if (!CheckDelayTimer()) return;
-
-        if (cooldownTimer == 0f)
+        if (!attacking)
         {
+            AnimateAttack();
+            attacking = true;
+
             Debug.Log("Single Attack");
             foreach (var target in targets)
+            {
                 if (target.enemy is not null)
                 {
                     #region TAG IMPLEMENTATION
@@ -25,7 +25,7 @@ public class SingleAttacker : Attacker
 
                         Quaternion rotation = Quaternion.LookRotation(direction);
                         Vector3 centerPosition = transform.position + direction * medianReach;
-                        Vector3 scale = new Vector3(strikethroughBeamWidth / 2, 1000, medianReach / 2);
+                        Vector3 scale = new Vector3(strikethroughBeamWidth / 2, 1000, medianReach / 2); // test what is width vs length
 
                         Collider[] collisions = Physics.OverlapBox(centerPosition, scale, rotation, mask);
 
@@ -40,13 +40,16 @@ public class SingleAttacker : Attacker
 
                     target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
 
-                    AnimateAttack(target);
+                    targetsToShoot.Add(target);
                 }
+            }
         }
 
         if (!CheckCooldownTimer()) return;
 
         delayTimer = 0;
         cooldownTimer = 0;
+        attacking = false;
+        targetsToShoot.Clear();
     }
 }
