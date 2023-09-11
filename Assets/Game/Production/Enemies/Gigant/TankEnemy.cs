@@ -7,7 +7,7 @@ public class TankEnemy : Enemy
     [Space]
     int damageReduction = 1;
 
-    int halfHealthMark = 0;
+    float halfHealthMark = 0;
     bool hasArmour = true;
     
     protected override void CustomAwakeEvents()

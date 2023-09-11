@@ -48,20 +48,12 @@ public struct Details
 
 public class Tower : Building
 {
-
     // Components
     protected new Transform transform;
     protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-
-    // Enemy targeter values
-
-    [SerializeField] private float FiringCone = 10;
-    // Trap targeter values
-    [SerializeField] float TrapRadius = 1;
-    [SerializeField] bool FindNumberOfTargets = false;
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
@@ -114,17 +106,6 @@ public class Tower : Building
         attackerComponent.transform = transform;
 
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
-
-        if (targeterComponent is TrackTargeter)
-        {
-            (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
-            (targeterComponent as TrackTargeter).trapRadius = TrapRadius;
-            (targeterComponent as TrackTargeter).findNumberOfTargets = FindNumberOfTargets;
-        }
-        else
-        {
-            (targeterComponent as EnemyTargeter).firingCone = FiringCone;
-        }
 
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;

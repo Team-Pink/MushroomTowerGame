@@ -20,27 +20,34 @@ public class Attacker
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
+    protected List<Target> targetsToShoot = new();
+    protected bool attacking = false;
+
     public virtual void Attack(HashSet<Target> targets)
     {
         Debug.LogWarning("Use one of the other methods of attacking");
     }
     protected bool CheckCooldownTimer()
     {
-        if (cooldownTimer < attackCooldown)
+        if (cooldownTimer < attackCooldown + attackDelay)
         {
             cooldownTimer += Time.deltaTime;
             return false;
         }
         return true;
     }
-    protected bool CheckDelayTimer()
+
+    public void AnimateProjectile()
     {
-        if (delayTimer < attackDelay)
+        foreach (Target target in targetsToShoot)
         {
-            delayTimer += Time.deltaTime;
-            return false;
+            Bullet bulletRef;
+
+            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+
+            bulletRef.timeToTarget = attackDelay;
+            bulletRef.target = target;
         }
-        return true;
     }
 
     /// <summary>
@@ -56,16 +63,10 @@ public class Attacker
         return attackInProgress;
     }
 
-    public void AnimateAttack(Target target)
+    public void AnimateAttack()
     {
-        Bullet bulletRef;
+        if (animator == null) return;
 
-        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-
-        bulletRef.timeToTarget = attackDelay;
-        bulletRef.target = target;
-
-        if (animator != null)
-            animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack");
     }
 }

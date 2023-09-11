@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class EnemyTargeter : Targeter
 {
     Quaternion defaultRotation = Quaternion.identity;
+    public float firingCone = 20;
 
     public void GetTargetsInRange()
     {
