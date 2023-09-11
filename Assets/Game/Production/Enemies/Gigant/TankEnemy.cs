@@ -31,7 +31,7 @@ public class TankEnemy : Enemy
         base.AttackHub();
     }
 
-    public override void TakeDamage(int damage)
+    public override void TakeDamage(float damage)
     {
         if (hasArmour)
         {

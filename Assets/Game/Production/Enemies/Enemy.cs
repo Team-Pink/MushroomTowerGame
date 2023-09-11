@@ -130,7 +130,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public virtual void TakeDamage(int damage) // this doesn't need to be a coroutine any more.
+    public virtual void TakeDamage(float damage) // this doesn't need to be a coroutine any more.
     {       
         health -= damage;
     }
