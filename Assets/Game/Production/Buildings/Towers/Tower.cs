@@ -16,6 +16,7 @@ public struct Target
 
 [Serializable] public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
@@ -24,6 +25,7 @@ public struct Target
 } // For Editor Use Only
 [Serializable] public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
