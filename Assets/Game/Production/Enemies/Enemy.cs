@@ -123,18 +123,16 @@ public class Enemy : MonoBehaviour
         get;
         protected set;
     }          
-    // this is specifically for the ondeath function. to replace the functionality of checking
-    // health in update and setting isDead in Ondeath so it can only run once.
+    // this is specifically for the ondeath function to replace the functionality of checking
+    // health <= 0, and so that OnDeath() can only run once.
 
     [Header("Provides On Death")]
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public virtual IEnumerator TakeDamage(float damage, float delay = 0)
-    {
-        yield return new WaitForSeconds(delay);
+    public virtual void TakeDamage(float damage) // this doesn't need to be a coroutine any more.
+    {       
         health -= damage;
-        if(CheckIfDead()) OnDeath();
     }
     public void SpawnIn()
     {
@@ -149,11 +147,11 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private bool CheckIfDead()
+    public bool CheckIfDead()
     {
         return CurrentHealth <= 0;
     }
-    private void OnDeath()
+    public void OnDeath()
     {
         if (Dead) return; // don't increase currency twice.
         Dead = true; // object pool flag;

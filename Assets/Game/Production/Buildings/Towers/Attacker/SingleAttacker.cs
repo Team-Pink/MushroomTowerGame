@@ -15,7 +15,10 @@ public class SingleAttacker : Attacker
             {
                 if (target.enemy is not null)
                 {
-                    target.enemy.StartCoroutine(target.enemy.TakeDamage(damage, attackDelay));
+                    //target.enemy.StartCoroutine(target.enemy.TakeDamage(damage)); // swap this with generate attack object
+                    AttackObject singleAttack =GenerateAttackObject(target);
+                    singleAttack.StartCoroutine(singleAttack.CommenceAttack());
+
                     targetsToShoot.Add(target);
                 }
             }
