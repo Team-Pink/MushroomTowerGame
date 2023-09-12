@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
@@ -17,6 +21,7 @@ public struct Target
 [Serializable]
 public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
@@ -26,6 +31,7 @@ public enum TargeterType
 [Serializable]
 public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
