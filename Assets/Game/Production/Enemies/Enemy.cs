@@ -134,7 +134,7 @@ public class Enemy : MonoBehaviour
     {       
         health -= damage;
     }
-    public void SpawnIn()
+    public virtual void SpawnIn()
     {
         for (int i = 0; i < transform.childCount; i++)
         {

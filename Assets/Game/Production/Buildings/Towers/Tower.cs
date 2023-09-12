@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
@@ -17,6 +21,7 @@ public struct Target
 [Serializable]
 public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
@@ -26,6 +31,7 @@ public enum TargeterType
 [Serializable]
 public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
@@ -291,9 +297,3 @@ public class Tower : Building
         public void IncrementLockTimer() { lockOnProgress += Time.deltaTime; }
     }
 }
-
-// I wish that C# had function pointers because then rather than having if checks I could just generate a list of function pointers in Awake and run through them in update.
-// Otherwise I'll have to create a switch with different logic packages or something equally heinous
-// Maybe a Tag class with a RunLogic(Tower tower) function? Then a list of Tag variants that get assigned in awake and run in update
-
-

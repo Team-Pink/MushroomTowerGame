@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6533875848915124893}
   - component: {fileID: 6533875848915124894}
   - component: {fileID: 2029106839798511778}
+  - component: {fileID: 6829538405946730101}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -53,7 +54,7 @@ MonoBehaviour:
   - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
   - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
-  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
+  - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
   buildingLayers:
     serializedVersion: 2
     m_Bits: 448
@@ -156,3 +157,15 @@ MonoBehaviour:
   secondsBetweenWaves: 1
   hub: {fileID: 0}
   wonText: {fileID: 0}
+--- !u!114 &6829538405946730101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6533875848915131746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a3cc6040e19c84790261071fafbbbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
