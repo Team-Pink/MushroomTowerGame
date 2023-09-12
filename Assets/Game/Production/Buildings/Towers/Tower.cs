@@ -14,7 +14,8 @@ public struct Target
     }
 }
 
-[Serializable] public enum TargeterType
+[Serializable]
+public enum TargeterType
 {
     SelectAType,
     Close,
@@ -23,7 +24,8 @@ public struct Target
     Strong,
     Track
 } // For Editor Use Only
-[Serializable] public enum AttackerType
+[Serializable]
+public enum AttackerType
 {
     SelectAType,
     Area,
@@ -31,7 +33,8 @@ public struct Target
     Trap
 } // For Editor Use Only
 
-[Serializable] public struct Details
+[Serializable]
+public struct Details
 {
     public string name;
     public TargeterType targeterType;
@@ -77,8 +80,24 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    // Temp Variables
+    // prefabs
     [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject attackObjectPrefab;
+
+    // Tags from Lochlan
+    //Multitarget
+    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private int numTargets; // number of targets if the above is true.
+
+    //Accelerate
+    private bool accelerate = false;
+    public bool accelerated = false; // determines if a tower is currently accelerated
+    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
+    public float accelTimer = 0; // timer to keep track of the above.
+    public readonly float accelSpeedMod = 0.5f; // on kill multiply the attack delay by this basically increase by 50%
+    public readonly float decreaseAccel = 1.25f; //acceleration decreases by 25% if the tower fails a kill.
+    private float baseDelay; // the original starting delay of the tower
+    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     private void Awake()
     {
@@ -87,38 +106,35 @@ public class Tower : Building
         transform = gameObject.transform;
         targeterComponent.transform = transform;
         attackerComponent.transform = transform;
-        
+
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
         attackerComponent.bulletPrefab = bulletPrefab;
+        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
+        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead.
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
+
+        if (accelerate) baseDelay = attackerComponent.attackDelay;
     }
 
     private void Update()
     {
         if (Active)
         {
-            targets = targeterComponent.AcquireTargets();
+            if (multiTarget) targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
-                attackerComponent.Attack(targets);
-                
-                // rotate tower to targetted enemy
-                foreach (Target targetEnemy in targets)
-                {
-                    // take enemy experience
-                    if (targetEnemy.enemy != null)
-                    {
-                        storedExperience += targetEnemy.enemy.expValue;
-                        targetEnemy.enemy.expValue = 0;
-                    }
-
-                    // remove it from targets and retarget
-                }
+                attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+             
+                // Attack tags
+                AccelerateTag();
             }
         }
     }
+
+
 
     public void Upgrade(int upgradePath)
     {
@@ -155,6 +171,20 @@ public class Tower : Building
         int tempExp = storedExperience;
         storedExperience = 0;
         return tempExp;
+    }
+
+    public void AccelerateTag()
+    {
+        if (accelerated)
+        {
+            accelTimer += Time.deltaTime;
+            if (accelTimer > accelTimeMax || AttackerComponent.attackDelay > baseDelay)
+            {
+                accelerated = false;
+                attackerComponent.attackDelay = baseDelay;// return attack delay to normal
+                accelTimer = 0; // Reset timer
+            }
+        }
     }
 }
 
