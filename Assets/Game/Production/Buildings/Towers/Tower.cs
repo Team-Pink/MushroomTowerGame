@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
@@ -14,22 +18,27 @@ public struct Target
     }
 }
 
-[Serializable] public enum TargeterType
+[Serializable]
+public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
     Strong,
     Track
 } // For Editor Use Only
-[Serializable] public enum AttackerType
+[Serializable]
+public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
 } // For Editor Use Only
 
-[Serializable] public struct Details
+[Serializable]
+public struct Details
 {
     public string name;
     public TargeterType targeterType;
@@ -45,19 +54,12 @@ public struct Target
 
 public class Tower : Building
 {
-
     // Components
     protected new Transform transform;
     protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-    
-    // Enemy targeter values
-    [SerializeField] private float FiringCone = 10;
-    // Trap targeter values
-    [SerializeField] float TrapRadius = 1;
-    [SerializeField] bool FindNumberOfTargets = false;
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
@@ -82,8 +84,24 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    // Temp Variables
+    // prefabs
     [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject attackObjectPrefab;
+
+    // Tags from Lochlan
+    //Multitarget
+    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private int numTargets; // number of targets if the above is true.
+
+    //Accelerate
+    private bool accelerate = false;
+    public bool accelerated = false; // determines if a tower is currently accelerated
+    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
+    public float accelTimer = 0; // timer to keep track of the above.
+    public readonly float accelSpeedMod = 0.5f; // on kill multiply the attack delay by this basically increase by 50%
+    public readonly float decreaseAccel = 1.25f; //acceleration decreases by 25% if the tower fails a kill.
+    private float baseDelay; // the original starting delay of the tower
+    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     private void Awake()
     {
@@ -92,46 +110,35 @@ public class Tower : Building
         transform = gameObject.transform;
         targeterComponent.transform = transform;
         attackerComponent.transform = transform;
-        
+
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
-        if (targeterComponent is TrackTargeter)
-        {
-            (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
-            (targeterComponent as TrackTargeter).trapRadius = TrapRadius;
-            (targeterComponent as TrackTargeter).findNumberOfTargets = FindNumberOfTargets;
-        }
-        else
-        {
-            (targeterComponent as EnemyTargeter).firingCone = FiringCone;
-        }
-
         attackerComponent.bulletPrefab = bulletPrefab;
+        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
+        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead.
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
+
+        if (accelerate) baseDelay = attackerComponent.attackDelay;
     }
 
     private void Update()
     {
         if (Active)
         {
-            targets = targeterComponent.AcquireTargets();
+            if (multiTarget) targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
-                attackerComponent.Attack(targets);
-                
-                // rotate tower to targetted enemy
-                foreach (Target targetEnemy in targets)
-                {
-                    // take enemy experience
-                    storedExperience += targetEnemy.enemy.expValue;
-                    targetEnemy.enemy.expValue = 0;
-
-                    // remove it from targets and retarget
-                }
+                attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+             
+                // Attack tags
+                AccelerateTag();
             }
         }
     }
+
+
 
     public void Upgrade(int upgradePath)
     {
@@ -169,20 +176,18 @@ public class Tower : Building
         storedExperience = 0;
         return tempExp;
     }
-}
 
-// if you aren't going to implement it functionally don't add it to alpha.
-//#if UNITY_EDITOR
-//namespace Editor
-//{
-//    using UnityEditor;
-//    [CustomEditor(typeof(Tower))]
-//    public class TowerEditor : Editor
-//    {
-//       // public override void OnInspectorGUI()
-//        {
-//           // GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-//        }
-//    }
-//}
-//#endif
+    public void AccelerateTag()
+    {
+        if (accelerated)
+        {
+            accelTimer += Time.deltaTime;
+            if (accelTimer > accelTimeMax || AttackerComponent.attackDelay > baseDelay)
+            {
+                accelerated = false;
+                attackerComponent.attackDelay = baseDelay;// return attack delay to normal
+                accelTimer = 0; // Reset timer
+            }
+        }
+    }
+}

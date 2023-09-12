@@ -15,7 +15,26 @@ public class Attacker
 
     public Transform transform;
     public GameObject bulletPrefab;
+    public GameObject attackObjectPrefab;
+    public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
+
+    #region TAGS
+    [Header("Spray Tag")]
+    public bool spray = false;
+    public int sprayDamage = 1;
+    public float additionalSprayRange = 2;
+
+    [Header("Strikethrough Tag")]
+    public bool strikethrough = true;
+    public int strikethroughDamage = 1;
+    public int strikethroughReach = 10;
+    public int strikethroughBeamWidth = 4;
+    public Matrix4x4 strikethroughMatrix;
+    #endregion
+
+    protected List<Target> targetsToShoot = new();
+    protected bool attacking = false;
 
     public virtual void Attack(HashSet<Target> targets)
     {
@@ -23,33 +42,44 @@ public class Attacker
     }
     protected bool CheckCooldownTimer()
     {
-        if (cooldownTimer < attackCooldown)
+        if (cooldownTimer < attackCooldown + attackDelay)
         {
             cooldownTimer += Time.deltaTime;
             return false;
         }
         return true;
     }
-    protected bool CheckDelayTimer()
+
+    public void AnimateProjectile()
     {
-        if (delayTimer < attackDelay)
+        foreach (Target target in targetsToShoot)
         {
-            delayTimer += Time.deltaTime;
-            return false;
+            Bullet bulletRef;
+
+            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+
+            bulletRef.timeToTarget = attackDelay;
+            bulletRef.target = target;
         }
-        return true;
     }
 
-    public void AnimateAttack(Target target)
+    /// <summary>
+    /// Instantiates an AttackObject assigns it's values and animates an attack.
+    /// </summary>
+    protected AttackObject GenerateAttackObject(Target enemy)
     {
-        Bullet bulletRef;
+        AttackObject attackInProgress = MonoBehaviour.Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
+        attackInProgress.damage = damage;
+        attackInProgress.delayToTarget = attackDelay;
+        attackInProgress.originTower = originReference;
+        attackInProgress.target = enemy;
+        return attackInProgress;
+    }
 
-        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+    public void AnimateAttack()
+    {
+        if (animator == null) return;
 
-        bulletRef.timeToTarget = attackDelay;
-        bulletRef.target = target;
-
-        if (animator != null)
-            animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack");
     }
 }

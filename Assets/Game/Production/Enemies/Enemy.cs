@@ -1,14 +1,63 @@
-using Vector3List = System.Collections.Generic.List<UnityEngine.Vector3>;
 using UnityEngine;
 using Text = TMPro.TMP_Text;
 using System.Collections;
+using System;
+using System.Collections.Generic;
+
+public enum ConditionType
+{
+    None,
+    Infection,
+    Poison,
+    Slow,
+    Stagger,
+    Vulnerability
+}
+
+[Serializable]
+public class Condition
+{
+    public ConditionType type;
+    public float value;
+    public float duration;
+
+    public Condition(ConditionType typeInit, float valueInit, float durationInit)
+    {
+        type = typeInit;
+        value = valueInit;
+        duration = durationInit;
+    }
+
+    public bool Duration()
+    {
+        if (duration < 0)
+            return true;
+
+        duration -= Time.deltaTime;
+        return false;
+    }
+}
 
 public class Enemy : MonoBehaviour
 {
+    List<Condition> activeConditions;
+
+    protected virtual void CustomAwakeEvents()
+    {
+
+    }
+
     private void Awake()
     {
         points = pathToFollow.GetPoints();
+
         health = maxHealth;
+
+        CustomAwakeEvents();
+    }
+
+    private void Update()
+    {
     }
 
     protected virtual void Playing()
@@ -26,12 +75,40 @@ public class Enemy : MonoBehaviour
         Travel();
     }
 
+
+    public void ApplyConditions(Condition[] conditions)
+    {
+        for(int newIndex = 0; newIndex < conditions.Length; newIndex++)
+        {
+            bool shouldApply = true;
+            for (int activeIndex = 0; activeIndex < activeConditions.Count; activeIndex++)
+            {
+                if (conditions[newIndex].type != activeConditions[activeIndex].type)
+                    continue;
+
+                if (conditions[newIndex].value > activeConditions[activeIndex].value)
+                {
+                    activeConditions.RemoveAt(activeIndex); break;
+                }
+                else
+                {
+                    shouldApply = false; continue;
+                }
+            }
+
+            if (shouldApply)
+                activeConditions.Add(conditions[newIndex]);
+        }
+    }
+
+
     #region ALIVE STATUS
     [Header("Health")]
     [SerializeField] Text healthText;
+    public float health;
+    public bool isDead;
     [SerializeField] int maxHealth;
-    private int health;
-    public int CurrentHealth
+    public float CurrentHealth
     {
         get => health;
         protected set => health = value;
@@ -46,20 +123,18 @@ public class Enemy : MonoBehaviour
         get;
         protected set;
     }          
-    // this is specifically for the ondeath function. to replace the functionality of checking
-    // health in update and setting isDead in Ondeath so it can only run once.
+    // this is specifically for the ondeath function to replace the functionality of checking
+    // health <= 0, and so that OnDeath() can only run once.
 
     [Header("Provides On Death")]
     [SerializeField] int bugBits = 2;
     public int expValue = 1;
 
-    public IEnumerator TakeDamage(int damage, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        CurrentHealth -= damage;
-        if(CheckIfDead()) OnDeath();
+    public virtual void TakeDamage(float damage) // this doesn't need to be a coroutine any more.
+    {       
+        health -= damage;
     }
-    public void SpawnIn()
+    public virtual void SpawnIn()
     {
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -72,11 +147,11 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private bool CheckIfDead()
+    public bool CheckIfDead()
     {
         return CurrentHealth <= 0;
     }
-    private void OnDeath()
+    public void OnDeath()
     {
         if (Dead) return; // don't increase currency twice.
         Dead = true; // object pool flag;
@@ -101,6 +176,14 @@ public class Enemy : MonoBehaviour
     [SerializeField, Range(0.0f, 5.0f)]
     protected float speed = 2f;
 
+    [SerializeField] protected LayerMask range;
+
+    public float mass
+    {
+        get;
+        protected set;
+    }
+
     [HideInInspector]
     public float Speed
     {
@@ -113,7 +196,7 @@ public class Enemy : MonoBehaviour
 
     float progress = 0.0f;
     int currentPoint;
-    Vector3List points = new();
+    List<Vector3> points = new();
 
     protected void Travel()
     {
@@ -136,8 +219,6 @@ public class Enemy : MonoBehaviour
             else
                 AttackMode = true;
         }
-        else
-            AttackMode = false;
     }
 
     private void RotateToFaceTravelDirection()
@@ -149,7 +230,12 @@ public class Enemy : MonoBehaviour
 
     #region Attacking
     [Header("Attacking")]
-    [SerializeField] protected float attackCooldown;
+    [SerializeField] protected int damage;
+    
+    [SerializeField] protected float attackCooldown = 0;
+    [SerializeField] protected float attackDelay = 0;
+    protected float elapsedCooldown = 0;
+    protected float elapsedDelay = 0;
     [HideInInspector] protected bool AttackMode
     {
         get
@@ -161,38 +247,52 @@ public class Enemy : MonoBehaviour
             attackMode = value;
         }
     }
-    protected float elapsedCooldown;
-    protected bool attackInProgress;
     private bool attackMode;
 
-    protected void AttackHub()
+    protected bool attackInProgress = false;
+    protected bool attackCoolingDown = false;
+
+    //there are areas I can further optimise and clean up but that will be a later thing
+    protected virtual void AttackHub()
     {
-        if (!attackInProgress)
+        if(elapsedCooldown == 0 && elapsedDelay == 0)
         {
             animator.SetTrigger("Attack");
-            hub.Damage(1);
             attackInProgress = true;
         }
+        
+        if (elapsedDelay < attackDelay)
+        {
+            elapsedDelay += Time.deltaTime;
+
+            if (elapsedDelay >= attackDelay)
+            {
+                hub.Damage(damage);
+                attackInProgress = false;
+            }
+        }            
         else
         {
+            if (elapsedCooldown == 0)
+                attackCoolingDown = true;
+
             elapsedCooldown += Time.deltaTime;
 
             if (elapsedCooldown >= attackCooldown)
             {
-                attackInProgress = false;
+                elapsedDelay = 0;
                 elapsedCooldown = 0;
+                attackCoolingDown = false;
             }
         }
     }
     #endregion
 
     #region MISC
-    [Header("Components")]
-    public Hub hub;
-    [SerializeField] protected LayerMask range;
+    [Space]
+    [HideInInspector] public Hub hub;
     [SerializeField] protected Animator animator;
     #endregion
-    //move to different location if there is a better spot for these variables
 
     #region DEBUG
     [Header("Debug")]

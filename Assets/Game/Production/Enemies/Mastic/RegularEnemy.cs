@@ -21,4 +21,15 @@ public class RegularEnemy : Enemy
     {
         base.Playing();
     }
+
+    protected override void AttackHub()
+    {
+        if (!attackInProgress && !attackCoolingDown)
+        {
+            TakeDamage(damage);
+            if(CheckIfDead()) OnDeath();
+        }
+
+        base.AttackHub();
+    }
 }

@@ -115,7 +115,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_Name
-      value: Mastic
+      value: MasticEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -148,16 +152,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthText: {fileID: 919106454038645387}
+  health: 0
+  isDead: 0
   maxHealth: 5
   bugBits: 2
   expValue: 1
   speed: 1
-  pathToFollow: {fileID: 0}
-  attackCooldown: 1
-  hub: {fileID: 0}
   range:
     serializedVersion: 2
     m_Bits: 4096
+  pathToFollow: {fileID: 0}
+  damage: 1
+  attackCooldown: 2
+  attackDelay: 1
+  hub: {fileID: 0}
   animator: {fileID: 7282610292993822671}
   showPath: 1
   showLevers: 0
