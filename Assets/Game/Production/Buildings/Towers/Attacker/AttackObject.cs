@@ -13,58 +13,117 @@ public class AttackObject : MonoBehaviour
     public Tower originTower; // origin of the attack
     public HashSet<Enemy> areaHitTargets;
 
+    #region TAG SPECIFIC
+    public int tagSpecificDamage;
+    public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
+    #endregion
+
     // private Animator
 
     public IEnumerator CommenceAttack()
     {
         yield return new WaitForSeconds(delayToTarget); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
         
-            // play impact animation
+        // play impact animation
 
-            //originTower.AttackerComponent.Attack(targetEnemy);// Do attack on target
+        Attacker attackerComponent = originTower.AttackerComponent;
+
+        if (attackerComponent is SingleAttacker)
+        {
             target.enemy.TakeDamage(damage);
 
-            if (target.enemy.CheckIfDead())
+            ///Strikethrough Tag
+            if (attackerComponent.strikethrough)
             {
-                // extract exp
-                originTower.storedExperience += target.enemy.expValue;
-                target.enemy.expValue = 0;
+                if (tagSpecificEnemiesHit.Count < 1)
+                    Debug.LogError("No Enemies Detected Please Resolve");
 
-                if (originTower.GetAccelerate()) // Accelerate logic
+                foreach (var enemy in tagSpecificEnemiesHit)
                 {
-                    if (!target.enemy.Dead)
-                    {
-                        originTower.accelerated = true; // this could be called from elsewhere if neccesary
-                        originTower.accelTimer = 0;
-                        originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
-                    }
-                    else
-                    {
-                        originTower.AttackerComponent.attackDelay *= originTower.decreaseAccel;// modify attack delay
-                    }
+                    enemy.TakeDamage(tagSpecificDamage);
+                    
+                    HandleNonTargetEnemyDeath(enemy);
                 }
-                target.enemy.OnDeath(); // enemy on death               
-           
+                
+            }
+        }
 
-            if (originTower.AttackerComponent is AreaAttacker)
+        if (attackerComponent is AreaAttacker)
+        {
+            // get everything hit by the attack
+            foreach (Enemy enemyHit in areaHitTargets)
             {
-                // get everything hit by the attack
-                foreach (Enemy enemyHit in areaHitTargets)
+                enemyHit.TakeDamage(damage);
+                if (enemyHit.CheckIfDead())
                 {
-                    enemyHit.TakeDamage(damage);
-                    if (enemyHit.CheckIfDead())
-                    {
-                        // extract exp
-                        originTower.storedExperience += target.enemy.expValue;
-                        target.enemy.expValue = 0;
-                        target.enemy.OnDeath(); // enemy on death               
-                    }
+                    HandleNonTargetEnemyDeath(enemyHit);
+                }
+            }
+
+            ///Spray Tag
+            if (attackerComponent.spray)
+            {
+                if (tagSpecificEnemiesHit is null)
+                    Debug.LogError("No Enemies Detected Please Resolve");
+
+                foreach (Enemy enemyHit in tagSpecificEnemiesHit)
+                {
+                    enemyHit.TakeDamage(tagSpecificDamage);
+                    
+                    HandleNonTargetEnemyDeath(enemyHit);
                 }
             }
         }
-        Destroy(gameObject);
-        // Destroy this
 
+        HandleTargetEnemyDeath();
+
+        Destroy(gameObject); // Destroy this object
+    }
+
+    /// <summary>
+    /// Checks if the target enemy has died and if so perform nessesary actions
+    /// </summary>
+    void HandleTargetEnemyDeath()
+    {
+        if (target.enemy.CheckIfDead())
+        {
+            // extract exp
+            originTower.storedExperience += target.enemy.expValue;
+            target.enemy.expValue = 0;
+
+            if (originTower.GetAccelerate()) // Accelerate logic
+            {
+                if (!target.enemy.Dead)
+                {
+                    originTower.accelerated = true; // this could be called from elsewhere if neccesary
+                    originTower.accelTimer = 0;
+                    originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
+                }
+                else
+                {
+                    originTower.AttackerComponent.attackDelay *= originTower.decreaseAccel;// modify attack delay
+                }
+            }
+            target.enemy.OnDeath(); // enemy on death
+        }
+    }
+
+    /// <summary>
+    /// Checks if a non target enemy has died and if so perform nessesary actions
+    /// </summary>
+    /// <param name="enemy"></param>
+    void HandleNonTargetEnemyDeath(Enemy enemy)
+    {
+        if (enemy == target.enemy)
+            return;
+        
+        if (enemy.CheckIfDead())
+        {
+            // extract exp
+            originTower.storedExperience += enemy.expValue;
+            enemy.expValue = 0;
+            enemy.OnDeath(); // enemy on death
+        }
     }
 }
 

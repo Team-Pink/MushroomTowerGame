@@ -21,6 +21,13 @@ public class TankEnemy : Enemy
             Playing();
     }
 
+    public override void SpawnIn()
+    {
+        hasArmour = true;
+
+        base.SpawnIn();
+    }
+
     protected override void Playing()
     {
         base.Playing();
