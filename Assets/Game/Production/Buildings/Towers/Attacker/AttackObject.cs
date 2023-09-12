@@ -15,7 +15,7 @@ public class AttackObject : MonoBehaviour
 
     #region TAG SPECIFIC
     public int tagSpecificDamage;
-    public HashSet<Enemy> tagSpecificEnemiesHit; //enemies that were hit as a result of tags like spray
+    public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
     #endregion
 
     // private Animator
@@ -35,12 +35,16 @@ public class AttackObject : MonoBehaviour
             ///Strikethrough Tag
             if (attackerComponent.strikethrough)
             {
+                if (tagSpecificEnemiesHit.Count < 1)
+                    Debug.LogError("No Enemies Detected Please Resolve");
+
                 foreach (var enemy in tagSpecificEnemiesHit)
                 {
                     enemy.TakeDamage(tagSpecificDamage);
-
+                    
                     HandleNonTargetEnemyDeath(enemy);
                 }
+                
             }
         }
 
@@ -59,6 +63,9 @@ public class AttackObject : MonoBehaviour
             ///Spray Tag
             if (attackerComponent.spray)
             {
+                if (tagSpecificEnemiesHit is null)
+                    Debug.LogError("No Enemies Detected Please Resolve");
+
                 foreach (Enemy enemyHit in tagSpecificEnemiesHit)
                 {
                     enemyHit.TakeDamage(tagSpecificDamage);

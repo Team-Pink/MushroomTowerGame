@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AreaAttacker : Attacker
 {
@@ -8,6 +9,10 @@ public class AreaAttacker : Attacker
 
     public override void Attack(HashSet<Target> targets) //  I need a way to get references to the things hit by the aoe out.
     {
+        spray = true;
+        additionalSprayRange = 2f;
+        sprayDamage = 1;
+
         if (!attacking)
         {
             affectedEnemies.Clear();
@@ -20,8 +25,7 @@ public class AreaAttacker : Attacker
 
             foreach (var target in targets)
             {
-                AttackObject areaAttack = GenerateAttackObject(target);
-                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
+                AttackObject areaAttack = GenerateAttackObject(target); 
 
                 Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                 foreach (var collision in mainCollisions)
@@ -35,30 +39,12 @@ public class AreaAttacker : Attacker
                 #region Tag Applications
                 if (spray)
                 {
-                    HashSet<Enemy> sprayTargets = new HashSet<Enemy>();
                     areaAttack.tagSpecificDamage = sprayDamage;
-
-                    foreach (var sprayCollision in Physics.OverlapSphere(target.position, damageRadius + additionalSprayRange, mask))
-                    {
-                        bool isMainCollision = false;
-                        Enemy enemy = sprayCollision.gameObject.GetComponent<Enemy>();
-
-                        foreach (var mainCollision in mainCollisions)
-                        {
-                            if (mainCollision == sprayCollision)
-                                isMainCollision = true;
-                        }
-
-                        if (!isMainCollision)
-                        {
-                            sprayTargets.Add(enemy);
-                        }
-                            
-                    }
-                    areaAttack.tagSpecificEnemiesHit = sprayTargets;
+                    areaAttack.tagSpecificEnemiesHit = Spray(target, mainCollisions, mask);
                 }
                 #endregion
 
+                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
                 targetsToShoot.Add(target);
             }
         }
@@ -69,5 +55,33 @@ public class AreaAttacker : Attacker
         delayTimer = 0f;
         attacking = false;
         targetsToShoot.Clear();
+    }
+
+    HashSet<Enemy> Spray(Target target, Collider[] mainCollisions, LayerMask layerMask)
+    {
+        HashSet<Enemy> sprayTargets = new HashSet<Enemy>();
+
+        foreach (var sprayCollision in Physics.OverlapSphere(target.position, damageRadius + additionalSprayRange, layerMask))
+        {
+            bool isMainCollision = false;
+            Enemy enemy = sprayCollision.gameObject.GetComponent<Enemy>();
+
+            foreach (var mainCollision in mainCollisions)
+            {
+                if (mainCollision == sprayCollision)
+                {
+                    isMainCollision = true;
+                    break;
+                }
+            }
+
+            if (!isMainCollision)
+            {
+                sprayTargets.Add(enemy);
+               
+            }
+
+        }
+        return sprayTargets;
     }
 }

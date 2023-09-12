@@ -184,19 +184,4 @@ public class Tower : Building
             }
         }
     }
-
-    /*
-     *  this is commented out because i don't wanna break stuff
-     *  private void OnDrawGizmos()
-     *  {
-     *      if(attackerComponent.strikethrough)
-     *      {
-     *          Gizmos.color = Color.red;
-     *  
-     *          Gizmos.DrawWireCube(transform.position, new Vector3(1, 1, 1));
-     *  
-     *          Gizmos.matrix = attackerComponent.strikethroughMatrix;
-     *      }
-     *  }
-    */
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using BuildingList = System.Collections.Generic.List<Building>;
 
@@ -69,9 +70,22 @@ public class Pylon : Building
         get
         {
             int towers = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+
             foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
                 if (building is Tower)
                     towers++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
             return towers;
         }
         private set { }
@@ -81,9 +95,22 @@ public class Pylon : Building
         get
         {
             int pylons = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+
             foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
                 if (building is Pylon)
                     pylons++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
             return pylons;
         }
         private set { }
