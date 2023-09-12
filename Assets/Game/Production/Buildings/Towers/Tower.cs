@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
