@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TankEnemy : Enemy
-{    
-    void Start()
+{
+    [Space]
+    int damageReduction = 1;
+
+    float halfHealthMark = 0;
+    bool hasArmour = true;
+    
+    protected override void CustomAwakeEvents()
     {
-        
+        halfHealthMark = health / 2;
     }
 
     void Update()
@@ -18,5 +24,27 @@ public class TankEnemy : Enemy
     protected override void Playing()
     {
         base.Playing();
+    }
+
+    protected override void AttackHub()
+    {
+        base.AttackHub();
+    }
+
+    public override void TakeDamage(float damage)
+    {
+        if (hasArmour)
+        {
+            base.TakeDamage(damage - damageReduction);
+
+            if (health <= halfHealthMark)
+            {
+                hasArmour = false;
+            }
+        }
+        else
+        {
+            base.TakeDamage(damage);
+        }
     }
 }
