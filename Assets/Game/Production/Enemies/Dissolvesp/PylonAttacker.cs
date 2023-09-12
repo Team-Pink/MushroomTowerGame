@@ -77,6 +77,13 @@ public class PylonAttacker : Enemy
                 }
             }
         }
+        else if (lockedOn)
+        {
+            speed = 1;
+            lockedOn = false;
+            target = null;
+            ResetBullet();
+        }
     }
 
     void RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes

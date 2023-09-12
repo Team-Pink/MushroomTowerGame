@@ -27,6 +27,8 @@ public class Attacker
     {
         Debug.LogWarning("Use one of the other methods of attacking");
     }
+
+
     protected bool CheckCooldownTimer()
     {
         if (cooldownTimer < attackCooldown + attackDelay)

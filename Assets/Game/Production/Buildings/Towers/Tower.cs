@@ -90,7 +90,7 @@ public class Tower : Building
 
     //Multitarget
     private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
-    private int numTargets; // number of targets if the above is true.
+    private int numTargets; // number of targets if multiTarget is true.
 
     //Accelerate
     private bool accelerate = false;
@@ -103,13 +103,12 @@ public class Tower : Building
     public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     //Lock On
-    private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    [SerializeField] private bool lockOn = false; // determines if the tower will lock on to an enemy.
     private float lockOnDuration = 1.5f;
-    private List<LockOnTarget> lockOnTargets;
+    private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
 
     //Continuous
-    private bool continuous;
-    private bool targetLocked;
+    [SerializeField] private bool continuous = false;
 
     private void Awake()
     {
@@ -207,83 +206,89 @@ public class Tower : Building
         }
     }
 
-    /// <summary>
-    /// Personally I think this is a bad tag, I could understand if the Idea was to have the attacker play a lock on animation that uses the attackDelay as the lockOnTime
-    /// but to have the tower hold off on attacking and 
-    /// </summary>
     private void LockOnTag()
     {
 
-        /* Lock on loop PsuedoCode
+        /* PsuedoCode
          
-        new local hashset of marked targets 
-        marked = targets
+        new local hashset of Target marked = targets deep copy
+
+        new local hashset of Target targetsLockedFire 
         
         for each targetLock in lockOnTargets
-            check if targetLlock is in targets
-            if it's in there, fix the timer, and remove that enemy to the marked targets hash
-            if it isn't in there, remove it
-            
+            if targetLlock is in targets
+                update the timer
+                remove that enemy to the marked targets hash
+                if targetLocked is true
+                    add it to the targetsLockedFire set
+                else
+                    if the timer on lockTarget has expired
+                        add it to the targetsLockedFire set
+                        reset timer on lockTarget
+                        if continuous
+                            targetLocked is true
+            else targetLock is not in targets so
+                remove it from lockOnTargets
 
         for each target in marked
             add it to lockOnTargets
 
+        call attack on targetsLockedFire
+
          */
 
-        HashSet<Target> marked = new HashSet<Target>;   //Right now this is just creating another reference to the same thing
-        marked = targets;
+        HashSet<Target> marked = new HashSet<Target>(targets);
 
-        foreach (LockOnTarget targetLock in lockOnTargets)
+        HashSet<Target> targetsLockedFire = new HashSet<Target>(); // to handle the attack call
+
+        for (int i = 0; i < lockOnTargets.Count; i++)
         {
 
-                if (targets.Contains(targetLock.target))
+            if (targets.Contains(lockOnTargets[i].target))
             {
-                targetLock.IncrementLockTimer(); 
-            }
-                    lockOnTargets.Remove(targetLock);
+                lockOnTargets[i].IncrementLockTimer();
+                marked.Remove(lockOnTargets[i].target);
+                if (lockOnTargets[i].targetLocked)
+                {
+                    targetsLockedFire.Add(lockOnTargets[i].target);
+                }
                 else
-                    
-
-                if(targetLock.target.enemy == target.enemy)addTarget = false;
-
-        }
-
-
-
-
-        //if (lockOnTargets != targets)
-        {
-            lockOnTargets = targets;
-            lockOnProgress = 0;
-            targetLocked = false;
-        }
-        else if (targetLocked)
-        {
-            attackerComponent.Attack(lockOnTargets);
-        }
-        else
-        {
-            lockOnProgress += Time.deltaTime;
-            if (lockOnProgress > lockOnDuration)
-            {
-                attackerComponent.Attack(lockOnTargets);
-                lockOnProgress = 0;
+                {
+                    if (lockOnTargets[i].lockOnProgress > lockOnDuration)
+                    {
+                        targetsLockedFire.Add(lockOnTargets[i].target);
+                        lockOnTargets[i].lockOnProgress = 0;
+                        if (continuous) lockOnTargets[i].targetLocked = true;
+                    }
+                }
             }
-
-            if (continuous) targetLocked = true;
+            else lockOnTargets.Remove(lockOnTargets[i]);             
         }
+
+        foreach (Target target in marked)
+        {
+            lockOnTargets.Add(new LockOnTarget(target));
+        }
+
+        if (targetsLockedFire.Count > 0) attackerComponent.Attack(targetsLockedFire);
+
     }
 
     // I hate that this is neccesary
-    struct LockOnTarget
+    class LockOnTarget
     {
         public Target target;
+        public bool targetLocked;
         public float lockOnProgress;
 
-        public void IncrementLockTimer()
+        public LockOnTarget(Target inputTarget)
         {
-            lockOnProgress += Time.deltaTime;
+            target = inputTarget;
+            targetLocked = false;
+            lockOnProgress = 0;
         }
+
+        public void IncrementLockTimer() { lockOnProgress += Time.deltaTime; }
     }
 }
 
