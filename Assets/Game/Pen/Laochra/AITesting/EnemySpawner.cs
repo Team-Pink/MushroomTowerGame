@@ -34,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
 
             boidLogic.levelData = levelData;
 
-            boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
+            boidList.Add(new BoidReference(boidTransform, boidRigidbody, boidLogic));
         }
     }
 }

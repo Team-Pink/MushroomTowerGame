@@ -3,14 +3,12 @@ using UnityEngine;
 
 public struct BoidReference
 {
-    public GameObject gameObject;
     public Transform transform;
     public Rigidbody rigidbody;
     public EnemyLogic logic;
 
-    public BoidReference(GameObject GameObject, Transform Transform, Rigidbody Rigidbody, EnemyLogic Logic)
+    public BoidReference(Transform Transform, Rigidbody Rigidbody, EnemyLogic Logic)
     {
-        gameObject = GameObject;
         transform = Transform;
         rigidbody = Rigidbody;
         logic = Logic;
@@ -24,6 +22,7 @@ public class EnemyLogic : MonoBehaviour
     [SerializeField] float speed;
     [SerializeField] float steeringForce;
     [SerializeField] float rotateSpeed;
+    [SerializeField] int maxNeighbourhoodSize;
 
     [Header("Influences"), SerializeField, Range(0.0f, 5.0f)] private float targetingStrength = 0.2f;
     [Space()]
@@ -40,6 +39,7 @@ public class EnemyLogic : MonoBehaviour
     {
         get => Mathf.Max(alignmentRange, cohesionStrength, seperationRange);
     }
+
     // Components
     private new Transform transform;
     private new Rigidbody rigidbody;
@@ -62,22 +62,37 @@ public class EnemyLogic : MonoBehaviour
     {
         Vector3 newVelocity = Vector3.zero;
 
-        // Targetting
+        // Targeting
         newVelocity += targetingStrength * levelData.GetFlowAtPoint(transform.position);
 
         // Get Boids in Neighbourhood
         neighbourhood.Clear();
         var boidColliderList = Physics.OverlapSphere(transform.position, NeighbourhoodRange, boidLayers);
 
-        foreach (Collider boidCollider in boidColliderList)
+        for (int colliderIndex = 0; colliderIndex < boidColliderList.Length; colliderIndex++)
         {
-            GameObject boidGameObject = boidCollider.gameObject;
-            Transform boidTransform = boidCollider.transform;
-            Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
-            EnemyLogic boidLogic = boidCollider.GetComponent<EnemyLogic>();
+            Collider boidCollider = boidColliderList[colliderIndex];
+            if (boidCollider.gameObject != gameObject)
+            {
+                Transform boidTransform = boidCollider.transform;
 
-            if (boidGameObject != gameObject)
-                neighbourhood.Add(new(boidGameObject, boidTransform, boidRigidbody, boidLogic));
+                Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
+                EnemyLogic boidLogic = boidCollider.GetComponent<EnemyLogic>();
+
+                neighbourhood.Add(new(boidTransform, boidRigidbody, boidLogic));
+
+                if (neighbourhood.Count < maxNeighbourhoodSize) continue;
+
+                int furthestIndex = 0;
+                float furthestSqrMag = (neighbourhood[furthestIndex].transform.position - transform.position).sqrMagnitude;
+                for (int currentIndex = 1; currentIndex < neighbourhood.Count; currentIndex++)
+                {
+                    float currentSqrMag = (neighbourhood[currentIndex].transform.position - transform.position).sqrMagnitude;
+                    if (currentSqrMag > furthestSqrMag) furthestIndex = currentIndex;
+                }
+
+                neighbourhood.RemoveAt(furthestIndex);
+            }
         }
 
         // Flocking
@@ -91,8 +106,6 @@ public class EnemyLogic : MonoBehaviour
         if (rigidbody.velocity != Vector3.zero)
         {
             transform.forward = rigidbody.velocity.normalized;
-            //Quaternion toRotation = Quaternion.LookRotation(rigidbody.velocity.normalized, Vector3.up);
-            //transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotateSpeed * Time.deltaTime);
         }
     }
 
@@ -109,8 +122,7 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, alignmentRange))
             {
-                alignmentInfluence += boid.rigidbody.velocity
-                    / (boid.transform.position - transform.position).magnitude;
+                alignmentInfluence += boid.rigidbody.velocity;
             }
         }
 
@@ -125,8 +137,7 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, cohesionRange))
             {
-                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized
-                    / (boid.transform.position - transform.position).magnitude;
+                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized;
             }
         }
 
@@ -141,8 +152,7 @@ public class EnemyLogic : MonoBehaviour
         {
             if (BoidInRange(boid.transform, seperationRange))
             {
-                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized
-                    / (boid.transform.position - transform.position).magnitude;
+                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized;
             }
         }
 
