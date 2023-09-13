@@ -268,7 +268,7 @@ public class Tower : Building
                     }
                 }
             }
-            else lockOnTargets.Remove(lockOnTargets[i]);             
+            else lockOnTargets.Remove(lockOnTargets[i]);     // this won't work because it modifies the list the loop is dependent on         
         }
 
         foreach (Target target in marked)

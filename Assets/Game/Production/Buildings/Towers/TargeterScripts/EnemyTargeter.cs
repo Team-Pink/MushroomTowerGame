@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class EnemyTargeter : Targeter
 {
@@ -10,7 +11,41 @@ public abstract class EnemyTargeter : Targeter
     {
         Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
         if (enemyColliders == null) return;
-        targetsInRange.Clear();
+        HashSet<Enemy> enemySet = new HashSet<Enemy>(); // the Set of enemies to add into the inRangeEnemiesList
+        HashSet<Target> targetsToRemove = new HashSet<Target>(); // the set of enemies to remove from the inRangeEnemies List
+        
+
+        foreach (Collider collider in enemyColliders)
+        {
+            enemySet.Add(collider.GetComponent<Enemy>());
+        }
+        /////////////////////////////////////////////////////////////
+        foreach(Target target in targetsInRange)
+        {
+
+            if (enemySet.Contains(target.enemy))
+            {
+                
+                enemySet.Remove(target.enemy); // we have that enemy already so remove it.          
+               
+            }
+            else targetsToRemove.Add(target); // we don't have the enemy anymore so prepare to remove it.
+        }
+
+        foreach (Target oldTarget in targetsToRemove)
+        {
+            targetsInRange.Remove(oldTarget);
+        }
+        foreach(Enemy newTarget in enemySet)
+        {
+            targetsInRange.Add(new Target(newTarget.transform.position, newTarget));
+        }
+
+
+    
+    /////////////////////////////////////////////////////////////
+
+    targetsInRange.Clear();
         foreach (Collider collider in enemyColliders)
         {
             targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
@@ -32,7 +67,10 @@ public abstract class EnemyTargeter : Targeter
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
-            targets = targetsInRange;
+            foreach (Target target in targetsInRange)
+            {
+                targets.Add(target);
+            }
             if (CheckRotation(targets))
                 return targets;
         }
