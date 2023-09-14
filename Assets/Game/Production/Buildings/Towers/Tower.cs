@@ -191,19 +191,3 @@ public class Tower : Building
         }
     }
 }
-
-// if you aren't going to implement it functionally don't add it to alpha.
-//#if UNITY_EDITOR
-//namespace Editor
-//{
-//    using UnityEditor;
-//    [CustomEditor(typeof(Tower))]
-//    public class TowerEditor : Editor
-//    {
-//       // public override void OnInspectorGUI()
-//        {
-//           // GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-//        }
-//    }
-//}
-//#endif
