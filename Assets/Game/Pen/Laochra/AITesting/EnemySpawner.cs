@@ -10,6 +10,7 @@ public class EnemySpawner : MonoBehaviour
 
     private new Transform transform;
     private LevelDataGrid levelData;
+    public Transform hubTransform;
 
     private void Awake()
     {
@@ -33,6 +34,7 @@ public class EnemySpawner : MonoBehaviour
             EnemyLogic boidLogic = boidGameObject.GetComponent<EnemyLogic>();
 
             boidLogic.levelData = levelData;
+            boidLogic.hubTransform = hubTransform;
 
             boidList.Add(new BoidReference(boidTransform, boidRigidbody, boidLogic));
         }

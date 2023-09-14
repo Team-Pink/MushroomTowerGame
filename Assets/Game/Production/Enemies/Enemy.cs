@@ -1,6 +1,5 @@
 using UnityEngine;
 using Text = TMPro.TMP_Text;
-using System.Collections;
 using System;
 using System.Collections.Generic;
 

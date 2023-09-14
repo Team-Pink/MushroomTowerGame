@@ -829,7 +829,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1310828174
 Transform:
   m_ObjectHideFlags: 0
@@ -2483,8 +2483,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddf328a2b60c2f4d901b257a64ef8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 500
+  amount: 250
   boidPrefab: {fileID: 3484178329749052489, guid: c54e2be9fe86c5b4a853b8a54fa869ab, type: 3}
+  hubTransform: {fileID: 877326243}
 --- !u!114 &6533875848325092003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2501,7 +2502,7 @@ MonoBehaviour:
   gridWidth: 120
   gridHeight: 120
   muddySpeedMultiplier: 20
-  drawGrid: 1
+  drawGrid: 0
   drawFlowLines: 0
 --- !u!4 &6593354657837421337 stripped
 Transform:

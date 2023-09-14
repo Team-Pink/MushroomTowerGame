@@ -18,11 +18,22 @@ public struct BoidReference
 
 public class EnemyLogic : MonoBehaviour
 {
+    [System.Serializable]
+    public enum EnemyState
+    {
+        None,
+        Approach,
+        Hunt,
+        Attack
+    } public EnemyState state = EnemyState.Approach;
+
     // Values
     [SerializeField] float speed;
     [SerializeField] float steeringForce;
     [SerializeField] float rotateSpeed;
     [SerializeField] int maxNeighbourhoodSize;
+    [SerializeField] float attackRadius;
+    private float AttackRadiusSqr { get => attackRadius * attackRadius; }
 
     [Header("Influences"), SerializeField, Range(0.0f, 5.0f)] private float targetingStrength = 0.2f;
     [Space()]
@@ -44,6 +55,7 @@ public class EnemyLogic : MonoBehaviour
     private new Transform transform;
     private new Rigidbody rigidbody;
     [HideInInspector] public LevelDataGrid levelData;
+    [HideInInspector] public Transform hubTransform;
 
     private LayerMask boidLayers;
 
@@ -60,12 +72,59 @@ public class EnemyLogic : MonoBehaviour
 
     private void Update()
     {
-        Vector3 newVelocity = Vector3.zero;
+        switch (state)
+        {
+            case EnemyState.Approach:
+                ApproachState();
+                break;
+            case EnemyState.Hunt:
+                HuntState();
+                break;
+            case EnemyState.Attack:
+                AttackState();
+                break;
+        }
+    }
+
+    protected virtual void ApproachState()
+    {
+        if ((hubTransform.position - transform.position).sqrMagnitude < AttackRadiusSqr)
+        {
+            rigidbody.velocity = Vector2.zero;
+            state = EnemyState.Attack;
+            neighbourhood.Clear();
+            return;
+        }
+
+        // Get Boids in Neighbourhood
+        PopulateNeighbourhood();
+
+        // Flocking
+        Vector3 newVelocity = Flock();
 
         // Targeting
         newVelocity += targetingStrength * levelData.GetFlowAtPoint(transform.position);
 
-        // Get Boids in Neighbourhood
+        // Apply New Velocity
+        rigidbody.velocity = speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
+
+        // Face Direction of Movement
+        if (rigidbody.velocity != Vector3.zero)
+        {
+            transform.forward = rigidbody.velocity.normalized;
+        }
+    }
+    protected virtual void HuntState()
+    {
+
+    }
+    protected virtual void AttackState()
+    {
+
+    }
+
+    private void PopulateNeighbourhood()
+    {
         neighbourhood.Clear();
         var boidColliderList = Physics.OverlapSphere(transform.position, NeighbourhoodRange, boidLayers);
 
@@ -74,10 +133,12 @@ public class EnemyLogic : MonoBehaviour
             Collider boidCollider = boidColliderList[colliderIndex];
             if (boidCollider.gameObject != gameObject)
             {
-                Transform boidTransform = boidCollider.transform;
-
-                Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
                 EnemyLogic boidLogic = boidCollider.GetComponent<EnemyLogic>();
+
+                if (boidLogic.state != EnemyState.Approach) continue;
+
+                Transform boidTransform = boidCollider.transform;
+                Rigidbody boidRigidbody = boidCollider.GetComponent<Rigidbody>();
 
                 neighbourhood.Add(new(boidTransform, boidRigidbody, boidLogic));
 
@@ -94,19 +155,22 @@ public class EnemyLogic : MonoBehaviour
                 neighbourhood.RemoveAt(furthestIndex);
             }
         }
+    }
 
-        // Flocking
-        newVelocity += Align();
-        newVelocity += Cohere();
-        newVelocity += Seperate();
-
-        rigidbody.velocity = speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
-
-        // Face Direction of Movement
-        if (rigidbody.velocity != Vector3.zero)
+    private Vector3 Flock()
+    {
+        Vector3 alignmentInfluence = Vector3.zero, cohesionInfluence = Vector3.zero, seperationInfluence = Vector3.zero;
+        foreach (BoidReference boid in neighbourhood)
         {
-            transform.forward = rigidbody.velocity.normalized;
+            alignmentInfluence += Align(boid);
+            cohesionInfluence += Cohere(boid);
+            seperationInfluence += Seperate(boid);
         }
+        Vector3 result = alignmentInfluence.normalized * alignmentStrength;
+        result += cohesionInfluence.normalized * cohesionStrength;
+        result += seperationInfluence.normalized * seperationStrength;
+
+        return result;
     }
 
     private bool BoidInRange(Transform boidTransform, float range)
@@ -114,48 +178,27 @@ public class EnemyLogic : MonoBehaviour
         return (boidTransform.position - transform.position).sqrMagnitude < (range * range);
     }
 
-    private Vector3 Align()
+    private Vector3 Align(BoidReference boid)
     {
-        Vector3 alignmentInfluence = Vector3.zero;
-
-        foreach (BoidReference boid in neighbourhood)
-        {
-            if (BoidInRange(boid.transform, alignmentRange))
-            {
-                alignmentInfluence += boid.rigidbody.velocity;
-            }
-        }
-
-        return alignmentInfluence.normalized * alignmentStrength;
+        if (BoidInRange(boid.transform, alignmentRange))
+            return boid.rigidbody.velocity;
+        else
+            return Vector3.zero;
     }
 
-    private Vector3 Cohere()
+    private Vector3 Cohere(BoidReference boid)
     {
-        Vector3 cohesionInfluence = Vector3.zero;
-
-        foreach (BoidReference boid in neighbourhood)
-        {
-            if (BoidInRange(boid.transform, cohesionRange))
-            {
-                cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized;
-            }
-        }
-
-        return cohesionInfluence.normalized * cohesionStrength;
+        if (BoidInRange(boid.transform, cohesionRange))
+            return (boid.transform.position - gameObject.transform.position).normalized;
+        else
+            return Vector3.zero;
     }
 
-    private Vector3 Seperate()
+    private Vector3 Seperate(BoidReference boid)
     {
-        Vector3 seperationInfluence = Vector3.zero;
-
-        foreach (BoidReference boid in neighbourhood)
-        {
-            if (BoidInRange(boid.transform, seperationRange))
-            {
-                seperationInfluence -= (boid.transform.position - gameObject.transform.position).normalized;
-            }
-        }
-
-        return seperationInfluence.normalized * seperationStrength;
+        if (BoidInRange(boid.transform, seperationRange))
+            return (boid.transform.position - gameObject.transform.position).normalized;
+        else
+            return Vector3.zero;
     }
 }

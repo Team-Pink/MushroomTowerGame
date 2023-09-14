@@ -50,10 +50,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617e408a30300584db328b5f1d612fd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  simulateBoids: 1
   speed: 3
   steeringForce: 0.15
   rotateSpeed: 150
   maxNeighbourhoodSize: 10
+  attackRadius: 3
   targetingStrength: 3
   alignmentRange: 5
   alignmentStrength: 0.6
@@ -62,6 +64,7 @@ MonoBehaviour:
   seperationRange: 1.5
   seperationStrength: 2
   levelData: {fileID: 0}
+  hubTransform: {fileID: 0}
 --- !u!33 &1892399166391520278
 MeshFilter:
   m_ObjectHideFlags: 0
