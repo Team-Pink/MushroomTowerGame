@@ -7,7 +7,7 @@ public class TankEnemy : Enemy
     [Space]
     int damageReduction = 1;
 
-    int halfHealthMark = 0;
+    float halfHealthMark = 0;
     bool hasArmour = true;
     
     protected override void CustomAwakeEvents()
@@ -31,11 +31,11 @@ public class TankEnemy : Enemy
         base.AttackHub();
     }
 
-    public override IEnumerator TakeDamage(int damage, float delay)
+    public override void TakeDamage(float damage)
     {
         if (hasArmour)
         {
-            StartCoroutine(base.TakeDamage(damage - damageReduction, delay));
+            base.TakeDamage(damage - damageReduction);
 
             if (health <= halfHealthMark)
             {
@@ -44,8 +44,7 @@ public class TankEnemy : Enemy
         }
         else
         {
-            StartCoroutine(base.TakeDamage(damage, delay));
+            base.TakeDamage(damage);
         }
-        yield return null;
     }
 }
