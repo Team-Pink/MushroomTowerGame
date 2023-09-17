@@ -1,8 +1,47 @@
 namespace EditorScripts
 {
     using static UnityEngine.GUILayout;
-    using GUI = UnityEditor.EditorGUILayout;
     using UnityEditor;
+    using UnityEngine;
+    using System.Collections.Generic;
+    using System;
+
+    [Serializable]
+    public class Tag
+    {
+        public string name;
+        public bool enabled;
+        public Tag requiredTag;
+        public TargeterType requiredTargeterType;
+        public AttackerType requiredAttackerType;
+
+        public bool RequirementsMet(TowerEditor tower)
+        {
+            if (requiredTag != null && !requiredTag.enabled) return false;
+
+            if (requiredTargeterType != TargeterType.SelectAType &&
+                tower.targeterType != requiredTargeterType) return false;
+
+            if (requiredAttackerType != AttackerType.SelectAType &&
+                tower.attackerType != requiredAttackerType) return false;
+
+            return true;
+        }
+
+        public Tag(string nameInit)
+        {
+            name = nameInit;
+            enabled = false;
+            requiredTag = null;
+            requiredTargeterType = TargeterType.SelectAType;
+            requiredAttackerType = AttackerType.SelectAType;
+        }
+
+        public void ToggleEnabled()
+        {
+            enabled = !enabled;
+        }
+    }
 
     [CustomEditor(typeof(Tower))]
     public class TowerEditor : Editor
@@ -20,12 +59,54 @@ namespace EditorScripts
 
         bool upgradable;
 
-        TargeterType targeterType = TargeterType.Close;
-        AttackerType attackerType = AttackerType.Area;
+        public TargeterType targeterType = TargeterType.Close;
+        public AttackerType attackerType = AttackerType.Area;
+
+        Color selectedColor = new(1.75f, 1, 1.75f);
+
+        readonly List<Tag> targettingTags = new()
+        {
+            new("Continuous"),
+            new("Lock-on"),
+            new("Multi-target")
+        };
+        readonly List<Tag> attackingTags = new()
+        {
+            new("Bounce"),
+            new("Delay"),
+            new("Knockback"),
+            new("Non-repeating"),
+            new("Spray"),
+            new("Strikethrough")
+        };
+        readonly List<Tag> onKillTags = new()
+        {
+            new("Accelerate")
+        };
+
+        readonly List<Condition> conditions = new();
+        public void AddCondition() => conditions.Add(new(Condition.ConditionType.None, 0, 0));
+        public void RemoveCondition(int index) => conditions.RemoveAt(index);
 
         public void OnEnable()
         {
             tower = target as Tower;
+
+            {
+                targettingTags[0].requiredTag = targettingTags[1]; // Continuous requires lock-on
+                attackingTags[1].requiredAttackerType = AttackerType.Area; // Delay requires area
+                attackingTags[3].requiredTag = attackingTags[0]; // Non-repeating requires bounce
+            } // Set Tag Requirements
+
+            {
+                // Tag Value gets set here
+                // Tag Value gets set here
+                // Tag Value gets set here
+                // Tag Value gets set here
+                // Tag Value gets set here
+                // Tag Value gets set here
+                // Tag Value gets set here
+            } // Set Tag Values - WIP !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             {
                 if (tower.TargeterComponent is CloseTargeter)
@@ -59,124 +140,200 @@ namespace EditorScripts
             EditorGUI.BeginChangeCheck();
 
             BeginHorizontal("box", ExpandWidth(true), Height(35));
-                GUI.Space(); towerName = GUI.TextField(tower.details.name, Stylesheet.TitleTextField, MaxWidth(200), Height(25)); GUI.Space();
+                EditorGUILayout.Space(); towerName = EditorGUILayout.TextField(tower.details.name, Stylesheet.TitleTextField, MaxWidth(200), Height(25)); EditorGUILayout.Space();
             EndHorizontal();
 
-            GUI.Space();
+            EditorGUILayout.Space();
 
+            #region Tower Values
             BeginVertical("box", ExpandWidth(true));
-                GUI.LabelField("Tower Values", Stylesheet.TitleLabel); 
+                EditorGUILayout.LabelField("Tower Values", Stylesheet.TitleLabel); 
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Attack Radius", Stylesheet.RightLabel, MaxWidth(100));
-                    attackRadius = GUI.FloatField(tower.TargeterComponent.range, Stylesheet.CentreText, MaxWidth(35));
-                    GUI.LabelField("Meters", MaxWidth(100)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Attack Radius", Stylesheet.RightLabel, MaxWidth(100));
+                    attackRadius = EditorGUILayout.FloatField(tower.TargeterComponent.range, Stylesheet.CentreText, MaxWidth(35));
+                    EditorGUILayout.LabelField("Meters", MaxWidth(100)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Turn Rate", Stylesheet.RightLabel, MaxWidth(100));
-                    turnRate = GUI.FloatField(tower.TargeterComponent.turnRate, Stylesheet.CentreText, MaxWidth(35));
-                    GUI.LabelField("° per Second", MaxWidth(100)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Turn Rate", Stylesheet.RightLabel, MaxWidth(100));
+                    turnRate = EditorGUILayout.FloatField(tower.TargeterComponent.turnRate, Stylesheet.CentreText, MaxWidth(35));
+                    EditorGUILayout.LabelField("° per Second", MaxWidth(100)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space(10);
+                EditorGUILayout.Space(10);
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Damage", Stylesheet.RightLabel, MaxWidth(100));
-                    damage = GUI.IntField(tower.AttackerComponent.damage, Stylesheet.CentreText, MaxWidth(35));
-                    GUI.LabelField("Hitpoints", MaxWidth(100)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Damage", Stylesheet.RightLabel, MaxWidth(100));
+                    damage = EditorGUILayout.IntField(tower.AttackerComponent.damage, Stylesheet.CentreText, MaxWidth(35));
+                    EditorGUILayout.LabelField("Hitpoints", MaxWidth(100)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Attack Cooldown", Stylesheet.RightLabel, MaxWidth(100));
-                    attackCooldown = GUI.FloatField(tower.AttackerComponent.attackCooldown, Stylesheet.CentreText, MaxWidth(35));
-                    GUI.LabelField("Seconds", MaxWidth(100)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Attack Cooldown", Stylesheet.RightLabel, MaxWidth(100));
+                    attackCooldown = EditorGUILayout.FloatField(tower.AttackerComponent.attackCooldown, Stylesheet.CentreText, MaxWidth(35));
+                    EditorGUILayout.LabelField("Seconds", MaxWidth(100)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Damage Delay", Stylesheet.RightLabel, MaxWidth(100));
-                    damageDelay = GUI.FloatField(tower.AttackerComponent.attackDelay, Stylesheet.CentreText, MaxWidth(35));
-                    GUI.LabelField("Seconds", MaxWidth(100)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Damage Delay", Stylesheet.RightLabel, MaxWidth(100));
+                    damageDelay = EditorGUILayout.FloatField(tower.AttackerComponent.attackDelay, Stylesheet.CentreText, MaxWidth(35));
+                    EditorGUILayout.LabelField("Seconds", MaxWidth(100)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
             EndVertical();
+            #endregion
 
-            GUI.Space();
+            EditorGUILayout.Space();
 
+            #region Upgrades
             BeginVertical("box", ExpandWidth(true));
-                GUI.LabelField("Upgrades", Stylesheet.TitleLabel);
+                EditorGUILayout.LabelField("Upgrades", Stylesheet.TitleLabel);
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Upgradable", Stylesheet.RightLabel, MaxWidth(80));
-                    upgradable = GUI.Toggle(upgradable, Width(20), Height(20)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Upgradable", Stylesheet.RightLabel, MaxWidth(80));
+                    upgradable = EditorGUILayout.Toggle(upgradable, Width(20), Height(20)); EditorGUILayout.Space();
                 EndHorizontal();
                 if (upgradable)
                 {
-                    GUI.Space();
+                    EditorGUILayout.Space();
                     BeginHorizontal();
-                        GUI.Space(); GUI.LabelField("Path 1 Prefab", Stylesheet.RightLabel, MaxWidth(100));
-                        GUI.TextField("", MaxWidth(80)); GUI.Space();
+                        EditorGUILayout.Space(); EditorGUILayout.LabelField("Path 1 Prefab", Stylesheet.RightLabel, MaxWidth(100));
+                        EditorGUILayout.TextField("", MaxWidth(80)); EditorGUILayout.Space();
                     EndHorizontal();
-                    GUI.Space();
+                    EditorGUILayout.Space();
                     BeginHorizontal();
-                        GUI.Space(); GUI.LabelField("Path 2 Prefab", Stylesheet.RightLabel, MaxWidth(100));
-                        GUI.TextField("", MaxWidth(80)); ; GUI.Space();
+                        EditorGUILayout.Space(); EditorGUILayout.LabelField("Path 2 Prefab", Stylesheet.RightLabel, MaxWidth(100));
+                        EditorGUILayout.TextField("", MaxWidth(80)); ; EditorGUILayout.Space();
                     EndHorizontal();
-                    GUI.Space();
+                    EditorGUILayout.Space();
                 }
             EndVertical();
+            #endregion
 
-            GUI.Space();
+            EditorGUILayout.Space();
 
+            #region Targeting / Attacking Types
             BeginVertical("box", ExpandWidth(true));
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Targeting Type", Stylesheet.RightLabel, MaxWidth(100));
-                    targeterType = (TargeterType)GUI.EnumPopup(targeterType, MaxWidth(80)); GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Targeting Type", Stylesheet.RightLabel, MaxWidth(100));
+                    targeterType = (TargeterType)EditorGUILayout.EnumPopup(targeterType, MaxWidth(80)); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
                 BeginHorizontal();
-                    GUI.Space(); GUI.LabelField("Attacking Type", Stylesheet.RightLabel, MaxWidth(100));
-                    attackerType = (AttackerType)GUI.EnumPopup(attackerType, MaxWidth(80)); ; GUI.Space();
+                    EditorGUILayout.Space(); EditorGUILayout.LabelField("Attacking Type", Stylesheet.RightLabel, MaxWidth(100));
+                    attackerType = (AttackerType)EditorGUILayout.EnumPopup(attackerType, MaxWidth(80)); ; EditorGUILayout.Space();
                 EndHorizontal();
             EndVertical();
+            #endregion
 
-            GUI.Space();
+            EditorGUILayout.Space();
 
+            #region Tags
             BeginVertical("box");
-                GUI.LabelField("Tags", Stylesheet.TitleLabel);
+                EditorGUILayout.LabelField("Tags", Stylesheet.TitleLabel);
                 //Tags go here
                 BeginHorizontal();
                     BeginVertical("box", ExpandWidth(true));
-                        BeginHorizontal(); GUI.Space(); GUI.LabelField("Targeting", Stylesheet.HeadingLabel, MaxWidth(80)); GUI.Space(); EndHorizontal();
-                        for (int tagIndex = 0; tagIndex < 2; tagIndex++)
+                        BeginHorizontal(); EditorGUILayout.Space(); EditorGUILayout.LabelField("Targeting", Stylesheet.HeadingLabel, MaxWidth(80)); EditorGUILayout.Space(); EndHorizontal();
+                        for (int tagIndex = 0; tagIndex < targettingTags.Count; tagIndex++)
                         {
+                            Tag currentTag = targettingTags[tagIndex];
                             if (tagIndex % 2 == 0) BeginHorizontal();
-                            Button("Target " + (tagIndex+1));
-                            if (tagIndex % 2 == 1) EndHorizontal();
+                            if (!currentTag.RequirementsMet(this))
+                            {
+                                currentTag.enabled = false;
+                                GUI.backgroundColor = Color.grey;
+                            }
+                            if (currentTag.enabled) GUI.backgroundColor = selectedColor;
+                            if (Button(currentTag.name)) currentTag.ToggleEnabled();
+                            GUI.backgroundColor = Color.white;
+                            if (tagIndex % 2 == 1 || tagIndex + 1 == targettingTags.Count) EndHorizontal();
                         }
                     EndVertical();
                     BeginVertical("box", ExpandWidth(true));
-                        BeginHorizontal(); GUI.Space(); GUI.LabelField("Attacking", Stylesheet.HeadingLabel, MaxWidth(80)); GUI.Space(); EndHorizontal();
-                        for (int tagIndex = 0; tagIndex < 4; tagIndex++)
+                        BeginHorizontal(); EditorGUILayout.Space(); EditorGUILayout.LabelField("Attacking", Stylesheet.HeadingLabel, MaxWidth(80)); EditorGUILayout.Space(); EndHorizontal();
+                        for (int tagIndex = 0; tagIndex < attackingTags.Count; tagIndex++)
                         {
+                            Tag currentTag = attackingTags[tagIndex];
                             if (tagIndex % 2 == 0) BeginHorizontal();
-                            Button("Attack " + (tagIndex + 1));
-                            if (tagIndex % 2 == 1) EndHorizontal();
+                            if (!currentTag.RequirementsMet(this))
+                            {
+                                currentTag.enabled = false;
+                                GUI.backgroundColor = Color.grey;
+                            }
+                            if (currentTag.enabled) GUI.backgroundColor = selectedColor;
+                            if (Button(currentTag.name)) currentTag.ToggleEnabled();
+                            GUI.backgroundColor = Color.white;
+                            if (tagIndex % 2 == 1 || tagIndex + 1 == attackingTags.Count) EndHorizontal();
                         }
                     EndVertical();
                 EndHorizontal();
                 BeginHorizontal();
-                    GUI.Space(); BeginVertical("box", MaxWidth(160));
-                        BeginHorizontal();  GUI.Space(); GUI.LabelField("On-Kill", Stylesheet.HeadingLabel, MaxWidth(80)); GUI.Space(); EndHorizontal();
-                        for (int tagIndex = 0; tagIndex < 1; tagIndex++)
+                    EditorGUILayout.Space(); BeginVertical("box", MaxWidth(160));
+                        BeginHorizontal();  EditorGUILayout.Space(); EditorGUILayout.LabelField("On-Kill", Stylesheet.HeadingLabel, MaxWidth(80)); EditorGUILayout.Space(); EndHorizontal();
+                        for (int tagIndex = 0; tagIndex < onKillTags.Count; tagIndex++)
                         {
-                            BeginHorizontal();
-                                GUI.Space();
-                                Button("On-Kill " + (tagIndex + 1), MaxWidth(80));
-                                GUI.Space();
-                            EndHorizontal();
+                            Tag currentTag = onKillTags[tagIndex];
+                            if (tagIndex % 2 == 0) BeginHorizontal();
+                            if (!currentTag.RequirementsMet(this))
+                            {
+                                currentTag.enabled = false;
+                                GUI.backgroundColor = Color.grey;
+                            }
+                            if (currentTag.enabled) GUI.backgroundColor = selectedColor;
+                            if (Button(currentTag.name)) currentTag.ToggleEnabled();
+                            GUI.backgroundColor = Color.white;
+                            if (tagIndex % 2 == 1 || tagIndex + 1 == onKillTags.Count) EndHorizontal();
                         }
 
-                    EndVertical(); GUI.Space();
+                    EndVertical(); EditorGUILayout.Space();
                 EndHorizontal();
-                GUI.Space();
+                EditorGUILayout.Space();
             EndVertical();
+            #endregion
+
+            EditorGUILayout.Space();
+
+            #region Conditions
+            BeginVertical("box");
+                EditorGUILayout.LabelField("Conditions", Stylesheet.TitleLabel);
+
+                BeginHorizontal(); EditorGUILayout.Space();
+                if (Button("Add", MaxWidth(80))) AddCondition();
+                EditorGUILayout.Space(); EndHorizontal();
+
+                EditorGUILayout.Space();
+
+                for (int conditionIndex = 0; conditionIndex < conditions.Count; conditionIndex++)
+                {     
+                    BeginVertical("box");
+
+                        EditorGUILayout.Space();
+
+                        BeginHorizontal(); EditorGUILayout.Space();
+                            EditorGUILayout.EnumPopup(conditions[conditionIndex].type, MaxWidth(120));
+                            if (Button("Remove", MaxWidth(80))) RemoveCondition(conditionIndex);
+                        EditorGUILayout.Space(); EndHorizontal();
+
+                        EditorGUILayout.Space();
+
+                        BeginHorizontal(); EditorGUILayout.Space();
+                            EditorGUILayout.LabelField("Value", Stylesheet.RightLabel, MaxWidth(50));
+                            EditorGUILayout.FloatField(0, MaxWidth(80));
+                        EditorGUILayout.Space(); EndHorizontal();
+
+                        EditorGUILayout.Space();
+
+                        BeginHorizontal(); EditorGUILayout.Space();
+                            EditorGUILayout.LabelField("Duration", Stylesheet.RightLabel, MaxWidth(50));
+                            EditorGUILayout.FloatField(0, MaxWidth(80));
+                        EditorGUILayout.Space(); EndHorizontal();
+
+                        EditorGUILayout.Space();
+
+                    EndVertical();
+                }
+            EndVertical();
+            #endregion
+
+            EditorGUILayout.Space();
 
             if (EditorGUI.EndChangeCheck())
                 SaveChanges();

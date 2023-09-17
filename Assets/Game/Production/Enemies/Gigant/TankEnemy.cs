@@ -1,34 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TankEnemy : Enemy
 {
-    [Space]
-    int damageReduction = 1;
+    [Header("Biote Specific Variables")]
+    [SerializeField] int damageReduction = 1;
 
-    float halfHealthMark = 0;
-    bool hasArmour = true;
-    
-    protected override void CustomAwakeEvents()
+    private float halfHealthMark = 0;
+    private bool hasArmour = true;
+
+    public override void SpawnIn()
     {
+        base.SpawnIn();
+
+        hasArmour = true;
         halfHealthMark = health / 2;
-    }
-
-    void Update()
-    {
-        if (!Dead)
-            Playing();
-    }
-
-    protected override void Playing()
-    {
-        base.Playing();
-    }
-
-    protected override void AttackHub()
-    {
-        base.AttackHub();
     }
 
     public override void TakeDamage(float damage)

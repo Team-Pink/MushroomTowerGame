@@ -14,7 +14,15 @@ public class Hub : Building
 
     
     public PylonList connectedPylons;
-    [HideInInspector] public int pylonCount = 0;
+    public int pylonCount
+    {
+        get
+        {
+            return connectedPylons.Count;
+        }
+        private set { }
+    }
+    public int connectedPylonsCount = 0;
 
     private void Update()
     {
@@ -30,6 +38,9 @@ public class Hub : Building
         }
 
         hubHealthText.text = health.ToString();
+
+        ClearDestroyedPylons();
+        connectedPylonsCount = pylonCount;
     }
 
     public void Damage(int damageAmount) => health -= damageAmount;
@@ -38,9 +49,10 @@ public class Hub : Building
 
     public void ClearDestroyedPylons()
     {
-        foreach (Pylon pylon in connectedPylons)
+        for (int i = 0; i < connectedPylons.Count; i++)
         {
-            if (pylon is null)
+            Pylon pylon = connectedPylons[i];
+            if (pylon == null)
                 RemovePylon(pylon);
         }
     }
