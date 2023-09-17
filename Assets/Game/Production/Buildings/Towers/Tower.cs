@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
@@ -17,6 +21,7 @@ public struct Target
 [Serializable]
 public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
@@ -26,6 +31,7 @@ public enum TargeterType
 [Serializable]
 public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
@@ -185,19 +191,3 @@ public class Tower : Building
         }
     }
 }
-
-// if you aren't going to implement it functionally don't add it to alpha.
-//#if UNITY_EDITOR
-//namespace Editor
-//{
-//    using UnityEditor;
-//    [CustomEditor(typeof(Tower))]
-//    public class TowerEditor : Editor
-//    {
-//       // public override void OnInspectorGUI()
-//        {
-//           // GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-//        }
-//    }
-//}
-//#endif
