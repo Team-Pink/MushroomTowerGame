@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 [Serializable]
 public class Attacker
@@ -19,6 +18,20 @@ public class Attacker
     public GameObject attackObjectPrefab;
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
+
+    #region TAGS
+    [Header("Spray Tag")]
+    public bool spray = false;
+    public int sprayDamage = 1;
+    public float additionalSprayRange = 2;
+
+    [Header("Strikethrough Tag")]
+    public bool strikethrough = true;
+    public int strikethroughDamage = 1;
+    public int strikethroughReach = 10;
+    public int strikethroughBeamWidth = 4;
+    public Matrix4x4 strikethroughMatrix;
+    #endregion
 
     protected List<Target> targetsToShoot = new();
     protected bool attacking = false;
