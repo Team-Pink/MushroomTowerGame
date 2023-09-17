@@ -41,11 +41,15 @@ public class WaveSpawner : MonoBehaviour
     private int spawnedEnemies;
     private readonly List<Enemy> aliveEnemies = new();
 
+    [SerializeField] Transform parentFolder;
     [SerializeField] Hub hub;
     [SerializeField] Text wonText;
+    private LevelDataGrid levelData;
 
     private void Awake()
     {
+        levelData = GetComponent<LevelDataGrid>();
+
         currentPath = paths[Random.Range(0, paths.Length - 1)];
 
         currentWave = SpawnWave(currentWaveIndex);
@@ -99,8 +103,10 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.pathToFollow = currentPath;
+            //enemy.pathToFollow = currentPath;
             enemy.hub = hub;
+            enemy.hubTransform = hub.transform;
+            enemy.levelData = levelData;
             enemy.transform.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
 
@@ -171,7 +177,7 @@ public class WaveSpawner : MonoBehaviour
         GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
         GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length)];
 
-        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, GameObject.Find("----|| Enemies ||----").transform);
+        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, parentFolder);
 
         enemyObject.name = "Enemy " + enemyNumber;
         enemyNumber++;
