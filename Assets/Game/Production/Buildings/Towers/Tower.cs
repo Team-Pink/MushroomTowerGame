@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -95,17 +96,16 @@ public class Tower : Building
 
 
     //Multitarget
-    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
-    private int numTargets; // number of targets if multiTarget is true.
+    [SerializeField] private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    [SerializeField] private int numTargets; // number of targets if multiTarget is true.
 
     //Accelerate
-    private bool accelerate = false;
+    [SerializeField] private bool accelerate = false;
     [SerializeField] public bool accelerated = false; // determines if a tower is currently accelerated
     readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
     public float accelTimer = 0; // timer to keep track of the above.
-    public readonly float accelSpeedMod = 0.5f; // on kill multiply the attack delay by this basically increase by 50%
-    public readonly float decreaseAccel = 1.25f; //acceleration decreases by 25% if the tower fails a kill.
-    private float baseDelay; // the original starting delay of the tower
+    public readonly float accelSpeedMod = 0.2f; // on kill multiply the attack delay by this basically increase by 50%
+    private float accelModReverse;
     public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     //Lock On
@@ -128,18 +128,20 @@ public class Tower : Building
 
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
-        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead.
+        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
-        if (accelerate) baseDelay = attackerComponent.attackDelay;
+        accelModReverse = 1 / accelSpeedMod;
+        if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
     }
 
     private void Update()
     {
         if (Active)
         {
-            if (multiTarget) targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            if (multiTarget) 
+                targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
             else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
@@ -203,15 +205,20 @@ public class Tower : Building
         if (accelerated)
         {
             accelTimer += Time.deltaTime;
-            if (accelTimer > accelTimeMax || AttackerComponent.attackDelay > baseDelay)
+            if (accelTimer > accelTimeMax)
             {
                 accelerated = false;
-                attackerComponent.attackDelay = baseDelay;// return attack delay to normal
+                attackerComponent.attackDelay *= accelModReverse;// return attack delay to normal
                 accelTimer = 0; // Reset timer
             }
         }
     }
 
+    /// <summary>
+    /// Here's the thing this works as far as maintaining locks on the targets in range with the highest max health but in the case a better target enters 
+    /// it's range it will immediately stop and try locking onto the new better target. unfortunately the only way to prevent this would be to forcefully maintain
+    /// a lock until a target goes out of range
+    /// </summary>
     private void LockOnTag()
     {
 
@@ -253,9 +260,11 @@ public class Tower : Building
             if (targets.Contains(lockOnTargets[i].target))
             {
                 lockOnTargets[i].IncrementLockTimer();
+                // progress lock on animation
                 marked.Remove(lockOnTargets[i].target);
                 if (lockOnTargets[i].targetLocked)
                 {
+                    Debug.DrawLine(transform.position, lockOnTargets[i].target.position, Color.red, 0.02f);
                     targetsLockedFire.Add(lockOnTargets[i].target);
                 }
                 else
