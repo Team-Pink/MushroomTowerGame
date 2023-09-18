@@ -60,5 +60,25 @@ namespace EditorScripts
                 alignment = TextAnchor.MiddleCenter
             };
         }
+
+        public static GUIStyle DisabledButton
+        {
+            get => new(GUI.skin.button)
+            {
+                normal = new()
+                {
+                    textColor = Color.grey
+                },
+                hover = new()
+                {
+                    textColor = Color.grey
+                },
+                active = new()
+                {
+                    textColor = Color.grey
+                }
+
+            };
+        }
     }
 }

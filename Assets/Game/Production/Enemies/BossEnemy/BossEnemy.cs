@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossEnemy : Enemy
 {
-    
+    /*
     void Update()
     {
         if (!Dead)
@@ -14,5 +14,5 @@ public class BossEnemy : Enemy
     protected override void Playing()
     {
         base.Playing();
-    }
+    }*/
 }

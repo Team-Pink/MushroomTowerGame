@@ -90,6 +90,13 @@ public class LevelDataGrid : MonoBehaviour
         return new Vector3(flowDirection.x, 0, flowDirection.y);
     }
 
+    public bool GetMuddyAtPoint(Vector3 position)
+    {
+        WorldToTileSpace(position, out int xCoord, out int zCoord);
+
+        return tiles[xCoord, zCoord].muddy;
+    }
+
     private void WorldToTileSpace(Vector3 position, out int xCoord, out int zCoord)
     {
         float x = (position.x - TileWidth * 0.5f) / TileWidth + tilesWidth * 0.5f;

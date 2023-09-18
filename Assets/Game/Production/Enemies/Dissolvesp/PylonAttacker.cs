@@ -2,89 +2,154 @@ using UnityEngine;
 
 public class PylonAttacker : Enemy
 {
-    [SerializeField] private Pylon target;
-    private bool lockedOn = false;
+    [Header("Pylon Attacker Variables")]
+
+    [SerializeField] Pylon target;
     public float firingCone = 10;
-    [SerializeField, Range(0.1f, 1.0f)] private float turnSpeed = 1;
+    [SerializeField] float detectionRange = 15;
+    [SerializeField, Range(0.1f, 1.0f)] float turnSpeed = 1;
 
     // garbage animation objects
     [SerializeField] GameObject bullet;
-    [SerializeField, Range(0.1f, 1.0f)] private float bulletSpeed;
+    [SerializeField, Range(0.1f, 1.0f)] float bulletSpeed;
 
-    private void Update()
+    LayerMask mask = new LayerMask();
+
+    public override void SpawnIn()
     {
-        if (!Dead)
-            Playing();
+        mask = LayerMask.GetMask("Pylon");
+
+        base.SpawnIn();
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Pylon"))
-        {
-            target = other.GetComponent<Pylon>();
-            if (target.CurrentHealth <= 0)
-            {
-                target = null;
-                return;
-            }
 
-            // stop movement
-            speed = 0;
-            Debug.Log("encountered" + other);
+
+    protected override void ApproachState()
+    {
+        base.ApproachState(); //move towards the hub (either gonna have at the start or the end of the function)
+
+        //Checks for any pylons in range
+        foreach (Collider collider in Physics.OverlapSphere(transform.position, detectionRange))
+        {
+            if (collider.GetComponent<Pylon>() == null)
+                continue;
+
+            if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+            {
+                target = collider.GetComponent<Pylon>();
+                state = EnemyState.Hunt;
+                Debug.Log("Detected new target " + target.name);
+                break;
+            }
         }
     }
 
-    protected override void Playing()
+    protected override void HuntState()
     {
-        AttackPylon();
-        base.Playing();
-    }
-
-    void AttackPylon() // The reason this is as terrible as it is is because I had to break up the order to add in FireBullet.
-    {
-        if (target)
+        rigidbody.velocity = Vector3.zero;
+        if (target.CurrentHealth <= 0 || !target.Active)
         {
-            if (target.CurrentHealth <= 0)
-            {
+            Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
 
-                //turn back on the path this should be corrected by the flocking/steering behavior when it's implemented
-                // resume travelling
-                speed = 1;
-                lockedOn = false;
+            if (collisions.Length < 1)
+            {
+                state = EnemyState.Approach;
                 target = null;
                 ResetBullet();
                 return;
             }
-            // rotate to face pylon
-            RotateToTarget(GetRotationToTarget());
-            if (lockedOn && !attackInProgress)
-            {
 
-                // trigger pylon attack animation              
-                target.CurrentHealth -= 1;
-                attackInProgress = true;
-            }
-            else
+            foreach (Collider collider in collisions)
             {
-                elapsedCooldown += Time.deltaTime;
-                bullet.SetActive(lockedOn);
-                FireBullet();
-                if (elapsedCooldown >= attackCooldown)
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
                 {
-                    ResetBullet();
-                    attackInProgress = false;
-                    elapsedCooldown = 0;
+                    target = collider.GetComponent<Pylon>();
+                    break;
                 }
             }
         }
+
+        //Move Pylon Attacker towards the target
+        bool facingTarget = RotateToTarget(GetRotationToTarget());
+
+        if (Vector3.Distance(transform.position, target.transform.position) > attackRadius)
+            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, Time.deltaTime * Speed);
+
+        if (Vector3.Distance(transform.position, target.transform.position) <= attackRadius && facingTarget)
+        {
+            state = EnemyState.Attack;
+        }
     }
 
-    void RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes
+    protected override void AttackState()
     {
-        if (!lockedOn && Quaternion.Angle(transform.rotation, lookTarget) < firingCone)
-            lockedOn = true;
+        if (target == null)
+        {
+            base.AttackState(); // Attack Hub
+            return;
+        }
 
+        //On Pylon Death or Deactivation
+        if (target.CurrentHealth <= 0 || !target.Active)
+        {
+            target = null;
+            ResetBullet();
+
+            Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
+
+            if (collisions.Length < 1)
+            {
+                state = EnemyState.Approach;
+                return;
+            }
+
+            foreach (Collider collider in collisions)
+            {   
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+                {
+                    target = collider.GetComponent<Pylon>();
+                    state = EnemyState.Hunt;
+                    break;
+                }
+            }
+
+            if (target != null)
+                state = EnemyState.Hunt;
+            else
+                state = EnemyState.Approach;
+
+            return;
+        }
+
+        //Attacking the Pylon
+        if (!attackInProgress)
+        {
+            animator.SetTrigger("Attack");
+            target.CurrentHealth -= damage;
+            attackInProgress = true;
+            bullet.SetActive(true);
+        }
+        else
+        {
+            elapsedCooldown += Time.deltaTime;
+            FireBullet();
+
+            if (elapsedCooldown < attackCooldown) return;
+
+            bullet.SetActive(false);
+            ResetBullet();
+            attackInProgress = false;
+            elapsedCooldown = 0;
+        }
+    }
+
+
+
+    bool RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes
+    {
         transform.rotation = Quaternion.Slerp(transform.rotation, lookTarget, turnSpeed);
+
+        return Quaternion.Angle(transform.rotation, lookTarget) < firingCone;
     }
 
     Quaternion GetRotationToTarget() => Quaternion.LookRotation((target.transform.position - transform.position).normalized);

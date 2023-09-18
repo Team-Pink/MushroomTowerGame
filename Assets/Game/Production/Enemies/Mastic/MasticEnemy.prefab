@@ -123,17 +123,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
---- !u!114 &919106454038645387 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5932547466001727575, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-  m_PrefabInstance: {fileID: 6815624152218815196}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1008108567171407266 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
@@ -151,24 +140,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06f9b2115c5d4f428d88c000c2d69c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthText: {fileID: 919106454038645387}
-  health: 0
-  isDead: 0
+  state: 1
   maxHealth: 5
-  bugBits: 2
-  expValue: 1
-  speed: 1
-  range:
-    serializedVersion: 2
-    m_Bits: 4096
-  pathToFollow: {fileID: 0}
+  health: 0
+  dead: 0
+  speed: 2
+  steeringForce: 0.15
+  maxNeighbourhoodSize: 10
+  influences:
+    targetingStrength: 3
+    alignmentRange: 5
+    alignmentStrength: 0.6
+    cohesionRange: 5
+    cohesionStrength: 0.1
+    seperationRange: 1.5
+    seperationStrength: 2
   damage: 1
   attackCooldown: 2
   attackDelay: 1
+  attackRadius: 3
+  bugBits: 2
+  expValue: 1
+  levelData: {fileID: 0}
+  hubTransform: {fileID: 0}
   hub: {fileID: 0}
   animator: {fileID: 7282610292993822671}
-  showPath: 1
-  showLevers: 0
 --- !u!4 &1008108567171407452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
