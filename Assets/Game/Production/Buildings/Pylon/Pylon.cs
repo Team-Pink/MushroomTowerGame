@@ -32,7 +32,7 @@ public class Pylon : Building
         {
             currentXP = value;
 
-            if (currentXP >= XPEnhanceRequirement)
+            if (currentXP >= XPEnhanceRequirement * costMultiplier)
             {
                 Enhance();
             }
@@ -163,6 +163,7 @@ public class Pylon : Building
         {
             building.Deactivate();
         }
+
         base.Deactivate();
     }
     public override void Reactivate()
