@@ -38,6 +38,7 @@ public class InteractionManager : MonoBehaviour
 
     [Header("Placement")]
     #region Placement Variables
+    LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
     private LayerMask placableLayers;
@@ -126,6 +127,7 @@ public class InteractionManager : MonoBehaviour
         ResetInteraction();
 
         mainCamera = Camera.main;
+        levelDataGrid = GetComponent<LevelDataGrid>();
 
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
@@ -401,7 +403,7 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
             bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
@@ -460,7 +462,7 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
             bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
