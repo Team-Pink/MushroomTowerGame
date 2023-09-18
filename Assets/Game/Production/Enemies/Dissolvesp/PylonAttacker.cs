@@ -23,6 +23,7 @@ public class PylonAttacker : Enemy
     }
 
 
+
     protected override void ApproachState()
     {
         base.ApproachState(); //move towards the hub (either gonna have at the start or the end of the function)
@@ -54,7 +55,6 @@ public class PylonAttacker : Enemy
             {
                 state = EnemyState.Approach;
                 target = null;
-                lockedOn = false;
                 ResetBullet();
                 return;
             }
@@ -142,6 +142,8 @@ public class PylonAttacker : Enemy
             elapsedCooldown = 0;
         }
     }
+
+
 
     bool RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes
     {
