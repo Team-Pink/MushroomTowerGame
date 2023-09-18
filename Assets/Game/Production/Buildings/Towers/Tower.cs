@@ -96,12 +96,12 @@ public class Tower : Building
 
 
     //Multitarget
-    [SerializeField] private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
-    [SerializeField] private int numTargets; // number of targets if multiTarget is true.
+    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private int numTargets; // number of targets if multiTarget is true.
 
     //Accelerate
-    [SerializeField] private bool accelerate = false;
-    [SerializeField] public bool accelerated = false; // determines if a tower is currently accelerated
+    private bool accelerate = false;
+    public bool accelerated = false; // determines if a tower is currently accelerated
     readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
     public float accelTimer = 0; // timer to keep track of the above.
     public readonly float accelSpeedMod = 0.2f; // on kill multiply the attack delay by this basically increase by 50%
@@ -109,7 +109,7 @@ public class Tower : Building
     public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     //Lock On
-    [SerializeField] private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    private bool lockOn = false; // determines if the tower will lock on to an enemy.
     private float lockOnDuration = 1.5f;
     private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
 
