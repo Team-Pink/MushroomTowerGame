@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using BuildingList = System.Collections.Generic.List<Building>;
 
@@ -64,10 +65,56 @@ public class Pylon : Building
 
     [Header("Connections")]
     [SerializeField] BuildingList connectedBuildings = new();
-    [HideInInspector] public int connectedTowersCount = 0;
-    [HideInInspector] public int connectedPylonsCount = 0;
+    public int connectedTowersCount
+    {
+        get
+        {
+            int towers = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
 
-    //[HideInInspector] public Building parent = null;
+            foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
+                if (building is Tower)
+                    towers++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
+            return towers;
+        }
+        private set { }
+    }
+    public int connectedPylonsCount
+    {
+        get
+        {
+            int pylons = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+
+            foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
+                if (building is Pylon)
+                    pylons++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
+            return pylons;
+        }
+        private set { }
+    }
 
     public bool IsBuildingInList(Building building)
     {
@@ -100,19 +147,11 @@ public class Pylon : Building
     public void AddBuilding(Building building)
     {
         connectedBuildings.Add(building);
-        if (building is Tower)
-            connectedTowersCount++;
-        else
-            connectedPylonsCount++;
     }
 
     public void RemoveBuilding(Building building)
     {
         connectedBuildings.Remove(building);
-        if (building is Tower)
-            connectedTowersCount--;
-        else
-            connectedPylonsCount--;
     }
 
     public override void Deactivate()
