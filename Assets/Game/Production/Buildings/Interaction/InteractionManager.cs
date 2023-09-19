@@ -349,7 +349,7 @@ public class InteractionManager : MonoBehaviour
             if (hoveredButtonIndex == 0)
             {
                 targetPylon.CurrentHealth = targetPylon.MaxHealth;
-                targetPylon.Reactivate();
+                targetPylon.ToggleResidual(false);
             } // Repair
             else if (hoveredButtonIndex == 1)
             {

@@ -4,6 +4,8 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    [HideInInspector] bool isResidual;
+
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
@@ -58,7 +60,7 @@ public class Pylon : Building
         {
             currentHealth = value;
             if (currentHealth <= 0)
-                Deactivate();
+                ToggleResidual(true);
         }
     }
 
@@ -157,40 +159,78 @@ public class Pylon : Building
 
     public override void Deactivate()
     {
-        ToggleResidual(true);
+        if (isResidual) return;
 
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
         }
 
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(true);
+            enhancedPylon.SetActive(false);
+            enhancedBud.SetActive(false);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(true);
+            basePylon.SetActive(false);
+            baseBud.SetActive(false);
+        }
+
         base.Deactivate();
     }
     public override void Reactivate()
     {
-        ToggleResidual(false);
+        if (isResidual) return;
 
-        CurrentHealth = MaxHealth;
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
+
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(false);
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(false);
+            basePylon.SetActive(true);
+            baseBud.SetActive(true);
+        }
+
         base.Reactivate();
     }
 
     public void ToggleResidual(bool value)
     {
+        isResidual = value;
+
+        if (!isResidual)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Reactivate();
+            }
+        }
+
         if (Enhanced)
         {
-            pylonResidual.SetActive(value);
-            enhancedPylon.SetActive(!value);
-            enhancedBud.SetActive(!value);
+            pylonResidual.SetActive(isResidual);
+            deactivatedEnhancedPylon.SetActive(!isResidual);
+            enhancedPylon.SetActive(!isResidual);
+            enhancedBud.SetActive(!isResidual);
         }
         else
         {
-            pylonResidual.SetActive(value);
-            basePylon.SetActive(!value);
-            baseBud.SetActive(!value);
+            pylonResidual.SetActive(isResidual);
+            deactivatedBasePylon.SetActive(!isResidual);
+            basePylon.SetActive(!isResidual);
+            baseBud.SetActive(!isResidual);
         }
     }
 
@@ -230,6 +270,11 @@ public class Pylon : Building
         if (connectedBuildings.Count > 0)
         {
             ToggleResidual(true);
+
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Deactivate();
+            }
         }
         else
         {
