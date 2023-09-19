@@ -1005,6 +1005,17 @@ Transform:
   m_Father: {fileID: 815648652}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &870560216 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6399468923159554815, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &877326243 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6811093020081216666, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
@@ -1521,6 +1532,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1328651514 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3458338133070766803, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1364608598 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6375534184692175654, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
@@ -2534,6 +2556,14 @@ PrefabInstance:
       propertyPath: towerMenuButtons.Array.data[2]
       value: 
       objectReference: {fileID: 1970392925}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: residualMenuButtons.Array.data[0]
+      value: 
+      objectReference: {fileID: 1328651514}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: residualMenuButtons.Array.data[1]
+      value: 
+      objectReference: {fileID: 870560216}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionMenuButtons.Array.data[0]
       value: 
