@@ -126,6 +126,8 @@ public class Enemy : MonoBehaviour
 
     #region Attacking Values
     [Header("Attacking")]
+    protected Building targetBuilding;
+
     [SerializeField] protected int damage;
 
     [SerializeField] protected float attackCooldown = 0;

@@ -3,8 +3,9 @@ using UnityEngine;
 public class PylonAttacker : Enemy
 {
     [Header("Pylon Attacker Variables")]
+    private Pylon targetPylon;
 
-    [SerializeField] Pylon target;
+    //[SerializeField] Pylon targetBuilding;
     public float firingCone = 10;
     [SerializeField] float detectionRange = 15;
     [SerializeField, Range(0.1f, 1.0f)] float turnSpeed = 1;
@@ -38,7 +39,8 @@ public class PylonAttacker : Enemy
 
             if (pylon.CurrentHealth > 0 && pylon.Active)
             {
-                target = pylon;
+                targetBuilding = pylon;
+                targetPylon = pylon;
                 state = EnemyState.Hunt;
                 break;
             }
@@ -48,23 +50,23 @@ public class PylonAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (target.CurrentHealth <= 0 || !target.Active)
+        if (targetPylon.CurrentHealth <= 0 || targetBuilding == null)
         {
             Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
 
             if (collisions.Length < 1)
             {
                 state = EnemyState.Approach;
-                target = null;
+                targetBuilding = null;
                 ResetBullet();
                 return;
             }
 
             foreach (Collider collider in collisions)
             {
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
                 {
-                    target = collider.GetComponent<Pylon>();
+                    targetBuilding = collider.GetComponent<Pylon>();
                     break;
                 }
             }
@@ -73,27 +75,33 @@ public class PylonAttacker : Enemy
         //Move Pylon Attacker towards the target
         bool facingTarget = RotateToTarget(GetRotationToTarget());
 
-        if (Vector3.Distance(transform.position, target.transform.position) > attackRadius)
-            transform.position = Vector3.MoveTowards(transform.position, target.transform.position, Time.deltaTime * Speed);
+        float distance = Vector3.Distance(transform.position, targetBuilding.transform.position);
 
-        if (Vector3.Distance(transform.position, target.transform.position) <= attackRadius && facingTarget)
-        {
+        if (distance > attackRadius && !facingTarget)
+            transform.position = Vector3.MoveTowards(transform.position, targetBuilding.transform.position, Time.deltaTime * Speed);
+        else
             state = EnemyState.Attack;
-        }
     }
 
     protected override void AttackState()
     {
-        if (target == null)
+        if (targetBuilding == null)
+        {
+            state = EnemyState.Approach;
+        }
+
+        if (targetBuilding is Hub)
         {
             base.AttackState(); // Attack Hub
             return;
         }
 
+        Pylon pylonTarget = targetBuilding as Pylon;
+
         //On Pylon Death or Deactivation
-        if (target.CurrentHealth <= 0 || !target.Active)
+        if (pylonTarget.CurrentHealth <= 0)
         {
-            target = null;
+            targetBuilding = null;
             ResetBullet();
 
             Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
@@ -106,15 +114,15 @@ public class PylonAttacker : Enemy
 
             foreach (Collider collider in collisions)
             {   
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+                if (pylonTarget.CurrentHealth > 0 && pylonTarget.Active)
                 {
-                    target = collider.GetComponent<Pylon>();
+                    targetBuilding = collider.GetComponent<Pylon>();
                     state = EnemyState.Hunt;
                     break;
                 }
             }
 
-            if (target != null)
+            if (targetBuilding != null)
                 state = EnemyState.Hunt;
             else
                 state = EnemyState.Approach;
@@ -126,7 +134,7 @@ public class PylonAttacker : Enemy
         if (!attackInProgress)
         {
             animator.SetTrigger("Attack");
-            target.CurrentHealth -= damage;
+            pylonTarget.CurrentHealth -= damage;
             attackInProgress = true;
             bullet.SetActive(true);
         }
@@ -153,11 +161,11 @@ public class PylonAttacker : Enemy
         return Quaternion.Angle(transform.rotation, lookTarget) < firingCone;
     }
 
-    Quaternion GetRotationToTarget() => Quaternion.LookRotation((target.transform.position - transform.position).normalized);
+    Quaternion GetRotationToTarget() => Quaternion.LookRotation((targetBuilding.transform.position - transform.position).normalized);
 
     void FireBullet()
     {
-        bullet.transform.position = Vector3.Lerp(bullet.transform.position, target.transform.position + Vector3.up, Time.deltaTime * 2);
+        bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
     }
 
     void ResetBullet()
