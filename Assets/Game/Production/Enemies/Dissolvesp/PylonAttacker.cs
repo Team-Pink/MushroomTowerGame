@@ -34,11 +34,12 @@ public class PylonAttacker : Enemy
             if (collider.GetComponent<Pylon>() == null)
                 continue;
 
-            if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+            Pylon pylon = collider.GetComponent<Pylon>();
+
+            if (pylon.CurrentHealth > 0 && pylon.Active)
             {
-                target = collider.GetComponent<Pylon>();
+                target = pylon;
                 state = EnemyState.Hunt;
-                Debug.Log("Detected new target " + target.name);
                 break;
             }
         }

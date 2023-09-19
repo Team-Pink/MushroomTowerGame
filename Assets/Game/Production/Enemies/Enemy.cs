@@ -51,7 +51,8 @@ public class Enemy : MonoBehaviour
     #region Health Values
     [Header("Health")]
     [SerializeField] int maxHealth;
-    [HideInInspector] public float health;
+    //[HideInInspector]
+    public float health;
     [HideInInspector] public bool dead;
     public int MaxHealth { get => maxHealth; }
     public float CurrentHealth { get => health; protected set => health = value; }
