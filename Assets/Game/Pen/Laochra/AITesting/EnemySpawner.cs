@@ -1,20 +1,23 @@
-using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] int amount;
     [SerializeField] GameObject boidPrefab;
 
-    private readonly BoidList boidList = new();
+    private readonly List<Enemy.BoidReference> boidList = new();
 
     private new Transform transform;
     private LevelDataGrid levelData;
+    public Transform hubTransform;
+    private Hub hub;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
         levelData = GetComponent<LevelDataGrid>();
+        hub = hubTransform.GetComponent<Hub>();
 
         SpawnBoids();
     }
@@ -30,11 +33,13 @@ public class EnemySpawner : MonoBehaviour
             GameObject boidGameObject = Instantiate(boidPrefab, position, rotation, transform);
             Transform boidTransform = boidGameObject.transform;
             Rigidbody boidRigidbody = boidGameObject.GetComponent<Rigidbody>();
-            EnemyLogic boidLogic = boidGameObject.GetComponent<EnemyLogic>();
+            Enemy boidLogic = boidGameObject.GetComponent<Enemy>();
 
             boidLogic.levelData = levelData;
+            boidLogic.hubTransform = hubTransform;
+            boidLogic.hub = hub;
 
-            boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
+            boidList.Add(new Enemy.BoidReference(boidTransform, boidRigidbody, boidLogic));
         }
     }
 }

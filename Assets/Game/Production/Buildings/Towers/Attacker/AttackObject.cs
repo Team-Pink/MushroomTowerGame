@@ -93,15 +93,11 @@ public class AttackObject : MonoBehaviour
 
             if (originTower.GetAccelerate()) // Accelerate logic
             {
-                if (!target.enemy.Dead)
+                if (!target.enemy.Dead) // The bool Dead is set in OnDeath() so if it is false we can be sure this attack dealt the killing blow as the enemy has no health but hasn't "died" yet.
                 {
                     originTower.accelerated = true; // this could be called from elsewhere if neccesary
                     originTower.accelTimer = 0;
                     originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
-                }
-                else
-                {
-                    originTower.AttackerComponent.attackDelay *= originTower.decreaseAccel;// modify attack delay
                 }
             }
             target.enemy.OnDeath(); // enemy on death
@@ -128,7 +124,7 @@ public class AttackObject : MonoBehaviour
 }
 
 //Rundown of current functionality
-// runs a clock that works off of the attack delay to delay damage until the attack has reached the target  // Could be replaced with a coroutine that waits.
+// runs a coroutine that waits to delay damage until the attack has reached the target
 // when it does reach the target
 // deal damage to the given targets
 // if the target dies modify exp and accelerate and then call the enemy's OnDeath()

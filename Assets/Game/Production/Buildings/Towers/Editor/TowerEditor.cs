@@ -85,7 +85,7 @@ namespace EditorScripts
         };
 
         readonly List<Condition> conditions = new();
-        public void AddCondition() => conditions.Add(new(ConditionType.None, 0, 0));
+        public void AddCondition() => conditions.Add(new(Condition.ConditionType.None, 0, 0));
         public void RemoveCondition(int index) => conditions.RemoveAt(index);
 
         public void OnEnable()
