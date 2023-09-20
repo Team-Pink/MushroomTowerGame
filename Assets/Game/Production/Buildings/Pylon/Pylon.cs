@@ -159,8 +159,8 @@ public class Pylon : Building
 
     public override void Deactivate()
     {
+        base.Deactivate();
         if (isResidual) return;
-
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
@@ -178,13 +178,11 @@ public class Pylon : Building
             basePylon.SetActive(false);
             baseBud.SetActive(false);
         }
-
-        base.Deactivate();
     }
     public override void Reactivate()
     {
+        base.Reactivate();
         if (isResidual) return;
-
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
@@ -202,15 +200,20 @@ public class Pylon : Building
             basePylon.SetActive(true);
             baseBud.SetActive(true);
         }
-
-        base.Reactivate();
     }
 
     public void ToggleResidual(bool value)
     {
         isResidual = value;
 
-        if (!isResidual)
+        if (isResidual)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Deactivate();
+            }
+        }
+        else if (Active)
         {
             foreach (Building connectedBuilding in connectedBuildings)
             {
@@ -220,17 +223,29 @@ public class Pylon : Building
 
         if (Enhanced)
         {
+            if (Active)
+            {
+                enhancedPylon.SetActive(!isResidual);
+                enhancedBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedEnhancedPylon.SetActive(!isResidual);
+            }
             pylonResidual.SetActive(isResidual);
-            deactivatedEnhancedPylon.SetActive(!isResidual);
-            enhancedPylon.SetActive(!isResidual);
-            enhancedBud.SetActive(!isResidual);
         }
         else
         {
+            if (Active)
+            {
+                basePylon.SetActive(!isResidual);
+                baseBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedBasePylon.SetActive(!isResidual);
+            }
             pylonResidual.SetActive(isResidual);
-            deactivatedBasePylon.SetActive(!isResidual);
-            basePylon.SetActive(!isResidual);
-            baseBud.SetActive(!isResidual);
         }
     }
 
@@ -270,11 +285,6 @@ public class Pylon : Building
         if (connectedBuildings.Count > 0)
         {
             ToggleResidual(true);
-
-            foreach (Building connectedBuilding in connectedBuildings)
-            {
-                connectedBuilding.Deactivate();
-            }
         }
         else
         {
