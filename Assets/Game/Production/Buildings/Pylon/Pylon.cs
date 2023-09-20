@@ -32,7 +32,7 @@ public class Pylon : Building
         {
             currentXP = value;
 
-            if (currentXP >= XPEnhanceRequirement)
+            if (currentXP >= XPEnhanceRequirement * costMultiplier)
             {
                 Enhance();
             }
@@ -58,9 +58,10 @@ public class Pylon : Building
         {
             currentHealth = value;
             if (currentHealth <= 0)
-                ToggleResidual(true);
+                Deactivate();
         }
     }
+
     public GameObject pylonResidual;
 
     [Header("Connections")]
@@ -156,41 +157,20 @@ public class Pylon : Building
 
     public override void Deactivate()
     {
-        if (Enhanced)
-        {
-            deactivatedEnhancedPylon.SetActive(true);
-            enhancedPylon.SetActive(false);
-            enhancedBud.SetActive(false);
-        }
-        else
-        {
-            deactivatedBasePylon.SetActive(true);
-            basePylon.SetActive(false);
-            baseBud.SetActive(false);
-        }
+        ToggleResidual(true);
 
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
         }
+
         base.Deactivate();
     }
     public override void Reactivate()
     {
-        if (Enhanced)
-        {
-            enhancedPylon.SetActive(true);
-            enhancedBud.SetActive(true);
-            deactivatedEnhancedPylon.SetActive(false);
-        }
-        else
-        {
-            basePylon.SetActive(true);
-            baseBud.SetActive(true);
-            deactivatedBasePylon.SetActive(false);
-        }
+        ToggleResidual(false);
 
-
+        CurrentHealth = MaxHealth;
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
@@ -276,7 +256,7 @@ public class Pylon : Building
 
             if (building == null)
                 continue;
-            
+
             if (building is Pylon)
             {
                 (building as Pylon).SellAll();
