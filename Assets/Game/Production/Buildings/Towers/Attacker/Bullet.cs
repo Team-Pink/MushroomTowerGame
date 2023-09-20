@@ -5,28 +5,31 @@ public class Bullet : MonoBehaviour
     
     public float timeToTarget;
     private float timeElapsed;
-    private Vector3 startPosition;
+    private Vector3 startPos;
     public Target target;
-    private Vector3 targetPosition;
+    private Vector3 targetPos;
     
     // parobola variables
     public bool parabola;
-    private float progress;
-    private float launchAngle;
-    private float distance;
+    private float progress = 0;
+    private float arcHeight = 40;
+    Vector3 currentPos;
+
 
     private void Awake()
     {
-        startPosition = transform.position;        
+        startPos = transform.position;
         if (target.enemy != null)
-            targetPosition = target.enemy.transform.position;
+            targetPos = target.enemy.transform.position;
     }
 
     void Update()
     {
+        targetPos = target.position;
 
-        if (parabola)MoveParabola(); 
-        else MoveStraightToTarget();
+
+      if (parabola)MoveParabola(); 
+      else MoveStraightToTarget();
 
         
         if (timeElapsed >= timeToTarget)
@@ -38,20 +41,24 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-        transform.position = Vector3.Lerp(startPosition, targetPosition, timeElapsed / timeToTarget);
+        transform.position = Vector3.Lerp(startPos, targetPos, timeElapsed / timeToTarget);
     }
 
     void MoveParabola()
     {
-        // Ideas                                                                                           problems
-        // 1. predict where the enemy will be and shoot the bullet in a perfect parabola to that position. impossible to get accurate predictions without complex simulation.
-        // 2. fire it along a line and modify the y value based on the distance to the target.             distance will be changing as the enemy moves.
-        // 3. fire it along a parabola to the current changeing location of the target.                    requires a new parabola to be created every update.
-        // 4. get the midpoint of the tower and target and rotate the bullet around that point.            unexplored maths required, would need the midpoint to be moveable.
 
-        // Generate a parobola between the tower and enemy pos every movement generate a vector3 position
-        // based on the progress of a float between 0 and 1 then rotate + lerp the bullet towards it.
+        // update progress to match time elapsed
+        progress = timeElapsed / timeToTarget;
+        
 
+        currentPos = Vector3.Lerp(startPos, targetPos, progress); // update xz position
+        currentPos.y = -progress * progress + progress; // update y position
+        currentPos.y *= arcHeight; 
+
+        transform.rotation = Quaternion.LookRotation(currentPos); // rotate towards the direction of movement
+
+        transform.position = currentPos; // Update position
+       
 
     }
 }
