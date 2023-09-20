@@ -16,7 +16,7 @@ public class AreaAttacker : Attacker
         if (!attacking)
         {
             affectedEnemies.Clear();
-            AnimateAttack();
+            AnimateAttack(); Debug.Log("ANIMATE YOU FUCKER");
             attacking = true;
 
             LayerMask mask = LayerMask.GetMask("Enemy");
