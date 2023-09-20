@@ -57,7 +57,7 @@ public class Pylon : Building
         set
         {
             currentHealth = value;
-            if (currentHealth <= 0)
+            if (currentHealth <= float.Epsilon)
                 Deactivate();
         }
     }
