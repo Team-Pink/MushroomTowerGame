@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AreaAttacker : Attacker
 {
@@ -16,7 +15,15 @@ public class AreaAttacker : Attacker
         if (!attacking)
         {
             affectedEnemies.Clear();
-            AnimateAttack(); Debug.Log("ANIMATE YOU FUCKER");
+            AnimateAttack();
+
+            if (windupParticlePrefab != null)
+            {
+                GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                Object.Destroy(particle, lockonDuration);
+            }
+
             attacking = true;
 
             LayerMask mask = LayerMask.GetMask("Enemy");

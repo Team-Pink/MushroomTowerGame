@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class SingleAttacker : Attacker
 {
@@ -9,6 +8,14 @@ public class SingleAttacker : Attacker
         if (!attacking)
         {
             AnimateAttack();
+
+            if (windupParticlePrefab != null)
+            {
+                GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                Object.Destroy(particle, lockonDuration);
+            }
+
             attacking = true;
 
             Debug.Log("Single Attack");

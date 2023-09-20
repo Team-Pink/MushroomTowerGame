@@ -13,9 +13,14 @@ public class Attacker
     public float attackDelay = 2;
     protected float delayTimer = 0f;
 
+    public float lockonDuration = 0f;
+
     public Transform transform;
     public GameObject bulletPrefab;
     public GameObject attackObjectPrefab;
+    public GameObject windupParticlePrefab;
+    public GameObject attackParticlePrefab;
+    public float particleOriginOffset = 0.0f;
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
@@ -56,10 +61,16 @@ public class Attacker
     {
         foreach (Target target in targetsToShoot)
         {
+            if (attackParticlePrefab != null)
+            {
+                GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                UnityEngine.Object.Destroy(particle, 0.5f);
+            }
+
             Bullet bulletRef;
 
             bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
         }
