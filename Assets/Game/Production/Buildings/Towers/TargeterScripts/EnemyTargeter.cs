@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public abstract class EnemyTargeter : Targeter
 {
@@ -10,44 +10,27 @@ public abstract class EnemyTargeter : Targeter
 
     public void GetTargetsInRange()
     {
-        Collider[] enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer);
-        if (enemyColliders == null) return;
+        List<Collider> enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer).ToList();
         
-        
-      /*
-        HashSet<Enemy> enemySet = new HashSet<Enemy>(); // the Set of enemies to add into the inRangeEnemiesList
-        HashSet<Target> targetsToRemove = new HashSet<Target>(); // the set of enemies to remove from the inRangeEnemies List
-        foreach (Collider collider in enemyColliders)
+        // Ensure dead enemies aren't included in checks
+        List<Collider> deadEnemyColliders = new();
+        foreach (Collider enemyCollider in enemyColliders)
         {
-            enemySet.Add(collider.GetComponent<Enemy>());
-        }
-        
-        foreach(Target target in targetsInRange)
-        {
-
-            if (enemySet.Contains(target.enemy))
+            if (enemyCollider.GetComponent<Enemy>().Dead)
             {
-                
-                enemySet.Remove(target.enemy); // we have that enemy already so remove it.          
-               
+                deadEnemyColliders.Add(enemyCollider);
             }
-            else targetsToRemove.Add(target); // we don't have the enemy anymore so prepare to remove it.
         }
-
-        foreach (Target oldTarget in targetsToRemove)
+        foreach (Collider enemyCollider in deadEnemyColliders)
         {
-            targetsInRange.Remove(oldTarget);
-        }
-        foreach(Enemy newTarget in enemySet)
-        {
-            targetsInRange.Add(new Target(newTarget.transform.position, newTarget));
+            enemyColliders.Remove(enemyCollider);
         }
 
-        //this is pointless it doesn't solve the problem
-    
-    */
+        targetsInRange.Clear();
+        bestTargets.Clear();
 
-    targetsInRange.Clear();
+        if (enemyColliders == null) return;
+
         foreach (Collider collider in enemyColliders)
         {
             targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));

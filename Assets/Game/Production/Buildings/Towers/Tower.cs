@@ -57,7 +57,7 @@ public class Tower : Building
 {
     // Components
     protected new Transform transform;
-    protected Animator animator;
+    [SerializeField] protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
@@ -118,7 +118,7 @@ public class Tower : Building
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        attackerComponent.animator = animator;
 
         transform = gameObject.transform;
         targeterComponent.transform = transform;
@@ -129,6 +129,10 @@ public class Tower : Building
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
         attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
+        
+        // Temporary measure to stop towers attacking before they finish being built
+        attackerComponent.attacking = true;
+        attackerComponent.cooldownTimer = 5f;
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
@@ -181,6 +185,18 @@ public class Tower : Building
         {
             Debug.LogError("Upgrade only accepts an int value of 0 or 1", this);
         }
+    }
+
+    public override void Deactivate()
+    {
+        base.Deactivate();
+        animator.SetTrigger("Deactivate");
+    }
+
+    public override void Reactivate()
+    {
+        base.Reactivate();
+        animator.SetTrigger("Reactivate");
     }
 
     public override void Sell()

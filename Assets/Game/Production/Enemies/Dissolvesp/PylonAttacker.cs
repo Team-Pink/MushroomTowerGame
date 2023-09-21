@@ -38,7 +38,6 @@ public class PylonAttacker : Enemy
             {
                 target = collider.GetComponent<Pylon>();
                 state = EnemyState.Hunt;
-                Debug.Log("Detected new target " + target.name);
                 break;
             }
         }

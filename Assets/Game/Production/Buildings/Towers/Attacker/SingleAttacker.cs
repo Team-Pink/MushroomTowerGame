@@ -13,17 +13,18 @@ public class SingleAttacker : Attacker
             {
                 GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
                 particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-                Object.Destroy(particle, lockonDuration);
+                Object.Destroy(particle, animationLeadIn);
             }
 
             attacking = true;
 
-            Debug.Log("Single Attack");
             foreach (var target in targets)
             {
                 if (target.enemy is not null)
                 {
                     AttackObject singleAttack = GenerateAttackObject(target);
+
+                    singleAttack.hitParticlePrefab = hitParticlePrefab;
 
                     #region TAG IMPLEMENTATION
                     if (strikethrough)
@@ -36,7 +37,7 @@ public class SingleAttacker : Attacker
                     }
                     #endregion
 
-                    singleAttack.StartCoroutine(singleAttack.CommenceAttack());
+                    singleAttack.StartCoroutine(singleAttack.CommenceAttack(animationLeadIn));
 
                     targetsToShoot.Add(target);
                 }

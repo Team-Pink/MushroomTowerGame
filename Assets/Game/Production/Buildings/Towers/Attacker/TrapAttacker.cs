@@ -49,9 +49,9 @@ public class TrapAttacker : Attacker
 
             if (attackParticlePrefab != null)
             {
-                GameObject particle = Object.Instantiate(attackParticlePrefab, transform);
-                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-                Object.Destroy(particle, 1.5f);
+                //GameObject particle = Object.Instantiate(attackParticlePrefab, transform);
+                //particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                //Object.Destroy(particle, 1.5f);
             }
 
             Debug.Log("Trap Attacker");

@@ -4,7 +4,7 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
-    [HideInInspector] bool isResidual;
+    private bool isResidual;
 
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;

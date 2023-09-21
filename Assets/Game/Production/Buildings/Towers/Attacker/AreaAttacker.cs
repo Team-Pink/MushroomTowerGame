@@ -21,18 +21,18 @@ public class AreaAttacker : Attacker
             {
                 GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
                 particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-                Object.Destroy(particle, lockonDuration);
+                Object.Destroy(particle, animationLeadIn);
             }
 
             attacking = true;
 
             LayerMask mask = LayerMask.GetMask("Enemy");
 
-            Debug.Log("Area Attack");
-
             foreach (var target in targets)
             {
-                AttackObject areaAttack = GenerateAttackObject(target); 
+                AttackObject areaAttack = GenerateAttackObject(target);
+
+                areaAttack.hitParticlePrefab = hitParticlePrefab;
 
                 Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                 foreach (var collision in mainCollisions)
@@ -51,7 +51,7 @@ public class AreaAttacker : Attacker
                 }
                 #endregion
 
-                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
+                areaAttack.StartCoroutine(areaAttack.CommenceAttack(animationLeadIn));
                 targetsToShoot.Add(target);
             }
         }

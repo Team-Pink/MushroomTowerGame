@@ -57,6 +57,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
+--- !u!137 &3863218965728110354 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3815281831247788329, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
+  m_PrefabInstance: {fileID: 103147050358545979}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &7282610292993822671 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7241635144816136692, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
@@ -161,10 +166,14 @@ MonoBehaviour:
   attackRadius: 3
   bugBits: 2
   expValue: 1
+  animator: {fileID: 7282610292993822671}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
   hub: {fileID: 0}
-  animator: {fileID: 7282610292993822671}
+  deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
+  particleOriginOffset: 1
+  meshRenderer: {fileID: 3863218965728110354}
+  hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
 --- !u!4 &1008108567171407452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
