@@ -161,6 +161,9 @@ public class Enemy : MonoBehaviour
     private Material defaultMaterial;
     [SerializeField] Material hurtMaterial;
 
+    [SerializeField] AudioClip attackAudio;
+    [SerializeField] AudioClip deathAudio;
+
     private void Awake()
     {
         transform = GetComponent<Transform>();
@@ -228,6 +231,7 @@ public class Enemy : MonoBehaviour
         Dead = true; // object pool flag;
 
         // death animation
+        AudioManager.main.PlaySoundEffect(deathAudio.name, 0);
 
         // increment currency
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
@@ -407,6 +411,7 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
+                AttackAudio();
                 attackInProgress = false;
             }
         }
@@ -426,6 +431,11 @@ public class Enemy : MonoBehaviour
         }
     }
     #endregion
+
+    protected void AttackAudio()
+    {
+        AudioManager.main.PlaySoundEffect(attackAudio.name, 0);
+    }
 
 
     /*

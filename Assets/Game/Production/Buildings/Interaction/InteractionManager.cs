@@ -620,7 +620,7 @@ public class InteractionManager : MonoBehaviour
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
-
+        
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
         else

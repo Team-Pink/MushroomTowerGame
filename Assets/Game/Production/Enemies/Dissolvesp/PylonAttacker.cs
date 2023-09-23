@@ -123,6 +123,7 @@ public class PylonAttacker : Enemy
         //Attacking the Pylon
         if (!attackInProgress)
         {
+            AttackAudio();
             animator.SetTrigger("Attack");
             target.CurrentHealth -= damage;
             attackInProgress = true;

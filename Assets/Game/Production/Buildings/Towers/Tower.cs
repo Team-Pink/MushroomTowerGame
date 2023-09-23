@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -55,14 +54,20 @@ public struct Details
 
 public class Tower : Building
 {
+    // Startup
+    [SerializeField] float growthDuration = 5.0f;
+    private float growthTime = 0.0f;
+    private bool recovering = false;
+    [SerializeField] float recoveryDuration = 2.0f;
+    private float recoveryTime = 0.0f;
+
+
     // Components
-    protected new Transform transform;
     [SerializeField] protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-
-
+    protected new Transform transform;
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
@@ -130,10 +135,6 @@ public class Tower : Building
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
         attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
         
-        // Temporary measure to stop towers attacking before they finish being built
-        attackerComponent.attacking = true;
-        attackerComponent.cooldownTimer = 5f;
-
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
         accelModReverse = 1 / accelSpeedMod;
@@ -142,6 +143,26 @@ public class Tower : Building
 
     private void Update()
     {
+        if (growthTime < growthDuration)
+        {
+            growthTime += Time.deltaTime;
+            return;
+        }
+
+        if (recovering)
+        {
+            if (recoveryTime < recoveryDuration)
+            {
+                recoveryTime += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                recovering = false;
+                base.Reactivate();
+            }
+        }
+
         if (Active)
         {
             if (multiTarget) 
@@ -191,11 +212,12 @@ public class Tower : Building
     {
         base.Deactivate();
         animator.SetTrigger("Deactivate");
+        recoveryTime = 0.0f;
     }
 
     public override void Reactivate()
     {
-        base.Reactivate();
+        recovering = true;
         animator.SetTrigger("Reactivate");
     }
 

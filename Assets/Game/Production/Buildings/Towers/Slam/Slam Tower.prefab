@@ -12,8 +12,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2472821387772103797}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: bulletPrefab
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: details.name
       value: Slam Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: growthDuration
+      value: 3.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: recoveryDuration
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent
@@ -204,9 +216,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441041].attackSoundEffect
+      value: 
+      objectReference: {fileID: 8300000, guid: bd1e26470f777c943bc1819a61ebc655, type: 3}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].hitParticlePrefab
       value: 
       objectReference: {fileID: 4545457377672113928, guid: d713cdae472d5cf478659f6e9cab28d6, type: 3}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441041].leadinSoundEffect
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].attackObjectPrefab
       value: 
@@ -366,6 +386,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5109823546609926887, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
   m_PrefabInstance: {fileID: 185255037942516225}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8458371139374482302 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+  m_PrefabInstance: {fileID: 185255037942516225}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23cbdd097d57c7f4ebf48502456b6355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2745665884213552059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -444,3 +475,21 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 309527230517620686, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
   m_PrefabInstance: {fileID: 2745665884213552059}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3355269832880202126 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 615516168855061045, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+  m_PrefabInstance: {fileID: 2745665884213552059}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1852065058533896351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355269832880202126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0343d5dff0e31264992e4db9a663b7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tower: {fileID: 8458371139374482302}

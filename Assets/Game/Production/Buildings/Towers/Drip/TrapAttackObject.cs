@@ -7,6 +7,8 @@ public class TrapAttackObject : MonoBehaviour
 
     // Data
     public TrapDetails details = new TrapDetails();
+    public float cleanupDuration;
+    private float cleanupTime = 0.0f;
 
     // Components
     private new Transform transform;
@@ -44,6 +46,14 @@ public class TrapAttackObject : MonoBehaviour
             }
         }
 
+        if (cleanupTime < cleanupDuration)
+        {
+            cleanupTime += Time.deltaTime;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, transform.localScale.x * 0.5f, enemies);
 

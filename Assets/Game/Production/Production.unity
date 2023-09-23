@@ -900,10 +900,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f15ceea03a77b5f42b4346055cb94f55, type: 3}
-    - target: {fileID: 6375534184885773180, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6375534184984826935, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -2439,37 +2435,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 625561296}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: enemyPrefab
-      value: 
-      objectReference: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: parentFolder
       value: 
       objectReference: {fileID: 1768477436}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[2]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[3]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[4]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: paths.Array.data[5]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: spawnPoints.Array.data[0]
       value: 
@@ -2526,6 +2494,10 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[13]
       value: 
       objectReference: {fileID: 1573247803}
+    - target: {fileID: 4915721120753536162, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: m_Name
+      value: Swamp Danger
+      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124892, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -2579,10 +2551,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1146967826}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: radialMenu
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: targetPlane
       value: 
       objectReference: {fileID: 285150794}
@@ -2598,14 +2566,6 @@ PrefabInstance:
       propertyPath: towerSelectionMenu
       value: 
       objectReference: {fileID: 2143670441}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: pylonMenuButtons.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: towerMenuButtons.Array.size
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: pylonMenuButtons.Array.data[0]
       value: 
@@ -2662,13 +2622,13 @@ PrefabInstance:
       propertyPath: currencyText
       value: 
       objectReference: {fileID: 1545976202}
-    - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: startingAmount
-      value: 150
-      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915131746, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8555039552271152558, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: m_Name
+      value: MasticDeath
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 066cde3769000064188cecd38420fa52, type: 3}

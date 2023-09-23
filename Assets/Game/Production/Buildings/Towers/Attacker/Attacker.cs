@@ -18,10 +18,14 @@ public class Attacker
     public Transform transform;
     public GameObject bulletPrefab;
     public GameObject attackObjectPrefab;
+
     public GameObject windupParticlePrefab;
     public GameObject attackParticlePrefab;
     public GameObject hitParticlePrefab;
     public float particleOriginOffset = 0.0f;
+    public AudioClip leadinSoundEffect;
+    public AudioClip attackSoundEffect;
+
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
@@ -62,6 +66,13 @@ public class Attacker
 
     public void AnimateProjectile()
     {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.main.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (bulletPrefab == null) return;
+
         foreach (Target target in targetsToShoot)
         {
             if (attackParticlePrefab != null)
@@ -96,6 +107,11 @@ public class Attacker
 
     public void AnimateAttack()
     {
+        if (leadinSoundEffect != null)
+        {
+            AudioManager.main.PlaySoundEffect(leadinSoundEffect.name, 1, animationLeadIn);
+        }
+
         if (animator == null) return;
 
         animator.SetTrigger("Attack");

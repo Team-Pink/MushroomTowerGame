@@ -138,8 +138,11 @@ public class Pylon : Building
     public void Enhance()
     {
         Enhanced = true;
-        enhancedPylon.SetActive(true);
-        enhancedBud.SetActive(true);
+        if (!isResidual)
+        {
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
 
         pylonPlacementRange.SetActive(true);
 

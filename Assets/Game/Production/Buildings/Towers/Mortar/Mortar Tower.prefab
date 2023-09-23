@@ -16,6 +16,14 @@ PrefabInstance:
       value: Mortar Tower
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: growthDuration
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: recoveryDuration
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent
       value: 4951535851181441043
       objectReference: {fileID: 0}
@@ -244,9 +252,17 @@ PrefabInstance:
       value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441043].attackSoundEffect
+      value: 
+      objectReference: {fileID: 8300000, guid: b6a65748241c9a54a924f51bb444176d, type: 3}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441043].hitParticlePrefab
       value: 
       objectReference: {fileID: 8987633323233306716, guid: 4f3374fe177914e45b4641603227ae23, type: 3}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441043].leadinSoundEffect
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441043].attackObjectPrefab
       value: 
