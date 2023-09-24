@@ -35,13 +35,9 @@ public class PylonAttacker : Enemy
             if (collider.GetComponent<Pylon>() == null)
                 continue;
 
-<<<<<<< HEAD
             Pylon pylon = collider.GetComponent<Pylon>();
 
             if (pylon.CurrentHealth > 0 && pylon.Active)
-=======
-            if (collider.GetComponent<Pylon>().CurrentHealth > 0)
->>>>>>> e1a13e616666e97c96d9a85b6d9c76965c437b56
             {
                 targetBuilding = pylon;
                 targetPylon = pylon;
