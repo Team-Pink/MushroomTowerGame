@@ -7,20 +7,39 @@ using static UnityEngine.SceneManagement.SceneManager;
 
 public class Hub : Building
 {
-    [SerializeField] int health = 10;
+    [SerializeField] float maxHealth = 100;
+    private float currentHealth;
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
     [SerializeField] Text hubHealthText;
 
+    public MeshRenderer healthDisplay;
+    public float healthDisplayWindow = 2.0f;
+    private float healthDisplayActiveTime;
+
     
     public PylonList connectedPylons;
-    [HideInInspector] public int pylonCount = 0;
+    public int pylonCount
+    {
+        get
+        {
+            return connectedPylons.Count;
+        }
+        private set { }
+    }
+    public int connectedPylonsCount = 0;
+
+    private void Awake()
+    {
+        currentHealth = maxHealth;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
+    }
 
     private void Update()
     {
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
-            health = 0;
+            currentHealth = 0;
             gameOverText.enabled = true;
 
             if (gameOverDuration > 0)
@@ -29,18 +48,38 @@ public class Hub : Building
                 RestartScene();
         }
 
-        hubHealthText.text = health.ToString();
+        if (healthDisplayActiveTime < healthDisplayWindow)
+        {
+            healthDisplayActiveTime += deltaTime;
+
+            if (healthDisplayActiveTime >= healthDisplayWindow)
+            {
+                healthDisplay.enabled = false;
+            }
+        }
+
+        hubHealthText.text = currentHealth.ToString();
+
+        ClearDestroyedPylons();
+        connectedPylonsCount = pylonCount;
     }
 
-    public void Damage(int damageAmount) => health -= damageAmount;
+    public void Damage(float damageAmount)
+    {
+        currentHealth -= damageAmount;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
+        healthDisplay.enabled = true;
+        healthDisplayActiveTime = 0;
+    }
 
     private void RestartScene() => LoadScene(GetActiveScene().name);
 
     public void ClearDestroyedPylons()
     {
-        foreach (Pylon pylon in connectedPylons)
+        for (int i = 0; i < connectedPylons.Count; i++)
         {
-            if (pylon is null)
+            Pylon pylon = connectedPylons[i];
+            if (pylon == null)
                 RemovePylon(pylon);
         }
     }

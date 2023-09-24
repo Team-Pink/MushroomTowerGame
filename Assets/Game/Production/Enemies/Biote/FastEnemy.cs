@@ -1,24 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FastEnemy : Enemy
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("Biote Specific Variables")]
+    [SerializeField] float speedUpMultiplier = 3.0f;
+    private bool damaged = false;
+
+    public override void SpawnIn()
     {
-        
+        damaged = false;
+
+        base.SpawnIn();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void TakeDamage(float damage)
     {
-        if (!Dead)
-            Playing();
+        base.TakeDamage(damage);
+
+        if (!damaged && !Dead)
+        {
+            damaged = true;
+            speedModifiers.Add(speedUpMultiplier);
+        }
     }
 
-    protected override void Playing()
+    [ContextMenu("damage")]
+    public void Damage()
     {
-        base.Playing();
+        TakeDamage(1);
+    }
+
+    protected override void AttackState()
+    {
+        base.AttackState();
+
+        if (!attackInProgress && !attackCoolingDown)
+        {
+            //Explosion logic goes here
+            TakeDamage(CurrentHealth);
+            OnDeath();
+        }    
     }
 }

@@ -8,15 +8,7 @@ public abstract class Building : MonoBehaviour
     {
         get => active;
 
-        private set
-        {
-            active = value;
-
-            if (value)
-                Debug.Log("Reactivated", this);
-            else
-                Debug.Log("Deactivated", this);
-        }
+        private set => active = value;
     }
 
     public GameObject radiusDisplay;
@@ -29,7 +21,7 @@ public abstract class Building : MonoBehaviour
 
     public virtual void Sell()
     {
-        Debug.Log("Sold", this);
+        //Debug.Log("Sold", this);
     }
 
     public IEnumerator ExpandRadiusDisplay()

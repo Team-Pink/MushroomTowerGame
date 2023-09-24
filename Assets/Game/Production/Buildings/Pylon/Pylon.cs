@@ -1,8 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    public MeshRenderer healthDisplay;
+    private bool isResidual;
+
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
@@ -31,7 +35,7 @@ public class Pylon : Building
         {
             currentXP = value;
 
-            if (currentXP >= XPEnhanceRequirement)
+            if (currentXP >= XPEnhanceRequirement * costMultiplier)
             {
                 Enhance();
             }
@@ -43,40 +47,95 @@ public class Pylon : Building
     }
 
     [Header("Destruction")]
-    [SerializeField] int pylonHealth = 5;
-    public int MaxHealth
+    [SerializeField] float pylonHealth = 5;
+    public float MaxHealth
     {
         get => pylonHealth;
         private set { }
     }
-    private int currentHealth;
-    public int CurrentHealth
+    private float currentHealth;
+    public float CurrentHealth
     {
         get => currentHealth;
         set
         {
             currentHealth = value;
-            if (currentHealth <= 0)
+            if (currentHealth <= float.Epsilon)
+            {
+                AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 ToggleResidual(true);
+            }
         }
     }
+
     public GameObject pylonResidual;
 
     [Header("Connections")]
     [SerializeField] BuildingList connectedBuildings = new();
-    [HideInInspector] public int connectedTowersCount = 0;
-    [HideInInspector] public int connectedPylonsCount = 0;
+    public int connectedTowersCount
+    {
+        get
+        {
+            int towers = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
 
-    //[HideInInspector] public Building parent = null;
+            foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
+                if (building is Tower)
+                    towers++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
+            return towers;
+        }
+        private set { }
+    }
+    public int connectedPylonsCount
+    {
+        get
+        {
+            int pylons = 0;
+            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+
+            foreach (var building in connectedBuildings)
+            {
+                if (building == null)
+                {
+                    buildingsToRemove.Add(building);
+                    continue;
+                }
+                if (building is Pylon)
+                    pylons++;
+            }
+
+            foreach (var building in buildingsToRemove)
+                connectedBuildings.Remove(building);
+
+            return pylons;
+        }
+        private set { }
+    }
+
+    [Header("Sounds")]
+    [SerializeField] AudioClip placeAudio;
+    [SerializeField] AudioClip deathAudio;
 
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
     }
 
-    private void Awake()
+    private void Start()
     {
         CurrentHealth = pylonHealth;
+        AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
     private void Update()
@@ -88,8 +147,11 @@ public class Pylon : Building
     public void Enhance()
     {
         Enhanced = true;
-        enhancedPylon.SetActive(true);
-        enhancedBud.SetActive(true);
+        if (!isResidual)
+        {
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
 
         pylonPlacementRange.SetActive(true);
 
@@ -100,23 +162,22 @@ public class Pylon : Building
     public void AddBuilding(Building building)
     {
         connectedBuildings.Add(building);
-        if (building is Tower)
-            connectedTowersCount++;
-        else
-            connectedPylonsCount++;
     }
 
     public void RemoveBuilding(Building building)
     {
         connectedBuildings.Remove(building);
-        if (building is Tower)
-            connectedTowersCount--;
-        else
-            connectedPylonsCount--;
     }
 
     public override void Deactivate()
     {
+        base.Deactivate();
+        if (isResidual) return;
+        foreach (Building building in connectedBuildings)
+        {
+            building.Deactivate();
+        }
+
         if (Enhanced)
         {
             deactivatedEnhancedPylon.SetActive(true);
@@ -129,49 +190,74 @@ public class Pylon : Building
             basePylon.SetActive(false);
             baseBud.SetActive(false);
         }
-
-        foreach (Building building in connectedBuildings)
-        {
-            building.Deactivate();
-        }
-        base.Deactivate();
     }
     public override void Reactivate()
     {
-        if (Enhanced)
-        {
-            enhancedPylon.SetActive(true);
-            enhancedBud.SetActive(true);
-            deactivatedEnhancedPylon.SetActive(false);
-        }
-        else
-        {
-            basePylon.SetActive(true);
-            baseBud.SetActive(true);
-            deactivatedBasePylon.SetActive(false);
-        }
-
-
+        base.Reactivate();
+        if (isResidual) return;
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
-        base.Reactivate();
+
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(false);
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(false);
+            basePylon.SetActive(true);
+            baseBud.SetActive(true);
+        }
     }
 
     public void ToggleResidual(bool value)
     {
+        isResidual = value;
+
+        if (isResidual)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Deactivate();
+            }
+        }
+        else if (Active)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Reactivate();
+            }
+        }
+
         if (Enhanced)
         {
-            pylonResidual.SetActive(value);
-            enhancedPylon.SetActive(!value);
-            enhancedBud.SetActive(!value);
+            if (Active)
+            {
+                enhancedPylon.SetActive(!isResidual);
+                enhancedBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedEnhancedPylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
         else
         {
-            pylonResidual.SetActive(value);
-            basePylon.SetActive(!value);
-            baseBud.SetActive(!value);
+            if (Active)
+            {
+                basePylon.SetActive(!isResidual);
+                baseBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedBasePylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
     }
 
@@ -237,7 +323,7 @@ public class Pylon : Building
 
             if (building == null)
                 continue;
-            
+
             if (building is Pylon)
             {
                 (building as Pylon).SellAll();

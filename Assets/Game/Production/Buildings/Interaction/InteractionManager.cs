@@ -38,6 +38,7 @@ public class InteractionManager : MonoBehaviour
 
     [Header("Placement")]
     #region Placement Variables
+    LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
     private LayerMask placableLayers;
@@ -126,6 +127,7 @@ public class InteractionManager : MonoBehaviour
         ResetInteraction();
 
         mainCamera = Camera.main;
+        levelDataGrid = GetComponent<LevelDataGrid>();
 
         placableLayers = LayerMask.GetMask("Ground");
         pylonLayer = LayerMask.GetMask("Pylon");
@@ -245,10 +247,20 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        DisplayBuildingHealth(out MeshRenderer healthDisplay);
+
+        if (GetRayHit(budLayer).collider != null)
+        {
+            if (healthDisplay != null) healthDisplay.enabled = false;
+            ResetInteraction();
+            return;
+        }
+
         currentHit = GetRayHit(buildingLayers);
 
         if (currentHit.collider is null)
         {
+            if (healthDisplay != null) healthDisplay.enabled = false;
             ResetInteraction();
             return;
         }
@@ -261,6 +273,8 @@ public class InteractionManager : MonoBehaviour
         if (Input.GetKeyDown(interactKey))
         {
             radiusDisplay.SetActive(false);
+            if (healthDisplay != null) healthDisplay.enabled = false;
+
             if (targetBuilding is Pylon)
             {
                 Pylon targetPylon = targetBuilding as Pylon;
@@ -353,8 +367,6 @@ public class InteractionManager : MonoBehaviour
             {
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
-
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
@@ -401,7 +413,7 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
             bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
@@ -460,7 +472,7 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
         {
             bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
             bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
@@ -612,17 +624,13 @@ public class InteractionManager : MonoBehaviour
 
         if (activeBud.transform.parent.GetComponent<Hub>() != null)
         {
-            (targetBuilding as Hub).pylonCount++;
-        }
-        else
-        {
-            (targetBuilding as Pylon).connectedPylonsCount++;
+            activeBud.transform.parent.GetComponent<Hub>().ClearDestroyedPylons();
         }
 
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
-
+        
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
         else
@@ -640,7 +648,6 @@ public class InteractionManager : MonoBehaviour
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
-            (targetBuilding as Pylon).connectedTowersCount++;
         }  
 
         ResetInteraction();
@@ -655,6 +662,28 @@ public class InteractionManager : MonoBehaviour
             StartCoroutine(targetBuilding.ExpandRadiusDisplay());
         }
     }
+    private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
+    {
+        healthDisplay = null;
+        if (targetBuilding is Hub)
+        {
+            healthDisplay = (targetBuilding as Hub).healthDisplay;
+
+        }
+        else if (targetBuilding is Pylon)
+        {
+            Pylon targetPylon = (targetBuilding as Pylon);
+            healthDisplay = targetPylon.healthDisplay;
+            healthDisplay.sharedMaterial.SetFloat("_Value", targetPylon.CurrentHealth / targetPylon.MaxHealth);
+        }
+        else return;
+
+        if (!healthDisplay.enabled)
+        {
+            healthDisplay.enabled = true;
+        }
+    }
+
 
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {

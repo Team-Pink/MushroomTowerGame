@@ -23,8 +23,8 @@ public class WaveSpawner : MonoBehaviour
         WaitingForWaveEnd
     }
 
-    [SerializeField] Path[] paths;
-    private Path currentPath;
+    [SerializeField] Transform[] spawnPoints;
+    //private Path currentPath;
     private Transform currentSpawnPoint;
 
     [SerializeField] Wave[] waves;
@@ -41,12 +41,14 @@ public class WaveSpawner : MonoBehaviour
     private int spawnedEnemies;
     private readonly List<Enemy> aliveEnemies = new();
 
+    [SerializeField] Transform parentFolder;
     [SerializeField] Hub hub;
     [SerializeField] Text wonText;
+    private LevelDataGrid levelData;
 
     private void Awake()
     {
-        currentPath = paths[Random.Range(0, paths.Length - 1)];
+        levelData = GetComponent<LevelDataGrid>();
 
         currentWave = SpawnWave(currentWaveIndex);
 
@@ -99,8 +101,9 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.pathToFollow = currentPath;
             enemy.hub = hub;
+            enemy.hubTransform = hub.transform;
+            enemy.levelData = levelData;
             enemy.transform.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
 
@@ -151,16 +154,13 @@ public class WaveSpawner : MonoBehaviour
         currentWaveIndex++;
         currentWave = SpawnWave(currentWaveIndex);
 
-        currentPath = paths[Random.Range(0, paths.Length - 1)];
-
         spawnedEnemies = 0;
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
     }
 
     private Wave SpawnWave(int waveIndex)
     {
-        Path currentPath = paths[Random.Range(0, paths.Length - 1)];
-        currentSpawnPoint = currentPath.transform.GetChild(0);
+        currentSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length - 1)];
 
         return waves[waveIndex];
     }
@@ -171,7 +171,7 @@ public class WaveSpawner : MonoBehaviour
         GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
         GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length)];
 
-        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, GameObject.Find("----|| Enemies ||----").transform);
+        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, parentFolder);
 
         enemyObject.name = "Enemy " + enemyNumber;
         enemyNumber++;

@@ -1,18 +1,23 @@
-using BoidList = System.Collections.Generic.List<BoidReference>;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] int amount;
     [SerializeField] GameObject boidPrefab;
 
-    private readonly BoidList boidList = new();
+    private readonly List<Enemy.BoidReference> boidList = new();
 
     private new Transform transform;
+    private LevelDataGrid levelData;
+    public Transform hubTransform;
+    private Hub hub;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
+        levelData = GetComponent<LevelDataGrid>();
+        hub = hubTransform.GetComponent<Hub>();
 
         SpawnBoids();
     }
@@ -23,14 +28,18 @@ public class EnemySpawner : MonoBehaviour
         for (int boidIndex = 0; boidIndex < amount; boidIndex++)
         {
             Quaternion rotation = new(0, Random.Range(-1.0f, 1.0f), 0.0f, 0.0f);
-            Vector3 position = transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f));
+            Vector3 position = transform.position + new Vector3(Random.Range(-60.0f, 60.0f), 0.0f, Random.Range(-60.0f, 60.0f));
 
             GameObject boidGameObject = Instantiate(boidPrefab, position, rotation, transform);
             Transform boidTransform = boidGameObject.transform;
             Rigidbody boidRigidbody = boidGameObject.GetComponent<Rigidbody>();
-            EnemyLogic boidLogic = boidGameObject.GetComponent<EnemyLogic>();
+            Enemy boidLogic = boidGameObject.GetComponent<Enemy>();
 
-            boidList.Add(new BoidReference(boidGameObject, boidTransform, boidRigidbody, boidLogic));
+            boidLogic.levelData = levelData;
+            boidLogic.hubTransform = hubTransform;
+            boidLogic.hub = hub;
+
+            boidList.Add(new Enemy.BoidReference(boidTransform, boidRigidbody, boidLogic));
         }
     }
 }

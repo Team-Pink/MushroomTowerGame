@@ -1,41 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TankEnemy : Enemy
 {
-    [Space]
-    int damageReduction = 1;
+    [Header("Biote Specific Variables")]
+    [SerializeField] int damageReduction = 1;
 
-    int halfHealthMark = 0;
-    bool hasArmour = true;
-    
-    protected override void CustomAwakeEvents()
+    private float halfHealthMark = 0;
+    private bool hasArmour = true;
+
+    public override void SpawnIn()
     {
+        base.SpawnIn();
+
+        hasArmour = true;
         halfHealthMark = health / 2;
     }
 
-    void Update()
-    {
-        if (!Dead)
-            Playing();
-    }
-
-    protected override void Playing()
-    {
-        base.Playing();
-    }
-
-    protected override void AttackHub()
-    {
-        base.AttackHub();
-    }
-
-    public override IEnumerator TakeDamage(int damage, float delay)
+    public override void TakeDamage(float damage)
     {
         if (hasArmour)
         {
-            StartCoroutine(base.TakeDamage(damage - damageReduction, delay));
+            if (damage < damageReduction) return; // Prevent damage less than damageReduction causing enemies to heal.
+
+            base.TakeDamage(damage - damageReduction);
 
             if (health <= halfHealthMark)
             {
@@ -44,8 +31,7 @@ public class TankEnemy : Enemy
         }
         else
         {
-            StartCoroutine(base.TakeDamage(damage, delay));
+            base.TakeDamage(damage);
         }
-        yield return null;
     }
 }

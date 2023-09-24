@@ -6,6 +6,10 @@ public struct Target
 {
     public Vector3 position;
     public Enemy enemy;
+    float timeFound
+    {
+        get => Time.time;
+    }
 
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
@@ -14,22 +18,27 @@ public struct Target
     }
 }
 
-[Serializable] public enum TargeterType
+[Serializable]
+public enum TargeterType
 {
+    SelectAType,
     Close,
     Cluster,
     Fast,
     Strong,
     Track
 } // For Editor Use Only
-[Serializable] public enum AttackerType
+[Serializable]
+public enum AttackerType
 {
+    SelectAType,
     Area,
     Single,
     Trap
 } // For Editor Use Only
 
-[Serializable] public struct Details
+[Serializable]
+public struct Details
 {
     public string name;
     public TargeterType targeterType;
@@ -45,19 +54,20 @@ public struct Target
 
 public class Tower : Building
 {
+    // Startup
+    [SerializeField] float growthDuration = 5.0f;
+    private float growthTime = 0.0f;
+    private bool recovering = false;
+    [SerializeField] float recoveryDuration = 2.0f;
+    private float recoveryTime = 0.0f;
+
 
     // Components
-    protected new Transform transform;
-    protected Animator animator;
+    [SerializeField] protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-    
-    // Enemy targeter values
-    [SerializeField] private float FiringCone = 10;
-    // Trap targeter values
-    [SerializeField] float TrapRadius = 1;
-    [SerializeField] bool FindNumberOfTargets = false;
+    protected new Transform transform;
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
@@ -82,56 +92,105 @@ public class Tower : Building
     public int purchaseCost = 10;
     [Range(0, 1)] public float sellReturnPercent = 0.5f;
 
-    // Temp Variables
+
+    // prefabs
     [SerializeField] GameObject bulletPrefab;
+    [SerializeField] GameObject attackObjectPrefab;
+
+    // Tags from Lochlan
+
+
+    //Multitarget
+    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private int numTargets; // number of targets if multiTarget is true.
+
+    //Accelerate
+    private bool accelerate = false;
+    public bool accelerated = false; // determines if a tower is currently accelerated
+    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
+    public float accelTimer = 0; // timer to keep track of the above.
+    public readonly float accelSpeedMod = 0.2f; // on kill multiply the attack delay by this basically increase by 50%
+    private float accelModReverse;
+    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
+
+    //Lock On
+    private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    private float lockOnDuration = 1.5f;
+    private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
+
+    //Continuous
+    [SerializeField] private bool continuous = false;
+
+    [SerializeField] AudioClip buildAudio;
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        attackerComponent.animator = animator;
 
         transform = gameObject.transform;
         targeterComponent.transform = transform;
         attackerComponent.transform = transform;
-        
+
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
-        if (targeterComponent is TrackTargeter)
-        {
-            (targeterComponent as TrackTargeter).layerMask = LayerMask.GetMask("Ground", "NotPlaceable"); // for the ink tower to differentiate path
-            (targeterComponent as TrackTargeter).trapRadius = TrapRadius;
-            (targeterComponent as TrackTargeter).findNumberOfTargets = FindNumberOfTargets;
-        }
-        else
-        {
-            (targeterComponent as EnemyTargeter).firingCone = FiringCone;
-        }
-
         attackerComponent.bulletPrefab = bulletPrefab;
-
+        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
+        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
+        
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
+
+        accelModReverse = 1 / accelSpeedMod;
+        if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
+
+        AudioManager.PlaySoundEffect(buildAudio.name, 1);
     }
 
     private void Update()
     {
+        if (growthTime < growthDuration)
+        {
+            growthTime += Time.deltaTime;
+            return;
+        }
+
+        if (recovering)
+        {
+            if (recoveryTime < recoveryDuration)
+            {
+                recoveryTime += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                recovering = false;
+                base.Reactivate();
+            }
+        }
+
         if (Active)
         {
-            targets = targeterComponent.AcquireTargets();
+            if (multiTarget) 
+                targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
-                attackerComponent.Attack(targets);
-                
-                // rotate tower to targetted enemy
-                foreach (Target targetEnemy in targets)
+                if (lockOn) // this is terrible code
                 {
-                    // take enemy experience
-                    storedExperience += targetEnemy.enemy.expValue;
-                    targetEnemy.enemy.expValue = 0;
-
-                    // remove it from targets and retarget
+                    LockOnTag();
                 }
+                else
+                    attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+
+
+
+                // Attack tags
+                AccelerateTag();
+
             }
         }
     }
+
+
 
     public void Upgrade(int upgradePath)
     {
@@ -153,6 +212,19 @@ public class Tower : Building
         }
     }
 
+    public override void Deactivate()
+    {
+        base.Deactivate();
+        animator.SetTrigger("Deactivate");
+        recoveryTime = 0.0f;
+    }
+
+    public override void Reactivate()
+    {
+        recovering = true;
+        animator.SetTrigger("Reactivate");
+    }
+
     public override void Sell()
     {
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
@@ -169,20 +241,110 @@ public class Tower : Building
         storedExperience = 0;
         return tempExp;
     }
-}
 
-// if you aren't going to implement it functionally don't add it to alpha.
-//#if UNITY_EDITOR
-//namespace Editor
-//{
-//    using UnityEditor;
-//    [CustomEditor(typeof(Tower))]
-//    public class TowerEditor : Editor
-//    {
-//       // public override void OnInspectorGUI()
-//        {
-//           // GUILayout.Button("Open Editor", GUILayout.MaxWidth(50));
-//        }
-//    }
-//}
-//#endif
+    public void AccelerateTag()
+    {
+        if (accelerated)
+        {
+            accelTimer += Time.deltaTime;
+            if (accelTimer > accelTimeMax)
+            {
+                accelerated = false;
+                attackerComponent.attackDelay *= accelModReverse;// return attack delay to normal
+                accelTimer = 0; // Reset timer
+            }
+        }
+    }
+
+    /// <summary>
+    /// Here's the thing this works as far as maintaining locks on the targets in range with the highest max health but in the case a better target enters 
+    /// it's range it will immediately stop and try locking onto the new better target. unfortunately the only way to prevent this would be to forcefully maintain
+    /// a lock until a target goes out of range
+    /// </summary>
+    private void LockOnTag()
+    {
+
+        /* PsuedoCode
+         
+        new local hashset of Target marked = targets deep copy
+
+        new local hashset of Target targetsLockedFire 
+        
+        for each targetLock in lockOnTargets
+            if targetLlock is in targets
+                update the timer
+                remove that enemy to the marked targets hash
+                if targetLocked is true
+                    add it to the targetsLockedFire set
+                else
+                    if the timer on lockTarget has expired
+                        add it to the targetsLockedFire set
+                        reset timer on lockTarget
+                        if continuous
+                            targetLocked is true
+            else targetLock is not in targets so
+                remove it from lockOnTargets
+
+        for each target in marked
+            add it to lockOnTargets
+
+        call attack on targetsLockedFire
+
+         */
+
+        HashSet<Target> marked = new HashSet<Target>(targets);
+
+        HashSet<Target> targetsLockedFire = new HashSet<Target>(); // to handle the attack call
+
+        for (int i = 0; i < lockOnTargets.Count; i++)
+        {
+
+            if (targets.Contains(lockOnTargets[i].target))
+            {
+                lockOnTargets[i].IncrementLockTimer();
+                // progress lock on animation
+                marked.Remove(lockOnTargets[i].target);
+                if (lockOnTargets[i].targetLocked)
+                {
+                    Debug.DrawLine(transform.position, lockOnTargets[i].target.position, Color.red, 0.02f);
+                    targetsLockedFire.Add(lockOnTargets[i].target);
+                }
+                else
+                {
+                    if (lockOnTargets[i].lockOnProgress > lockOnDuration)
+                    {
+                        targetsLockedFire.Add(lockOnTargets[i].target);
+                        lockOnTargets[i].lockOnProgress = 0;
+                        if (continuous) lockOnTargets[i].targetLocked = true;
+                    }
+                }
+            }
+            else lockOnTargets.Remove(lockOnTargets[i]);     // this won't work because it modifies the list the loop is dependent on         
+        }
+
+        foreach (Target target in marked)
+        {
+            lockOnTargets.Add(new LockOnTarget(target));
+        }
+
+        if (targetsLockedFire.Count > 0) attackerComponent.Attack(targetsLockedFire);
+
+    }
+
+    // I hate that this is neccesary
+    class LockOnTarget
+    {
+        public Target target;
+        public bool targetLocked;
+        public float lockOnProgress;
+
+        public LockOnTarget(Target inputTarget)
+        {
+            target = inputTarget;
+            targetLocked = false;
+            lockOnProgress = 0;
+        }
+
+        public void IncrementLockTimer() { lockOnProgress += Time.deltaTime; }
+    }
+}
