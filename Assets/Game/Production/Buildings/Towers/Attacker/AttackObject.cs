@@ -13,6 +13,7 @@ public class AttackObject : MonoBehaviour
     public Tower originTower; // origin of the attack
     public HashSet<Enemy> areaHitTargets;
     public GameObject hitParticlePrefab;
+    public AudioClip hitSoundEffect;
 
     #region TAG SPECIFIC
     public int tagSpecificDamage;
@@ -26,6 +27,7 @@ public class AttackObject : MonoBehaviour
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
         // play impact animation
         if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
+        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
 
         Attacker attackerComponent = originTower.AttackerComponent;
 

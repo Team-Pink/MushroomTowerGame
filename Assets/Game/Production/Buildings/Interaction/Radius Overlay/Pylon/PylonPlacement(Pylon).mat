@@ -28,7 +28,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3003
+  m_CustomRenderQueue: 3005
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
@@ -110,19 +110,20 @@ Material:
     - _Display_Amount: 1
     - _DstBlend: 10
     - _EnvironmentReflections: 1
-    - _Fill_Transparency: 0.4
+    - _Fill_Transparency: 0.2
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Hole_Radius: 0.35
     - _Inner: 0.35
     - _InnerRadius: 0.2
+    - _IntersectionDepth: 0.3
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Outer: 0.5
     - _OuterRadius: 0.5
     - _Outline_Thickness: 80
-    - _Outline_Transparency: 0.8
+    - _Outline_Transparency: 0.6
     - _Parallax: 0.005
     - _QueueControl: 1
     - _QueueOffset: 0

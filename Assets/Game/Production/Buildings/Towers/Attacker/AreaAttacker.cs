@@ -33,6 +33,7 @@ public class AreaAttacker : Attacker
                 AttackObject areaAttack = GenerateAttackObject(target);
 
                 areaAttack.hitParticlePrefab = hitParticlePrefab;
+                areaAttack.hitSoundEffect = attackHitSoundEffect;
 
                 Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                 foreach (var collision in mainCollisions)

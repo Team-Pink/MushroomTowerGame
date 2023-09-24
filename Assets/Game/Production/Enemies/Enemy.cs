@@ -231,7 +231,7 @@ public class Enemy : MonoBehaviour
         Dead = true; // object pool flag;
 
         // death animation
-        AudioManager.main.PlaySoundEffect(deathAudio.name, 0);
+        AudioManager.PlaySoundEffect(deathAudio.name, 0);
 
         // increment currency
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
@@ -434,7 +434,7 @@ public class Enemy : MonoBehaviour
 
     protected void AttackAudio()
     {
-        AudioManager.main.PlaySoundEffect(attackAudio.name, 0);
+        AudioManager.PlaySoundEffect(attackAudio.name, 0);
     }
 
 

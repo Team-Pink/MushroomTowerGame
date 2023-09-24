@@ -20,6 +20,8 @@ public class TankEnemy : Enemy
     {
         if (hasArmour)
         {
+            if (damage < damageReduction) return; // Prevent damage less than damageReduction causing enemies to heal.
+
             base.TakeDamage(damage - damageReduction);
 
             if (health <= halfHealthMark)

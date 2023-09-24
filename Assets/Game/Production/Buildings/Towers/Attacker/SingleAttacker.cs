@@ -25,6 +25,7 @@ public class SingleAttacker : Attacker
                     AttackObject singleAttack = GenerateAttackObject(target);
 
                     singleAttack.hitParticlePrefab = hitParticlePrefab;
+                    singleAttack.hitSoundEffect = attackHitSoundEffect;
 
                     #region TAG IMPLEMENTATION
                     if (strikethrough)

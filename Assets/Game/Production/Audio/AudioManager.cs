@@ -21,12 +21,6 @@ public struct AudioSourceGroup
             return true;
         }
         Debug.LogError("Audio Source with clip name " + clipName + " not found");
-
-        Debug.Log(audioSourceDictionary.Count);
-        foreach (KeyValuePair<string, AudioSource> element in audioSourceDictionary)
-        {
-            Debug.Log(element.Key + ": " + element.Value);
-        }
         return false;
     }
 
@@ -62,8 +56,8 @@ public class ActiveClip
 
 public class AudioManager : MonoBehaviour
 {
-    // Global Accessibility
-    public static AudioManager main
+    // Singleton Reference
+    public static AudioManager Instance
     {
         get
         {
@@ -97,17 +91,11 @@ public class AudioManager : MonoBehaviour
     {
         if (instance != null)
         {
-            string error = "Multiple instances of AudioManager exist. " +
-                "This will cause fatal errors. The program will now end.";
+            Debug.LogError("Multiple instances of AudioManager exist. " +
+                "This will cause fatal errors. An instance will be destroyed.", Instance);
+            Debug.LogError("An instance of AudioManager attached to this GameObject has been destroyed.", gameObject);
 
-            Debug.LogError(error, main);
-            Debug.LogError(error, this);
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.ExitPlaymode();
-            #else
-            UnityEngine.Diagnostics.Utils.NativeAssert(error);
-            UnityEngine.Diagnostics.Utils.ForceCrash(UnityEngine.Diagnostics.ForcedCrashCategory.FatalError);
-            #endif
+            Destroy(this);
         }
         instance = this;
     }
@@ -141,19 +129,19 @@ public class AudioManager : MonoBehaviour
         clipsToRemove.Clear();
     }
 
-    public void PlayAmbience(string clipName)
+    public static void PlayAmbience(string clipName)
     {
-        PlayClip(ambience[0], clipName);
+        Instance.PlayClip(Instance.ambience[0], clipName);
     }
-    public void PlayMusic(string clipName)
+    public static void PlayMusic(string clipName)
     {
-        PlayClip(music[0], clipName);
+        Instance.PlayClip(Instance.music[0], clipName);
     }
     /// <param name="groupIndex"> 0 = Enemy Sounds, 1 = Tower Sounds</param>
-    public void PlaySoundEffect(string clipName, int groupIndex, float duration = 0)
+    public static void PlaySoundEffect(string clipName, int groupIndex, float duration = 0)
     {
-        if (duration == 0) PlayClip(soundEffects[groupIndex], clipName);
-        else PlayClip(soundEffects[groupIndex], clipName, duration);
+        if (duration == 0) Instance.PlayClip(Instance.soundEffects[groupIndex], clipName);
+        else Instance.PlayClip(Instance.soundEffects[groupIndex], clipName, duration);
     }
 
     private void PlayClip(AudioSourceGroup sourceGroup, string clipName)

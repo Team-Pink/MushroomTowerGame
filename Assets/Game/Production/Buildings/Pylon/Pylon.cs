@@ -4,6 +4,7 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    public MeshRenderer healthDisplay;
     private bool isResidual;
 
     [Header("Purchasing and Selling")]
@@ -46,21 +47,24 @@ public class Pylon : Building
     }
 
     [Header("Destruction")]
-    [SerializeField] int pylonHealth = 5;
-    public int MaxHealth
+    [SerializeField] float pylonHealth = 5;
+    public float MaxHealth
     {
         get => pylonHealth;
         private set { }
     }
-    private int currentHealth;
-    public int CurrentHealth
+    private float currentHealth;
+    public float CurrentHealth
     {
         get => currentHealth;
         set
         {
             currentHealth = value;
             if (currentHealth <= float.Epsilon)
+            {
+                AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 ToggleResidual(true);
+            }
         }
     }
 
@@ -119,14 +123,19 @@ public class Pylon : Building
         private set { }
     }
 
+    [Header("Sounds")]
+    [SerializeField] AudioClip placeAudio;
+    [SerializeField] AudioClip deathAudio;
+
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
     }
 
-    private void Awake()
+    private void Start()
     {
         CurrentHealth = pylonHealth;
+        AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
     private void Update()

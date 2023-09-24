@@ -23,8 +23,10 @@ public class Attacker
     public GameObject attackParticlePrefab;
     public GameObject hitParticlePrefab;
     public float particleOriginOffset = 0.0f;
+
     public AudioClip leadinSoundEffect;
     public AudioClip attackSoundEffect;
+    public AudioClip attackHitSoundEffect;
 
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
@@ -68,7 +70,7 @@ public class Attacker
     {
         if (attackSoundEffect != null)
         {
-            AudioManager.main.PlaySoundEffect(attackSoundEffect.name, 1);
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
         }
 
         if (bulletPrefab == null) return;
@@ -109,7 +111,7 @@ public class Attacker
     {
         if (leadinSoundEffect != null)
         {
-            AudioManager.main.PlaySoundEffect(leadinSoundEffect.name, 1, animationLeadIn);
+            AudioManager.PlaySoundEffect(leadinSoundEffect.name, 1, animationLeadIn);
         }
 
         if (animator == null) return;

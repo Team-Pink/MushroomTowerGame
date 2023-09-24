@@ -121,6 +121,8 @@ public class Tower : Building
     //Continuous
     [SerializeField] private bool continuous = false;
 
+    [SerializeField] AudioClip buildAudio;
+
     private void Awake()
     {
         attackerComponent.animator = animator;
@@ -139,6 +141,8 @@ public class Tower : Building
 
         accelModReverse = 1 / accelSpeedMod;
         if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
+
+        AudioManager.PlaySoundEffect(buildAudio.name, 1);
     }
 
     private void Update()

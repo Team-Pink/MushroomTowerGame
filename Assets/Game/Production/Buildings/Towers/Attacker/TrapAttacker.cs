@@ -47,8 +47,6 @@ public class TrapAttacker : Attacker
         {
             AnimateAttack();
 
-            Debug.Log("Trap Attacker");
-
             TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
