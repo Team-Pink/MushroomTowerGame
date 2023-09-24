@@ -14,7 +14,7 @@ public class PylonAttacker : Enemy
     [SerializeField] GameObject bullet;
     [SerializeField, Range(0.1f, 1.0f)] float bulletSpeed;
 
-    LayerMask mask = new LayerMask();
+    LayerMask mask = new();
 
     public override void SpawnIn()
     {
@@ -35,9 +35,13 @@ public class PylonAttacker : Enemy
             if (collider.GetComponent<Pylon>() == null)
                 continue;
 
+<<<<<<< HEAD
             Pylon pylon = collider.GetComponent<Pylon>();
 
             if (pylon.CurrentHealth > 0 && pylon.Active)
+=======
+            if (collider.GetComponent<Pylon>().CurrentHealth > 0)
+>>>>>>> e1a13e616666e97c96d9a85b6d9c76965c437b56
             {
                 targetBuilding = pylon;
                 targetPylon = pylon;
@@ -50,7 +54,7 @@ public class PylonAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (targetPylon.CurrentHealth <= 0 || targetBuilding == null)
+        if (targetPylon.CurrentHealth <= 0)
         {
             Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
 
@@ -114,7 +118,7 @@ public class PylonAttacker : Enemy
 
             foreach (Collider collider in collisions)
             {   
-                if (pylonTarget.CurrentHealth > 0 && pylonTarget.Active)
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
                 {
                     targetBuilding = collider.GetComponent<Pylon>();
                     state = EnemyState.Hunt;
@@ -133,6 +137,7 @@ public class PylonAttacker : Enemy
         //Attacking the Pylon
         if (!attackInProgress)
         {
+            AttackAudio();
             animator.SetTrigger("Attack");
             pylonTarget.CurrentHealth -= damage;
             attackInProgress = true;
