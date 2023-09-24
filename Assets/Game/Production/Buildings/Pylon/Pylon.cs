@@ -4,6 +4,9 @@ using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
+    public MeshRenderer healthDisplay;
+    private bool isResidual;
+
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
@@ -44,21 +47,24 @@ public class Pylon : Building
     }
 
     [Header("Destruction")]
-    [SerializeField] int pylonHealth = 5;
-    public int MaxHealth
+    [SerializeField] float pylonHealth = 5;
+    public float MaxHealth
     {
         get => pylonHealth;
         private set { }
     }
-    private int currentHealth;
-    public int CurrentHealth
+    private float currentHealth;
+    public float CurrentHealth
     {
         get => currentHealth;
         set
         {
             currentHealth = value;
             if (currentHealth <= float.Epsilon)
-                Deactivate();
+            {
+                AudioManager.PlaySoundEffect(deathAudio.name, 1);
+                ToggleResidual(true);
+            }
         }
     }
 
@@ -117,14 +123,19 @@ public class Pylon : Building
         private set { }
     }
 
+    [Header("Sounds")]
+    [SerializeField] AudioClip placeAudio;
+    [SerializeField] AudioClip deathAudio;
+
     public bool IsBuildingInList(Building building)
     {
         return connectedBuildings.Contains(building);
     }
 
-    private void Awake()
+    private void Start()
     {
         CurrentHealth = pylonHealth;
+        AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
     private void Update()
@@ -136,8 +147,11 @@ public class Pylon : Building
     public void Enhance()
     {
         Enhanced = true;
-        enhancedPylon.SetActive(true);
-        enhancedBud.SetActive(true);
+        if (!isResidual)
+        {
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
 
         pylonPlacementRange.SetActive(true);
 
@@ -157,40 +171,93 @@ public class Pylon : Building
 
     public override void Deactivate()
     {
-        ToggleResidual(true);
-
+        base.Deactivate();
+        if (isResidual) return;
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
         }
 
-        base.Deactivate();
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(true);
+            enhancedPylon.SetActive(false);
+            enhancedBud.SetActive(false);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(true);
+            basePylon.SetActive(false);
+            baseBud.SetActive(false);
+        }
     }
     public override void Reactivate()
     {
-        ToggleResidual(false);
-
-        CurrentHealth = MaxHealth;
+        base.Reactivate();
+        if (isResidual) return;
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
-        base.Reactivate();
+
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(false);
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(false);
+            basePylon.SetActive(true);
+            baseBud.SetActive(true);
+        }
     }
 
     public void ToggleResidual(bool value)
     {
+        isResidual = value;
+
+        if (isResidual)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Deactivate();
+            }
+        }
+        else if (Active)
+        {
+            foreach (Building connectedBuilding in connectedBuildings)
+            {
+                connectedBuilding.Reactivate();
+            }
+        }
+
         if (Enhanced)
         {
-            pylonResidual.SetActive(value);
-            enhancedPylon.SetActive(!value);
-            enhancedBud.SetActive(!value);
+            if (Active)
+            {
+                enhancedPylon.SetActive(!isResidual);
+                enhancedBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedEnhancedPylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
         else
         {
-            pylonResidual.SetActive(value);
-            basePylon.SetActive(!value);
-            baseBud.SetActive(!value);
+            if (Active)
+            {
+                basePylon.SetActive(!isResidual);
+                baseBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedBasePylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
     }
 

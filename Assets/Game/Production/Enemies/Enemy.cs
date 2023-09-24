@@ -2,6 +2,7 @@ using UnityEngine;
 using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 [Serializable]
 public class Condition
@@ -53,7 +54,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] int maxHealth;
     //[HideInInspector]
     public float health;
-    [HideInInspector] public bool dead;
+    public bool dead;
     public int MaxHealth { get => maxHealth; }
     public float CurrentHealth { get => health; protected set => health = value; }
     public bool Dead { get => dead; protected set => dead = value; }
@@ -146,17 +147,28 @@ public class Enemy : MonoBehaviour
     public int expValue = 1;
 
     // Components
+    [Header("Components")]
+    [SerializeField] protected Animator animator;
     protected new Transform transform;
     protected new Rigidbody rigidbody;
     [HideInInspector] public LevelDataGrid levelData;
     [HideInInspector] public Transform hubTransform;
     [HideInInspector] public Hub hub;
-    [SerializeField] protected Animator animator;
+
+    [SerializeField] GameObject deathParticle;
+    [SerializeField] protected float particleOriginOffset;
+    [SerializeField] SkinnedMeshRenderer meshRenderer;
+    private Material defaultMaterial;
+    [SerializeField] Material hurtMaterial;
+
+    [SerializeField] AudioClip attackAudio;
+    [SerializeField] AudioClip deathAudio;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
+        defaultMaterial = meshRenderer.material;
 
         enemyLayers = LayerMask.GetMask("Enemy");
 
@@ -199,6 +211,14 @@ public class Enemy : MonoBehaviour
     public virtual void TakeDamage(float damage)
     {
         health -= damage;
+        StartCoroutine(DisplayHurt());
+    }
+
+    private IEnumerator DisplayHurt()
+    {
+        meshRenderer.material = hurtMaterial;
+        yield return new WaitForSeconds(0.5f);
+        meshRenderer.material = defaultMaterial;
     }
 
     public bool CheckIfDead()
@@ -211,6 +231,7 @@ public class Enemy : MonoBehaviour
         Dead = true; // object pool flag;
 
         // death animation
+        AudioManager.PlaySoundEffect(deathAudio.name, 0);
 
         // increment currency
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
@@ -221,6 +242,12 @@ public class Enemy : MonoBehaviour
             transform.GetChild(i).gameObject.SetActive(false);
         }
         GetComponent<Rigidbody>().detectCollisions = false;
+
+        if (deathParticle != null)
+        {
+            GameObject particle = Instantiate(deathParticle, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+        }
 
         state = EnemyState.None;
     }
@@ -384,6 +411,7 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
+                AttackAudio();
                 attackInProgress = false;
             }
         }
@@ -403,6 +431,11 @@ public class Enemy : MonoBehaviour
         }
     }
     #endregion
+
+    protected void AttackAudio()
+    {
+        AudioManager.PlaySoundEffect(attackAudio.name, 0);
+    }
 
 
     /*

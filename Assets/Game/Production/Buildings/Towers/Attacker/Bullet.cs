@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    
+    private bool initialised;
+
     public float timeToTarget;
     private float timeElapsed;
     private Vector3 startPos;
     public Target target;
+    private Transform targetTransform;
     private Vector3 targetPos;
     
     // parobola variables
@@ -15,21 +17,22 @@ public class Bullet : MonoBehaviour
     private float arcHeight = 40;
     Vector3 currentPos;
 
-
-    private void Awake()
+    public void Initialise()
     {
         startPos = transform.position;
-        if (target.enemy != null)
-            targetPos = target.enemy.transform.position;
+        targetTransform = target.enemy.transform;
+        initialised = true;
     }
 
     void Update()
     {
-        targetPos = target.position;
+        if (!initialised) return;
+
+        targetPos = targetTransform.position;
 
 
-      if (parabola)MoveParabola(); 
-      else MoveStraightToTarget();
+        if (parabola)MoveParabola(); 
+        else MoveStraightToTarget();
 
         
         if (timeElapsed >= timeToTarget)
@@ -41,7 +44,7 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-        transform.position = Vector3.Lerp(startPos, targetPos, timeElapsed / timeToTarget);
+        transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
 
     void MoveParabola()

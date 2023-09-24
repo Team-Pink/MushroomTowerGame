@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public struct Target
 {
@@ -55,14 +54,20 @@ public struct Details
 
 public class Tower : Building
 {
+    // Startup
+    [SerializeField] float growthDuration = 5.0f;
+    private float growthTime = 0.0f;
+    private bool recovering = false;
+    [SerializeField] float recoveryDuration = 2.0f;
+    private float recoveryTime = 0.0f;
+
+
     // Components
-    protected new Transform transform;
-    protected Animator animator;
+    [SerializeField] protected Animator animator;
     [SerializeReference] private Attacker attackerComponent;
     [SerializeReference] private Targeter targeterComponent;
     public Details details; // For Editor Use Only
-
-
+    protected new Transform transform;
 
     public Attacker AttackerComponent { get => attackerComponent; set => attackerComponent = value; }
 
@@ -116,9 +121,11 @@ public class Tower : Building
     //Continuous
     [SerializeField] private bool continuous = false;
 
+    [SerializeField] AudioClip buildAudio;
+
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        attackerComponent.animator = animator;
 
         transform = gameObject.transform;
         targeterComponent.transform = transform;
@@ -129,15 +136,37 @@ public class Tower : Building
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
         attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
-
+        
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
         accelModReverse = 1 / accelSpeedMod;
         if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
+
+        AudioManager.PlaySoundEffect(buildAudio.name, 1);
     }
 
     private void Update()
     {
+        if (growthTime < growthDuration)
+        {
+            growthTime += Time.deltaTime;
+            return;
+        }
+
+        if (recovering)
+        {
+            if (recoveryTime < recoveryDuration)
+            {
+                recoveryTime += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                recovering = false;
+                base.Reactivate();
+            }
+        }
+
         if (Active)
         {
             if (multiTarget) 
@@ -181,6 +210,19 @@ public class Tower : Building
         {
             Debug.LogError("Upgrade only accepts an int value of 0 or 1", this);
         }
+    }
+
+    public override void Deactivate()
+    {
+        base.Deactivate();
+        animator.SetTrigger("Deactivate");
+        recoveryTime = 0.0f;
+    }
+
+    public override void Reactivate()
+    {
+        recovering = true;
+        animator.SetTrigger("Reactivate");
     }
 
     public override void Sell()
