@@ -34,10 +34,10 @@ public class PylonAttacker : Enemy
         {
             if (collider.GetComponent<Pylon>() == null)
                 continue;
-
+        
             Pylon pylon = collider.GetComponent<Pylon>();
-
-            if (pylon.CurrentHealth > 0 && pylon.Active)
+        
+            if (pylon.CurrentHealth > 0)
             {
                 targetBuilding = pylon;
                 targetPylon = pylon;
@@ -50,26 +50,9 @@ public class PylonAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (targetPylon.CurrentHealth <= 0)
+        if (targetPylon.CurrentHealth <= 0 || targetPylon == null)
         {
-            Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
-
-            if (collisions.Length < 1)
-            {
-                state = EnemyState.Approach;
-                targetBuilding = null;
-                ResetBullet();
-                return;
-            }
-
-            foreach (Collider collider in collisions)
-            {
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
-                {
-                    targetBuilding = collider.GetComponent<Pylon>();
-                    break;
-                }
-            }
+            targetBuilding = FindNewTarget();
         }
 
         //Move Pylon Attacker towards the target
@@ -87,46 +70,23 @@ public class PylonAttacker : Enemy
     {
         if (targetBuilding == null)
         {
-            state = EnemyState.Approach;
+            ResetBullet();
+            targetBuilding = FindNewTarget();
+            return;
         }
-
-        if (targetBuilding is Hub)
+        else if (targetBuilding is Hub)
         {
             base.AttackState(); // Attack Hub
             return;
         }
 
-        Pylon pylonTarget = targetBuilding as Pylon;
+        Pylon pylonTarget = targetBuilding.GetComponent<Pylon>();
 
         //On Pylon Death or Deactivation
         if (pylonTarget.CurrentHealth <= 0)
         {
-            targetBuilding = null;
             ResetBullet();
-
-            Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
-
-            if (collisions.Length < 1)
-            {
-                state = EnemyState.Approach;
-                return;
-            }
-
-            foreach (Collider collider in collisions)
-            {   
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
-                {
-                    targetBuilding = collider.GetComponent<Pylon>();
-                    state = EnemyState.Hunt;
-                    break;
-                }
-            }
-
-            if (targetBuilding != null)
-                state = EnemyState.Hunt;
-            else
-                state = EnemyState.Approach;
-
+            targetBuilding = FindNewTarget();
             return;
         }
 
@@ -173,5 +133,34 @@ public class PylonAttacker : Enemy
     {
         bullet.transform.position = transform.position;
         bullet.SetActive(false);
+    }
+
+   Pylon FindNewTarget()
+    {
+        Pylon pylon = null;
+
+        Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
+
+        if (collisions.Length < 1)
+        {
+            state = EnemyState.Approach;
+            return pylon;
+        }
+
+        foreach (Collider collider in collisions)
+        {
+            if (collider.GetComponent<Pylon>().CurrentHealth > 0)
+            {
+                targetBuilding = collider.GetComponent<Pylon>();
+                state = EnemyState.Hunt;
+                break;
+            }
+        }
+
+        if (targetBuilding != null)
+            state = EnemyState.Hunt;
+        else
+            state = EnemyState.Approach;
+        return pylon;
     }
 }
