@@ -7,6 +7,7 @@ public class OpenPauseUI : MonoBehaviour
 {
     public GameObject pauseMenu;
     Button button;
+    bool activePause = false;
 
     void Start()
     {
@@ -17,15 +18,10 @@ public class OpenPauseUI : MonoBehaviour
     // Update is called once per frame
     private void OpenPauseMenu()
     {
-        Debug.LogWarning("No Pause Menu Exists");
+        activePause = !activePause;
+        Debug.LogWarning("No Pause Menu Exists!");
+        Debug.LogWarning("Opening pause menu does not pause gameplay!");
         // pause game
-        pauseMenu.SetActive(true);
-    }
-
-    private void ClosePauseMenu()
-    {
-        Debug.LogWarning("No Pause Menu Exists");
-        // unpause game
-        pauseMenu.SetActive(false);
+        pauseMenu.SetActive(activePause);
     }
 }

@@ -54,25 +54,25 @@ public class WaveCounter : MonoBehaviour
         counterBits = GetComponent<Image>();
         counterBits.fillAmount = 0;
 
-        bitParent = transform.GetChild(0);
-        bits = new FallingBit[3];
-        for (int i = 0; i < 3; i++)
-        {
-            bits[i] = new FallingBit(bitParent.GetChild(i).gameObject);
-        }
+        //bitParent = transform.GetChild(0);
+        //bits = new FallingBit[3];
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    bits[i] = new FallingBit(bitParent.GetChild(i).gameObject);
+        //}
 
-        bitParent.gameObject.SetActive(false);
+        //bitParent.gameObject.SetActive(false);
     }
 
     public void SetWaveCounterFill(float fill = 0) => counterBits.fillAmount = fill;
 
-    private void Update()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            bits[i].UpdateBitMotion();
-        }
-    }
+    //private void Update()
+    //{
+    //    for (int i = 0; i < 3; i++)
+    //    {
+    //        bits[i].UpdateBitMotion();
+    //    }
+    //}
 
     public void AnimateBitsFalling()
     {
