@@ -18,6 +18,7 @@ public class AttackObject : MonoBehaviour
     #region TAG SPECIFIC
     public int tagSpecificDamage;
     public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
+    float _velocity = 0;
     #endregion
 
     // private Animator
@@ -46,8 +47,26 @@ public class AttackObject : MonoBehaviour
                     enemy.TakeDamage(tagSpecificDamage);
                     
                     HandleNonTargetEnemyDeath(enemy);
-                }
-                
+                }   
+            }
+
+            if (attackerComponent.bounce)
+            {
+                _velocity = Vector3.Distance(originTower.transform.position, target.enemy.transform.position) / delayToTarget;
+                //i have like no idea how i'm gonna handle some of this stuff
+
+                /*
+                 * "A bounce energy system would probably work well here"
+                 * 
+                 * While loop here
+                 * 
+                 * Enemy newTarget = closest enemy in range of tower... this is gonna be a challenge to pull off
+                 * 
+                 * delayTime = Vector3.Distance(target.enemy.transform.position, newTarget.transform.position) / _velocity;
+                 * 
+                 * yeild return new WaitForSeconds(dealyTime);
+                 * end while loop
+                */
             }
         }
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
 using Text = TMPro.TMP_Text;
 
@@ -24,14 +25,14 @@ public class WaveSpawner : MonoBehaviour
     }
 
     [SerializeField] Transform[] spawnPoints;
-    //private Path currentPath;
     private Transform currentSpawnPoint;
+    private int currentSpawnPointIndex;
 
     [SerializeField] Wave[] waves;
     private Wave currentWave;
     private int currentWaveIndex;
 
-    private State spawnState;
+    private State spawnState = State.BetweenWaves;
     private float spawnCooldown;
     private float cooldownElapsed;
 
@@ -47,12 +48,20 @@ public class WaveSpawner : MonoBehaviour
     private LevelDataGrid levelData;
 
     WaveCounter waveCounterUI; // UI element that needs to be updated at the end of a wave.
+    
+    [SerializeField] RectTransform waveIndicator;
+    [SerializeField] Image waveTimer;
+    [SerializeField] Vector2[] indicatorPositions;
 
     private void Awake()
     {
         levelData = GetComponent<LevelDataGrid>();
 
-        currentWave = SpawnWave(currentWaveIndex);
+        CalculateSpawns();
+
+        currentWave = waves[currentWaveIndex];
+        waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
+        waveIndicator.gameObject.SetActive(true);
 
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
 
@@ -93,11 +102,15 @@ public class WaveSpawner : MonoBehaviour
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)
         {
             spawnState = State.Spawning;
-            currentWave = SpawnWave(currentWaveIndex);
             elapsedSecondsBetweenWaves = 0.0f;
+
+            waveIndicator.gameObject.SetActive(false);
         }
         else
+        {
+            waveTimer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
             elapsedSecondsBetweenWaves += Time.deltaTime;
+        }
     }
 
     private void SpawningState()
@@ -132,8 +145,11 @@ public class WaveSpawner : MonoBehaviour
             if (currentWaveIndex + 1 < waves.Length)
             {
                 
-                Debug.Log("Next Wave Starting");
+                Debug.Log("Next Wave Starting in " + secondsBetweenWaves + "Seconds");
                 InitialiseNextWave();
+
+                waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
+                waveIndicator.gameObject.SetActive(true);
             }
             else
             {
@@ -158,17 +174,17 @@ public class WaveSpawner : MonoBehaviour
         spawnState = State.BetweenWaves;
 
         currentWaveIndex++;
-        currentWave = SpawnWave(currentWaveIndex);
+        CalculateSpawns();
+        currentWave = waves[currentWaveIndex];
 
         spawnedEnemies = 0;
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
     }
 
-    private Wave SpawnWave(int waveIndex)
+    private void CalculateSpawns()
     {
-        currentSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length - 1)];
-
-        return waves[waveIndex];
+        currentSpawnPointIndex = Random.Range(0, spawnPoints.Length - 1);
+        currentSpawnPoint = spawnPoints[currentSpawnPointIndex];
     }
 
     int enemyNumber = 0;
