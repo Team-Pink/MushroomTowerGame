@@ -931,17 +931,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &681350710 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6375534184430743556, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-  m_PrefabInstance: {fileID: 625561294}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &814012329 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8974790835948645926, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
@@ -1082,6 +1071,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0162f70d554e5184eaa571118e45ef8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &900787937 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4333523389968260116, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &985597821
@@ -1783,17 +1783,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1544690219}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1545976202 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5643471327555855207, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-  m_PrefabInstance: {fileID: 625561294}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1573247802
 GameObject:
   m_ObjectHideFlags: 0
@@ -2603,7 +2592,7 @@ PrefabInstance:
     - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: currencyText
       value: 
-      objectReference: {fileID: 1545976202}
+      objectReference: {fileID: 900787937}
     - target: {fileID: 6533875848915131746, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -2676,7 +2665,7 @@ PrefabInstance:
     - target: {fileID: 8411860829937560677, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
       propertyPath: hubHealthText
       value: 
-      objectReference: {fileID: 681350710}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
 --- !u!33 &7769740207512944965

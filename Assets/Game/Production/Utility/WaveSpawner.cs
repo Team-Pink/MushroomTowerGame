@@ -46,6 +46,8 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
 
+    WaveCounter waveCounterUI; // UI element that needs to be updated at the end of a wave.
+
     private void Awake()
     {
         levelData = GetComponent<LevelDataGrid>();
@@ -53,6 +55,8 @@ public class WaveSpawner : MonoBehaviour
         currentWave = SpawnWave(currentWaveIndex);
 
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
+
+        waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
     }
 
     private void Update()
@@ -124,8 +128,10 @@ public class WaveSpawner : MonoBehaviour
     {
         if (aliveEnemies.Count == 0)
         {
+            UpdateWaveCounterUI(); // Lochlan's UI stuff.
             if (currentWaveIndex + 1 < waves.Length)
             {
+                
                 Debug.Log("Next Wave Starting");
                 InitialiseNextWave();
             }
@@ -177,5 +183,15 @@ public class WaveSpawner : MonoBehaviour
         enemyNumber++;
 
         return enemyObject;
+    }
+
+    // This is Lochlan's code for updating the WaveCounter UI element
+    
+    private void UpdateWaveCounterUI()
+    {
+        float waveProgress = (float)currentWaveIndex / (float)waves.Length;
+
+        // generate 2d sprites of bugbits falling into the counter
+        waveCounterUI.SetWaveCounterFill(waveProgress);
     }
 }
