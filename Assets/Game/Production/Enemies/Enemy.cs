@@ -51,7 +51,8 @@ public class Enemy : MonoBehaviour
     #region Health Values
     [Header("Health")]
     [SerializeField] int maxHealth;
-    [HideInInspector] public float health;
+    //[HideInInspector]
+    public float health;
     [HideInInspector] public bool dead;
     public int MaxHealth { get => maxHealth; }
     public float CurrentHealth { get => health; protected set => health = value; }
@@ -132,7 +133,7 @@ public class Enemy : MonoBehaviour
     protected float elapsedCooldown = 0;
     protected float elapsedDelay = 0;
 
-    [SerializeField, Range(0.0f, 10.0f)] float attackRadius = 3.0f;
+    [SerializeField, Range(0.0f, 10.0f)] protected float attackRadius = 3.0f;
     private float AttackRadiusSqr { get => attackRadius * attackRadius; }
 
     protected bool attackInProgress = false;
@@ -188,6 +189,7 @@ public class Enemy : MonoBehaviour
         }
         GetComponent<Rigidbody>().detectCollisions = true;
         Dead = false;
+        state = EnemyState.Approach;
 
         //whatever else needs to be done before fully spawning in do within here
 
@@ -219,6 +221,8 @@ public class Enemy : MonoBehaviour
             transform.GetChild(i).gameObject.SetActive(false);
         }
         GetComponent<Rigidbody>().detectCollisions = false;
+
+        state = EnemyState.None;
     }
     #endregion
 

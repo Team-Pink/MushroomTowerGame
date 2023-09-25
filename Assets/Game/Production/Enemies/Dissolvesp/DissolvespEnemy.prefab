@@ -315,15 +315,16 @@ MonoBehaviour:
   damage: 2
   attackCooldown: 1.5
   attackDelay: 1
-  attackRadius: 10
+  attackRadius: 5
   bugBits: 3
-  expValue: 2
+  expValue: 1
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
   hub: {fileID: 0}
   animator: {fileID: 6708249941602146778}
   target: {fileID: 0}
-  firingCone: 10
+  firingCone: 0.1
+  detectionRange: 15
   turnSpeed: 1
   bullet: {fileID: 2426019254276810249}
   bulletSpeed: 0.5

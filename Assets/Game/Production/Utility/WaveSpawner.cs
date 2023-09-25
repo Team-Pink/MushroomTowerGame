@@ -23,8 +23,8 @@ public class WaveSpawner : MonoBehaviour
         WaitingForWaveEnd
     }
 
-    [SerializeField] Path[] paths;
-    private Path currentPath;
+    [SerializeField] Transform[] spawnPoints;
+    //private Path currentPath;
     private Transform currentSpawnPoint;
 
     [SerializeField] Wave[] waves;
@@ -49,8 +49,6 @@ public class WaveSpawner : MonoBehaviour
     private void Awake()
     {
         levelData = GetComponent<LevelDataGrid>();
-
-        currentPath = paths[Random.Range(0, paths.Length - 1)];
 
         currentWave = SpawnWave(currentWaveIndex);
 
@@ -103,7 +101,6 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            //enemy.pathToFollow = currentPath;
             enemy.hub = hub;
             enemy.hubTransform = hub.transform;
             enemy.levelData = levelData;
@@ -157,16 +154,13 @@ public class WaveSpawner : MonoBehaviour
         currentWaveIndex++;
         currentWave = SpawnWave(currentWaveIndex);
 
-        currentPath = paths[Random.Range(0, paths.Length - 1)];
-
         spawnedEnemies = 0;
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
     }
 
     private Wave SpawnWave(int waveIndex)
     {
-        Path currentPath = paths[Random.Range(0, paths.Length - 1)];
-        currentSpawnPoint = currentPath.transform.GetChild(0);
+        currentSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length - 1)];
 
         return waves[waveIndex];
     }

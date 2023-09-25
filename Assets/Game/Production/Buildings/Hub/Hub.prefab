@@ -448,7 +448,7 @@ MonoBehaviour:
   gameOverText: {fileID: 0}
   hubHealthText: {fileID: 0}
   connectedPylons: []
-  pylonCount: 0
+  connectedPylonsCount: 0
 --- !u!64 &1139820822152035810
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -728,7 +728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3364223425624795044, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: intensity
-      value: 0.003
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3364223425624795044, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: bounceType
@@ -744,7 +744,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8555251113640901067, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: intensity
-      value: 0.15
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8555251113640901067, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
       propertyPath: bounceType
