@@ -40,11 +40,14 @@ public class Attacker
     public float additionalSprayRange = 2;
 
     [Header("Strikethrough Tag")]
-    public bool strikethrough = true;
+    public bool strikethrough = false;
     public int strikethroughDamage = 1;
     public int strikethroughReach = 10;
     public int strikethroughBeamWidth = 4;
     public Matrix4x4 strikethroughMatrix;
+
+    [Header("Bounce Tag")]
+    public bool bounce = false;
     #endregion
 
     protected List<Target> targetsToShoot = new();
