@@ -247,10 +247,20 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        DisplayBuildingHealth(out MeshRenderer healthDisplay);
+
+        if (GetRayHit(budLayer).collider != null)
+        {
+            if (healthDisplay != null) healthDisplay.enabled = false;
+            ResetInteraction();
+            return;
+        }
+
         currentHit = GetRayHit(buildingLayers);
 
         if (currentHit.collider is null)
         {
+            if (healthDisplay != null) healthDisplay.enabled = false;
             ResetInteraction();
             return;
         }
@@ -263,6 +273,8 @@ public class InteractionManager : MonoBehaviour
         if (Input.GetKeyDown(interactKey))
         {
             radiusDisplay.SetActive(false);
+            if (healthDisplay != null) healthDisplay.enabled = false;
+
             if (targetBuilding is Pylon)
             {
                 Pylon targetPylon = targetBuilding as Pylon;
@@ -349,14 +361,12 @@ public class InteractionManager : MonoBehaviour
             if (hoveredButtonIndex == 0)
             {
                 targetPylon.CurrentHealth = targetPylon.MaxHealth;
-                targetPylon.Reactivate();
+                targetPylon.ToggleResidual(false);
             } // Repair
             else if (hoveredButtonIndex == 1)
             {
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
-
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
@@ -620,7 +630,7 @@ public class InteractionManager : MonoBehaviour
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
-
+        
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
         else
@@ -652,6 +662,28 @@ public class InteractionManager : MonoBehaviour
             StartCoroutine(targetBuilding.ExpandRadiusDisplay());
         }
     }
+    private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
+    {
+        healthDisplay = null;
+        /*if (targetBuilding is Hub)
+        {
+            healthDisplay = (targetBuilding as Hub).healthDisplay;
+
+        }
+        else */if (targetBuilding is Pylon)
+        {
+            Pylon targetPylon = (targetBuilding as Pylon);
+            healthDisplay = targetPylon.healthDisplay;
+            healthDisplay.sharedMaterial.SetFloat("_Value", targetPylon.CurrentHealth / targetPylon.MaxHealth);
+        }
+        else return;
+
+        if (!healthDisplay.enabled)
+        {
+            healthDisplay.enabled = true;
+        }
+    }
+
 
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {

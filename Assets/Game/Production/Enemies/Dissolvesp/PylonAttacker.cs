@@ -13,7 +13,7 @@ public class PylonAttacker : Enemy
     [SerializeField] GameObject bullet;
     [SerializeField, Range(0.1f, 1.0f)] float bulletSpeed;
 
-    LayerMask mask = new LayerMask();
+    LayerMask mask = new();
 
     public override void SpawnIn()
     {
@@ -34,11 +34,10 @@ public class PylonAttacker : Enemy
             if (collider.GetComponent<Pylon>() == null)
                 continue;
 
-            if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+            if (collider.GetComponent<Pylon>().CurrentHealth > 0)
             {
                 target = collider.GetComponent<Pylon>();
                 state = EnemyState.Hunt;
-                Debug.Log("Detected new target " + target.name);
                 break;
             }
         }
@@ -47,7 +46,7 @@ public class PylonAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (target.CurrentHealth <= 0 || !target.Active)
+        if (target.CurrentHealth <= 0)
         {
             Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
 
@@ -61,7 +60,7 @@ public class PylonAttacker : Enemy
 
             foreach (Collider collider in collisions)
             {
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
                 {
                     target = collider.GetComponent<Pylon>();
                     break;
@@ -90,7 +89,7 @@ public class PylonAttacker : Enemy
         }
 
         //On Pylon Death or Deactivation
-        if (target.CurrentHealth <= 0 || !target.Active)
+        if (target.CurrentHealth <= 0)
         {
             target = null;
             ResetBullet();
@@ -105,7 +104,7 @@ public class PylonAttacker : Enemy
 
             foreach (Collider collider in collisions)
             {   
-                if (collider.GetComponent<Pylon>().CurrentHealth > 0 && collider.GetComponent<Pylon>().Active)
+                if (collider.GetComponent<Pylon>().CurrentHealth > 0)
                 {
                     target = collider.GetComponent<Pylon>();
                     state = EnemyState.Hunt;
@@ -124,6 +123,7 @@ public class PylonAttacker : Enemy
         //Attacking the Pylon
         if (!attackInProgress)
         {
+            AttackAudio();
             animator.SetTrigger("Attack");
             target.CurrentHealth -= damage;
             attackInProgress = true;

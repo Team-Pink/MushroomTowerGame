@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AreaAttacker : Attacker
 {
@@ -16,16 +15,25 @@ public class AreaAttacker : Attacker
         if (!attacking)
         {
             affectedEnemies.Clear();
-            AnimateAttack(); Debug.Log("ANIMATE YOU FUCKER");
+            AnimateAttack();
+
+            if (windupParticlePrefab != null)
+            {
+                GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                Object.Destroy(particle, animationLeadIn);
+            }
+
             attacking = true;
 
             LayerMask mask = LayerMask.GetMask("Enemy");
 
-            Debug.Log("Area Attack");
-
             foreach (var target in targets)
             {
-                AttackObject areaAttack = GenerateAttackObject(target); 
+                AttackObject areaAttack = GenerateAttackObject(target);
+
+                areaAttack.hitParticlePrefab = hitParticlePrefab;
+                areaAttack.hitSoundEffect = attackHitSoundEffect;
 
                 Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                 foreach (var collision in mainCollisions)
@@ -44,7 +52,7 @@ public class AreaAttacker : Attacker
                 }
                 #endregion
 
-                areaAttack.StartCoroutine(areaAttack.CommenceAttack());
+                areaAttack.StartCoroutine(areaAttack.CommenceAttack(animationLeadIn));
                 targetsToShoot.Add(target);
             }
         }
