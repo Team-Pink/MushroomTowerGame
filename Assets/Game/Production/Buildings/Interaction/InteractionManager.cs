@@ -673,12 +673,12 @@ public class InteractionManager : MonoBehaviour
     private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
     {
         healthDisplay = null;
-        if (targetBuilding is Hub)
+        /*if (targetBuilding is Hub)
         {
             healthDisplay = (targetBuilding as Hub).healthDisplay;
 
         }
-        else if (targetBuilding is Pylon)
+        else */if (targetBuilding is Pylon)
         {
             Pylon targetPylon = (targetBuilding as Pylon);
             healthDisplay = targetPylon.healthDisplay;
