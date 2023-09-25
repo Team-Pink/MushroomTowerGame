@@ -41,7 +41,6 @@ public class CurrencyManager : MonoBehaviour
     {
         if (currencyAmount < amount)
         {
-            Debug.Log("Cannot remove amount from currency total");
             return false;
         }
         return true;
