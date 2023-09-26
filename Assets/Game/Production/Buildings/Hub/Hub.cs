@@ -11,7 +11,6 @@ public class Hub : Building
     private float currentHealth;
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
-    [SerializeField] Text hubHealthText;
 
     public MeshRenderer healthDisplay;
 
@@ -46,7 +45,7 @@ public class Hub : Building
                 RestartScene();
         }
 
-        hubHealthText.text = currentHealth.ToString();
+
 
         ClearDestroyedPylons();
         connectedPylonsCount = pylonCount;
