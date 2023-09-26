@@ -144,8 +144,9 @@ public class WaveSpawner : MonoBehaviour
             UpdateWaveCounterUI();
             if (currentWaveIndex + 1 < waves.Length)
             {
-                
-                Debug.Log("Next Wave Starting in " + secondsBetweenWaves + "Seconds");
+
+                Debug.Log("Next Wave Starting in " + secondsBetweenWaves + " Seconds");
+
                 InitialiseNextWave();
 
                 waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
