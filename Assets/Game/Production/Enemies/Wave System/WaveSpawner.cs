@@ -205,7 +205,7 @@ public class WaveSpawner : MonoBehaviour
     
     private void UpdateWaveCounterUI()
     {
-        float waveProgress = (float)currentWaveIndex / (float)waves.Length;
+        float waveProgress = (float)(currentWaveIndex +1)/ (float)waves.Length;
 
         // generate 2d sprites of bugbits falling into the counter
         waveCounterUI.SetWaveCounterFill(waveProgress);
