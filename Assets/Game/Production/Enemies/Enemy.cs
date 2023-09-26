@@ -19,21 +19,23 @@ public class Condition
 
     public ConditionType type;
     public float value;
-    public float duration;
+    public float currentDuration;
+    public float totalDuration;
 
     public Condition(ConditionType typeInit, float valueInit, float durationInit)
     {
         type = typeInit;
         value = valueInit;
-        duration = durationInit;
+        currentDuration = durationInit;
+        totalDuration = durationInit;
     }
 
     public bool Duration()
     {
-        if (duration < 0)
+        if (currentDuration < 0)
             return true;
 
-        duration -= Time.deltaTime;
+        currentDuration -= Time.deltaTime;
         return false;
     }
 }
@@ -60,7 +62,7 @@ public class Enemy : MonoBehaviour
     public bool Dead { get => dead; protected set => dead = value; }
     #endregion
 
-    private readonly List<Condition> activeConditions;
+    private readonly List<Condition> activeConditions = new List<Condition>();
 
     #region Movement Values
     public struct BoidReference
@@ -181,6 +183,8 @@ public class Enemy : MonoBehaviour
     {
         if (Dead) return;
 
+        ApplyConditionEffects();
+
         switch (state)
         {
             case EnemyState.Approach:
@@ -279,6 +283,34 @@ public class Enemy : MonoBehaviour
             if (shouldApply)
                 activeConditions.Add(conditions[newIndex]);
         }
+    }
+
+    void ApplyConditionEffects()
+    {
+        List<Condition> markedForRemoval = new();
+        foreach (Condition condition in activeConditions)
+        {
+            if (condition.type == Condition.ConditionType.Poison)
+            {
+                TakeDamage(condition.value * Time.deltaTime);
+
+                if (condition.Duration())
+                    markedForRemoval.Add(condition);
+            }
+            else if (condition.type == Condition.ConditionType.Slow)
+            {
+                if (condition.currentDuration == condition.totalDuration)
+                    speedModifiers.Add(condition.value); //not entirelly sure on how this is intentioned to work
+                if (condition.Duration())
+                {
+                    speedModifiers.Remove(condition.value);
+                    markedForRemoval.Add(condition);
+                }
+            }
+        }
+
+        foreach (Condition condition in markedForRemoval)
+            activeConditions.Remove(condition);
     }
     #endregion
 
@@ -439,7 +471,7 @@ public class Enemy : MonoBehaviour
         AudioManager.PlaySoundEffect(attackAudio.name, 0);
     }
 
-
+    #region No Mans Land
     /*
 
     protected virtual void CustomAwakeEvents()
@@ -548,4 +580,5 @@ public class Enemy : MonoBehaviour
     [SerializeField] bool showLevers;
     #endregion
     */
+    #endregion
 }
