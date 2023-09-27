@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using static System.Linq.Enumerable;
 using FloatList = System.Collections.Generic.List<float>;
 using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+using TMPro;
 
 public enum InteractionState
 {
@@ -75,15 +76,22 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject pylonMenu;
     [SerializeField, NonReorderable] Image[] pylonMenuButtons;
+    [SerializeField] TMP_Text pylonMenuCostText;
 
     [SerializeField, Space()] GameObject residualMenu;
     [SerializeField, NonReorderable] Image[] residualMenuButtons;
+    [SerializeField] TMP_Text residualMenuCostText;
 
     [SerializeField, Space()] GameObject towerMenu;
     [SerializeField, NonReorderable] Image[] towerMenuButtons;
+    [SerializeField] TMP_Text towerMenuCostText;
 
     [SerializeField, Space()] GameObject towerSelectionMenu;
     [SerializeField, NonReorderable] Image[] towerSelectionMenuButtons;
+    [SerializeField] TMP_Text towerSelectionCostText;
+
+    [SerializeField, Space()] private Color canPurchaseColour;
+    [SerializeField] private Color canNotPurchaseColour;
     #endregion
 
     [Header("Interaction")]
@@ -247,10 +255,20 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        DisplayBuildingHealth(out MeshRenderer healthDisplay);
+
+        if (GetRayHit(budLayer).collider != null)
+        {
+            if (healthDisplay != null) healthDisplay.enabled = false;
+            ResetInteraction();
+            return;
+        }
+
         currentHit = GetRayHit(buildingLayers);
 
         if (currentHit.collider is null)
         {
+            if (healthDisplay != null) healthDisplay.enabled = false;
             ResetInteraction();
             return;
         }
@@ -263,6 +281,8 @@ public class InteractionManager : MonoBehaviour
         if (Input.GetKeyDown(interactKey))
         {
             radiusDisplay.SetActive(false);
+            if (healthDisplay != null) healthDisplay.enabled = false;
+
             if (targetBuilding is Pylon)
             {
                 Pylon targetPylon = targetBuilding as Pylon;
@@ -349,14 +369,12 @@ public class InteractionManager : MonoBehaviour
             if (hoveredButtonIndex == 0)
             {
                 targetPylon.CurrentHealth = targetPylon.MaxHealth;
-                targetPylon.Reactivate();
+                targetPylon.ToggleResidual(false);
             } // Repair
             else if (hoveredButtonIndex == 1)
             {
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
-
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
             hoveredButton.color = buttonBaseColour;
 
             ResetInteraction();
@@ -511,7 +529,7 @@ public class InteractionManager : MonoBehaviour
     {
         targetBuilding.radiusDisplay.SetActive(false);
 
-        RadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
+        TowerRadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
@@ -620,7 +638,7 @@ public class InteractionManager : MonoBehaviour
         GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
         pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
-
+        
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
         else
@@ -652,10 +670,35 @@ public class InteractionManager : MonoBehaviour
             StartCoroutine(targetBuilding.ExpandRadiusDisplay());
         }
     }
+    private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
+    {
+        healthDisplay = null;
+        /*if (targetBuilding is Hub)
+        {
+            healthDisplay = (targetBuilding as Hub).healthDisplay;
+
+        }
+        else */if (targetBuilding is Pylon)
+        {
+            Pylon targetPylon = (targetBuilding as Pylon);
+            healthDisplay = targetPylon.healthDisplay;
+            healthDisplay.sharedMaterial.SetFloat("_Value", targetPylon.CurrentHealth / targetPylon.MaxHealth);
+        }
+        else return;
+
+        if (!healthDisplay.enabled)
+        {
+            healthDisplay.enabled = true;
+        }
+    }
+
 
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
+        towerMenuCostText.text = "";
+        pylonMenuCostText.text = "";
+        residualMenuCostText.text = "";
 
         if (!radialMenu.activeSelf)
             radialMenu.SetActive(true);
@@ -687,6 +730,62 @@ public class InteractionManager : MonoBehaviour
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
+                }
+                else
+                {
+                    radialButtons[i].color = buttonBaseColour;
+                }
+            }
+        }
+        else
+        {
+            foreach (Image radialButton in radialButtons)
+            {
+                radialButton.color = buttonBaseColour;
+            }
+        }
+    }
+    private void TowerRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
+    {
+        hoveredButtonIndex = -1;
+        towerSelectionCostText.text = "";
+
+        if (!radialMenu.activeSelf)
+            radialMenu.SetActive(true);
+
+        if (startingMousePosition == Vector2.zero)
+        {
+            startingMousePosition = mouseScreenPosition;
+            radialMenu.GetComponent<RectTransform>().position = mouseScreenPosition;
+        }
+
+        float buttonAngularSize = (360 - reservedDegrees) / radialButtons.Length;
+
+        if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
+        {
+            FloatList angles = new();
+
+            for (int angleIndex = 0; angleIndex < radialButtons.Length + 1; angleIndex++)
+            {
+                float angleToAdd = (reservedDegrees * 0.5f) + (angleIndex * buttonAngularSize);
+                angles.Add(angleToAdd);
+            }
+
+            Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
+            float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
+
+            for (int i = 0; i < radialButtons.Length; i++)
+            {
+                if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
+                {
+                    radialButtons[i].color = buttonHoverColour;
+                    hoveredButtonIndex = i;
+
+                    int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
+                    towerSelectionCostText.text = "- " + cost.ToString();
+                    if (!currencyManager.CanDecreaseCurrencyAmount(cost))
+                        towerSelectionCostText.color = canNotPurchaseColour;
+                    else towerSelectionCostText.color = canPurchaseColour;
                 }
                 else
                 {

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class SingleAttacker : Attacker
 {
@@ -9,14 +8,24 @@ public class SingleAttacker : Attacker
         if (!attacking)
         {
             AnimateAttack();
+
+            if (windupParticlePrefab != null)
+            {
+                GameObject particle = Object.Instantiate(windupParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                Object.Destroy(particle, animationLeadIn);
+            }
+
             attacking = true;
 
-            Debug.Log("Single Attack");
             foreach (var target in targets)
             {
                 if (target.enemy is not null)
                 {
                     AttackObject singleAttack = GenerateAttackObject(target);
+
+                    singleAttack.hitParticlePrefab = hitParticlePrefab;
+                    singleAttack.hitSoundEffect = attackHitSoundEffect;
 
                     #region TAG IMPLEMENTATION
                     if (strikethrough)
@@ -29,7 +38,7 @@ public class SingleAttacker : Attacker
                     }
                     #endregion
 
-                    singleAttack.StartCoroutine(singleAttack.CommenceAttack());
+                    singleAttack.StartCoroutine(singleAttack.CommenceAttack(animationLeadIn));
 
                     targetsToShoot.Add(target);
                 }

@@ -7,10 +7,12 @@ using static UnityEngine.SceneManagement.SceneManager;
 
 public class Hub : Building
 {
-    [SerializeField] int health = 10;
+    [SerializeField] float maxHealth = 100;
+    private float currentHealth;
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
-    [SerializeField] Text hubHealthText;
+
+    public MeshRenderer healthDisplay;
 
     
     public PylonList connectedPylons;
@@ -24,11 +26,17 @@ public class Hub : Building
     }
     public int connectedPylonsCount = 0;
 
+    private void Awake()
+    {
+        currentHealth = maxHealth;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
+    }
+
     private void Update()
     {
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
-            health = 0;
+            currentHealth = 0;
             gameOverText.enabled = true;
 
             if (gameOverDuration > 0)
@@ -37,13 +45,18 @@ public class Hub : Building
                 RestartScene();
         }
 
-        hubHealthText.text = health.ToString();
+
 
         ClearDestroyedPylons();
         connectedPylonsCount = pylonCount;
     }
 
-    public void Damage(int damageAmount) => health -= damageAmount;
+    public void Damage(float damageAmount)
+    {
+        currentHealth -= damageAmount;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
+        if (!healthDisplay.enabled) healthDisplay.enabled = true;
+    }
 
     private void RestartScene() => LoadScene(GetActiveScene().name);
 

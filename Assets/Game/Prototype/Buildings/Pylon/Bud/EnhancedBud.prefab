@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1560123496164765164}
   - component: {fileID: 2452622969158705737}
   - component: {fileID: 427139176530171523}
-  - component: {fileID: 2497610405620010678}
   - component: {fileID: 8555251113640901067}
   - component: {fileID: 3364223425624795044}
+  - component: {fileID: 5132919334761132757}
   m_Layer: 13
   m_Name: EnhancedBud
   m_TagString: Pylon
@@ -86,20 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2497610405620010678
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2228574422893360982}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 1288562370995837304, guid: bf683dfb1211cf24da6c06a951fd28e6, type: 3}
 --- !u!114 &8555251113640901067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,3 +118,16 @@ MonoBehaviour:
   hoverAxis: 1
   intensity: 0.15
   speed: 0.5
+--- !u!135 &5132919334761132757
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228574422893360982}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.65
+  m_Center: {x: -0.071025595, y: 0, z: -0.000000029802322}

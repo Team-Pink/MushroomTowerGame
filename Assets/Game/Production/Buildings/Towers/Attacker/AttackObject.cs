@@ -12,19 +12,23 @@ public class AttackObject : MonoBehaviour
     public Target target; // targets of the attack
     public Tower originTower; // origin of the attack
     public HashSet<Enemy> areaHitTargets;
+    public GameObject hitParticlePrefab;
+    public AudioClip hitSoundEffect;
 
     #region TAG SPECIFIC
     public int tagSpecificDamage;
     public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
+    float _velocity = 0;
     #endregion
 
     // private Animator
 
-    public IEnumerator CommenceAttack()
+    public IEnumerator CommenceAttack(float animationDelay = 0.0f)
     {
-        yield return new WaitForSeconds(delayToTarget); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
-        
+        yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
         // play impact animation
+        if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
+        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
 
         Attacker attackerComponent = originTower.AttackerComponent;
 
@@ -43,8 +47,26 @@ public class AttackObject : MonoBehaviour
                     enemy.TakeDamage(tagSpecificDamage);
                     
                     HandleNonTargetEnemyDeath(enemy);
-                }
-                
+                }   
+            }
+
+            if (attackerComponent.bounce)
+            {
+                _velocity = Vector3.Distance(originTower.transform.position, target.enemy.transform.position) / delayToTarget;
+                //i have like no idea how i'm gonna handle some of this stuff
+
+                /*
+                 * "A bounce energy system would probably work well here"
+                 * 
+                 * While loop here
+                 * 
+                 * Enemy newTarget = closest enemy in range of tower... this is gonna be a challenge to pull off
+                 * 
+                 * delayTime = Vector3.Distance(target.enemy.transform.position, newTarget.transform.position) / _velocity;
+                 * 
+                 * yeild return new WaitForSeconds(dealyTime);
+                 * end while loop
+                */
             }
         }
 

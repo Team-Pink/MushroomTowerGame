@@ -7,10 +7,13 @@ public class TrapAttackObject : MonoBehaviour
 
     // Data
     public TrapDetails details = new TrapDetails();
+    public float cleanupDuration;
+    private float cleanupTime = 0.0f;
 
     // Components
     private new Transform transform;
     [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] new GameObject particleSystem;
 
     // Detection
     private LayerMask enemies;
@@ -21,6 +24,7 @@ public class TrapAttackObject : MonoBehaviour
         // Components
         transform = gameObject.transform;
         meshRenderer.enabled = false;
+        particleSystem.SetActive(false);
 
         // Detection
         enemies = LayerMask.GetMask("Enemy");
@@ -37,10 +41,19 @@ public class TrapAttackObject : MonoBehaviour
             else
             {
                 meshRenderer.enabled = true;
+                particleSystem.SetActive(true);
                 active = true; return;
             }
         }
 
+        if (cleanupTime < cleanupDuration)
+        {
+            cleanupTime += Time.deltaTime;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, transform.localScale.x * 0.5f, enemies);
 

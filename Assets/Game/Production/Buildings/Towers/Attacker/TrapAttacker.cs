@@ -47,8 +47,6 @@ public class TrapAttacker : Attacker
         {
             AnimateAttack();
 
-            Debug.Log("Trap Attacker");
-
             TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
@@ -57,7 +55,7 @@ public class TrapAttacker : Attacker
 
         if (!CheckCooldownTimer()) return;
 
-        CleanUp();
+        placedTraps.Clear();
         delayTimer = 0f;
         cooldownTimer = 0f;
         attacking = false;
@@ -90,6 +88,7 @@ public class TrapAttacker : Attacker
         GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].position, Quaternion.identity);
         TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
 
+        trapScript.cleanupDuration = attackCooldown;
         trapScript.details.inkLevel = inkDetails.inkLevel;
         trapScript.details.dps = damage;
         trapScript.details.startupTime = attackDelay;
@@ -98,14 +97,5 @@ public class TrapAttacker : Attacker
         placedTraps.Add(newTrap);
         inkPlacementIndex++;
         return true;
-    }
-
-    void CleanUp()
-    {
-        foreach (GameObject trap in placedTraps)
-        {
-            Object.Destroy(trap);
-        }
-        placedTraps.Clear();
     }
 }
