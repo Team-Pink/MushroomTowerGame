@@ -168,7 +168,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip attackAudio;
     [SerializeField] AudioClip deathAudio;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
@@ -208,7 +208,6 @@ public class Enemy : MonoBehaviour
         GetComponent<Rigidbody>().detectCollisions = true;
         Dead = false;
         state = EnemyState.Approach;
-
         //whatever else needs to be done before fully spawning in do within here
 
     }
