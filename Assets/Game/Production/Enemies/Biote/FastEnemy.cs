@@ -6,6 +6,12 @@ public class FastEnemy : Enemy
     [SerializeField] float speedUpMultiplier = 3.0f;
     private bool damaged = false;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        animator.SetBool("Crawling", true);
+    }
+
     public override void SpawnIn()
     {
         damaged = false;
@@ -21,6 +27,9 @@ public class FastEnemy : Enemy
         {
             damaged = true;
             speedModifiers.Add(speedUpMultiplier);
+
+            animator.SetBool("Crawling", false);
+            animator.SetBool("Spinning", true);
         }
     }
 
@@ -37,6 +46,7 @@ public class FastEnemy : Enemy
         if (!attackInProgress && !attackCoolingDown)
         {
             //Explosion logic goes here
+            AttackAudio();
             TakeDamage(CurrentHealth);
             OnDeath();
         }    
