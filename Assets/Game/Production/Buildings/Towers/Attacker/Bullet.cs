@@ -49,8 +49,8 @@ public class Bullet : MonoBehaviour
 
     void MoveParabola()
     {
-        LooseTargetTracking();
-
+        //LooseTargetTracking();
+Debug.DrawLine(transform.position, targetPos, Color.red, 0.02f);
         // update progress to match time elapsed
         progress = timeElapsed / timeToTarget;
         
@@ -69,6 +69,6 @@ public class Bullet : MonoBehaviour
     void LooseTargetTracking()
     {
         targetPos = Vector3.MoveTowards( targetPos, targetTransform.position, trackingSpeed);
-        Debug.DrawLine(transform.position, targetPos, Color.red, 0.02f);
+        
     }
 }
