@@ -13,14 +13,17 @@ public class Bullet : MonoBehaviour
     
     // parobola variables
     public bool parabola;
+    public float trackingSpeed = 0.001f; // the distance the targetPos will move towards the enemyPos in a frame
     private float progress = 0;
     private float arcHeight = 40;
     Vector3 currentPos;
+    
 
     public void Initialise()
     {
         startPos = transform.position;
         targetTransform = target.enemy.transform;
+        targetPos = targetTransform.position;
         initialised = true;
     }
 
@@ -28,12 +31,8 @@ public class Bullet : MonoBehaviour
     {
         if (!initialised) return;
 
-        targetPos = targetTransform.position;
-
-
         if (parabola)MoveParabola(); 
         else MoveStraightToTarget();
-
         
         if (timeElapsed >= timeToTarget)
         {
@@ -44,11 +43,13 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
+        targetPos = targetTransform.position;
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
 
     void MoveParabola()
     {
+        LooseTargetTracking();
 
         // update progress to match time elapsed
         progress = timeElapsed / timeToTarget;
@@ -63,5 +64,11 @@ public class Bullet : MonoBehaviour
         transform.position = currentPos; // Update position
        
 
+    }
+
+    void LooseTargetTracking()
+    {
+        targetPos = Vector3.MoveTowards( targetPos, targetTransform.position, trackingSpeed);
+        Debug.DrawLine(transform.position, targetPos, Color.red, 0.02f);
     }
 }

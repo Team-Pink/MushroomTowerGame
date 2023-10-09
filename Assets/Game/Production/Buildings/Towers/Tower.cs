@@ -266,7 +266,7 @@ public class Tower : Building
 
         /* PsuedoCode
          
-        new local hashset of Target marked = targets deep copy
+        new local hashset of Target marked = targets deep copy           // copy the references stored in targets but not the reference to targets
 
         new local hashset of Target targetsLockedFire 
         
@@ -303,7 +303,7 @@ public class Tower : Building
             {
                 lockOnTargets[i].IncrementLockTimer();
                 // progress lock on animation
-                marked.Remove(lockOnTargets[i].target);
+                marked.Remove(lockOnTargets[i].target); 
                 if (lockOnTargets[i].targetLocked)
                 {
                     Debug.DrawLine(transform.position, lockOnTargets[i].target.position, Color.red, 0.02f);
