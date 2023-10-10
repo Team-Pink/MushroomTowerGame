@@ -4,17 +4,12 @@ using UnityEngine;
 public class AreaAttacker : Attacker
 {
     public float damageRadius = 3f;
-    public HashSet<Enemy> affectedEnemies = new HashSet<Enemy>();
 
     public override void Attack(HashSet<Target> targets) //  I need a way to get references to the things hit by the aoe out.
     {
-        spray = true;
-        additionalSprayRange = 2f;
-        sprayDamage = 1;
 
         if (!attacking)
         {
-            affectedEnemies.Clear();
             AnimateAttack();
 
             if (windupParticlePrefab != null)
@@ -28,25 +23,32 @@ public class AreaAttacker : Attacker
 
             LayerMask mask = LayerMask.GetMask("Enemy");
 
+
+
+
             foreach (var target in targets)
             {
+
+
                 AttackObject areaAttack = GenerateAttackObject(target);
 
                 areaAttack.hitParticlePrefab = hitParticlePrefab;
                 areaAttack.hitSoundEffect = attackHitSoundEffect;
 
-                Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
-                foreach (var collision in mainCollisions)
+                if(lobProjectile)
                 {
-                    Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-                    if (enemy is null) continue;
-                    affectedEnemies.Add(enemy); // grabs references to all hit enemies which really should be done by a targeter.
+                    areaAttack.noTracking = true;
                 }
-                areaAttack.areaHitTargets = affectedEnemies;
 
-                #region Tag Applications
+
+                areaAttack.areaHitTargets = new(); 
+                areaAttack.damageRadius = damageRadius;
+                areaAttack.mask = mask;
+
+                #region Tag Applications 
                 if (spray)
                 {
+                    Collider[] mainCollisions = Physics.OverlapSphere(target.position, damageRadius, mask);
                     areaAttack.tagSpecificDamage = sprayDamage;
                     areaAttack.tagSpecificEnemiesHit = Spray(target, mainCollisions, mask);
                 }
@@ -86,7 +88,7 @@ public class AreaAttacker : Attacker
             if (!isMainCollision)
             {
                 sprayTargets.Add(enemy);
-               
+
             }
 
         }

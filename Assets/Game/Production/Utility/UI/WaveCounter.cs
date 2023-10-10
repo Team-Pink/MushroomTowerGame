@@ -8,13 +8,13 @@ public class WaveCounter : MonoBehaviour
 {
     private class FallingBit
     {
-        private GameObject bit; 
+        private GameObject bit;
         private bool animateBit;
-        
+
         private Vector3 startPos;
         private Vector3 fallSpeed;
         private Vector3 fallRotation;
-        
+
 
         public FallingBit(GameObject Bit)
         {
@@ -30,7 +30,7 @@ public class WaveCounter : MonoBehaviour
             animateBit = true;
             bit.SetActive(animateBit);
             fallSpeed.y = -(UnityEngine.Random.value + 1); // 
-            fallRotation.z = UnityEngine.Random.Range(-10,10);        
+            fallRotation.z = UnityEngine.Random.Range(-10, 10);
         }
 
         public void UpdateBitMotion()
@@ -63,10 +63,13 @@ public class WaveCounter : MonoBehaviour
         {
             bits[i] = new FallingBit(bitParent.GetChild(i).gameObject);
         }
-        
+
     }
 
-    public void SetWaveCounterFill(float fill = 0) => counterBits.fillAmount = fill;
+    public void SetWaveCounterFill(float fill = 0)
+    {
+        counterBits.fillAmount = fill;
+    }
 
     private void Update()
     {

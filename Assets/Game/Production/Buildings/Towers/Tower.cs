@@ -4,7 +4,7 @@ using UnityEngine;
 
 public struct Target
 {
-    public Vector3 position;
+    public Vector3 position; // expands in practice to enemy.transform.position if an enemy exists.
     public Enemy enemy;
     float timeFound
     {

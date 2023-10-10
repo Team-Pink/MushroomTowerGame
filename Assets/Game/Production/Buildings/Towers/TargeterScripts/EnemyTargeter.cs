@@ -28,6 +28,7 @@ public abstract class EnemyTargeter : Targeter
         } // a possible solution would be to have deadenemies move onto and exist on a different layer or just delete them upon death.
 
         targetsInRange.Clear();
+        bestTargets.Clear(); // this worries me. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         if (enemyColliders == null) return;
 
