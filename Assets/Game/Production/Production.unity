@@ -173,7 +173,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &259668924
 Transform:
   m_ObjectHideFlags: 0
@@ -256,7 +256,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &284812018
 Transform:
   m_ObjectHideFlags: 0
@@ -349,7 +349,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &299905273
 Transform:
   m_ObjectHideFlags: 0
@@ -432,7 +432,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &363121861
 Transform:
   m_ObjectHideFlags: 0
@@ -548,7 +548,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &571542163
 Transform:
   m_ObjectHideFlags: 0
@@ -742,7 +742,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &624589646
 Transform:
   m_ObjectHideFlags: 0
@@ -815,6 +815,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
+    - target: {fileID: 678731283837580279, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1776430532823025575, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2210237291933881853, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 400
@@ -842,6 +850,10 @@ PrefabInstance:
     - target: {fileID: 4504082788279147880, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_fontSizeBase
       value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 4561000501569965181, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5951071099514158202, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -942,6 +954,10 @@ PrefabInstance:
     - target: {fileID: 6375534184558690590, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210974776577348663, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
@@ -1348,7 +1364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1319613418
 Transform:
   m_ObjectHideFlags: 0
@@ -1442,7 +1458,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1355529936
 Transform:
   m_ObjectHideFlags: 0
@@ -1665,7 +1681,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1674988715
 Transform:
   m_ObjectHideFlags: 0
@@ -1810,7 +1826,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1718553955
 Transform:
   m_ObjectHideFlags: 0
@@ -1946,7 +1962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1860300685
 Transform:
   m_ObjectHideFlags: 0
@@ -2061,7 +2077,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1960362077
 Transform:
   m_ObjectHideFlags: 0
@@ -2318,6 +2334,10 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[13]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[0].enemyPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
     - target: {fileID: 4915721120753536162, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
       value: Swamp Danger

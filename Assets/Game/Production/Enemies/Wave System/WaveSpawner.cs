@@ -141,7 +141,7 @@ public class WaveSpawner : MonoBehaviour
     {
         if (aliveEnemies.Count == 0)
         {
-            UpdateWaveCounterUI(); // Lochlan's UI stuff.
+            UpdateWaveCounterUI();
             if (currentWaveIndex + 1 < waves.Length)
             {
 
@@ -202,13 +202,13 @@ public class WaveSpawner : MonoBehaviour
         return enemyObject;
     }
 
-    // This is Lochlan's code for updating the WaveCounter UI element
-    
+    /// <summary>
+    /// This is Lochlan's code for updating the WaveCounter UI element
+    /// </summary>
     private void UpdateWaveCounterUI()
     {
         float waveProgress = (float)(currentWaveIndex +1)/ (float)waves.Length;
-
-        // generate 2d sprites of bugbits falling into the counter
+        waveCounterUI.AnimateBitsFalling();
         waveCounterUI.SetWaveCounterFill(waveProgress);
     }
 }
