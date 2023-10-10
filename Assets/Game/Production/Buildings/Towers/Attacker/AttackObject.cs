@@ -58,12 +58,17 @@ public class AttackObject : MonoBehaviour
                 bool hasAvailableTargetToHit = true;
                 int hitCount = 1;
                 LayerMask mask = LayerMask.GetMask("Enemy");
+                attackerComponent.bounceHitLimit = 1000;
 
                 hitList.Add(target.enemy);
 
                 while (hasAvailableTargetToHit)
                 {
-                    if (hitCount >= attackerComponent.bounceHitLimit) hasAvailableTargetToHit = false;
+                    if (hitCount >= attackerComponent.bounceHitLimit)
+                    {
+                        hasAvailableTargetToHit = false;
+                        continue;
+                    }
                     Enemy newTarget = null;
                     Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
 
