@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
@@ -105,6 +106,8 @@ public class WaveSpawner : MonoBehaviour
             elapsedSecondsBetweenWaves = 0.0f;
 
             waveIndicator.gameObject.SetActive(false);
+
+            GenericUtility.DestroyAllChildren(parentFolder.transform);
         }
         else
         {
@@ -175,6 +178,7 @@ public class WaveSpawner : MonoBehaviour
         spawnState = State.BetweenWaves;
 
         currentWaveIndex++;
+        enemyNumber = 0;
         CalculateSpawns();
         currentWave = waves[currentWaveIndex];
 
@@ -196,7 +200,7 @@ public class WaveSpawner : MonoBehaviour
 
         GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, parentFolder);
 
-        enemyObject.name = "Enemy " + enemyNumber;
+        enemyObject.name = "Child " + (currentWaveIndex + 1) + "-" + enemyNumber;
         enemyNumber++;
 
         return enemyObject;

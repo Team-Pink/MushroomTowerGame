@@ -3,6 +3,7 @@ using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEditor;
 
 [Serializable]
 public class Condition
@@ -242,19 +243,18 @@ public class Enemy : MonoBehaviour
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
+        state = EnemyState.None;
+
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
         GetComponent<Rigidbody>().detectCollisions = false;
-
         if (deathParticle != null)
         {
             GameObject particle = Instantiate(deathParticle, transform);
             particle.transform.position += new Vector3(0, particleOriginOffset, 0);
         }
-
-        state = EnemyState.None;
     }
     #endregion
 
@@ -321,6 +321,7 @@ public class Enemy : MonoBehaviour
         {
             rigidbody.velocity = Vector2.zero;
             state = EnemyState.Attack;
+            targetBuilding = hub;
             neighbourhood.Clear();
             return;
         }
@@ -444,6 +445,7 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
+                Debug.Log(name + " has dealt damage to the hub");
                 AttackAudio();
                 attackInProgress = false;
             }

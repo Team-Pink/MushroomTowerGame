@@ -48,6 +48,8 @@ public class Attacker
 
     [Header("Bounce Tag")]
     public bool bounce = false;
+    public int bounceHitLimit = 10;
+    public float bounceSpeed = 5;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -104,7 +106,8 @@ public class Attacker
     {
         AttackObject attackInProgress = MonoBehaviour.Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
         attackInProgress.damage = damage;
-        attackInProgress.delayToTarget = attackDelay;
+        if (bounce) attackInProgress.delayToTarget = GenericUtility.CalculateTime(bounceSpeed, GenericUtility.CalculateDistance(originReference.transform.position, enemy.position));
+        else attackInProgress.delayToTarget = attackDelay;
         attackInProgress.originTower = originReference;
         attackInProgress.target = enemy;
         return attackInProgress;

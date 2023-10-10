@@ -49,24 +49,66 @@ public class AttackObject : MonoBehaviour
                     HandleNonTargetEnemyDeath(enemy);
                 }   
             }
-
+            //attackerComponent.bounce = true;
             if (attackerComponent.bounce)
             {
-                _velocity = Vector3.Distance(originTower.transform.position, target.enemy.transform.position) / delayToTarget;
-                //i have like no idea how i'm gonna handle some of this stuff
+                _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
+                List<Enemy> hitList = new List<Enemy>();
 
-                /*
-                 * "A bounce energy system would probably work well here"
-                 * 
-                 * While loop here
-                 * 
-                 * Enemy newTarget = closest enemy in range of tower... this is gonna be a challenge to pull off
-                 * 
-                 * delayTime = Vector3.Distance(target.enemy.transform.position, newTarget.transform.position) / _velocity;
-                 * 
-                 * yeild return new WaitForSeconds(dealyTime);
-                 * end while loop
-                */
+                bool hasAvailableTargetToHit = true;
+                int hitCount = 1;
+                LayerMask mask = LayerMask.GetMask("Enemy");
+
+                hitList.Add(target.enemy);
+
+                while (hasAvailableTargetToHit)
+                {
+                    if (hitCount >= attackerComponent.bounceHitLimit) hasAvailableTargetToHit = false;
+                    Enemy newTarget = null;
+                    Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
+
+                    foreach(var potentialTarget in potentialTargets)
+                    {
+                        Enemy enemy = potentialTarget.gameObject.GetComponent<Enemy>();
+                        if (hitList.Contains(enemy)) continue;
+
+                        if (newTarget == null) newTarget = enemy;
+                        else
+                        {
+                            float distanceFromTargetA = GenericUtility.CalculateDistance(transform.position, newTarget.transform.position);
+                            float distanceFromTargetB = GenericUtility.CalculateDistance(transform.position, enemy.transform.position);
+
+                            if (distanceFromTargetA > distanceFromTargetB) newTarget = enemy;
+                        }
+                    }
+
+                    if (newTarget == null)
+                    {
+                        hasAvailableTargetToHit = false;
+                        continue;
+                    }
+                    else
+                    {
+                        delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+                        
+                        yield return new WaitForSeconds(delayToTarget);
+
+                        if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
+                        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+
+                        newTarget.TakeDamage(damage);
+                        if (newTarget.CheckIfDead()) HandleNonTargetEnemyDeath(newTarget);
+
+                        hitList.Add(newTarget);
+                        hitCount++;
+                    }
+                }
+
+                hitList.Clear();
+
+                delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+
+                yield return new WaitForSeconds(delayToTarget);
             }
         }
 
@@ -76,10 +118,7 @@ public class AttackObject : MonoBehaviour
             foreach (Enemy enemyHit in areaHitTargets)
             {
                 enemyHit.TakeDamage(damage);
-                if (enemyHit.CheckIfDead())
-                {
-                    HandleNonTargetEnemyDeath(enemyHit);
-                }
+                if (enemyHit.CheckIfDead()) HandleNonTargetEnemyDeath(enemyHit);
             }
 
             ///Spray Tag
