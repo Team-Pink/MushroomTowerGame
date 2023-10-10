@@ -674,6 +674,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ~EnvThings~
       objectReference: {fileID: 0}
+    - target: {fileID: 418145679395481264, guid: 341fc19b61786e143b841b961fc35d62, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 418145679395481265, guid: 341fc19b61786e143b841b961fc35d62, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -2338,6 +2342,14 @@ PrefabInstance:
       propertyPath: waves.Array.data[0].enemyPrefabs.Array.data[0]
       value: 
       objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+    - target: {fileID: 4105631474352096952, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: gridWidth
+      value: 114.85179
+      objectReference: {fileID: 0}
+    - target: {fileID: 4105631474352096952, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: gridHeight
+      value: 114.85179
+      objectReference: {fileID: 0}
     - target: {fileID: 4915721120753536162, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
       value: Swamp Danger
@@ -2398,6 +2410,10 @@ PrefabInstance:
       propertyPath: targetPlane
       value: 
       objectReference: {fileID: 285150794}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: placeOnPaths
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: residualMenu
       value: 

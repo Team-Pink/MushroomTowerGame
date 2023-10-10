@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d956dcf30ef35df429e9dfbe809aebcb, type: 2}
+  - {fileID: 2100000, guid: 8ecabd1cbcfa5eb45a1b23b596613c8f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radiusDisplay: {fileID: 2366948552776975683}
   radiusMaterials:
-  - {fileID: 2100000, guid: d956dcf30ef35df429e9dfbe809aebcb, type: 2}
+  - {fileID: 2100000, guid: 8ecabd1cbcfa5eb45a1b23b596613c8f, type: 2}
   growthDuration: 5
   recoveryDuration: 2
   animator: {fileID: 0}
@@ -204,6 +204,7 @@ MonoBehaviour:
           e31: 0
           e32: 0
           e33: 0
+        bounce: 0
         attacking: 0
     - rid: 4335502593997406209
       type: {class: CloseTargeter, ns: , asm: Assembly-CSharp}
@@ -215,6 +216,8 @@ MonoBehaviour:
           serializedVersion: 2
           m_Bits: 0
         firingCone: 20
+        radiusMaterial: {fileID: 2100000, guid: 8ecabd1cbcfa5eb45a1b23b596613c8f, type: 2}
+        exclusionZoneRadius: 0
 --- !u!136 &7386576921632069825
 CapsuleCollider:
   m_ObjectHideFlags: 0

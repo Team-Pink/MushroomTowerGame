@@ -7,10 +7,26 @@ public abstract class EnemyTargeter : Targeter
     Quaternion defaultRotation = Quaternion.identity;
     HashSet<Target> bestTargets = new();
     public float firingCone = 20;
+
+    private bool radiusInitialised = false;
+    public Material radiusMaterial;
     public float exclusionZoneRadius = 0; // the variable that will exclude enemies from targets in range if they are in a radius around the tower
 
     public void GetTargetsInRange()
     {
+        if (!radiusInitialised)
+        {
+            if (radiusMaterial != null)
+            {
+                radiusMaterial.SetFloat("_Hole_Radius", exclusionZoneRadius / range);
+            }
+            else if (exclusionZoneRadius > 0)
+            {
+                Debug.LogError("An exclusion zone has been defined but no radius material is attached to modify.");
+            }
+            radiusInitialised = true;
+        }
+
         List<Collider> enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer).ToList();
         
         // Ensure dead enemies aren't included in checks

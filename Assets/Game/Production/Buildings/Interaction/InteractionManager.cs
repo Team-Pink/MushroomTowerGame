@@ -39,6 +39,7 @@ public class InteractionManager : MonoBehaviour
 
     [Header("Placement")]
     #region Placement Variables
+    [SerializeField] bool placeOnPaths;
     LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
@@ -412,7 +413,8 @@ public class InteractionManager : MonoBehaviour
 
     private void PlacingFromHubState()
     {
-        bool canPlace;
+        bool canPlace = false;
+        selectionIndicator.color = Color.red;
 
         targetBuilding = activeBud.transform.parent.GetComponent<Building>();
         DisplayBuildingRadius(out GameObject radiusDisplay);
@@ -421,30 +423,28 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
+
+        if (currentHit.collider is not null)
         {
-            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+            bool isPlaceable;
+            if (placeOnPaths) isPlaceable = !levelDataGrid.GetMuddyAtPoint(currentHit.point);
+            else isPlaceable = levelDataGrid.GetMuddyAtPoint(currentHit.point);
 
-            float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
-
-            bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
-
-            if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
+            if (isPlaceable)
             {
-                canPlace = true;
-                selectionIndicator.color = Color.green;
+                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+
+                float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+                bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
+
+                if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
+                {
+                    canPlace = true;
+                    selectionIndicator.color = Color.green;
+                }
             }
-            else
-            {
-                canPlace = false;
-                selectionIndicator.color = Color.red;
-            }
-        }
-        else
-        {
-            canPlace = false;
-            selectionIndicator.color = Color.red;
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
@@ -470,7 +470,6 @@ public class InteractionManager : MonoBehaviour
     {
         bool canPlace = false;
         bool placingPylon = false;
-
         selectionIndicator.color = Color.red;
 
         targetBuilding = activeBud.transform.parent.GetComponent<Building>();
@@ -480,26 +479,34 @@ public class InteractionManager : MonoBehaviour
             dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
+        if (currentHit.collider is not null)
         {
-            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
 
-            float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+            bool isPlaceable;
+            if (placeOnPaths) isPlaceable = !levelDataGrid.GetMuddyAtPoint(currentHit.point);
+            else isPlaceable = levelDataGrid.GetMuddyAtPoint(currentHit.point);
 
-            bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
-            bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
-
-            bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
-            bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
-
-            if (towerPlacementCriteria || pylonPlacementCriteria)
+            if (isPlaceable)
             {
-                canPlace = true;
-                selectionIndicator.color = Color.green;
+                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
 
-                if (pylonPlacementCriteria)
-                    placingPylon = true;
+                float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+                bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
+                bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
+
+                bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
+                bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
+
+                if (towerPlacementCriteria || pylonPlacementCriteria)
+                {
+                    canPlace = true;
+                    selectionIndicator.color = Color.green;
+
+                    if (pylonPlacementCriteria)
+                        placingPylon = true;
+                }
             }
         }
 
