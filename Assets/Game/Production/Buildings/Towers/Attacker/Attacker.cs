@@ -31,7 +31,7 @@ public class Attacker
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
-    [SerializeField] bool lobProjectile;
+    [SerializeField]protected  bool lobProjectile;
 
     #region TAGS
     [Header("Spray Tag")]
