@@ -10,7 +10,8 @@ public class Attacker
     public float attackCooldown = 3;
     public float cooldownTimer = 0f;
 
-    public float attackDelay = 2;
+    public float attackSpeed = 1;
+    public float attackDelay = 2; // this is the time it takes for an attack to reach a target.
     protected float delayTimer = 0f;
 
     public float animationLeadIn = 0f;
@@ -98,7 +99,7 @@ public class Attacker
     }
 
     /// <summary>
-    /// Instantiates an AttackObject assigns it's values and animates an attack.
+    /// Instantiates an AttackObject assigns it's universal values.
     /// </summary>
     protected AttackObject GenerateAttackObject(Target enemy)
     {
@@ -120,5 +121,15 @@ public class Attacker
         if (animator == null) return;
 
         animator.SetTrigger("Attack");
+    }
+
+    /// <summary>
+    /// uses distance to target and attackSpeed to calculate the travel time of an attack to it's target.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="originPos"></param>
+    public void CalcTimeToTarget(Target target, Vector3 originPos)
+    {       
+        attackDelay = Vector3.Distance(originPos, target.position) / attackSpeed;       
     }
 }
