@@ -39,81 +39,13 @@ public class AttackObject : MonoBehaviour
             ///Strikethrough Tag
             if (attackerComponent.strikethrough)
             {
-                if (tagSpecificEnemiesHit.Count < 1)
-                    Debug.LogError("No Enemies Detected Please Resolve");
-
-                foreach (var enemy in tagSpecificEnemiesHit)
-                {
-                    enemy.TakeDamage(tagSpecificDamage);
-                    
-                    HandleNonTargetEnemyDeath(enemy);
-                }   
+                Stikethrough();
             }
-            //attackerComponent.bounce = true;
+
+            attackerComponent.bounce = true;
             if (attackerComponent.bounce)
             {
-                _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
-                List<Enemy> hitList = new List<Enemy>();
-
-                bool hasAvailableTargetToHit = true;
-                int hitCount = 1;
-                LayerMask mask = LayerMask.GetMask("Enemy");
-                attackerComponent.bounceHitLimit = 1000;
-
-                hitList.Add(target.enemy);
-
-                while (hasAvailableTargetToHit)
-                {
-                    if (hitCount >= attackerComponent.bounceHitLimit)
-                    {
-                        hasAvailableTargetToHit = false;
-                        continue;
-                    }
-                    Enemy newTarget = null;
-                    Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
-
-                    foreach(var potentialTarget in potentialTargets)
-                    {
-                        Enemy enemy = potentialTarget.gameObject.GetComponent<Enemy>();
-                        if (hitList.Contains(enemy)) continue;
-
-                        if (newTarget == null) newTarget = enemy;
-                        else
-                        {
-                            float distanceFromTargetA = GenericUtility.CalculateDistance(transform.position, newTarget.transform.position);
-                            float distanceFromTargetB = GenericUtility.CalculateDistance(transform.position, enemy.transform.position);
-
-                            if (distanceFromTargetA > distanceFromTargetB) newTarget = enemy;
-                        }
-                    }
-
-                    if (newTarget == null)
-                    {
-                        hasAvailableTargetToHit = false;
-                        continue;
-                    }
-                    else
-                    {
-                        delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
-                        
-                        yield return new WaitForSeconds(delayToTarget);
-
-                        if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
-                        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
-
-                        newTarget.TakeDamage(damage);
-                        if (newTarget.CheckIfDead()) HandleNonTargetEnemyDeath(newTarget);
-
-                        hitList.Add(newTarget);
-                        hitCount++;
-                    }
-                }
-
-                hitList.Clear();
-
-                delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
-
-                yield return new WaitForSeconds(delayToTarget);
+                StartCoroutine(Bounce(attackerComponent));
             }
         }
 
@@ -129,15 +61,7 @@ public class AttackObject : MonoBehaviour
             ///Spray Tag
             if (attackerComponent.spray)
             {
-                if (tagSpecificEnemiesHit is null)
-                    Debug.LogError("No Enemies Detected Please Resolve");
-
-                foreach (Enemy enemyHit in tagSpecificEnemiesHit)
-                {
-                    enemyHit.TakeDamage(tagSpecificDamage);
-                    
-                    HandleNonTargetEnemyDeath(enemyHit);
-                }
+                Spray();
             }
         }
 
@@ -185,6 +109,98 @@ public class AttackObject : MonoBehaviour
             originTower.storedExperience += enemy.expValue;
             enemy.expValue = 0;
             enemy.OnDeath(); // enemy on death
+        }
+    }
+
+    void Stikethrough()
+    {
+        if (tagSpecificEnemiesHit.Count < 1)
+            Debug.LogError("No Enemies Detected Please Resolve");
+
+        foreach (var enemy in tagSpecificEnemiesHit)
+        {
+            enemy.TakeDamage(tagSpecificDamage);
+
+            HandleNonTargetEnemyDeath(enemy);
+        }
+    }
+
+    IEnumerator Bounce(Attacker attackerComponent) //turn to void and make it spawn a new attack object instead of dealing dmg to nearest enemy.
+    {
+        _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
+        List<Enemy> hitList = new List<Enemy>();
+
+        bool hasAvailableTargetToHit = true;
+        int hitCount = 1;
+        LayerMask mask = LayerMask.GetMask("Enemy");
+        attackerComponent.bounceHitLimit = 1000;
+
+        hitList.Add(target.enemy);
+
+        while (hasAvailableTargetToHit)
+        {
+            if (hitCount >= attackerComponent.bounceHitLimit)
+            {
+                hasAvailableTargetToHit = false;
+                continue;
+            }
+            Enemy newTarget = null;
+            Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
+
+            foreach (var potentialTarget in potentialTargets)
+            {
+                Enemy enemy = potentialTarget.gameObject.GetComponent<Enemy>();
+                if (hitList.Contains(enemy) || enemy.CheckIfDead()) continue;
+
+                if (newTarget == null) newTarget = enemy;
+                else
+                {
+                    float distanceFromTargetA = GenericUtility.CalculateDistance(transform.position, newTarget.transform.position);
+                    float distanceFromTargetB = GenericUtility.CalculateDistance(transform.position, enemy.transform.position);
+
+                    if (distanceFromTargetA > distanceFromTargetB) newTarget = enemy;
+                }
+            }
+
+            if (newTarget == null)
+            {
+                hasAvailableTargetToHit = false;
+                continue;
+            }
+            else
+            {
+                delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+
+                yield return new WaitForSeconds(delayToTarget);
+
+                if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
+                if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+
+                newTarget.TakeDamage(damage);
+                if (newTarget.CheckIfDead()) HandleNonTargetEnemyDeath(newTarget);
+
+                hitList.Add(newTarget);
+                hitCount++;
+            }
+        }
+
+        hitList.Clear();
+
+        delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+
+        yield return new WaitForSeconds(delayToTarget);
+    }
+
+    void Spray()
+    {
+        if (tagSpecificEnemiesHit is null)
+            Debug.LogError("No Enemies Detected Please Resolve");
+
+        foreach (Enemy enemyHit in tagSpecificEnemiesHit)
+        {
+            enemyHit.TakeDamage(tagSpecificDamage);
+
+            HandleNonTargetEnemyDeath(enemyHit);
         }
     }
 }
