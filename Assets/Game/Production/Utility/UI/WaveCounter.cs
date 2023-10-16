@@ -64,7 +64,7 @@ public class WaveCounter : MonoBehaviour
             bits[i] = new FallingBit(bitParent.GetChild(i).gameObject);
         }
 
-        counterBits.transform.position = transform.position -= new Vector3(0, counterBits.rectTransform.rect.height, 0);
+        //counterBits.transform.position = transform.position -= new Vector3(0, counterBits.rectTransform.rect.height, 0);
 
     }
 
