@@ -18,6 +18,11 @@ public class AttackObject : MonoBehaviour
     #region TAG SPECIFIC
     public int tagSpecificDamage;
     public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
+
+    //Bounce Tag
+    List<Enemy> hitList = new List<Enemy>();
+    bool returningToTower = false;
+    float returnToTowerTime = 0;
     float _velocity = 0;
     #endregion
 
@@ -26,6 +31,7 @@ public class AttackObject : MonoBehaviour
     public IEnumerator CommenceAttack(float animationDelay = 0.0f)
     {
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
+
         // play impact animation
         if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
         if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
@@ -45,7 +51,7 @@ public class AttackObject : MonoBehaviour
             attackerComponent.bounce = true;
             if (attackerComponent.bounce)
             {
-                StartCoroutine(Bounce(attackerComponent));
+                Bounce(attackerComponent);
             }
         }
 
@@ -66,6 +72,12 @@ public class AttackObject : MonoBehaviour
         }
 
         HandleTargetEnemyDeath();
+
+        if (originTower.AttackerComponent.bounce && returningToTower)
+        {
+            yield return new WaitForSeconds(returnToTowerTime);
+            originTower.AttackerComponent.bounceBulletTowersPossession = true;
+        }
 
         Destroy(gameObject); // Destroy this object
     }
@@ -125,70 +137,63 @@ public class AttackObject : MonoBehaviour
         }
     }
 
-    IEnumerator Bounce(Attacker attackerComponent) //turn to void and make it spawn a new attack object instead of dealing dmg to nearest enemy.
+    void Bounce(Attacker attackerComponent)
     {
-        _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
-        List<Enemy> hitList = new List<Enemy>();
-
-        bool hasAvailableTargetToHit = true;
-        int hitCount = 1;
-        LayerMask mask = LayerMask.GetMask("Enemy");
-        attackerComponent.bounceHitLimit = 1000;
+        if (_velocity <= 0)
+        {
+            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
+        }
 
         hitList.Add(target.enemy);
 
-        while (hasAvailableTargetToHit)
+        int hitCount = hitList.Count;
+        LayerMask mask = LayerMask.GetMask("Enemy");
+        attackerComponent.bounceHitLimit = 1000; //remove line when bounce is integrated with the tower editor
+
+        if (hitCount >= attackerComponent.bounceHitLimit)
         {
-            if (hitCount >= attackerComponent.bounceHitLimit)
-            {
-                hasAvailableTargetToHit = false;
-                continue;
-            }
-            Enemy newTarget = null;
-            Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
+            returningToTower = true;
+            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originTower.transform.position));
+            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
+            returnToTowerTime = timeToTower;
+            return;
+        }
 
-            foreach (var potentialTarget in potentialTargets)
-            {
-                Enemy enemy = potentialTarget.gameObject.GetComponent<Enemy>();
-                if (hitList.Contains(enemy) || enemy.CheckIfDead()) continue;
+        Enemy newTarget = null;
+        Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
 
-                if (newTarget == null) newTarget = enemy;
-                else
-                {
-                    float distanceFromTargetA = GenericUtility.CalculateDistance(transform.position, newTarget.transform.position);
-                    float distanceFromTargetB = GenericUtility.CalculateDistance(transform.position, enemy.transform.position);
+        foreach (var potentialTarget in potentialTargets)
+        {
+            Enemy enemy = potentialTarget.gameObject.GetComponent<Enemy>();
+            if (hitList.Contains(enemy) || enemy.CheckIfDead()) continue;
 
-                    if (distanceFromTargetA > distanceFromTargetB) newTarget = enemy;
-                }
-            }
-
-            if (newTarget == null)
-            {
-                hasAvailableTargetToHit = false;
-                continue;
-            }
+            if (newTarget == null) newTarget = enemy;
             else
             {
-                delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+                float distanceFromCurrentTargetA = GenericUtility.CalculateDistance(target.enemy.transform.position, newTarget.transform.position);
+                float distanceFromCurrentTargetB = GenericUtility.CalculateDistance(target.enemy.transform.position, enemy.transform.position);
 
-                yield return new WaitForSeconds(delayToTarget);
-
-                if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.enemy.transform.position, Quaternion.identity);
-                if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
-
-                newTarget.TakeDamage(damage);
-                if (newTarget.CheckIfDead()) HandleNonTargetEnemyDeath(newTarget);
-
-                hitList.Add(newTarget);
-                hitCount++;
+                if (distanceFromCurrentTargetA > distanceFromCurrentTargetB) newTarget = enemy;
             }
         }
 
-        hitList.Clear();
-
-        delayToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
-
-        yield return new WaitForSeconds(delayToTarget);
+        if (newTarget == null)
+        {
+            returningToTower = true;
+            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
+            returnToTowerTime = timeToTower;
+            return;
+        }
+        else
+        {
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            Target newTargetEnemy = new Target();
+            newTargetEnemy.enemy = newTarget;
+            AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
+            newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
+            originTower.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
+        }
     }
 
     void Spray()
@@ -202,6 +207,19 @@ public class AttackObject : MonoBehaviour
 
             HandleNonTargetEnemyDeath(enemyHit);
         }
+    }
+
+    AttackObject GenerateBounceAttackObject(Target enemy, float timeToNextTarget)
+    {
+        AttackObject attackInProgress = MonoBehaviour.Instantiate(originTower.GetAttackObjectPrefab()).GetComponent<AttackObject>();
+        attackInProgress.damage = damage;
+        attackInProgress.delayToTarget = timeToNextTarget;
+        attackInProgress.originTower = originTower;
+        attackInProgress.target = enemy;
+        attackInProgress.hitList = hitList;
+        attackInProgress.returningToTower = returningToTower;
+        attackInProgress._velocity = _velocity;
+        return attackInProgress;
     }
 }
 

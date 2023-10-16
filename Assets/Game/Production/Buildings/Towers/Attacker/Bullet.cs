@@ -17,6 +17,13 @@ public class Bullet : MonoBehaviour
     private float arcHeight = 40;
     Vector3 currentPos;
 
+    public void InitialiseForNonEnemies(Transform _transform)
+    {
+        startPos = transform.position;
+        targetTransform = _transform;
+        initialised = true;
+    }
+
     public void Initialise()
     {
         startPos = transform.position;

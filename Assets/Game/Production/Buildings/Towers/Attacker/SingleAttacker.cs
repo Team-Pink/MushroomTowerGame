@@ -7,6 +7,7 @@ public class SingleAttacker : Attacker
     {
         if (!attacking)
         {
+            bounceBulletTowersPossession = false;
             AnimateAttack();
 
             if (windupParticlePrefab != null)

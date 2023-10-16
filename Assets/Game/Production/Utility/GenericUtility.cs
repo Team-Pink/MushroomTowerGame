@@ -28,6 +28,13 @@ public static class GenericUtility
     {
         return time * velocity;
     }
+
+    /// <summary>
+    /// Uses the euclidean distance equation
+    /// </summary>
+    /// <param name="posA"></param>
+    /// <param name="posB"></param>
+    /// <returns></returns>
     public static float CalculateDistance(Vector3 posA, Vector3 posB)
     {
         return Mathf.Sqrt(Mathf.Pow(posB.x - posA.x, 2) + Mathf.Pow(posB.z - posA.z, 2));
