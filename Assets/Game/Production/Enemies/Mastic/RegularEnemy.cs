@@ -1,13 +1,18 @@
 public class RegularEnemy : Enemy
 {
+    bool hasAttacked;
     protected override void AttackState()
     {
-        if (!attackInProgress && !attackCoolingDown)
+        base.AttackState();
+
+        if (attackInProgress) hasAttacked = false;
+        if (!attackCoolingDown && !attackInProgress)
         {
+            if (hasAttacked) return;
+
             TakeDamage(damage);
             if(CheckIfDead()) OnDeath();
+            hasAttacked = true;
         }
-
-        base.AttackState();
     }
 }
