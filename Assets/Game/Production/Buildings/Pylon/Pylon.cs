@@ -134,6 +134,7 @@ public class Pylon : Building
 
     private void Start()
     {
+        bud = baseBud;
         CurrentHealth = pylonHealth;
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
@@ -147,6 +148,7 @@ public class Pylon : Building
     public void Enhance()
     {
         Enhanced = true;
+        bud = enhancedBud;
         if (!isResidual)
         {
             enhancedPylon.SetActive(true);
