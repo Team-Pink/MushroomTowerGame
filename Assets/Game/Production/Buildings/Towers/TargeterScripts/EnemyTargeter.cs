@@ -7,6 +7,7 @@ public abstract class EnemyTargeter : Targeter
     Quaternion defaultRotation = Quaternion.identity;
     HashSet<Target> bestTargets = new();
     public float firingCone = 20;
+    public float exclusionZoneRadius = 0; // the variable that will exclude enemies from targets in range if they are in a radius around the tower
 
     public void GetTargetsInRange()
     {
@@ -16,18 +17,17 @@ public abstract class EnemyTargeter : Targeter
         List<Collider> deadEnemyColliders = new();
         foreach (Collider enemyCollider in enemyColliders)
         {
-            if (enemyCollider.GetComponent<Enemy>().Dead)
+            if (enemyCollider.GetComponent<Enemy>().Dead || Vector3.Distance(enemyCollider.transform.position, transform.position) < exclusionZoneRadius)
             {
                 deadEnemyColliders.Add(enemyCollider);
             }
         }
-        foreach (Collider enemyCollider in deadEnemyColliders)
+        foreach (Collider enemyCollider in deadEnemyColliders) // the reason I'm doing it this way is that I can't modify enemyColliders in the above foreach loop
         {
             enemyColliders.Remove(enemyCollider);
-        }
+        } // a possible solution would be to have deadenemies move onto and exist on a different layer or just delete them upon death.
 
         targetsInRange.Clear();
-        bestTargets.Clear();
 
         if (enemyColliders == null) return;
 
@@ -51,7 +51,7 @@ public abstract class EnemyTargeter : Targeter
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
         {
-            bestTargets.Clear(); // discard best targets
+            bestTargets.Clear(); // discard best targets 
             foreach (Target target in targetsInRange)
             {
                 bestTargets.Add(target); // add any targets you can.
