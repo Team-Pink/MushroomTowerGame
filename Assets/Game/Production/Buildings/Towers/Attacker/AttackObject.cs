@@ -15,15 +15,17 @@ public class AttackObject : MonoBehaviour
     public GameObject hitParticlePrefab;
     public AudioClip hitSoundEffect;
 
-    #region TAG SPECIFIC
+    #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
     public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
 
+    #region BOUNCE
     //Bounce Tag
     List<Enemy> hitList = new List<Enemy>();
     bool returningToTower = false;
     float returnToTowerTime = 0;
     float _velocity = 0;
+    #endregion
     #endregion
 
     // private Animator
@@ -48,7 +50,6 @@ public class AttackObject : MonoBehaviour
                 Stikethrough();
             }
 
-            attackerComponent.bounce = true;
             if (attackerComponent.bounce)
             {
                 Bounce(attackerComponent);
@@ -73,11 +74,12 @@ public class AttackObject : MonoBehaviour
 
         HandleTargetEnemyDeath();
 
-        if (originTower.AttackerComponent.bounce && returningToTower)
+        
+        if (originTower.AttackerComponent.bounce && returningToTower) 
         {
             yield return new WaitForSeconds(returnToTowerTime);
             originTower.AttackerComponent.bounceBulletTowersPossession = true;
-        }
+        }//this is for bounce only to allow the tower to shoot again.
 
         Destroy(gameObject); // Destroy this object
     }
@@ -148,7 +150,6 @@ public class AttackObject : MonoBehaviour
 
         int hitCount = hitList.Count;
         LayerMask mask = LayerMask.GetMask("Enemy");
-        attackerComponent.bounceHitLimit = 1000; //remove line when bounce is integrated with the tower editor
 
         if (hitCount >= attackerComponent.bounceHitLimit)
         {
