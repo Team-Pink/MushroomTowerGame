@@ -259,9 +259,6 @@ public class InteractionManager : MonoBehaviour
         {
             if (timeHeld > interactHoldRequirement)
             {
-                if (startingMousePosition == Vector2.zero)
-                    startingMousePosition = mouseScreenPosition;
-
                 if (targetBuilding is Hub)
                 {
                     radiusDisplay.SetActive(false);
@@ -475,10 +472,12 @@ public class InteractionManager : MonoBehaviour
         currentHit = GetRayHit(placableLayers);
         if (currentHit.collider is not null)
         {
-
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = !levelDataGrid.GetMuddyAtPoint(currentHit.point);
             else isPlaceable = levelDataGrid.GetMuddyAtPoint(currentHit.point);
+
+            if (dragStartPosition == Vector3.zero)
+                dragStartPosition = currentHit.point;
 
             if (isPlaceable)
             {
@@ -807,6 +806,7 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
+        dragStartPosition = Vector3.zero;
         CurrentInteraction = InteractionState.None;
         timeHeld = 0.0f;
         interactKeyHeld = false;
