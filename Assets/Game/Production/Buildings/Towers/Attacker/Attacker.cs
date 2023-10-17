@@ -49,6 +49,8 @@ public class Attacker
 
     [Header("Bounce Tag")]
     public bool bounce = false;
+    public int bounceHitLimit = 10;
+    public bool bounceBulletTowersPossession = true;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -96,6 +98,54 @@ public class Attacker
             if (lobProjectile) bulletRef.parabola = true;
             bulletRef.Initialise();
         }
+    }
+
+    public void AnimateBounceProjectileToEnemy(Target startingTarget, Target targetEnemy, float timeToTarget)
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (bulletPrefab == null) return;
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityEngine.Object.Destroy(particle, 0.5f);
+        }
+
+        Bullet bulletRef;
+
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef.timeToTarget = timeToTarget;
+        bulletRef.target = targetEnemy;
+        if (lobProjectile) bulletRef.parabola = true;
+        bulletRef.Initialise();
+    }
+    public void AnimateBounceProjectileToTower(Target targetEnemy, float timeToTarget)
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (bulletPrefab == null) return;
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityEngine.Object.Destroy(particle, 0.5f);
+        }
+
+        Bullet bulletRef;
+
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef.timeToTarget = timeToTarget;
+        if (lobProjectile) bulletRef.parabola = true;
+        bulletRef.InitialiseForNonEnemies(originReference.transform);
     }
 
     /// <summary>

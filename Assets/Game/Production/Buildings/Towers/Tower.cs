@@ -184,11 +184,21 @@ public class Tower : Building
                 {
                     LockOnTag();
                 }
+                else if (attackerComponent.bounce)
+                    {
+                        if (attackerComponent.bounceBulletTowersPossession)
+                        {
+                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                        }
+                            
+                    }                    
                 else if (attackerComponent.CheckCooldownTimer())
                 {
                     CalcTimeToTarget(targets, transform.position);
                     attackerComponent.Attack(targets);
                 }
+                    
+
 
 
 
@@ -249,6 +259,15 @@ public class Tower : Building
         int tempExp = storedExperience;
         storedExperience = 0;
         return tempExp;
+    }
+
+    /// <summary>
+    /// literally exists because bounce needs to port it's own stuff for 
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetAttackObjectPrefab()
+    {
+        return attackObjectPrefab;
     }
 
     public void AccelerateTag()
