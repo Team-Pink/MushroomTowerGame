@@ -3,6 +3,7 @@ using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEditor;
 
 [Serializable]
 public class Condition
@@ -19,21 +20,23 @@ public class Condition
 
     public ConditionType type;
     public float value;
-    public float duration;
+    public float currentDuration;
+    public float totalDuration;
 
     public Condition(ConditionType typeInit, float valueInit, float durationInit)
     {
         type = typeInit;
         value = valueInit;
-        duration = durationInit;
+        currentDuration = durationInit;
+        totalDuration = durationInit;
     }
 
     public bool Duration()
     {
-        if (duration < 0)
+        if (currentDuration < 0)
             return true;
 
-        duration -= Time.deltaTime;
+        currentDuration -= Time.deltaTime;
         return false;
     }
 }
@@ -60,7 +63,7 @@ public class Enemy : MonoBehaviour
     public bool Dead { get => dead; protected set => dead = value; }
     #endregion
 
-    private readonly List<Condition> activeConditions;
+    private readonly List<Condition> activeConditions = new List<Condition>();
 
     #region Movement Values
     public struct BoidReference
@@ -127,6 +130,8 @@ public class Enemy : MonoBehaviour
 
     #region Attacking Values
     [Header("Attacking")]
+    protected Building targetBuilding;
+
     [SerializeField] protected int damage;
 
     [SerializeField] protected float attackCooldown = 0;
@@ -164,7 +169,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip attackAudio;
     [SerializeField] AudioClip deathAudio;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
@@ -178,6 +183,8 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         if (Dead) return;
+
+        ApplyConditionEffects();
 
         switch (state)
         {
@@ -202,7 +209,6 @@ public class Enemy : MonoBehaviour
         GetComponent<Rigidbody>().detectCollisions = true;
         Dead = false;
         state = EnemyState.Approach;
-
         //whatever else needs to be done before fully spawning in do within here
 
     }
@@ -237,19 +243,18 @@ public class Enemy : MonoBehaviour
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
+        state = EnemyState.None;
+
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
         GetComponent<Rigidbody>().detectCollisions = false;
-
         if (deathParticle != null)
         {
             GameObject particle = Instantiate(deathParticle, transform);
             particle.transform.position += new Vector3(0, particleOriginOffset, 0);
         }
-
-        state = EnemyState.None;
     }
     #endregion
 
@@ -278,6 +283,34 @@ public class Enemy : MonoBehaviour
                 activeConditions.Add(conditions[newIndex]);
         }
     }
+
+    void ApplyConditionEffects()
+    {
+        List<Condition> markedForRemoval = new();
+        foreach (Condition condition in activeConditions)
+        {
+            if (condition.type == Condition.ConditionType.Poison)
+            {
+                TakeDamage(condition.value * Time.deltaTime);
+
+                if (condition.Duration())
+                    markedForRemoval.Add(condition);
+            }
+            else if (condition.type == Condition.ConditionType.Slow)
+            {
+                if (condition.currentDuration == condition.totalDuration)
+                    speedModifiers.Add(condition.value); //not entirelly sure on how this is intentioned to work
+                if (condition.Duration())
+                {
+                    speedModifiers.Remove(condition.value);
+                    markedForRemoval.Add(condition);
+                }
+            }
+        }
+
+        foreach (Condition condition in markedForRemoval)
+            activeConditions.Remove(condition);
+    }
     #endregion
 
     #region Movement Logic
@@ -288,6 +321,7 @@ public class Enemy : MonoBehaviour
         {
             rigidbody.velocity = Vector2.zero;
             state = EnemyState.Attack;
+            targetBuilding = hub;
             neighbourhood.Clear();
             return;
         }
@@ -411,6 +445,7 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
+                Debug.Log(name + " has dealt damage to the hub");
                 AttackAudio();
                 attackInProgress = false;
             }
@@ -437,7 +472,7 @@ public class Enemy : MonoBehaviour
         AudioManager.PlaySoundEffect(attackAudio.name, 0);
     }
 
-
+    #region No Mans Land
     /*
 
     protected virtual void CustomAwakeEvents()
@@ -546,4 +581,5 @@ public class Enemy : MonoBehaviour
     [SerializeField] bool showLevers;
     #endregion
     */
+    #endregion
 }

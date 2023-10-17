@@ -11,11 +11,8 @@ public class Hub : Building
     private float currentHealth;
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
-    [SerializeField] Text hubHealthText;
 
     public MeshRenderer healthDisplay;
-    public float healthDisplayWindow = 2.0f;
-    private float healthDisplayActiveTime;
 
     
     public PylonList connectedPylons;
@@ -48,17 +45,7 @@ public class Hub : Building
                 RestartScene();
         }
 
-        if (healthDisplayActiveTime < healthDisplayWindow)
-        {
-            healthDisplayActiveTime += deltaTime;
 
-            if (healthDisplayActiveTime >= healthDisplayWindow)
-            {
-                healthDisplay.enabled = false;
-            }
-        }
-
-        hubHealthText.text = currentHealth.ToString();
 
         ClearDestroyedPylons();
         connectedPylonsCount = pylonCount;
@@ -68,8 +55,7 @@ public class Hub : Building
     {
         currentHealth -= damageAmount;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
-        healthDisplay.enabled = true;
-        healthDisplayActiveTime = 0;
+        if (!healthDisplay.enabled) healthDisplay.enabled = true;
     }
 
     private void RestartScene() => LoadScene(GetActiveScene().name);
