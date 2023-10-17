@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 10
+  maxHealth: 4
   health: 0
   dead: 0
   speed: 2
@@ -160,13 +160,11 @@ MonoBehaviour:
     cohesionStrength: 0.1
     seperationRange: 1.5
     seperationStrength: 2
-    avoidanceRange: 1.25
-    avoidanceStrength: 2.5
-  damage: 10
+  damage: 3
   attackCooldown: 0
   attackDelay: 0.5
   attackRadius: 3
-  bugBits: 2
+  bugBits: 1
   expValue: 1
   animator: {fileID: 6916185956099597753}
   levelData: {fileID: 0}
