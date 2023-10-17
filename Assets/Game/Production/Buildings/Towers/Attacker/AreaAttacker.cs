@@ -67,7 +67,6 @@ public class AreaAttacker : Attacker
         cooldownTimer = 0f;
         delayTimer = 0f;
         attacking = false;
-        targetsToShoot.Clear();
     }
 
     HashSet<Enemy> Spray(Target target, Collider[] mainCollisions, LayerMask layerMask)

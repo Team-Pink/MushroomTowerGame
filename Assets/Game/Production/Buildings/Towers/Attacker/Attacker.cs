@@ -95,9 +95,11 @@ public class Attacker
             bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
-            if (lobProjectile) bulletRef.parabola = true;
-            bulletRef.Initialise();
+            if (lobProjectile) bulletRef.InitializeNoTrackParabolaBullet(target.position);
+            else bulletRef.Initialise();
+            
         }
+        targetsToShoot.Clear();
     }
 
     public void AnimateBounceProjectileToEnemy(Target startingTarget, Target targetEnemy, float timeToTarget)

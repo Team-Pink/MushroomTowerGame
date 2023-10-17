@@ -18,7 +18,18 @@ public class Bullet : MonoBehaviour
     private float arcHeight = 40;
     Vector3 currentPos;
 
-    public void InitialiseForNonEnemies(Transform _transform)
+    /// <summary>
+    /// Do not use this on moving targets this does not track.
+    /// </summary>
+    public void InitializeNoTrackParabolaBullet(Vector3 pos)
+    {
+        startPos = transform.position;
+        targetPos = pos;
+        parabola = true;
+        initialised = true;
+    }
+
+    public void InitialiseForNonEnemies(Transform _transform) // what do you mean by non enemies
     {
         startPos = transform.position;
         targetTransform = _transform;
@@ -38,7 +49,12 @@ public class Bullet : MonoBehaviour
         if (!initialised) return;
 
         if (parabola) MoveParabola();
-        else MoveStraightToTarget();
+        else
+        {
+            if (!targetTransform)
+                Destroy(gameObject);
+            MoveStraightToTarget();
+        }
 
         if (timeElapsed >= timeToTarget)
         {
@@ -49,6 +65,7 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
+
         targetPos = targetTransform.position;
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
