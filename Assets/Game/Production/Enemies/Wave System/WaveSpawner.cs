@@ -106,8 +106,6 @@ public class WaveSpawner : MonoBehaviour
             elapsedSecondsBetweenWaves = 0.0f;
 
             waveIndicator.gameObject.SetActive(false);
-
-            GenericUtility.DestroyAllChildren(parentFolder.transform);
         }
         else
         {
@@ -154,6 +152,8 @@ public class WaveSpawner : MonoBehaviour
 
                 waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
                 waveIndicator.gameObject.SetActive(true);
+
+                GenericUtility.DestroyAllDeadChildren(parentFolder.transform);
             }
             else
             {

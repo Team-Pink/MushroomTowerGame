@@ -16,15 +16,6 @@ public class PylonAttacker : Enemy
 
     LayerMask mask = new();
 
-    public override void SpawnIn()
-    {
-        mask = LayerMask.GetMask("Pylon");
-
-        base.SpawnIn();
-    }
-
-
-
     protected override void ApproachState()
     {
         base.ApproachState(); //move towards the hub (either gonna have at the start or the end of the function)

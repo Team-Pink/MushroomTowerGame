@@ -3,7 +3,7 @@ using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using UnityEditor;
+
 
 [Serializable]
 public class Condition
@@ -11,32 +11,31 @@ public class Condition
     public enum ConditionType
     {
         None,
-        Infection,
         Poison,
-        Slow,
-        Stagger,
-        Vulnerability
+        Slow
     }
 
     public ConditionType type;
     public float value;
-    public float currentDuration;
+    [HideInInspector] public float currentDuration;
     public float totalDuration;
+    [HideInInspector] public bool applied;
 
     public Condition(ConditionType typeInit, float valueInit, float durationInit)
     {
         type = typeInit;
         value = valueInit;
-        currentDuration = durationInit;
         totalDuration = durationInit;
+        applied = false;
     }
 
     public bool Duration()
     {
-        if (currentDuration < 0)
+        if (currentDuration >= totalDuration)
             return true;
+        else
+            currentDuration += Time.deltaTime;
 
-        currentDuration -= Time.deltaTime;
         return false;
     }
 }
@@ -146,6 +145,7 @@ public class Enemy : MonoBehaviour
     protected bool attackCoolingDown = false;
     #endregion
 
+    #region OTHER VALUES
     // Drops
     [Header("Drops")]
     [SerializeField] int bugBits = 2;
@@ -169,6 +169,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip attackAudio;
     [SerializeField] AudioClip deathAudio;
 
+    #endregion
+
     protected virtual void Awake()
     {
         transform = GetComponent<Transform>();
@@ -184,7 +186,7 @@ public class Enemy : MonoBehaviour
     {
         if (Dead) return;
 
-        ApplyConditionEffects();
+        ExecuteConditionEffects();
 
         switch (state)
         {
@@ -198,19 +200,6 @@ public class Enemy : MonoBehaviour
                 AttackState();
                 break;
         }
-    }
-
-    public virtual void SpawnIn()
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.SetActive(true);
-        }
-        GetComponent<Rigidbody>().detectCollisions = true;
-        Dead = false;
-        state = EnemyState.Approach;
-        //whatever else needs to be done before fully spawning in do within here
-
     }
 
     #region Health Logic
@@ -261,6 +250,7 @@ public class Enemy : MonoBehaviour
     #region Condition Logic
     public void ApplyConditions(Condition[] conditions)
     {
+        
         for (int newIndex = 0; newIndex < conditions.Length; newIndex++)
         {
             bool shouldApply = true;
@@ -280,11 +270,14 @@ public class Enemy : MonoBehaviour
             }
 
             if (shouldApply)
+            {
                 activeConditions.Add(conditions[newIndex]);
+                conditions[newIndex].applied = false;
+            }
         }
     }
 
-    void ApplyConditionEffects()
+    void ExecuteConditionEffects()
     {
         List<Condition> markedForRemoval = new();
         foreach (Condition condition in activeConditions)
@@ -295,18 +288,22 @@ public class Enemy : MonoBehaviour
 
                 if (condition.Duration())
                     markedForRemoval.Add(condition);
-            }
+            }//POISON CONDITION
             else if (condition.type == Condition.ConditionType.Slow)
             {
-                if (condition.currentDuration == condition.totalDuration)
-                    speedModifiers.Add(condition.value); //not entirelly sure on how this is intentioned to work
+                if (condition.applied == false)
+                {
+                    speedModifiers.Add(condition.value);
+                    condition.applied = true;
+                }
+                    
                 if (condition.Duration())
                 {
                     speedModifiers.Remove(condition.value);
                     markedForRemoval.Add(condition);
                 }
-            }
-        }
+            }//SLOW CONDITION
+        }//CONDITIONS
 
         foreach (Condition condition in markedForRemoval)
             activeConditions.Remove(condition);
