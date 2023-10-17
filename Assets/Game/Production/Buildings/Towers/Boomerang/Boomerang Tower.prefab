@@ -105,7 +105,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441037].bounce
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441037].damage
@@ -164,6 +164,10 @@ PrefabInstance:
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441037].bounceSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441037].sprayDamage
       value: 0
       objectReference: {fileID: 0}
@@ -200,6 +204,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441037].bounceHitLimit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441037].animationLeadIn
       value: 1.5
       objectReference: {fileID: 0}
@@ -233,10 +241,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441037].strikethroughReach
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441035].exclusionZoneRadius
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
@@ -331,9 +335,9 @@ PrefabInstance:
       propertyPath: managedReferences[4951535851181441037].strikethroughMatrix.e33
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2366948552776975683, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441037].bounceBulletTowersPossession
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5109823546609926884, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: m_Name

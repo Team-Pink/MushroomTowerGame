@@ -7,6 +7,7 @@ public class SingleAttacker : Attacker
     {
         if (!attacking)
         {
+            
             AnimateAttack();
 
             if (windupParticlePrefab != null)
@@ -17,6 +18,7 @@ public class SingleAttacker : Attacker
             }
 
             attacking = true;
+            bounceBulletTowersPossession = false;
 
             foreach (var target in targets)
             {
