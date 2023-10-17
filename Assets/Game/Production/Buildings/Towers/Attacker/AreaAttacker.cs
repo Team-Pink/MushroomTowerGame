@@ -35,12 +35,6 @@ public class AreaAttacker : Attacker
                 areaAttack.hitParticlePrefab = hitParticlePrefab;
                 areaAttack.hitSoundEffect = attackHitSoundEffect;
 
-                if(lobProjectile)
-                {
-                    areaAttack.noTracking = true;
-                }
-
-
                 areaAttack.areaHitTargets = new(); 
                 areaAttack.damageRadius = damageRadius;
                 areaAttack.mask = mask;
@@ -53,9 +47,16 @@ public class AreaAttacker : Attacker
                     areaAttack.tagSpecificEnemiesHit = Spray(target, mainCollisions, mask);
                 }
                 #endregion
+                
+                if(lobProjectile)
+                {
+                    areaAttack.noTracking = true;
+                    targetsToShoot.Add(new Target(new Vector3() + target.position, null));
+                }
+                else targetsToShoot.Add(target);
 
                 areaAttack.StartCoroutine(areaAttack.CommenceAttack(animationLeadIn));
-                targetsToShoot.Add(target);
+                
             }
         }
 
