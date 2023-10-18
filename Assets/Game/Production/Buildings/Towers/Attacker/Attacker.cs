@@ -33,6 +33,7 @@ public class Attacker
     public Animator animator;
 
     [SerializeField]protected  bool lobProjectile;
+   
 
     #region TAGS
     [Header("Spray Tag")]
@@ -123,7 +124,6 @@ public class Attacker
         bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
         bulletRef.timeToTarget = timeToTarget;
         bulletRef.target = targetEnemy;
-        if (lobProjectile) bulletRef.parabola = true;
         bulletRef.Initialise();
     }
     public void AnimateBounceProjectileToTower(Target targetEnemy, float timeToTarget)

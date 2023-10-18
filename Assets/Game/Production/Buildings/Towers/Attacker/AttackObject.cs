@@ -50,6 +50,9 @@ public class AttackObject : MonoBehaviour
 
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
 
+        if (!target.enemy)
+            Destroy(gameObject);
+
         // play impact animation
         
         if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);

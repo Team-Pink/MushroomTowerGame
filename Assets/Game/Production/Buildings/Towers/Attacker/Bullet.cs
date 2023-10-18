@@ -51,8 +51,8 @@ public class Bullet : MonoBehaviour
         if (parabola) MoveParabola();
         else
         {
-            if (!targetTransform)
-                Destroy(gameObject);
+
+
             MoveStraightToTarget();
         }
 
@@ -65,7 +65,6 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-
         targetPos = targetTransform.position;
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
