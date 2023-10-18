@@ -52,7 +52,6 @@ public class SingleAttacker : Attacker
         delayTimer = 0;
         cooldownTimer = 0;
         attacking = false;
-        targetsToShoot.Clear();
     }
 
     HashSet<Enemy> Strikethrough(Target target)
