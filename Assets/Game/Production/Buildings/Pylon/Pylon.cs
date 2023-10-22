@@ -5,7 +5,11 @@ using BuildingList = System.Collections.Generic.List<Building>;
 public class Pylon : Building
 {
     public MeshRenderer healthDisplay;
-    private bool isResidual;
+    public bool isResidual
+    {
+        get;
+        private set;
+    }
 
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
@@ -63,7 +67,8 @@ public class Pylon : Building
             if (currentHealth <= float.Epsilon)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
-                ToggleResidual(true);
+                if (CanTurnIntoResidual())
+                    ToggleResidual(true);
             }
         }
     }
@@ -141,6 +146,9 @@ public class Pylon : Building
     private void Update()
     {
         GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
+
+        if (isResidual && connectedPylonsCount == 0 && connectedTowersCount == 0)
+            Destroy(gameObject);
     }
 
 
@@ -163,7 +171,6 @@ public class Pylon : Building
     {
         connectedBuildings.Add(building);
     }
-
     public void RemoveBuilding(Building building)
     {
         connectedBuildings.Remove(building);
@@ -260,6 +267,14 @@ public class Pylon : Building
             pylonResidual.SetActive(isResidual);
         }
     }
+    public bool CanTurnIntoResidual()
+    {
+        if (connectedBuildings.Count > 0)
+            return true;
+        else
+            Destroy(gameObject);
+        return false;
+    }
 
     #region PYLON COST
     public int GetPylonCost()
@@ -286,34 +301,73 @@ public class Pylon : Building
     {
         return baseCost;
     }
+    public int GetPylonSellAmount()
+    {
+        if (isResidual == false)
+            return (int)((baseCost * costMultiplier) * sellReturnPercent);
+        else
+            return 0;
+    }
+    public int GetPylonSellAllAmount()
+    {
+        int returnCost = 0;
+        List<Pylon> openList = new List<Pylon>();
+        List<Pylon> closeList = new List<Pylon>();
+        bool exitLoop = false;
+
+        openList.Add(this);
+
+        while(!exitLoop)
+        {
+            if (openList.Count == 0)
+            {
+                exitLoop = true;
+                continue;
+            }
+
+            Pylon pylon = openList[0];
+            foreach(Building building in pylon.connectedBuildings)
+            {
+                if (building is Pylon)
+                    openList.Add(building as Pylon);
+                else
+                    returnCost += (building as Tower).SellPrice();
+
+                if(pylon.isResidual == false)
+                    returnCost += pylon.GetPylonSellAmount();
+
+                openList.Remove(pylon);
+            }
+        }
+        
+        return returnCost;
+    }
     #endregion
 
 
     public override void Sell()
     {
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
+        if (!isResidual)
+            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
         if (connectedBuildings.Count > 0)
-        {
             ToggleResidual(true);
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
-
     public void SellAll()
     {
         SellAllConnectedBuildings();
 
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
+        if (!isResidual)
+            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
         Sell();
     }
-
     public void SellAllConnectedBuildings()
     {
         while (connectedBuildings.Count > 0)
