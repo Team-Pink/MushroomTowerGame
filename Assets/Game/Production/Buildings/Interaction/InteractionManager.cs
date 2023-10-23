@@ -629,6 +629,7 @@ public class InteractionManager : MonoBehaviour
         if (parent is Hub)
         {
             Hub parentHub = parent as Hub;
+            pylonMultiplier = 1;
             cost = Pylon.GetPylonBaseCurrency();
             parentHub.ClearDestroyedPylons();
             notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;

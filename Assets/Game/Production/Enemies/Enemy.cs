@@ -19,6 +19,7 @@ public class Condition
     public float value;
     [HideInInspector] public float currentDuration;
     public float totalDuration;
+    [HideInInspector] public float timer;
     [HideInInspector] public bool applied;
 
     public Condition(ConditionType typeInit, float valueInit, float durationInit)
@@ -27,6 +28,7 @@ public class Condition
         value = valueInit;
         totalDuration = durationInit;
         applied = false;
+        currentDuration = 0;
     }
 
     public bool Duration()
@@ -271,7 +273,10 @@ public class Enemy : MonoBehaviour
 
             if (shouldApply)
             {
-                activeConditions.Add(conditions[newIndex]);
+
+                Condition detailCondition = conditions[newIndex];
+                Condition condition = new Condition(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
+                activeConditions.Add(condition);
                 conditions[newIndex].applied = false;
             }
         }
@@ -285,6 +290,12 @@ public class Enemy : MonoBehaviour
             if (condition.type == Condition.ConditionType.Poison)
             {
                 TakeDamage(condition.value * Time.deltaTime);
+
+                if (CheckIfDead())
+                {
+                    OnDeath();
+                    return;
+                }
 
                 if (condition.Duration())
                     markedForRemoval.Add(condition);
@@ -303,6 +314,7 @@ public class Enemy : MonoBehaviour
                     markedForRemoval.Add(condition);
                 }
             }//SLOW CONDITION
+            
         }//CONDITIONS
 
         foreach (Condition condition in markedForRemoval)
@@ -468,115 +480,4 @@ public class Enemy : MonoBehaviour
     {
         AudioManager.PlaySoundEffect(attackAudio.name, 0);
     }
-
-    #region No Mans Land
-    /*
-
-    protected virtual void CustomAwakeEvents()
-    {
-
-    }
-
-    private void Awake()
-    {
-        points = pathToFollow.GetPoints();
-
-        CustomAwakeEvents();
-    }
-
-
-    protected virtual void Playing()
-    {
-
-        healthText.text = CurrentHealth.ToString();
-
-        if (AttackMode)
-        {
-            AttackHub();
-            return;
-        }
-
-        Travel();
-    }
-
-
-    #region ALIVE STATUS
-    [Header("Health")]
-    [SerializeField] Text healthText;
-
-    // this is specifically for the ondeath function to replace the functionality of checking
-    // health <= 0, and so that OnDeath() can only run once.
-
-    [Header("Provides On Death")]
-
-    #endregion
-
-    #region MOVEMENT
-    [Header("Movement")]
-    [SerializeField] protected LayerMask range;
-
-    public float mass
-    {
-        get;
-        protected set;
-    }
-
-    public Path pathToFollow;
-
-    float progress = 0.0f;
-    int currentPoint;
-    List<Vector3> points = new();
-
-    protected void Travel()
-    {
-        if (progress < 1)
-            progress += Time.deltaTime * speed;
-
-        if (currentPoint + 1 < points.Count)
-        {
-            if (speed > 0) RotateToFaceTravelDirection();
-            transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
-        }
-
-        if (progress >= 1)
-        {
-            if (currentPoint + 1 < points.Count)
-            {
-                progress = 0;
-                currentPoint++;
-            }
-            else
-                AttackMode = true;
-        }
-    }
-
-    private void RotateToFaceTravelDirection()
-    {
-        Vector3 lookDirection = (points[currentPoint + 1] - points[currentPoint]).normalized;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection), progress);
-    }
-    #endregion
-
-    #region Attacking
-    [Header("Attacking")]
-
-    //there are areas I can further optimise and clean up but that will be a later thing
-    protected virtual void AttackHub()
-    {
-
-    }
-    #endregion
-
-    #region MISC
-    [Space]
-
-    #endregion
-
-    #region DEBUG
-    [Header("Debug")]
-    [SerializeField] bool showPath;
-    [SerializeField] bool showLevers;
-    #endregion
-    */
-    #endregion
 }

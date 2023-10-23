@@ -277,30 +277,12 @@ public class Pylon : Building
     }
 
     #region PYLON COST
-    public int GetPylonCost()
-    {
-        return baseCost * (costMultiplier);
-    }
-    public int GetPylonCost(int instance)
-    {
-        return baseCost * (instance);
-    }
-    public int GetForceEnhanceCost()
-    {
-        return ForceEnhanceCost;
-    }
-    public int GetMultiplier()
-    {
-        return costMultiplier;
-    }
-    public void SetMultiplier(int number)
-    {
-        costMultiplier = number;
-    }
-    public static int GetPylonBaseCurrency()
-    {
-        return baseCost;
-    }
+    public int GetPylonCost() => baseCost * (costMultiplier);
+    public int GetPylonCost(int instance) => baseCost * (instance);
+    public int GetForceEnhanceCost() => ForceEnhanceCost;
+    public int GetMultiplier() => costMultiplier;
+    public void SetMultiplier(int number) => costMultiplier = number;
+    public static int GetPylonBaseCurrency() => baseCost;
     public int GetPylonSellAmount()
     {
         if (isResidual == false)
@@ -312,7 +294,6 @@ public class Pylon : Building
     {
         int returnCost = 0;
         List<Pylon> openList = new List<Pylon>();
-        List<Pylon> closeList = new List<Pylon>();
         bool exitLoop = false;
 
         openList.Add(this);
@@ -326,18 +307,27 @@ public class Pylon : Building
             }
 
             Pylon pylon = openList[0];
-            foreach(Building building in pylon.connectedBuildings)
+
+            if (pylon.connectedBuildings.Count <= 0)
+            {
+                if (pylon.isResidual == false)
+                    returnCost += pylon.GetPylonSellAmount();
+                openList.Remove(pylon);
+                continue;
+            }
+
+            foreach (Building building in pylon.connectedBuildings)
             {
                 if (building is Pylon)
                     openList.Add(building as Pylon);
                 else
                     returnCost += (building as Tower).SellPrice();
-
-                if(pylon.isResidual == false)
-                    returnCost += pylon.GetPylonSellAmount();
-
-                openList.Remove(pylon);
             }
+
+            if (pylon.isResidual == false)
+                returnCost += pylon.GetPylonSellAmount();
+
+            openList.Remove(pylon);
         }
         
         return returnCost;
@@ -360,12 +350,6 @@ public class Pylon : Building
     public void SellAll()
     {
         SellAllConnectedBuildings();
-
-        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-
-        if (!isResidual)
-            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
-
         Sell();
     }
     public void SellAllConnectedBuildings()
