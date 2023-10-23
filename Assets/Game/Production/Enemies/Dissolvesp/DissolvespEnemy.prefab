@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 12
+  maxHealth: 8
   health: 0
   dead: 0
   speed: 3
@@ -324,9 +324,8 @@ MonoBehaviour:
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
   attackAudio: {fileID: 8300000, guid: de122cde40614bd4bbc0ec1749f442cc, type: 3}
   deathAudio: {fileID: 8300000, guid: 2ff4d4c78e3b71c4fa6362f00b5b0acd, type: 3}
-  target: {fileID: 0}
   firingCone: 0.1
-  detectionRange: 15
+  detectionRange: 10
   turnSpeed: 1
   bullet: {fileID: 1819006839574022117}
   bulletSpeed: 0.5
