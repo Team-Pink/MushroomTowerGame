@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class PylonAttacker : Enemy
 {
@@ -11,7 +13,7 @@ public class PylonAttacker : Enemy
     [SerializeField, Range(0.1f, 1.0f)] float turnSpeed = 1;
 
     // garbage animation objects
-    [SerializeField] GameObject bullet;
+    [SerializeField] GameObject bulletPrefab;
     [SerializeField, Range(0.1f, 1.0f)] float bulletSpeed;
 
     LayerMask mask = new();
@@ -34,9 +36,9 @@ public class PylonAttacker : Enemy
         {
             if (collider.GetComponent<Pylon>() == null)
                 continue;
-        
+
             Pylon pylon = collider.GetComponent<Pylon>();
-        
+
             if (pylon.CurrentHealth > 0)
             {
                 targetBuilding = pylon;
@@ -70,7 +72,6 @@ public class PylonAttacker : Enemy
     {
         if (targetBuilding == null)
         {
-            ResetBullet();
             targetBuilding = FindNewTarget();
             return;
         }
@@ -85,7 +86,6 @@ public class PylonAttacker : Enemy
         //On Pylon Death or Deactivation
         if (pylonTarget.CurrentHealth <= 0)
         {
-            ResetBullet();
             targetBuilding = FindNewTarget();
             return;
         }
@@ -97,7 +97,7 @@ public class PylonAttacker : Enemy
             animator.SetTrigger("Attack");
             pylonTarget.CurrentHealth -= damage;
             attackInProgress = true;
-            bullet.SetActive(true);
+
         }
         else
         {
@@ -106,8 +106,6 @@ public class PylonAttacker : Enemy
 
             if (elapsedCooldown < attackCooldown) return;
 
-            bullet.SetActive(false);
-            ResetBullet();
             attackInProgress = false;
             elapsedCooldown = 0;
         }
@@ -126,16 +124,15 @@ public class PylonAttacker : Enemy
 
     void FireBullet()
     {
-        bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
+
+        Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef.timeToTarget = Vector3.Distance(transform.position, targetPylon.transform.position) * bulletSpeed; ;
+        bulletRef.InitializeNoTrackParabolaBullet(targetPylon.transform.position);
+
+        //bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
     }
 
-    void ResetBullet()
-    {
-        bullet.transform.position = transform.position;
-        bullet.SetActive(false);
-    }
-
-   Pylon FindNewTarget()
+    Pylon FindNewTarget()
     {
         Pylon pylon = null;
 
@@ -163,4 +160,10 @@ public class PylonAttacker : Enemy
             state = EnemyState.Approach;
         return pylon;
     }
+
+    //public IEnumerator DamagePylon(float attackDuration)
+    //{
+    //    yield return new WaitForSeconds(attackDuration);
+    //    pylonTarget.CurrentHealth -= damage;
+    //}
 }

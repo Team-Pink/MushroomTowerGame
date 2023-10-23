@@ -91,9 +91,7 @@ public class Attacker
                 UnityEngine.Object.Destroy(particle, 0.5f);
             }
 
-            Bullet bulletRef;
-
-            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+            Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
             if (lobProjectile) bulletRef.InitializeNoTrackParabolaBullet(target.position);
