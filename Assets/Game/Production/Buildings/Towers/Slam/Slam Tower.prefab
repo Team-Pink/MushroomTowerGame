@@ -24,6 +24,10 @@ PrefabInstance:
       value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: projectileSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: recoveryDuration
       value: 1
       objectReference: {fileID: 0}
@@ -430,15 +434,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
       propertyPath: m_LocalPosition.x
