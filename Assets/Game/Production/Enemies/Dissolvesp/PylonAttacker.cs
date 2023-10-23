@@ -9,6 +9,7 @@ public class PylonAttacker : Enemy
 
     //[SerializeField] Pylon targetBuilding;
     public float firingCone = 10;
+    private float attackDuration;
     [SerializeField] float detectionRange = 15;
     [SerializeField, Range(0.1f, 1.0f)] float turnSpeed = 1;
 
@@ -81,10 +82,8 @@ public class PylonAttacker : Enemy
             return;
         }
 
-        Pylon pylonTarget = targetBuilding.GetComponent<Pylon>();
-
         //On Pylon Death or Deactivation
-        if (pylonTarget.CurrentHealth <= 0)
+        if (targetPylon.CurrentHealth <= 0)
         {
             targetBuilding = FindNewTarget();
             return;
@@ -95,14 +94,16 @@ public class PylonAttacker : Enemy
         {
             AttackAudio();
             animator.SetTrigger("Attack");
-            pylonTarget.CurrentHealth -= damage;
+            //targetPylon.CurrentHealth -= damage;
+            FireBullet();
+            StartCoroutine(DamagePylon());
             attackInProgress = true;
 
         }
         else
         {
             elapsedCooldown += Time.deltaTime;
-            FireBullet();
+            
 
             if (elapsedCooldown < attackCooldown) return;
 
@@ -126,7 +127,7 @@ public class PylonAttacker : Enemy
     {
 
         Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-        bulletRef.timeToTarget = Vector3.Distance(transform.position, targetPylon.transform.position) * bulletSpeed; ;
+        bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetPylon.transform.position) * bulletSpeed; ;
         bulletRef.InitializeNoTrackParabolaBullet(targetPylon.transform.position);
 
         //bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
@@ -161,9 +162,9 @@ public class PylonAttacker : Enemy
         return pylon;
     }
 
-    //public IEnumerator DamagePylon(float attackDuration)
-    //{
-    //    yield return new WaitForSeconds(attackDuration);
-    //    pylonTarget.CurrentHealth -= damage;
-    //}
+    public IEnumerator DamagePylon()
+    {
+        yield return new WaitForSeconds(attackDuration);
+        targetPylon.CurrentHealth -= damage;
+    }
 }
