@@ -18,12 +18,14 @@ public class InstructionUI : MonoBehaviour
 
     public void OpenInst()
     {
+        Time.timeScale = 0;
         instructionPanel.SetActive(true);
         openInstButton.interactable = false;
     }
 
     public void CloseInst()
     {
+        Time.timeScale = 1;
         instructionPanel.SetActive(false);
         openInstButton.interactable = true;
     }

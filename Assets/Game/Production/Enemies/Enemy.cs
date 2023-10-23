@@ -152,7 +152,6 @@ public class Enemy : MonoBehaviour
     // Drops
     [Header("Drops")]
     [SerializeField] int bugBits = 2;
-    public int expValue = 1;
 
     // Components
     [Header("Components")]
@@ -186,6 +185,8 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         if (Dead) return;
 
         ApplyConditionEffects();

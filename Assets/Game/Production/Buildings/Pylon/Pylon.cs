@@ -15,37 +15,6 @@ public class Pylon : Building
     [SerializeField] GameObject deactivatedBasePylon;
     static readonly int baseCost = 10;
 
-    [Header("Enhancement")]
-    [SerializeField] bool enhanced;
-    public bool Enhanced
-    {
-        get;
-        private set;
-    }
-    [SerializeField] GameObject enhancedPylon;
-    [SerializeField] GameObject enhancedBud;
-    [SerializeField] GameObject deactivatedEnhancedPylon;
-    [SerializeField] GameObject pylonPlacementRange;
-    [SerializeField] int XPEnhanceRequirement = 2;
-    private int currentXP;
-    public int CurrentXP
-    {
-        get => currentXP;
-        set
-        {
-            currentXP = value;
-
-            if (currentXP >= XPEnhanceRequirement * costMultiplier)
-            {
-                Enhance();
-            }
-        }
-    }
-    private int ForceEnhanceCost
-    {
-        get => 2 * costMultiplier * baseCost;
-    }
-
     [Header("Destruction")]
     [SerializeField] float pylonHealth = 5;
     public float MaxHealth
@@ -144,23 +113,6 @@ public class Pylon : Building
         GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
     }
 
-
-    public void Enhance()
-    {
-        Enhanced = true;
-        bud = enhancedBud;
-        if (!isResidual)
-        {
-            enhancedPylon.SetActive(true);
-            enhancedBud.SetActive(true);
-        }
-
-        pylonPlacementRange.SetActive(true);
-
-        basePylon.SetActive(false);
-        baseBud.SetActive(false);
-    }
-
     public void AddBuilding(Building building)
     {
         connectedBuildings.Add(building);
@@ -180,18 +132,10 @@ public class Pylon : Building
             building.Deactivate();
         }
 
-        if (Enhanced)
-        {
-            deactivatedEnhancedPylon.SetActive(true);
-            enhancedPylon.SetActive(false);
-            enhancedBud.SetActive(false);
-        }
-        else
-        {
-            deactivatedBasePylon.SetActive(true);
-            basePylon.SetActive(false);
-            baseBud.SetActive(false);
-        }
+
+        deactivatedBasePylon.SetActive(true);
+        basePylon.SetActive(false);
+        baseBud.SetActive(false);
     }
     public override void Reactivate()
     {
@@ -202,18 +146,9 @@ public class Pylon : Building
             building.Reactivate();
         }
 
-        if (Enhanced)
-        {
-            deactivatedEnhancedPylon.SetActive(false);
-            enhancedPylon.SetActive(true);
-            enhancedBud.SetActive(true);
-        }
-        else
-        {
-            deactivatedBasePylon.SetActive(false);
-            basePylon.SetActive(true);
-            baseBud.SetActive(true);
-        }
+        deactivatedBasePylon.SetActive(false);
+        basePylon.SetActive(true);
+        baseBud.SetActive(true);
     }
 
     public void ToggleResidual(bool value)
@@ -235,32 +170,16 @@ public class Pylon : Building
             }
         }
 
-        if (Enhanced)
+        if (Active)
         {
-            if (Active)
-            {
-                enhancedPylon.SetActive(!isResidual);
-                enhancedBud.SetActive(!isResidual);
-            }
-            else
-            {
-                deactivatedEnhancedPylon.SetActive(!isResidual);
-            }
-            pylonResidual.SetActive(isResidual);
+            basePylon.SetActive(!isResidual);
+            baseBud.SetActive(!isResidual);
         }
         else
         {
-            if (Active)
-            {
-                basePylon.SetActive(!isResidual);
-                baseBud.SetActive(!isResidual);
-            }
-            else
-            {
-                deactivatedBasePylon.SetActive(!isResidual);
-            }
-            pylonResidual.SetActive(isResidual);
+            deactivatedBasePylon.SetActive(!isResidual);
         }
+        pylonResidual.SetActive(isResidual);
     }
 
     #region PYLON COST
@@ -271,10 +190,6 @@ public class Pylon : Building
     public int GetPylonCost(int instance)
     {
         return baseCost * (instance);
-    }
-    public int GetForceEnhanceCost()
-    {
-        return ForceEnhanceCost;
     }
     public int GetMultiplier()
     {
@@ -337,21 +252,6 @@ public class Pylon : Building
         }
     }
 
-    public override int GetTowerEXP()
-    {
-        if (!enhanced && connectedBuildings.Count > 0)
-        {
-            int total = 0;
-            foreach (Building building in connectedBuildings)
-            {
-                total += building.GetTowerEXP();
-            }
-            if (total > 0)
-                CurrentXP += total;
-        }
-
-        return base.GetTowerEXP();
-    }
     public void SellTower(Tower tower)
     {
         Debug.Log("Sold Tower", tower);

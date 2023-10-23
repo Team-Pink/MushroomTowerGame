@@ -34,7 +34,13 @@ public class InteractionManager : MonoBehaviour
     #region Building Selection Variables
     [SerializeField] LayerMask buildingLayers;
     private Building targetBuilding;
-    //private float interactionDuration = 0.0f;
+    [SerializeField] GameObject towerTooltips;
+    [SerializeField] TMP_Text towerName;
+    [SerializeField] string[] towerNames;
+    [SerializeField] TMP_Text towerDescription;
+    [SerializeField, TextArea] string[] towerDescriptions;
+    [SerializeField] GameObject towerRadiusPreviewPrefab;
+    private GameObject towerRadiusPreview;
     #endregion
 
     [Header("Placement")]
@@ -168,6 +174,8 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         mouseScreenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.1f);
         mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
 
@@ -306,6 +314,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void PylonMenuState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
+
         RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
@@ -320,24 +334,9 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost()))
-                {
-                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost());
-                    (targetBuilding as Pylon).Enhance();
-                }
-                else
-                {
-                    hoveredButton.color = buttonBaseColour;
-                    ResetInteraction();
-                    return;
-                }
-
-            } // Force Enhance
-            else if (hoveredButtonIndex == 1)
-            {
                 targetBuilding.Sell();
             } // Sell
-            else if (hoveredButtonIndex == 2)
+            else if (hoveredButtonIndex == 1)
             {
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
@@ -378,6 +377,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerMenuState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
+
         RadialMenu(towerMenu, towerMenuButtons, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
@@ -408,6 +413,12 @@ public class InteractionManager : MonoBehaviour
 
     private void PlacingFromHubState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
+
         bool canPlace = false;
         selectionIndicator.enabled = true;
         selectionIndicator.color = Color.red;
@@ -490,7 +501,7 @@ public class InteractionManager : MonoBehaviour
                 bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
 
                 bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
-                bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
+                bool pylonPlacementCriteria = inPylonBuildRange && spaceToPlace && spaceForPylon;
 
                 if (towerPlacementCriteria || pylonPlacementCriteria)
                 {
@@ -527,6 +538,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerSelectionState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
+
         targetBuilding.radiusDisplay.SetActive(false);
 
         TowerRadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
@@ -608,12 +625,6 @@ public class InteractionManager : MonoBehaviour
             cost = parentPylon.GetPylonCost(pylonMultiplier);
             
             notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
-
-            if (!parentPylon.Enhanced)
-            {
-                ResetInteraction();
-                return;
-            }
         }
 
         if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
@@ -799,6 +810,35 @@ public class InteractionManager : MonoBehaviour
                 radialButton.color = buttonBaseColour;
             }
         }
+
+        if (hoveredButtonIndex >= 0)
+        {
+            towerTooltips.SetActive(true);
+            towerName.text = towerNames[hoveredButtonIndex];
+            towerDescription.text = towerDescriptions[hoveredButtonIndex];
+
+            if (towerRadiusPreview == null)
+            {
+                towerRadiusPreview = Instantiate(towerRadiusPreviewPrefab, currentHit.point + new Vector3(0, 0.75f, 0), towerRadiusPreviewPrefab.transform.rotation);
+            }
+            Material material = towerRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
+
+            if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
+            else material.SetFloat("_Hole_Radius", 0.0f);
+
+            Tower tower = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>();
+            towerRadiusPreview.transform.localScale = new Vector3(2 * tower.TargeterComponent.range, 2 * tower.TargeterComponent.range);
+        }
+        else
+        {
+            towerTooltips.SetActive(false);
+
+            if (towerRadiusPreview != null)
+            {
+                Destroy(towerRadiusPreview);
+                towerRadiusPreview = null;
+            }
+        }
     }
 
     public void ResetInteraction(GameObject[] extraObjects = null)
@@ -834,6 +874,14 @@ public class InteractionManager : MonoBehaviour
 
         if (towerSelectionMenu.activeSelf)
             towerSelectionMenu.SetActive(false);
+        if (towerTooltips.activeSelf)
+            towerTooltips.SetActive(false);
+
+        if (towerRadiusPreview != null)
+        {
+            Destroy(towerRadiusPreview);
+            towerRadiusPreview = null;
+        }
 
         if (extraObjects is not null)
         {

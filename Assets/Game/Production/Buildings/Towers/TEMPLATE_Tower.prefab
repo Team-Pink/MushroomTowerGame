@@ -133,6 +133,7 @@ MonoBehaviour:
   radiusDisplay: {fileID: 2366948552776975683}
   radiusMaterials:
   - {fileID: 2100000, guid: 8ecabd1cbcfa5eb45a1b23b596613c8f, type: 2}
+  bud: {fileID: 0}
   growthDuration: 5
   recoveryDuration: 2
   animator: {fileID: 0}
@@ -144,7 +145,6 @@ MonoBehaviour:
     name: Template
     targeterType: 0
     attackerType: 1
-  storedExperience: 0
   upgradeable: 0
   upgradeCostL: 0
   upgradeCostR: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
   sellReturnPercent: 0.5
   bulletPrefab: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
   attackObjectPrefab: {fileID: 6026521766592497966, guid: feee843c155b37f41846cd1e0307544f, type: 3}
+  projectileSpeed: 1.5
   accelerated: 0
   accelTimer: 0
   continuous: 0
@@ -205,6 +206,8 @@ MonoBehaviour:
           e32: 0
           e33: 0
         bounce: 0
+        bounceHitLimit: 10
+        bounceBulletTowersPossession: 1
         attacking: 0
     - rid: 4335502593997406209
       type: {class: CloseTargeter, ns: , asm: Assembly-CSharp}
