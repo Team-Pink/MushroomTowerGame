@@ -204,6 +204,9 @@ MonoBehaviour:
           e31: 0
           e32: 0
           e33: 0
+        bounce: 0
+        bounceHitLimit: 10
+        bounceBulletTowersPossession: 1
         attacking: 0
     - rid: 4335502593997406209
       type: {class: CloseTargeter, ns: , asm: Assembly-CSharp}
@@ -215,6 +218,7 @@ MonoBehaviour:
           serializedVersion: 2
           m_Bits: 0
         firingCone: 20
+        exclusionZoneRadius: 0
 --- !u!136 &7386576921632069825
 CapsuleCollider:
   m_ObjectHideFlags: 0

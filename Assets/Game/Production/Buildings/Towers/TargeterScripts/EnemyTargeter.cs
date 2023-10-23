@@ -12,7 +12,7 @@ public abstract class EnemyTargeter : Targeter
     public void GetTargetsInRange()
     {
         List<Collider> enemyColliders = Physics.OverlapSphere(transform.position, range, enemyLayer).ToList();
-        
+
         // Ensure dead enemies aren't included in checks
         List<Collider> deadEnemyColliders = new();
         foreach (Collider enemyCollider in enemyColliders)
@@ -25,22 +25,38 @@ public abstract class EnemyTargeter : Targeter
         foreach (Collider enemyCollider in deadEnemyColliders) // the reason I'm doing it this way is that I can't modify enemyColliders in the above foreach loop
         {
             enemyColliders.Remove(enemyCollider);
-        } // a possible solution would be to have deadenemies move onto and exist on a different layer or just delete them upon death.
+        } // a possible solution would be to have deadenemies move onto and exist on a different layer.
+
+
 
         targetsInRange.Clear();
-
         if (enemyColliders == null) return;
 
         foreach (Collider collider in enemyColliders)
         {
+            // check against existing colliders
             targetsInRange.Add(new Target(collider.transform.position, collider.GetComponent<Enemy>()));
+        }
+
+        // make sure that bestTargets doesn't contain any invalid targets.
+        HashSet<Target> toRemove = new HashSet<Target>();
+        foreach (Target target in bestTargets)
+        {
+            if (!targetsInRange.Contains(target))
+            {
+                toRemove.Add(target);
+            }
+        }
+        foreach (Target target in toRemove) // once again I can't modify inside a foreach loop
+        {
+            bestTargets.Remove(target);
         }
     }
 
     public override HashSet<Target> AcquireTargets(int numTargets = 1)
     {
         if (defaultRotation == Quaternion.identity)
-            defaultRotation = Quaternion.Euler(0, 180, 0); 
+            defaultRotation = Quaternion.Euler(0, 180, 0);
 
         GetTargetsInRange(); // update targets in range
         if (targetsInRange.Count == 0 || targetsInRange == null) // null check out.
@@ -117,7 +133,7 @@ public abstract class EnemyTargeter : Targeter
         if (turnRate <= float.Epsilon || Quaternion.Angle(transform.rotation, lookRotation) < firingCone) // setting the turn rate of a tower to 0 means it doesn't nedd to turn at all.
             return true;
         else
-        { 
+        {
             return false;
         }
 

@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[Obsolete("Functionality moved to OpenPause UI", true)]
 public class QuitScript : MonoBehaviour
 {
     Button button;
