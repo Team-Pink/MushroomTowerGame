@@ -391,7 +391,7 @@ public class Tower : Building
         foreach (Target target in targets)
         {
             
-            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) * projectileSpeed;
+            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) / projectileSpeed;
             return;
             /*TargetCounter++;
             if (TargetCounter == targetProjectileSpeedCounter)
