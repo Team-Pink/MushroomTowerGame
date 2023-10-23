@@ -253,6 +253,8 @@ public class Tower : Building
 
         base.Sell();
     }
+    public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
+    public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
 
     public override int GetTowerEXP()
     {
