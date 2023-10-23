@@ -61,9 +61,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
---- !u!137 &360729632899816902 stripped
+--- !u!137 &863229067949385281 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 785965637854786293, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
+  m_CorrespondingSourceObject: {fileID: 293596432188180850, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
   m_PrefabInstance: {fileID: 1146691833943568179}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &6708249941602146778 stripped
@@ -164,7 +164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6010180596776884094, guid: 29a12a55370ce844d8a902893493d34b, type: 3}
       propertyPath: m_TagString
@@ -250,7 +250,7 @@ MonoBehaviour:
   hub: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 3
-  meshRenderer: {fileID: 360729632899816902}
+  meshRenderer: {fileID: 863229067949385281}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
   attackAudio: {fileID: 8300000, guid: de122cde40614bd4bbc0ec1749f442cc, type: 3}
   deathAudio: {fileID: 8300000, guid: 2ff4d4c78e3b71c4fa6362f00b5b0acd, type: 3}
