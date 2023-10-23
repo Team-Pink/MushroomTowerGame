@@ -134,7 +134,20 @@ MonoBehaviour:
     inkLevel: 0
     dps: 0
     startupTime: 0
-    conditions: []
+    conditions:
+    - type: 2
+      value: 0.25
+      currentDuration: 15.00571
+      totalDuration: 2
+      timer: 0
+      applied: 0
+    - type: 1
+      value: 0.5
+      currentDuration: 15.00571
+      totalDuration: 5
+      timer: 0
+      applied: 0
+  cleanupDuration: 0
   meshRenderer: {fileID: 639860854484873804}
   particleSystem: {fileID: 5452868304192742460}
 --- !u!136 &8552883208792144059
