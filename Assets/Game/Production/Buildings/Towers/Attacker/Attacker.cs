@@ -170,9 +170,7 @@ public class Attacker
 
         if (animator == null) return;
 
-        animator.SetTrigger("Attack");
-
-        
+        animator.SetTrigger("Attack");       
     }
 
 

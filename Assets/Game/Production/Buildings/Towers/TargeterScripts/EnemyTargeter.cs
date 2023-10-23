@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class EnemyTargeter : Targeter
 {
     Quaternion defaultRotation = Quaternion.identity;
-    HashSet<Target> bestTargets = new();
+    public HashSet<Target> bestTargets = new();
     public float firingCone = 20;
     public float exclusionZoneRadius = 0; // the variable that will exclude enemies from targets in range if they are in a radius around the tower
 

@@ -120,12 +120,13 @@ public class Tower : Building
     public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
 
     //Lock On
-    private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    [SerializeField] private bool lockOn = false; // determines if the tower will lock on to an enemy.
     private float lockOnDuration = 1.5f;
-    private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
-
-    //Continuous
-    [SerializeField] private bool continuous = false;
+    private float lockOnTimer = 0;
+    private float lockOnFiringIntermissionTime = 0;
+    private Target lockOnTarget;
+    [Obsolete]private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
+    
 
     [SerializeField] AudioClip buildAudio;
 
@@ -175,14 +176,22 @@ public class Tower : Building
 
         if (Active)
         {
-            if (multiTarget)
-                targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
-            else targets = targeterComponent.AcquireTargets(); // &*
+            //if (multiTarget)
+              //  targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
+            //else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
             {
                 if (lockOn) // this is terrible code
                 {
-                    LockOnTag();
+                    // if target in range and not already do the lock on animation
+                    if (!attackerComponent.animator.GetBool("Attack") && targets.Count > 0) attackerComponent.AnimateAttack();
+                    if (LockedOn()) 
+                    {
+                        // create the attack object
+                        // animate the attack
+
+                    }
+                    //LockOnTag();
                 }
                 else if (attackerComponent.bounce)
                     {
@@ -286,6 +295,28 @@ public class Tower : Building
 
     #region LockOn
 
+    private bool LockedOn()
+    {
+        if (targets.Count == 0) return false;
+
+        bool lockedOn = false;
+
+        if (lockOnTarget.enemy != targets.First().enemy)
+        {
+            lockOnTarget = targets.First();
+            lockOnTimer = 0;
+        }
+
+
+            
+
+        return lockedOn;
+    }
+
+
+
+
+    [Obsolete("LockOnTag is deprecated, please use LockedOn instead.")]
     /// <summary>
     /// Here's the thing this works as far as maintaining locks on the targets in range with the highest max health but in the case a better target enters 
     /// it's range it will immediately stop and try locking onto the new better target. unfortunately the only way to prevent this would be to forcefully maintain
@@ -345,7 +376,7 @@ public class Tower : Building
                     {
                         targetsLockedFire.Add(lockOnTargets[i].target);
                         lockOnTargets[i].lockOnProgress = 0;
-                        if (continuous) lockOnTargets[i].targetLocked = true;
+                        //if (continuous) lockOnTargets[i].targetLocked = true;
                     }
                 }
             }
@@ -361,6 +392,7 @@ public class Tower : Building
 
     }
 
+    [Obsolete("only used in the obsolete method LockOnTag")]
     // I hate that this is neccesary
     class LockOnTarget
     {
