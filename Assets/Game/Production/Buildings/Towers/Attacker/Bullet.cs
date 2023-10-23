@@ -13,9 +13,8 @@ public class Bullet : MonoBehaviour
 
     // parobola variables
     public bool parabola;
-    public float trackingSpeed = 0.001f; // the distance the targetPos will move towards the enemyPos in a frame
     private float progress = 0;
-    private float arcHeight = 40;
+    [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
 
     /// <summary>
@@ -51,8 +50,8 @@ public class Bullet : MonoBehaviour
         if (parabola) MoveParabola();
         else
         {
-            if (!targetTransform)
-                Destroy(gameObject);
+
+
             MoveStraightToTarget();
         }
 
@@ -65,7 +64,7 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-
+        
         targetPos = targetTransform.position;
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }

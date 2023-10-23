@@ -253,6 +253,8 @@ public class Tower : Building
 
         base.Sell();
     }
+    public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
+    public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
 
     public override int GetTowerEXP()
     {
@@ -391,7 +393,7 @@ public class Tower : Building
         foreach (Target target in targets)
         {
             
-            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) * projectileSpeed;
+            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) / projectileSpeed;
             return;
             /*TargetCounter++;
             if (TargetCounter == targetProjectileSpeedCounter)
