@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public struct Target
 {
-    public Vector3 position;
+    public Vector3 position; // expands in practice to enemy.transform.position if an enemy exists.
     public Enemy enemy;
     float timeFound
     {
@@ -97,12 +98,17 @@ public class Tower : Building
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] GameObject attackObjectPrefab;
 
+    // Tower values
+    [SerializeField] private float projectileSpeed = 1.5f; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! assign this properly on prefabs!
+    // setting the above to zero means time to target will equal zero because (Distance * projectileSpeed). Doing this will cause attacks to occur the frame their cooldown ends and they have a target.
+
     // Tags from Lochlan
 
 
     //Multitarget
     private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
     private int numTargets; // number of targets if multiTarget is true.
+    // private int targetProjectileSpeedCounter; // the current index of targets to be assigned a projectile speed during multitarget.
 
     //Accelerate
     private bool accelerate = false;
@@ -136,7 +142,7 @@ public class Tower : Building
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
         attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
-        
+
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
         accelModReverse = 1 / accelSpeedMod;
@@ -169,7 +175,7 @@ public class Tower : Building
 
         if (Active)
         {
-            if (multiTarget) 
+            if (multiTarget)
                 targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
             else targets = targeterComponent.AcquireTargets(); // &*
             if (targets != null)
@@ -178,8 +184,21 @@ public class Tower : Building
                 {
                     LockOnTag();
                 }
-                else
-                    attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                else if (attackerComponent.bounce)
+                    {
+                        if (attackerComponent.bounceBulletTowersPossession)
+                        {
+                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                        }
+                            
+                    }                    
+                else if (attackerComponent.CheckCooldownTimer())
+                {
+                    CalcTimeToTarget(targets, transform.position);
+                    attackerComponent.Attack(targets);
+                }
+                    
+
 
 
 
@@ -242,6 +261,15 @@ public class Tower : Building
         return tempExp;
     }
 
+    /// <summary>
+    /// literally exists because bounce needs to port it's own stuff for 
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetAttackObjectPrefab()
+    {
+        return attackObjectPrefab;
+    }
+
     public void AccelerateTag()
     {
         if (accelerated)
@@ -256,6 +284,8 @@ public class Tower : Building
         }
     }
 
+    #region LockOn
+
     /// <summary>
     /// Here's the thing this works as far as maintaining locks on the targets in range with the highest max health but in the case a better target enters 
     /// it's range it will immediately stop and try locking onto the new better target. unfortunately the only way to prevent this would be to forcefully maintain
@@ -266,7 +296,7 @@ public class Tower : Building
 
         /* PsuedoCode
          
-        new local hashset of Target marked = targets deep copy
+        new local hashset of Target marked = targets deep copy           // copy the references stored in targets but not the reference to targets
 
         new local hashset of Target targetsLockedFire 
         
@@ -346,5 +376,32 @@ public class Tower : Building
         }
 
         public void IncrementLockTimer() { lockOnProgress += Time.deltaTime; }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// uses distance to target and attackSpeed to calculate the travel time of an attack to it's target.
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="originPos"></param>
+    public void CalcTimeToTarget(HashSet<Target> targets, Vector3 originPos)
+    {
+        //int TargetCounter = 0;
+        foreach (Target target in targets)
+        {
+            
+            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) * projectileSpeed;
+            return;
+            /*TargetCounter++;
+            if (TargetCounter == targetProjectileSpeedCounter)
+            {
+                if (targetProjectileSpeedCounter >= numTargets)
+                    targetProjectileSpeedCounter = 0;
+                return; // yes I am indeed entering a foreach loop just to get a reference to the first object in targets and then returning without examining the other targets.
+            }*/
+            
+        }
+
     }
 }

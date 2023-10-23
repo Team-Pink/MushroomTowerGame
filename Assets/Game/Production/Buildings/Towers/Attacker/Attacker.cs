@@ -10,7 +10,8 @@ public class Attacker
     public float attackCooldown = 3;
     public float cooldownTimer = 0f;
 
-    public float attackDelay = 2;
+    
+    public float attackDelay = 2; // this is the time it takes for an attack to reach a target.
     protected float delayTimer = 0f;
 
     public float animationLeadIn = 0f;
@@ -31,7 +32,7 @@ public class Attacker
     public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
-    [SerializeField] bool lobProjectile;
+    [SerializeField]protected  bool lobProjectile;
 
     #region TAGS
     [Header("Spray Tag")]
@@ -48,6 +49,8 @@ public class Attacker
 
     [Header("Bounce Tag")]
     public bool bounce = false;
+    public int bounceHitLimit = 10;
+    public bool bounceBulletTowersPossession = true;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -59,9 +62,9 @@ public class Attacker
     }
 
 
-    protected bool CheckCooldownTimer()
+    public bool CheckCooldownTimer()
     {
-        if (cooldownTimer < attackCooldown + attackDelay)
+        if (cooldownTimer < attackCooldown)
         {
             cooldownTimer += Time.deltaTime;
             return false;
@@ -92,13 +95,63 @@ public class Attacker
             bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
-            if (lobProjectile) bulletRef.parabola = true;
-            bulletRef.Initialise();
+            if (lobProjectile) bulletRef.InitializeNoTrackParabolaBullet(target.position);
+            else bulletRef.Initialise();
+            
         }
+        targetsToShoot.Clear();
+    }
+
+    public void AnimateBounceProjectileToEnemy(Target startingTarget, Target targetEnemy, float timeToTarget)
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (bulletPrefab == null) return;
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityEngine.Object.Destroy(particle, 0.5f);
+        }
+
+        Bullet bulletRef;
+
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef.timeToTarget = timeToTarget;
+        bulletRef.target = targetEnemy;
+        if (lobProjectile) bulletRef.parabola = true;
+        bulletRef.Initialise();
+    }
+    public void AnimateBounceProjectileToTower(Target targetEnemy, float timeToTarget)
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (bulletPrefab == null) return;
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityEngine.Object.Destroy(particle, 0.5f);
+        }
+
+        Bullet bulletRef;
+
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef.timeToTarget = timeToTarget;
+        if (lobProjectile) bulletRef.parabola = true;
+        bulletRef.InitialiseForNonEnemies(originReference.transform);
     }
 
     /// <summary>
-    /// Instantiates an AttackObject assigns it's values and animates an attack.
+    /// Instantiates an AttackObject assigns it's universal values.
     /// </summary>
     protected AttackObject GenerateAttackObject(Target enemy)
     {
@@ -120,5 +173,9 @@ public class Attacker
         if (animator == null) return;
 
         animator.SetTrigger("Attack");
+
+        
     }
+
+
 }

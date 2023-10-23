@@ -53,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406210]
@@ -92,8 +92,12 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4335502593997406211].bounce
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].damage
-      value: 15
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441028].damage
@@ -193,7 +197,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].attackCooldown
-      value: 5
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4335502593997406211].bounceHitLimit
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].lockonDuration
@@ -245,6 +253,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].strikethroughDamage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4951535851181441032].exclusionZoneRadius
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
@@ -333,6 +345,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].strikethroughMatrix.e33
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: managedReferences[4335502593997406211].bounceBulletTowersPossession
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5109823546609926884, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}

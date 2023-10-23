@@ -955,6 +955,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7292871252384846779, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 53.600098
+      objectReference: {fileID: 0}
+    - target: {fileID: 7292871252384846779, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 42.80005
+      objectReference: {fileID: 0}
     - target: {fileID: 9210974776577348663, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2279,6 +2287,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2146346091}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: secondsBetweenWaves
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: spawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 1355529936}
@@ -2335,9 +2347,61 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: waves.Array.data[0].enemyPrefabs.Array.data[0]
+      propertyPath: waves.Array.data[15].enemyCount
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[15].durationInSeconds
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[15].enemyPrefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[0].enemyPrefabs.Array.data[1]
       value: 
       objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[7].enemyPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[7].enemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[7].enemyPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[11].enemyPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[11].enemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[11].enemyPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[13].enemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[13].enemyPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[15].enemyPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[15].enemyPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
     - target: {fileID: 4915721120753536162, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_Name
       value: Swamp Danger
