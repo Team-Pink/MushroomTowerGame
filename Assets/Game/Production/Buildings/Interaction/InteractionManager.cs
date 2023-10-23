@@ -63,6 +63,17 @@ public class InteractionManager : MonoBehaviour
     private int pylonMultiplier = 1;
     private int placementCost = 0;
     private CurrencyManager currencyManager;
+    Pylon refPylon = new Pylon();
+    Tower refTower = new Tower();
+    RadialType radialType;
+
+    enum RadialType
+    {
+        Pylon,
+        Residual,
+        Tower,
+        TowerSelection,
+    }
     #endregion
 
     [Header("UI")]
@@ -92,6 +103,7 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] private Color canPurchaseColour;
     [SerializeField] private Color canNotPurchaseColour;
+    [SerializeField] private Color sellColour;
     #endregion
 
     [Header("Interaction")]
@@ -310,6 +322,10 @@ public class InteractionManager : MonoBehaviour
     }
     private void PylonMenuState()
     {
+        radialType = RadialType.Pylon;
+
+        refPylon = targetBuilding as Pylon;
+
         RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
@@ -352,9 +368,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void ResidualMenuState()
     {
-        RadialMenu(residualMenu, residualMenuButtons, out int hoveredButtonIndex);
+        radialType = RadialType.Residual;
 
         Pylon targetPylon = targetBuilding as Pylon;
+        refPylon = targetPylon;
+
+        RadialMenu(residualMenu, residualMenuButtons, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -368,8 +387,12 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                targetPylon.CurrentHealth = targetPylon.MaxHealth;
-                targetPylon.ToggleResidual(false);
+                if (currencyManager.CanDecreaseCurrencyAmount(targetPylon.GetPylonCost()))
+                {
+                    currencyManager.DecreaseCurrencyAmount(targetPylon.GetPylonCost());
+                    targetPylon.CurrentHealth = targetPylon.MaxHealth;
+                    targetPylon.ToggleResidual(false);
+                }
             } // Repair
             else if (hoveredButtonIndex == 1)
             {
@@ -382,6 +405,10 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerMenuState()
     {
+        radialType = RadialType.Tower;
+
+        refTower = targetBuilding as Tower;
+
         RadialMenu(towerMenu, towerMenuButtons, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
@@ -474,6 +501,9 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.color = Color.red;
 
         targetBuilding = activeBud.transform.parent.GetComponent<Building>();
+
+        refPylon = targetBuilding as Pylon;
+
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
         if (dragStartPosition == Vector3.zero)
@@ -529,6 +559,8 @@ public class InteractionManager : MonoBehaviour
     {
         targetBuilding.radiusDisplay.SetActive(false);
 
+        radialType = RadialType.TowerSelection;
+
         TowerRadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
@@ -543,7 +575,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
+            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost * refPylon.GetMultiplier();
 
             if (!currencyManager.CanDecreaseCurrencyAmount(cost))
             {
@@ -597,6 +629,7 @@ public class InteractionManager : MonoBehaviour
         if (parent is Hub)
         {
             Hub parentHub = parent as Hub;
+            pylonMultiplier = 1;
             cost = Pylon.GetPylonBaseCurrency();
             parentHub.ClearDestroyedPylons();
             notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;
@@ -656,6 +689,8 @@ public class InteractionManager : MonoBehaviour
         if (previousInteraction == InteractionState.PlacingFromPylon)
         {
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
+
+            towerInstance.GetComponent<Tower>().NewPrice(refPylon.GetMultiplier());
         }  
 
         ResetInteraction();
@@ -730,6 +765,7 @@ public class InteractionManager : MonoBehaviour
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
+                    RadialCostDisplays(hoveredButtonIndex);
                 }
                 else
                 {
@@ -780,12 +816,7 @@ public class InteractionManager : MonoBehaviour
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
-
-                    int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost;
-                    towerSelectionCostText.text = "- " + cost.ToString();
-                    if (!currencyManager.CanDecreaseCurrencyAmount(cost))
-                        towerSelectionCostText.color = canNotPurchaseColour;
-                    else towerSelectionCostText.color = canPurchaseColour;
+                    RadialCostDisplays(i);
                 }
                 else
                 {
@@ -799,6 +830,73 @@ public class InteractionManager : MonoBehaviour
             {
                 radialButton.color = buttonBaseColour;
             }
+        }
+    }
+
+    void RadialCostDisplays(int index)
+    {
+        
+        switch(radialType)
+        {
+            case (RadialType.Pylon):
+                int pylonCost = 0;
+                if (index == 0)
+                {
+                    pylonCost = refPylon.GetForceEnhanceCost();
+                    pylonMenuCostText.text = "- " + pylonCost.ToString();
+                    if (!currencyManager.CanDecreaseCurrencyAmount(pylonCost))
+                        pylonMenuCostText.color = canNotPurchaseColour;
+                    else pylonMenuCostText.color = canPurchaseColour;
+                }//Force Enhance
+                if (index == 1)
+                {
+                    pylonCost = refPylon.GetPylonSellAmount();
+                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
+                    pylonMenuCostText.color = sellColour;
+                }//Sell
+                if (index == 2)
+                {
+                    pylonCost = refPylon.GetPylonSellAllAmount();
+                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
+                    pylonMenuCostText.color = sellColour;
+                }//Sell All
+                break;
+
+            case (RadialType.Residual):
+                int residualCost = 0;
+                if (index == 0)
+                {
+                    residualCost = refPylon.GetPylonCost();
+                    residualMenuCostText.text = "- " + residualCost.ToString();
+                    if (!currencyManager.CanDecreaseCurrencyAmount(residualCost))
+                        residualMenuCostText.color = canNotPurchaseColour;
+                    else residualMenuCostText.color = canPurchaseColour;
+                }//Repair
+                if (index == 1)
+                {
+                    residualCost = refPylon.GetPylonSellAllAmount();
+                    residualMenuCostText.text = "+ " + residualCost.ToString();
+                    residualMenuCostText.color = sellColour;
+                }//Sell All
+                break;
+
+            case (RadialType.Tower):
+                int towerCost = 0;
+                if (index == 1)
+                {
+                    towerCost = refTower.SellPrice();
+                    towerMenuCostText.text = "+ " + towerCost.ToString();
+                    towerMenuCostText.color = sellColour;
+                }//Sell
+                break;
+
+            case (RadialType.TowerSelection):
+                int towerSelectionCost = 10 * refPylon.GetMultiplier();
+                towerSelectionCostText.text = "- " + towerSelectionCost.ToString();
+                if (!currencyManager.CanDecreaseCurrencyAmount(towerSelectionCost))
+                    towerSelectionCostText.color = canNotPurchaseColour;
+                else towerSelectionCostText.color = canPurchaseColour;
+                break;
         }
     }
 

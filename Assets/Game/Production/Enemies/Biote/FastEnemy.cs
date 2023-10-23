@@ -12,13 +12,6 @@ public class FastEnemy : Enemy
         animator.SetBool("Crawling", true);
     }
 
-    public override void SpawnIn()
-    {
-        damaged = false;
-
-        base.SpawnIn();
-    }
-
     public override void TakeDamage(float damage)
     {
         base.TakeDamage(damage);
