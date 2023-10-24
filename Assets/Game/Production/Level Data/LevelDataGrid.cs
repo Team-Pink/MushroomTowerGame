@@ -1,21 +1,29 @@
 using UnityEngine;
 using System.Collections;
 
+public enum TileType
+{
+    Path,
+    Mud,
+    Obstacle
+}
+
 [System.Serializable]
 public struct Tile
 {
-    public readonly Vector2 flowDirection;
-    public readonly bool muddy;
 
-    public Tile(Vector2 flowDirectionInit, bool muddyInit)
+    public readonly Vector2 flowDirection;
+    public readonly TileType type;
+
+    public Tile(Vector2 flowDirectionInit, TileType typeInit)
     {
         flowDirection = flowDirectionInit;
-        muddy = muddyInit;
+        type = typeInit;
     }
 
     public float SpeedMultiplier
     {
-        get => muddy ? LevelDataGrid.MuddySpeedMultiplier : 1.0f;
+        get => type == TileType.Path ? 1.0f : LevelDataGrid.MuddySpeedMultiplier;
     }
 
     public bool GetFlow() => flowDirection != Vector2.zero;
@@ -57,7 +65,7 @@ public class LevelDataGrid : MonoBehaviour
         tilesWidth = tiles.GetLength(0);
         tilesHeight = tiles.GetLength(1);
 
-        bool muddy;
+        TileType tileType;
         Vector2 flowDirection;
         Color color;
         int currentIndex = 0;
@@ -67,14 +75,16 @@ public class LevelDataGrid : MonoBehaviour
             {
                 color = levelTexture.GetPixel(x, z);
 
-                if (color.r > 0.5f)
-                    muddy = true;
+                if (color.r > 0.67f)
+                    tileType = TileType.Path;
+                else if (color.r > 0.33f)
+                    tileType = TileType.Mud;
                 else
-                    muddy = false;
+                    tileType = TileType.Obstacle;
 
                 flowDirection = new Vector2((color.g - 0.5f) * 2, (color.b - 0.5f) * 2);
 
-                tiles[x, z] = new Tile(flowDirection, muddy);
+                tiles[x, z] = new Tile(flowDirection, tileType);
                 currentIndex++;
             }
         }
@@ -90,11 +100,11 @@ public class LevelDataGrid : MonoBehaviour
         return new Vector3(flowDirection.x, 0, flowDirection.y);
     }
 
-    public bool GetMuddyAtPoint(Vector3 position)
+    public TileType GetTileTypeAtPoint(Vector3 position)
     {
         WorldToTileSpace(position, out int xCoord, out int zCoord);
 
-        return tiles[xCoord, zCoord].muddy;
+        return tiles[xCoord, zCoord].type;
     }
 
     private void WorldToTileSpace(Vector3 position, out int xCoord, out int zCoord)
@@ -142,10 +152,12 @@ public class LevelDataGrid : MonoBehaviour
 
                     if (currentTile.flowDirection != null)
                     {
-                        if (currentTile.muddy)
+                        if (currentTile.type == TileType.Path)
+                            Gizmos.color = Color.green;
+                        else if (currentTile.type == TileType.Mud)
                             Gizmos.color = Color.yellow;
                         else
-                            Gizmos.color = Color.magenta;
+                            Gizmos.color = Color.red;
 
                         Gizmos.DrawRay(TileToWorldSpace(x, z), new Vector3(currentTile.flowDirection.x/4, 0, currentTile.flowDirection.y/4));
                     }

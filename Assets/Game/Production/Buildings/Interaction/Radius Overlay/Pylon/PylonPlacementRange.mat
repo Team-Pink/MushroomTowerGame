@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TowerAttackRadius
+  m_Name: PylonPlacementRange
   m_Shader: {fileID: -6465566751694194690, guid: cfbe3a7d689747d41a45aa94b5a87c01, type: 3}
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
@@ -28,7 +28,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3003
+  m_CustomRenderQueue: 3005
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
@@ -111,21 +111,21 @@ Material:
     - _Display_Amount: 1
     - _DstBlend: 10
     - _EnvironmentReflections: 1
-    - _Fill_Transparency: 0.3
+    - _Fill_Transparency: 0.2
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Hole_Radius: 0
-    - _Inner: 0.15
+    - _Hole_Radius: 0.35
+    - _Inner: 0.35
     - _InnerRadius: 0.2
     - _IntersectionDepth: 0.3
-    - _Intersection_Depth: 0.25
+    - _Intersection_Depth: 0.3
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Outer: 0.5
     - _OuterRadius: 0.5
-    - _Outline_Thickness: 50
-    - _Outline_Transparency: 1
+    - _Outline_Thickness: 80
+    - _Outline_Transparency: 0.6
     - _Parallax: 0.005
     - _QueueControl: 1
     - _QueueOffset: 0
@@ -144,14 +144,14 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
-    - _Base: {r: 0.42352936, g: 1.1925186, b: 1.4980392, a: 0}
+    - _Base: {r: 0.590619, g: 0.31854683, b: 0.8307701, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Colour: {r: 0.36862746, g: 1.027451, b: 1.3019608, a: 1}
+    - _Colour: {r: 0.95965505, g: 0.35109332, b: 1.4901961, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Fill_Colour: {r: 0.23921569, g: 0.85882354, b: 0.40392157, a: 1}
+    - _Fill_Colour: {r: 0.8627451, g: 0.24313726, b: 1.3803922, a: 1}
     - _HueVariation: {r: 1, g: 0.5, b: 0, a: 0.1}
-    - _Outline: {r: 0.31764704, g: 0.60729545, b: 0.83137256, a: 1}
-    - _Outline_Colour: {r: 0.16078432, g: 0.7647059, b: 0.32156864, a: 1}
+    - _Outline: {r: 0.5921569, g: 0.31764707, b: 0.83137256, a: 1}
+    - _Outline_Colour: {r: 0.85490197, g: 0.23529412, b: 1.372549, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
