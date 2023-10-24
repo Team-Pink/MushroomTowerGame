@@ -183,7 +183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1706277145746896281
 Transform:
   m_ObjectHideFlags: 0
@@ -280,7 +280,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6695139072738130777}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &7697117312752617692
 MeshFilter:
@@ -361,10 +361,94 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1706277145746896281}
+  - {fileID: 1094770225975128556}
   - {fileID: 7652125340494720153}
   m_Father: {fileID: 7692692432496397166}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4915728712045685285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1094770225975128556}
+  - component: {fileID: 6394907528808330612}
+  - component: {fileID: 1053806207379782535}
+  m_Layer: 0
+  m_Name: Pylon Placement Range (Grey)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1094770225975128556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915728712045685285}
+  m_LocalRotation: {x: -0.00000041093176, y: 0.7071068, z: 0.7071068, w: 0.00000041093176}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 36, y: 36, z: 36}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 6695139072738130777}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!33 &6394907528808330612
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915728712045685285}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1053806207379782535
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915728712045685285}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: aabed99df7a139445b46c7e67af05c8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5090340476508024332
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,19 +510,15 @@ MonoBehaviour:
   radiusDisplay: {fileID: 4319338923326572372}
   radiusMaterials:
   - {fileID: 2100000, guid: cbe8d64c6b3991144ae1a3296bbd9c17, type: 2}
+  - {fileID: 2100000, guid: aabed99df7a139445b46c7e67af05c8f, type: 2}
   - {fileID: 2100000, guid: 721faf7dece34f1479dcc13daece3b08, type: 2}
+  bud: {fileID: 0}
   healthDisplay: {fileID: 5291967889154492532}
   costMultiplier: 1
   sellReturnPercent: 0.5
   basePylon: {fileID: 5145626201642588360}
   baseBud: {fileID: 9161473062213660382}
   deactivatedBasePylon: {fileID: 970294987681182204}
-  enhanced: 0
-  enhancedPylon: {fileID: 7520770244146163946}
-  enhancedBud: {fileID: 102710932853449028}
-  deactivatedEnhancedPylon: {fileID: 970294987681182204}
-  pylonPlacementRange: {fileID: 1826867427512401639}
-  XPEnhanceRequirement: 2
   pylonHealth: 20
   pylonResidual: {fileID: 3591635762444012935}
   connectedBuildings: []
@@ -819,11 +899,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
---- !u!1 &102710932853449028 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2228574422893360982, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
-  m_PrefabInstance: {fileID: 2270266857914308114}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &731614624838269950 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
