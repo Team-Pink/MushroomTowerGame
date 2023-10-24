@@ -6,11 +6,13 @@ using UnityEngine.UIElements;
 
 public static class GenericUtility
 {
-    public static void DestroyAllChildren(Transform parentTransform)
+    public static void DestroyAllDeadChildren(Transform parentTransform)
     {
         foreach (Transform child in parentTransform)
         {
-            MonoBehaviour.Destroy(child.gameObject);
+            Enemy enemy = child.GetComponent<Enemy>();
+            if (enemy != null && enemy.Dead)
+                MonoBehaviour.Destroy(child.gameObject);
         }
     }
 

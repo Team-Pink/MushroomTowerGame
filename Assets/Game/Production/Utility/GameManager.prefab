@@ -1981,13 +1981,14 @@ MonoBehaviour:
   - {fileID: 0}
   lockedTowerSprite: {fileID: 0}
   towerSelectionCostText: {fileID: 0}
-  canPurchaseColour: {r: 0, g: 0, b: 0, a: 0}
-  canNotPurchaseColour: {r: 0, g: 0, b: 0, a: 0}
+  canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
+  canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
+  sellColour: {r: 0, g: 1, b: 0.00427413, a: 1}
   interactKey: 323
   cancelKey: 324
   interactHoldRequirement: 0.15
   showMouseDirection: 0
-  showCameraProjection: 0
+  showCameraProjection: 1
   logInteractionChange: 0
 --- !u!114 &6533875848915124894
 MonoBehaviour:

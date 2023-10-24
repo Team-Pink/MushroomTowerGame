@@ -127,8 +127,6 @@ public class WaveSpawner : MonoBehaviour
             elapsedSecondsBetweenWaves = 0.0f;
 
             waveIndicator.gameObject.SetActive(false);
-
-            GenericUtility.DestroyAllChildren(parentFolder.transform);
         }
         else
         {
@@ -176,6 +174,8 @@ public class WaveSpawner : MonoBehaviour
                 Debug.Log("Next Wave Starting in " + secondsBetweenWaves + " Seconds");
 
                 InitialiseNextWave();
+
+                GenericUtility.DestroyAllDeadChildren(parentFolder.transform);
             }
             else
             {
