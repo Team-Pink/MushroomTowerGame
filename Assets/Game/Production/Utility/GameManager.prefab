@@ -1908,14 +1908,41 @@ MonoBehaviour:
   targetPlane: {fileID: 0}
   pylonPrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
   towerPrefabs:
-  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
-  - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
-  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
   - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
+  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
+  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
+  - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   buildingLayers:
     serializedVersion: 2
     m_Bits: 448
+  towerTooltips: {fileID: 0}
+  towerName: {fileID: 0}
+  towerNames:
+  - Crushroom
+  - Biolumenaser
+  - Shroomiken
+  - Spore Launcher
+  - Sludge Slinger
+  towerDescription: {fileID: 0}
+  towerDescriptions:
+  - 'Area Damage
+
+    Slow Attack Rate'
+  - 'High Damage
+
+    Slow Charge Up'
+  - 'Low Damage
+
+    Bouncing Shots'
+  - 'Low Area Damage
+
+    Large Area of Effect'
+  - 'Damage Over Time
+
+    Slows Enemies'
+  towerRadiusPreviewPrefab: {fileID: 0}
+  placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
     m_Bits: 2496
@@ -1952,11 +1979,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  lockedTowerSprite: {fileID: 0}
   towerSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
   canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
   sellColour: {r: 0, g: 1, b: 0.00427413, a: 1}
   interactKey: 323
+  cancelKey: 324
+  interactHoldRequirement: 0.15
   showMouseDirection: 0
   showCameraProjection: 1
   logInteractionChange: 0
@@ -2110,6 +2140,14 @@ MonoBehaviour:
   - {x: 1185, y: 60}
   - {x: 480, y: 60}
   - {x: 400, y: 60}
+  towerUnlockTooltip: {fileID: 0}
+  towerIcon: {fileID: 0}
+  towerSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  unlockTooltipDuration: 2
 --- !u!114 &6829538405946730101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2135,8 +2173,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelTexture: {fileID: 2800000, guid: c9466c5c273c35647960ae6e295bf920, type: 3}
-  gridWidth: 150.6253
-  gridHeight: 150.6253
+  gridWidth: 115
+  gridHeight: 115
   muddySpeedMultiplier: 20
   drawGrid: 0
   drawFlowLines: 0
