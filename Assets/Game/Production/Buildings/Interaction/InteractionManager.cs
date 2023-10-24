@@ -95,6 +95,9 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject towerSelectionMenu;
     [SerializeField, NonReorderable] Image[] towerSelectionMenuButtons;
+    [SerializeField] Sprite lockedTowerSprite;
+    private readonly Sprite[] towerIconSprites = new Sprite[5];
+    private int unlockedTowers = 0;
     [SerializeField] TMP_Text towerSelectionCostText;
 
     [SerializeField, Space()] private Color canPurchaseColour;
@@ -153,6 +156,16 @@ public class InteractionManager : MonoBehaviour
         budLayer = LayerMask.GetMask("Bud");
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
+
+        for (int i = 0; i < towerSelectionMenuButtons.Length; i++)
+        {
+            towerIconSprites[i] = towerSelectionMenuButtons[i].sprite;
+
+            if (i > 0)
+            {
+                towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
+            }
+        }
     }
 
     private void OnValidate()
@@ -431,8 +444,8 @@ public class InteractionManager : MonoBehaviour
         if (currentHit.collider is not null)
         {
             bool isPlaceable;
-            if (placeOnPaths) isPlaceable = !levelDataGrid.GetMuddyAtPoint(currentHit.point);
-            else isPlaceable = levelDataGrid.GetMuddyAtPoint(currentHit.point);
+            if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
+            else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
             if (isPlaceable)
             {
@@ -484,8 +497,8 @@ public class InteractionManager : MonoBehaviour
         if (currentHit.collider is not null)
         {
             bool isPlaceable;
-            if (placeOnPaths) isPlaceable = !levelDataGrid.GetMuddyAtPoint(currentHit.point);
-            else isPlaceable = levelDataGrid.GetMuddyAtPoint(currentHit.point);
+            if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
+            else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
             if (dragStartPosition == Vector3.zero)
                 dragStartPosition = currentHit.point;
@@ -703,6 +716,11 @@ public class InteractionManager : MonoBehaviour
     }
 
 
+    public void UnlockTower(int towerIndex)
+    {
+        towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
+        unlockedTowers++;
+    }
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
@@ -784,7 +802,7 @@ public class InteractionManager : MonoBehaviour
             Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
             float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
 
-            for (int i = 0; i < radialButtons.Length; i++)
+            for (int i = 0; i < (unlockedTowers-1); i++)
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {

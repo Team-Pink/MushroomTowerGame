@@ -896,10 +896,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6375534185213049026, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
 --- !u!224 &625561295 stripped
@@ -2495,6 +2491,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1646853001}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: lockedTowerSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8a120454be707de44af47a46aab972d3, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: pylonMenuCostText
       value: 
       objectReference: {fileID: 1923365276}
@@ -2555,6 +2555,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 625561297}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerNames.Array.data[0]
+      value: Shroomiken
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerNames.Array.data[1]
+      value: Sludge Slinger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerNames.Array.data[2]
+      value: Crushroom
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerNames.Array.data[3]
+      value: Spore Launcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerNames.Array.data[4]
+      value: Biolumenaser
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerRadiusPreviewPrefab
       value: 
       objectReference: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
@@ -2586,6 +2606,36 @@ PrefabInstance:
       propertyPath: towerMenuButtons.Array.data[2]
       value: 
       objectReference: {fileID: 1970392925}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[0]
+      value: 'Low Damage
+
+        Bouncing Shots'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[1]
+      value: 'Damage Over Time
+
+        Slows Enemies'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[2]
+      value: 'Area Damage
+
+        Slow Attack Rate'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[3]
+      value: 'Low Area Damage
+
+        Large Area of Effect'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[4]
+      value: 'High Damage
+
+        Slow Charge Up'
+      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: residualMenuButtons.Array.data[0]
       value: 
@@ -2635,6 +2685,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1310828174}
     m_Modifications:
+    - target: {fileID: 512973377864925239, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6811093020081216666, guid: 7878e4fe9aa5c374ab448492a5b6a9f4, type: 3}
       propertyPath: m_RootOrder
       value: 0

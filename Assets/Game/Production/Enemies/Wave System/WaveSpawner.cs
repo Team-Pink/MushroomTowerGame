@@ -114,6 +114,11 @@ public class WaveSpawner : MonoBehaviour
         {
             towerUnlockTooltip.SetActive(true);
             towerIcon.sprite = towerSprites[currentWaveIndex];
+
+            if (elapsedSecondsBetweenWaves == 0.0f)
+            {
+                GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
+            }
         }
 
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)

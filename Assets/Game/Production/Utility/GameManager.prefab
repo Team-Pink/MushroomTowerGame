@@ -1908,11 +1908,11 @@ MonoBehaviour:
   targetPlane: {fileID: 0}
   pylonPrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
   towerPrefabs:
-  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
-  - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
-  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
   - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
+  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
+  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
+  - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   buildingLayers:
     serializedVersion: 2
     m_Bits: 448
@@ -1941,6 +1941,7 @@ MonoBehaviour:
   - 'Damage Over Time
 
     Slows Enemies'
+  towerRadiusPreviewPrefab: {fileID: 0}
   placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
@@ -1978,6 +1979,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  lockedTowerSprite: {fileID: 0}
   towerSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 0, g: 0, b: 0, a: 0}
   canNotPurchaseColour: {r: 0, g: 0, b: 0, a: 0}
