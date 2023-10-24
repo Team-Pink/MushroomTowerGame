@@ -54,11 +54,7 @@ public class TurretController : MonoBehaviour
             RotateToTarget();
 
             if (targetEnemy.Dead)
-            {
-                // take enemy experience
-                storedExperience += targetEnemy.expValue;
-                targetEnemy.expValue = 0;
-                
+            {                
                 // remove it from targets and retarget
                 inRangeEnemies.Remove(targetGameObject);
                 PickPriorityTarget();
