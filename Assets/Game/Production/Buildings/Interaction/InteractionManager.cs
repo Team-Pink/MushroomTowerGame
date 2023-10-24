@@ -34,11 +34,18 @@ public class InteractionManager : MonoBehaviour
     #region Building Selection Variables
     [SerializeField] LayerMask buildingLayers;
     private Building targetBuilding;
-    //private float interactionDuration = 0.0f;
+    [SerializeField] GameObject towerTooltips;
+    [SerializeField] TMP_Text towerName;
+    [SerializeField] string[] towerNames;
+    [SerializeField] TMP_Text towerDescription;
+    [SerializeField, TextArea] string[] towerDescriptions;
+    [SerializeField] GameObject towerRadiusPreviewPrefab;
+    private GameObject towerRadiusPreview;
     #endregion
 
     [Header("Placement")]
     #region Placement Variables
+    [SerializeField] bool placeOnPaths;
     LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
     private LayerMask pylonLayer;
@@ -63,8 +70,8 @@ public class InteractionManager : MonoBehaviour
     private int pylonMultiplier = 1;
     private int placementCost = 0;
     private CurrencyManager currencyManager;
-    Pylon refPylon = new Pylon();
-    Tower refTower = new Tower();
+    Pylon refPylon;
+    Tower refTower;
     RadialType radialType;
 
     enum RadialType
@@ -99,6 +106,9 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject towerSelectionMenu;
     [SerializeField, NonReorderable] Image[] towerSelectionMenuButtons;
+    [SerializeField] Sprite lockedTowerSprite;
+    private readonly Sprite[] towerIconSprites = new Sprite[5];
+    private int unlockedTowers = 0;
     [SerializeField] TMP_Text towerSelectionCostText;
 
     [SerializeField, Space()] private Color canPurchaseColour;
@@ -108,7 +118,11 @@ public class InteractionManager : MonoBehaviour
 
     [Header("Interaction")]
     #region Interaction Variables
-    [SerializeField, Space()] KeyCode interactKey = KeyCode.Mouse0;
+    [SerializeField] KeyCode interactKey = KeyCode.Mouse0;
+    [SerializeField] KeyCode cancelKey = KeyCode.Mouse1;
+    [SerializeField, Space()] float interactHoldRequirement = 0.25f;
+    private bool interactKeyHeld = false;
+    private float timeHeld = 0.0f;
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
 
@@ -154,6 +168,16 @@ public class InteractionManager : MonoBehaviour
         budLayer = LayerMask.GetMask("Bud");
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
+
+        for (int i = 0; i < towerSelectionMenuButtons.Length; i++)
+        {
+            towerIconSprites[i] = towerSelectionMenuButtons[i].sprite;
+
+            if (i > 0)
+            {
+                towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
+            }
+        }
     }
 
     private void OnValidate()
@@ -175,6 +199,8 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         mouseScreenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.1f);
         mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
 
@@ -234,94 +260,90 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
         }
-
-        if (Input.GetKeyDown(interactKey))
+        else
         {
-            currentHit = GetRayHit(budLayer);
-            if (currentHit.collider is not null)
-            {
-                if (currentHit.collider.CompareTag("Hub"))
-                {
-                    activeBud = currentHit.collider.gameObject;
-                    activeBud.SetActive(false);
-                    selectionIndicator.enabled = true;
+            targetBuilding = currentHit.collider.transform.parent.GetComponent<Building>();
 
-                    CurrentInteraction = InteractionState.PlacingFromHub;
-                }
-                else if (currentHit.collider.CompareTag("Pylon"))
-                {
-                    activeBud = currentHit.collider.gameObject;
-                    activeBud.SetActive(false);
-                    selectionIndicator.enabled = true;
-
-                    CurrentInteraction = InteractionState.PlacingFromPylon;
-                }
-
-                return;
-            }
+            CurrentInteraction = InteractionState.BuildingInteraction;
+            return;
         }
-
-        if (dragStartPosition != Vector3.zero)
-            dragStartPosition = Vector3.zero;
     }
 
     private void BuildingInteractionState()
     {
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
-        if (GetRayHit(budLayer).collider != null)
+        if (!interactKeyHeld)
         {
-            if (healthDisplay != null) healthDisplay.enabled = false;
-            ResetInteraction();
-            return;
-        }
+            currentHit = GetRayHit(budLayer);
+            if (currentHit.collider is null) currentHit = GetRayHit(buildingLayers);
 
-        currentHit = GetRayHit(buildingLayers);
-
-        if (currentHit.collider is null)
-        {
-            if (healthDisplay != null) healthDisplay.enabled = false;
-            ResetInteraction();
-            return;
+            if (currentHit.collider is null)
+            {
+                if (healthDisplay != null) healthDisplay.enabled = false;
+                ResetInteraction();
+                return;
+            }
         }
 
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
-        if (startingMousePosition == Vector2.zero)
-            startingMousePosition = mouseScreenPosition;
-
-        if (Input.GetKeyDown(interactKey))
+        if (interactKeyHeld)
         {
-            radiusDisplay.SetActive(false);
-            if (healthDisplay != null) healthDisplay.enabled = false;
-
-            if (targetBuilding is Pylon)
+            if (timeHeld > interactHoldRequirement)
             {
-                Pylon targetPylon = targetBuilding as Pylon;
-                if (!targetPylon.pylonResidual.activeSelf)
+                if (targetBuilding is Hub)
                 {
-                    CurrentInteraction = InteractionState.PylonMenu;
+                    radiusDisplay.SetActive(false);
+                    if (healthDisplay != null) healthDisplay.enabled = false;
+                    CurrentInteraction = InteractionState.PlacingFromHub;
+                    return;
                 }
-                else
+                else if (targetBuilding is Pylon)
                 {
-                    CurrentInteraction = InteractionState.ResidualMenu;
+                    radiusDisplay.SetActive(false);
+                    if (healthDisplay != null) healthDisplay.enabled = false;
+                    CurrentInteraction = InteractionState.PlacingFromPylon;
+                    return;
                 }
-                startingMousePosition = Vector2.zero;
-            }
-            else if (targetBuilding is Tower)
-            {
-                CurrentInteraction = InteractionState.TowerMenu;
-                startingMousePosition = Vector2.zero;
             }
             else
             {
-                ResetInteraction(new GameObject[] { radiusDisplay });
-                DefaultState();
+                timeHeld += Time.deltaTime;
+            }
+
+            if (Input.GetKeyUp(interactKey))
+            {
+                radiusDisplay.SetActive(false);
+                if (healthDisplay != null) healthDisplay.enabled = false;
+
+                if (targetBuilding is Pylon)
+                {
+                    if (!(targetBuilding as Pylon).pylonResidual.activeSelf)
+                        CurrentInteraction = InteractionState.PylonMenu;
+                    else
+                        CurrentInteraction = InteractionState.ResidualMenu;
+                }
+                else if (targetBuilding is Tower)
+                {
+                    CurrentInteraction = InteractionState.TowerMenu;
+                }
+                else
+                {
+                    ResetInteraction(new GameObject[] { radiusDisplay });
+                    DefaultState();
+                }
             }
         }
+        else if (Input.GetKeyDown(interactKey)) interactKeyHeld = true;
     }
     private void PylonMenuState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
         radialType = RadialType.Pylon;
 
         refPylon = targetBuilding as Pylon;
@@ -340,24 +362,9 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex == 0)
             {
-                if (!(targetBuilding as Pylon).Enhanced && currencyManager.CanDecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost()))
-                {
-                    currencyManager.DecreaseCurrencyAmount((targetBuilding as Pylon).GetForceEnhanceCost());
-                    (targetBuilding as Pylon).Enhance();
-                }
-                else
-                {
-                    hoveredButton.color = buttonBaseColour;
-                    ResetInteraction();
-                    return;
-                }
-
-            } // Force Enhance
-            else if (hoveredButtonIndex == 1)
-            {
                 targetBuilding.Sell();
             } // Sell
-            else if (hoveredButtonIndex == 2)
+            else if (hoveredButtonIndex == 1)
             {
                 (targetBuilding as Pylon).SellAll();
             } // Sell All
@@ -405,6 +412,11 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerMenuState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
         radialType = RadialType.Tower;
 
         refTower = targetBuilding as Tower;
@@ -439,39 +451,42 @@ public class InteractionManager : MonoBehaviour
 
     private void PlacingFromHubState()
     {
-        bool canPlace;
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
 
-        targetBuilding = activeBud.transform.parent.GetComponent<Building>();
+        bool canPlace = false;
+        selectionIndicator.enabled = true;
+        selectionIndicator.color = Color.red;
+        activeBud = targetBuilding.bud;
+
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
-        if (dragStartPosition == Vector3.zero)
-            dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
-
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
+
+        if (currentHit.collider is not null)
         {
-            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+            bool isPlaceable;
+            if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
+            else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
-            float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
-
-            bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
-
-            if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
+            if (isPlaceable)
             {
-                canPlace = true;
-                selectionIndicator.color = Color.green;
+                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+
+                float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+                bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
+
+                if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
+                {
+                    canPlace = true;
+                    selectionIndicator.color = Color.green;
+                }
             }
-            else
-            {
-                canPlace = false;
-                selectionIndicator.color = Color.red;
-            }
-        }
-        else
-        {
-            canPlace = false;
-            selectionIndicator.color = Color.red;
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
@@ -497,39 +512,45 @@ public class InteractionManager : MonoBehaviour
     {
         bool canPlace = false;
         bool placingPylon = false;
-
+        selectionIndicator.enabled = true;
         selectionIndicator.color = Color.red;
-
-        targetBuilding = activeBud.transform.parent.GetComponent<Building>();
+        activeBud = targetBuilding.bud;
 
         refPylon = targetBuilding as Pylon;
-
+        
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
-        if (dragStartPosition == Vector3.zero)
-            dragStartPosition = new Vector3(activeBud.transform.position.x, 0, activeBud.transform.position.z);
-
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null && levelDataGrid.GetMuddyAtPoint(currentHit.point))
+        if (currentHit.collider is not null)
         {
-            bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-            bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+            bool isPlaceable;
+            if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
+            else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
-            float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+            if (dragStartPosition == Vector3.zero)
+                dragStartPosition = currentHit.point;
 
-            bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
-            bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
-
-            bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
-            bool pylonPlacementCriteria = (targetBuilding as Pylon).Enhanced && inPylonBuildRange && spaceToPlace && spaceForPylon;
-
-            if (towerPlacementCriteria || pylonPlacementCriteria)
+            if (isPlaceable)
             {
-                canPlace = true;
-                selectionIndicator.color = Color.green;
+                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
+                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
 
-                if (pylonPlacementCriteria)
-                    placingPylon = true;
+                float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+                bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
+                bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
+
+                bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
+                bool pylonPlacementCriteria = inPylonBuildRange && spaceToPlace && spaceForPylon;
+
+                if (towerPlacementCriteria || pylonPlacementCriteria)
+                {
+                    canPlace = true;
+                    selectionIndicator.color = Color.green;
+
+                    if (pylonPlacementCriteria)
+                        placingPylon = true;
+                }
             }
         }
 
@@ -557,6 +578,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void TowerSelectionState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+            return;
+        }
+
         targetBuilding.radiusDisplay.SetActive(false);
 
         radialType = RadialType.TowerSelection;
@@ -641,12 +668,6 @@ public class InteractionManager : MonoBehaviour
             cost = parentPylon.GetPylonCost(pylonMultiplier);
             
             notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
-
-            if (!parentPylon.Enhanced)
-            {
-                ResetInteraction();
-                return;
-            }
         }
 
         if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
@@ -708,12 +729,11 @@ public class InteractionManager : MonoBehaviour
     private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
     {
         healthDisplay = null;
-        /*if (targetBuilding is Hub)
+        if (targetBuilding is Hub)
         {
             healthDisplay = (targetBuilding as Hub).healthDisplay;
-
         }
-        else */if (targetBuilding is Pylon)
+        else if (targetBuilding is Pylon)
         {
             Pylon targetPylon = (targetBuilding as Pylon);
             healthDisplay = targetPylon.healthDisplay;
@@ -728,6 +748,11 @@ public class InteractionManager : MonoBehaviour
     }
 
 
+    public void UnlockTower(int towerIndex)
+    {
+        towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
+        unlockedTowers++;
+    }
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
@@ -810,7 +835,7 @@ public class InteractionManager : MonoBehaviour
             Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
             float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
 
-            for (int i = 0; i < radialButtons.Length; i++)
+            for (int i = 0; i < (unlockedTowers-1); i++)
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {
@@ -831,6 +856,35 @@ public class InteractionManager : MonoBehaviour
                 radialButton.color = buttonBaseColour;
             }
         }
+
+        if (hoveredButtonIndex >= 0)
+        {
+            towerTooltips.SetActive(true);
+            towerName.text = towerNames[hoveredButtonIndex];
+            towerDescription.text = towerDescriptions[hoveredButtonIndex];
+
+            if (towerRadiusPreview == null)
+            {
+                towerRadiusPreview = Instantiate(towerRadiusPreviewPrefab, currentHit.point + new Vector3(0, 0.75f, 0), towerRadiusPreviewPrefab.transform.rotation);
+            }
+            Material material = towerRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
+
+            if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
+            else material.SetFloat("_Hole_Radius", 0.0f);
+
+            Tower tower = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>();
+            towerRadiusPreview.transform.localScale = new Vector3(2 * tower.TargeterComponent.range, 2 * tower.TargeterComponent.range);
+        }
+        else
+        {
+            towerTooltips.SetActive(false);
+
+            if (towerRadiusPreview != null)
+            {
+                Destroy(towerRadiusPreview);
+                towerRadiusPreview = null;
+            }
+        }
     }
 
     void RadialCostDisplays(int index)
@@ -839,22 +893,14 @@ public class InteractionManager : MonoBehaviour
         switch(radialType)
         {
             case (RadialType.Pylon):
-                int pylonCost = 0;
+                int pylonCost;
                 if (index == 0)
-                {
-                    pylonCost = refPylon.GetForceEnhanceCost();
-                    pylonMenuCostText.text = "- " + pylonCost.ToString();
-                    if (!currencyManager.CanDecreaseCurrencyAmount(pylonCost))
-                        pylonMenuCostText.color = canNotPurchaseColour;
-                    else pylonMenuCostText.color = canPurchaseColour;
-                }//Force Enhance
-                if (index == 1)
                 {
                     pylonCost = refPylon.GetPylonSellAmount();
                     pylonMenuCostText.text = "+ " + pylonCost.ToString();
                     pylonMenuCostText.color = sellColour;
                 }//Sell
-                if (index == 2)
+                if (index == 1)
                 {
                     pylonCost = refPylon.GetPylonSellAllAmount();
                     pylonMenuCostText.text = "+ " + pylonCost.ToString();
@@ -863,7 +909,7 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case (RadialType.Residual):
-                int residualCost = 0;
+                int residualCost;
                 if (index == 0)
                 {
                     residualCost = refPylon.GetPylonCost();
@@ -881,7 +927,7 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case (RadialType.Tower):
-                int towerCost = 0;
+                int towerCost;
                 if (index == 1)
                 {
                     towerCost = refTower.SellPrice();
@@ -905,7 +951,10 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
+        dragStartPosition = Vector3.zero;
         CurrentInteraction = InteractionState.None;
+        timeHeld = 0.0f;
+        interactKeyHeld = false;
 
         if (activeBud is not null)
         {
@@ -930,6 +979,14 @@ public class InteractionManager : MonoBehaviour
 
         if (towerSelectionMenu.activeSelf)
             towerSelectionMenu.SetActive(false);
+        if (towerTooltips.activeSelf)
+            towerTooltips.SetActive(false);
+
+        if (towerRadiusPreview != null)
+        {
+            Destroy(towerRadiusPreview);
+            towerRadiusPreview = null;
+        }
 
         if (extraObjects is not null)
         {

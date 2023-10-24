@@ -45,8 +45,6 @@ public class Hub : Building
                 RestartScene();
         }
 
-
-
         ClearDestroyedPylons();
         connectedPylonsCount = pylonCount;
     }

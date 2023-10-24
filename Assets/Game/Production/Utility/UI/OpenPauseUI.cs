@@ -25,6 +25,8 @@ public class OpenPauseUI : MonoBehaviour
     // Update is called once per frame
     private void OpenPauseMenu()
     {
+        Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
+
         activePause = !activePause;
         Debug.LogWarning("No Pause Menu Exists!");
         Debug.LogWarning("Opening pause menu does not pause gameplay!");
