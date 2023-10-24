@@ -66,11 +66,10 @@ public abstract class EnemyTargeter : Targeter
             return null;
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
-        {
-            bestTargets.Clear(); // discard best targets 
+        {           
             foreach (Target target in targetsInRange)
             {
-                bestTargets.Add(target); // add any targets you can.
+                if(!bestTargets.Contains(target))bestTargets.Add(target); // add any targets you can.              
             }
             if (CheckRotation(bestTargets)) // rotate towards those targets
                 return bestTargets;

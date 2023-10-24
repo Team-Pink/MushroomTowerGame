@@ -124,17 +124,7 @@ public class AttackObject : MonoBehaviour
         {
             // extract exp
             originTower.storedExperience += target.enemy.expValue;
-            target.enemy.expValue = 0;
-
-            if (originTower.GetAccelerate()) // Accelerate logic
-            {
-                if (!target.enemy.Dead) // The bool Dead is set in OnDeath() so if it is false we can be sure this attack dealt the killing blow as the enemy has no health but hasn't "died" yet.
-                {
-                    originTower.accelerated = true; // this could be called from elsewhere if neccesary
-                    originTower.accelTimer = 0;
-                    originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
-                }
-            }
+            target.enemy.expValue = 0;            
             target.enemy.OnDeath(); // enemy on death
         }
     }
