@@ -200,7 +200,6 @@ public class Pylon : Building
     #region PYLON COST
     public int GetPylonCost() => baseCost * (costMultiplier);
     public int GetPylonCost(int instance) => baseCost * (instance);
-    public int GetForceEnhanceCost() => ForceEnhanceCost;
     public int GetMultiplier() => costMultiplier;
     public void SetMultiplier(int number) => costMultiplier = number;
     public static int GetPylonBaseCurrency() => baseCost;

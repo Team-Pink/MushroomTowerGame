@@ -70,8 +70,8 @@ public class InteractionManager : MonoBehaviour
     private int pylonMultiplier = 1;
     private int placementCost = 0;
     private CurrencyManager currencyManager;
-    Pylon refPylon = new Pylon();
-    Tower refTower = new Tower();
+    Pylon refPylon;
+    Tower refTower;
     RadialType radialType;
 
     enum RadialType
@@ -893,22 +893,14 @@ public class InteractionManager : MonoBehaviour
         switch(radialType)
         {
             case (RadialType.Pylon):
-                int pylonCost = 0;
+                int pylonCost;
                 if (index == 0)
-                {
-                    pylonCost = refPylon.GetForceEnhanceCost();
-                    pylonMenuCostText.text = "- " + pylonCost.ToString();
-                    if (!currencyManager.CanDecreaseCurrencyAmount(pylonCost))
-                        pylonMenuCostText.color = canNotPurchaseColour;
-                    else pylonMenuCostText.color = canPurchaseColour;
-                }//Force Enhance
-                if (index == 1)
                 {
                     pylonCost = refPylon.GetPylonSellAmount();
                     pylonMenuCostText.text = "+ " + pylonCost.ToString();
                     pylonMenuCostText.color = sellColour;
                 }//Sell
-                if (index == 2)
+                if (index == 1)
                 {
                     pylonCost = refPylon.GetPylonSellAllAmount();
                     pylonMenuCostText.text = "+ " + pylonCost.ToString();
@@ -917,7 +909,7 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case (RadialType.Residual):
-                int residualCost = 0;
+                int residualCost;
                 if (index == 0)
                 {
                     residualCost = refPylon.GetPylonCost();
@@ -935,7 +927,7 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case (RadialType.Tower):
-                int towerCost = 0;
+                int towerCost;
                 if (index == 1)
                 {
                     towerCost = refTower.SellPrice();
