@@ -5,7 +5,7 @@ using UnityEngine;
 [Obsolete("Functionality moved to Tower", true)]
 public class TurretController : MonoBehaviour
 {
-    /*
+    
  // TODO: test if unity adds enemies colliding with it when it is instantiated to the inRangeEnemies or if I need to add them via sphere cast on start.
 
     //Enemy catalouging
@@ -160,5 +160,5 @@ public class TurretController : MonoBehaviour
             lockedOn = true;
 
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * turnSpeed);
-    }*/
+    }
 }

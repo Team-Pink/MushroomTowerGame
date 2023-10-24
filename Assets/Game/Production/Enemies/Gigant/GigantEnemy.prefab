@@ -151,10 +151,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 50
+  maxHealth: 20
   health: 0
   dead: 0
-  speed: 0.5
+  speed: 1.5
   steeringForce: 0.15
   maxNeighbourhoodSize: 10
   influences:
@@ -169,7 +169,7 @@ MonoBehaviour:
   attackCooldown: 3
   attackDelay: 1
   attackRadius: 6
-  bugBits: 10
+  bugBits: 4
   expValue: 4
   animator: {fileID: 6382702797799955622}
   levelData: {fileID: 0}
