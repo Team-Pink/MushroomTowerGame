@@ -92,10 +92,6 @@ public class Tower : Building
     // References
     private HashSet<Target> targets = new();
 
-
-    // Pylon Data
-    public int storedExperience;
-
     // Upgrading
     [SerializeField] bool upgradeable;
     public bool Upgradeable { get; private set; }
@@ -152,7 +148,8 @@ public class Tower : Building
 
     private void Update()
     {
-        // this will stop the tower from attacking until it completes it's spawn animation.
+        if (Time.timeScale == 0) return; // for use by the pause menu.
+
         if (growthTime < growthDuration)
         {
             growthTime += Time.deltaTime;
@@ -262,13 +259,6 @@ public class Tower : Building
     }
     public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
     public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
-
-    public override int GetTowerEXP()
-    {
-        int tempExp = storedExperience;
-        storedExperience = 0;
-        return tempExp;
-    }
 
     /// <summary>
     /// literally exists because bounce needs to port it's own stuff for 

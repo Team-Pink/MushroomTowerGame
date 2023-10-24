@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
@@ -54,15 +53,20 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Image waveTimer;
     [SerializeField] Vector2[] indicatorPositions;
 
+    [Header("Tower Unlocks")]
+    [SerializeField] GameObject towerUnlockTooltip;
+    [SerializeField] Image towerIcon;
+    [SerializeField] Sprite[] towerSprites = new Sprite[4];
+    [SerializeField] float unlockTooltipDuration = 2;
+
     private void Awake()
     {
+        Time.timeScale = 0;
         levelData = GetComponent<LevelDataGrid>();
 
         CalculateSpawns();
 
         currentWave = waves[currentWaveIndex];
-        waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-        waveIndicator.gameObject.SetActive(true);
 
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
 
@@ -71,6 +75,8 @@ public class WaveSpawner : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         switch (spawnState)
         {
             case State.BetweenWaves:
@@ -100,6 +106,21 @@ public class WaveSpawner : MonoBehaviour
 
     private void BetweenWavesState()
     {
+        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
+        {
+            towerUnlockTooltip.SetActive(false);
+        }
+        else if (currentWaveIndex < 5)
+        {
+            towerUnlockTooltip.SetActive(true);
+            towerIcon.sprite = towerSprites[currentWaveIndex];
+
+            if (elapsedSecondsBetweenWaves == 0.0f)
+            {
+                GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
+            }
+        }
+
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)
         {
             spawnState = State.Spawning;
@@ -109,6 +130,9 @@ public class WaveSpawner : MonoBehaviour
         }
         else
         {
+            waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
+            waveIndicator.gameObject.SetActive(true);
+
             waveTimer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
             elapsedSecondsBetweenWaves += Time.deltaTime;
         }
@@ -140,6 +164,7 @@ public class WaveSpawner : MonoBehaviour
 
     private void WaitingForWaveEndState()
     {
+
         if (aliveEnemies.Count == 0)
         {
             UpdateWaveCounterUI();
@@ -149,9 +174,6 @@ public class WaveSpawner : MonoBehaviour
                 Debug.Log("Next Wave Starting in " + secondsBetweenWaves + " Seconds");
 
                 InitialiseNextWave();
-
-                waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-                waveIndicator.gameObject.SetActive(true);
 
                 GenericUtility.DestroyAllDeadChildren(parentFolder.transform);
             }

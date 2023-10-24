@@ -13,6 +13,7 @@ public abstract class Building : MonoBehaviour
 
     public GameObject radiusDisplay;
     public Material[] radiusMaterials;
+    public GameObject bud;
 
     public virtual void Deactivate() => Active = false;
     public virtual void Reactivate() => Active = true;

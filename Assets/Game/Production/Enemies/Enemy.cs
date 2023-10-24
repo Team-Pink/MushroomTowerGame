@@ -1,9 +1,7 @@
 using UnityEngine;
-using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
 using System.Collections;
-
 
 [Serializable]
 public class Condition
@@ -113,6 +111,9 @@ public class Enemy : MonoBehaviour
         [Space()]
         public float seperationRange = 1.5f;
         [Range(0.0f, 5.0f)] public float seperationStrength = 2.0f;
+        [Space()]
+        public float avoidanceRange = 1.5f;
+        [Range(0.0f, 5.0f)] public float avoidanceStrength = 2.0f;
     }
 
     [SerializeField] InfluenceDetails influences = new();
@@ -123,9 +124,11 @@ public class Enemy : MonoBehaviour
     }
 
     private LayerMask enemyLayers;
+    private LayerMask obstacleLayers;
 
     // References
     [HideInInspector] public List<BoidReference> neighbourhood = new();
+    private List<GameObject> obstacles = new();
 
     #endregion
 
@@ -151,7 +154,6 @@ public class Enemy : MonoBehaviour
     // Drops
     [Header("Drops")]
     [SerializeField] int bugBits = 2;
-    public int expValue = 1;
 
     // Components
     [Header("Components")]
@@ -180,12 +182,15 @@ public class Enemy : MonoBehaviour
         defaultMaterial = meshRenderer.material;
 
         enemyLayers = LayerMask.GetMask("Enemy");
+        obstacleLayers = LayerMask.GetMask("Tower", "Pylon");
 
         health = maxHealth;
     }
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         if (Dead) return;
 
         ExecuteConditionEffects();
@@ -338,12 +343,15 @@ public class Enemy : MonoBehaviour
 
         // Get Boids in Neighbourhood
         PopulateNeighbourhood();
+        PopulateObstacles();
 
         // Flocking
         Vector3 newVelocity = Flock();
 
         // Targeting
         newVelocity += influences.targetingStrength * levelData.GetFlowAtPoint(transform.position);
+
+        newVelocity += Avoid();
 
         // Apply New Velocity
         rigidbody.velocity = Speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
@@ -387,6 +395,28 @@ public class Enemy : MonoBehaviour
                 neighbourhood.RemoveAt(furthestIndex);
             }
         }
+    }
+
+    private void PopulateObstacles()
+    {
+        obstacles.Clear();
+        var obstacleColliderList = Physics.OverlapSphere(transform.position, influences.avoidanceStrength, obstacleLayers);
+
+        for (int colliderIndex = 0; colliderIndex < obstacleColliderList.Length; colliderIndex++)
+        {
+            obstacles.Add(obstacleColliderList[colliderIndex].gameObject);
+        }
+    }
+
+    private Vector3 Avoid()
+    {
+        Vector3 avoidanceInfluence = Vector3.zero;
+        foreach (GameObject obstacle in obstacles)
+        {
+            avoidanceInfluence += -(obstacle.transform.position - gameObject.transform.position).normalized;
+        }
+
+        return avoidanceInfluence;
     }
 
     private Vector3 Flock()

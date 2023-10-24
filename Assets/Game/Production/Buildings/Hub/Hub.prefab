@@ -535,10 +535,10 @@ MonoBehaviour:
   radiusMaterials:
   - {fileID: 2100000, guid: 7c1f3a2c96df59d45881e8ebe22fe2ee, type: 2}
   - {fileID: 2100000, guid: 83bdd160cf119474387ab6f77c4c2ec7, type: 2}
+  bud: {fileID: 7174415430349467487}
   maxHealth: 100
   gameOverDuration: 5
   gameOverText: {fileID: 0}
-  hubHealthText: {fileID: 0}
   healthDisplay: {fileID: 2208848785647668206}
   connectedPylons: []
   connectedPylonsCount: 0
@@ -748,6 +748,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
+--- !u!1 &7174415430349467487 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2228574422893360982, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
+  m_PrefabInstance: {fileID: 9042621616019462153}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7555760888246957541 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}

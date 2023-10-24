@@ -140,9 +140,6 @@ public class AttackObject : MonoBehaviour
         
         if (enemy.CheckIfDead())
         {
-            // extract exp
-            originTower.storedExperience += enemy.expValue;
-            enemy.expValue = 0;
             enemy.OnDeath(); // enemy on death
         }
     }
@@ -249,7 +246,7 @@ public class AttackObject : MonoBehaviour
 // runs a coroutine that waits to delay damage until the attack has reached the target
 // when it does reach the target
 // deal damage to the given targets
-// if the target dies modify exp and accelerate and then call the enemy's OnDeath()
+// if the target dies accelerate and then call the enemy's OnDeath()
 // check if originTower uses an area attack
 // if yes get the damaged AffectedEnemies from the AttackerComponent and do death checks on them
 // finally destroy this.
