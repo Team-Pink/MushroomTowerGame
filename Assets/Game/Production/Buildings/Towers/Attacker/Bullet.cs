@@ -64,8 +64,9 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-        
-        targetPos = targetTransform.position;
+        if(targetTransform is null) Destroy(gameObject);
+        targetPos = targetTransform.position; // update target position for moving targets.
+
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
 

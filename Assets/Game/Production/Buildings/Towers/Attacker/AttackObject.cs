@@ -121,10 +121,7 @@ public class AttackObject : MonoBehaviour
     void HandleTargetEnemyDeath()
     {
         if (target.enemy.CheckIfDead())
-        {
-            // extract exp
-            originTower.storedExperience += target.enemy.expValue;
-            target.enemy.expValue = 0;            
+        {            
             target.enemy.OnDeath(); // enemy on death
         }
     }
