@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public struct Target
 {
@@ -122,6 +123,8 @@ public class Tower : Building
     private float lockOnTimer = 0;
     [SerializeField] private float lockOnFiringIntermissionTime = 0;
     private Target lockOnTarget;
+    [SerializeField] GameObject chargeUpObject;
+    private ParticleSystem chargeUpParticleSystem;
 
 
 
@@ -130,6 +133,13 @@ public class Tower : Building
     private void Awake()
     {
         attackerComponent.animator = animator;
+        if (chargeUpObject)
+        {
+            chargeUpParticleSystem = chargeUpObject.GetComponent<ParticleSystem>();
+            chargeUpParticleSystem.Clear();
+            chargeUpObject.SetActive(false);
+
+        }
 
         transform = gameObject.transform;
         targeterComponent.transform = transform;
@@ -184,6 +194,8 @@ public class Tower : Building
                     {
                         animator.SetTrigger("Attack Charge Up");
                         chargingLaser = true;
+                        chargeUpObject.SetActive(true);
+                        chargeUpParticleSystem.Play();
                     }
 
                     if (LockedOn())
@@ -209,6 +221,9 @@ public class Tower : Building
             {
                 animator.SetTrigger("Attack End");
                 chargingLaser = false;
+                chargeUpParticleSystem.Stop();
+                chargeUpParticleSystem.Clear();
+                chargeUpObject.SetActive(false);
             }
         }
     }
