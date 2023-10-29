@@ -164,10 +164,10 @@ public class WaveSpawner : MonoBehaviour
 
     private void WaitingForWaveEndState()
     {
-        /* ** commented this out bcs we not using it anymore :) - James
+        
         if (aliveEnemies.Count == 0)
         {
-            UpdateWaveCounterUI();
+            //UpdateWaveCounterUI(); // ** commented this out bcs we not using it anymore :) - James
             if (currentWaveIndex + 1 < waves.Length)
             {
 
@@ -187,7 +187,7 @@ public class WaveSpawner : MonoBehaviour
             }
 
         }
-        */
+        
     }
 
     private IEnumerator GameWon()
@@ -230,6 +230,7 @@ public class WaveSpawner : MonoBehaviour
     }
 
     /* ** commented this out bcs we not using it anymore :) - James
+     * 
     /// <summary>
     /// This is Lochlan's code for updating the WaveCounter UI element
     /// </summary>
