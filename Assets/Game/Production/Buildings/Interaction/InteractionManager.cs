@@ -114,6 +114,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField, Space()] private Color canPurchaseColour;
     [SerializeField] private Color canNotPurchaseColour;
     [SerializeField] private Color sellColour;
+
+    [SerializeField, Space(10)] private CursorManager cursorManager;
     #endregion
 
     [Header("Interaction")]
@@ -168,6 +170,7 @@ public class InteractionManager : MonoBehaviour
         budLayer = LayerMask.GetMask("Bud");
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
+        cursorManager = gameObject.GetComponent<CursorManager>();
 
         for (int i = 0; i < towerSelectionMenuButtons.Length; i++)
         {
@@ -208,6 +211,7 @@ public class InteractionManager : MonoBehaviour
         {
             case InteractionState.None:
                 DefaultState();
+                cursorManager.ChangeCursor();
                 break;
 
             case InteractionState.BuildingInteraction:
@@ -485,8 +489,10 @@ public class InteractionManager : MonoBehaviour
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
+                    cursorManager.ChangeCursor("Default");
                 }
             }
+            else cursorManager.ChangeCursor("CannotPlace");
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
@@ -547,11 +553,13 @@ public class InteractionManager : MonoBehaviour
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
+                    cursorManager.ChangeCursor("Default");
 
                     if (pylonPlacementCriteria)
                         placingPylon = true;
                 }
             }
+            else cursorManager.ChangeCursor("CannotPlace");
         }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
