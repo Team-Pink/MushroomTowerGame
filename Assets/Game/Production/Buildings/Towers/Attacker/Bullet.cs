@@ -64,8 +64,7 @@ public class Bullet : MonoBehaviour
 
     void MoveStraightToTarget()
     {
-        if(targetTransform == null) Destroy(gameObject); // this wouldn't need to be here if the wave didn't end before the shroomiken boomerang could return to it's tower.
-        targetPos = targetTransform.position; // update target position for moving targets.
+        if(targetTransform is Object) targetPos = targetTransform.position; // update target position for moving targets.
 
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
     }
