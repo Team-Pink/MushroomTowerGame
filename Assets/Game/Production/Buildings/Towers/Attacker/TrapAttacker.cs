@@ -37,7 +37,7 @@ public class TrapAttacker : Attacker
     [SerializeField] private int maxTrapCount;
     [SerializeField] private float bufferDistance = 1f;
 
-    public TrapDetails inkDetails;
+    public TrapDetails inkDetails = new();
     private int inkPlacementIndex;
     private LayerMask obstacles = 0;
 
@@ -63,8 +63,6 @@ public class TrapAttacker : Attacker
 
     public bool PlaceTrap()
     {
-        inkDetails = trapPrefab.GetComponent<TrapAttackObject>().details;
-
         if (obstacles == 0) obstacles = LayerMask.GetMask("Trap", "Tower", "Pylon", "Hub"); 
 
         if (placedTraps.Count >= maxTrapCount || inkPlacementIndex >= targets.Count)

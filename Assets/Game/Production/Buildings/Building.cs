@@ -13,10 +13,11 @@ public abstract class Building : MonoBehaviour
 
     public GameObject radiusDisplay;
     public Material[] radiusMaterials;
-    public GameObject bud;
 
     public virtual void Deactivate() => Active = false;
     public virtual void Reactivate() => Active = true;
+
+    public virtual int GetTowerEXP() { return 0; }
 
     public virtual void Sell()
     {
@@ -45,10 +46,4 @@ public abstract class Building : MonoBehaviour
             radiusMaterial.SetFloat("_Display_Amount", 1);
         }
     }
-
-    public virtual void ShowDefaultLines() { Debug.Log("SetLinesDefault() is not defined for this class", this); }
-    public virtual void ShowDeactivateLines() { Debug.Log("SetLinesSell() is not defined for this class", this); }
-    public virtual void ShowSellLines() { Debug.Log("SetLinesSellAll() is not defined for this class", this); }
-    public virtual void ResetLines() { Debug.Log("ResetLines() is not defined for this class", this); }
-    
 }

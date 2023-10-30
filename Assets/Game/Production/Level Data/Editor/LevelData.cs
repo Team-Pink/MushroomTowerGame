@@ -78,9 +78,7 @@ public class PendingTile
             else
                 distanceToTile = 1.41f;
 
-            if (tilesReference[x, z].type == TileType.Obstacle)
-                distanceToTile *= LevelData.mudCost * 10000;
-            else if (tilesReference[x, z].type == TileType.Mud)
+            if (tilesReference[x, z].muddy)
                 distanceToTile *= LevelData.mudCost;
 
             tile.SetDistance(distanceToTile + distanceFromCentreTile);
@@ -104,7 +102,7 @@ public class ClosedTile
     public ClosedTile bestNextTile;
     [SerializeField] private Vector2 flowDirection;
     public Vector2 FlowDirection { get => flowDirection; private set => flowDirection = value; }
-    public TileType type;
+    public bool muddy;
 
     public ClosedTile()
     {
@@ -189,7 +187,7 @@ public class LevelData : ScriptableObject
     {
         Clear();
         CreateGrid();
-        PopulateGridTileTypes();
+        PopulateGridMuddiness();
         initialised = true;
         generated = false;
     }
@@ -202,6 +200,7 @@ public class LevelData : ScriptableObject
             {
                 tile.tileStatus = TileStatus.Unreached;
                 tile.bestNextTile = null;
+                tile.muddy = false;
             }
         }
         amountClosed = 0;
@@ -223,7 +222,7 @@ public class LevelData : ScriptableObject
         }
     }
 
-    private void PopulateGridTileTypes()
+    private void PopulateGridMuddiness()
     {
         if (TextureMap == null)
             return;
@@ -232,13 +231,8 @@ public class LevelData : ScriptableObject
         {
             for (int z = 0; z < tiles.GetLength(1); z++)
             {
-                if (textureMap.GetPixel(x, z).r > 0.95f)
-                    tiles[x, z].type = TileType.Path;
-                else if (textureMap.GetPixel(x, z).r > 0.05f)
-                    tiles[x, z].type = TileType.Mud;
-                else
-                    tiles[x, z].type = TileType.Obstacle;
-
+                if (textureMap.GetPixel(x, z).r > 0.05f)
+                    tiles[x, z].muddy = true;
             }
         }
     }
@@ -391,7 +385,7 @@ public class LevelData : ScriptableObject
 
         Texture2D texture = new(columns, rows);
 
-        float type;
+        float muddy;
         float flowDirectionX;
         float flowDirectionZ;
         Color color;
@@ -400,17 +394,15 @@ public class LevelData : ScriptableObject
         {
             for (int z = 0; z < rows; z++)
             {
-                if (tiles[x, z].type == TileType.Path)
-                    type = 1.0f;
-                else if (tiles[x, z].type == TileType.Mud)
-                    type = 0.5f;
+                if (tiles[x, z].muddy)
+                    muddy = 1.0f;
                 else
-                    type = 0.0f;
+                    muddy = 0.0f;
 
                 flowDirectionX = tiles[x, z].FlowDirection.x;
                 flowDirectionZ = tiles[x, z].FlowDirection.y;
 
-                color = new(type, (flowDirectionX * 0.5f) + 0.5f, (-flowDirectionZ * 0.5f) + 0.5f);
+                color = new(muddy, (flowDirectionX * 0.5f) + 0.5f, (-flowDirectionZ * 0.5f) + 0.5f);
 
                 texture.SetPixel(x, z, color);
             }

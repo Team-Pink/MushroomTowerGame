@@ -24,10 +24,6 @@ PrefabInstance:
       value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: projectileSpeed
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: recoveryDuration
       value: 1
       objectReference: {fileID: 0}
@@ -48,16 +44,8 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: renderers.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: renderers.Array.data[0]
-      value: 
-      objectReference: {fileID: 5644478872640709988}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackDelay
@@ -69,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: deactivatedMaterials.Array.data[0]
@@ -105,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441040].range
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].spray
@@ -124,12 +112,8 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441041].bounce
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].damage
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441032].turnRate
@@ -181,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].sprayDamage
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].bulletPrefab
@@ -189,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].damageRadius
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].cooldownTimer
@@ -216,16 +200,8 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441040].radiusMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].attackCooldown
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441041].bounceHitLimit
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].lockonDuration
@@ -268,16 +244,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441040].exclusionZoneRadius
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].strikethroughDamage
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].additionalSprayRange
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].attackHitSoundEffect
@@ -361,10 +333,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441041].strikethroughMatrix.e33
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
-      propertyPath: managedReferences[4951535851181441041].bounceBulletTowersPossession
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5109823546609926884, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
@@ -453,6 +421,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 270515170913933455, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -496,10 +476,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlamTower
       objectReference: {fileID: 0}
-    - target: {fileID: 1852065058533896351, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
-      propertyPath: tower
-      value: 
-      objectReference: {fileID: 8458371139374482302}
+    - target: {fileID: 615516168855061045, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
 --- !u!95 &2472821387772103797 stripped
@@ -507,8 +487,21 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 309527230517620686, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
   m_PrefabInstance: {fileID: 2745665884213552059}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &5644478872640709988 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7516410136656037599, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
+--- !u!1 &3355269832880202126 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 615516168855061045, guid: 59acbdc32e1c33145a142ffa1db6fe21, type: 3}
   m_PrefabInstance: {fileID: 2745665884213552059}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1852065058533896351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355269832880202126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0343d5dff0e31264992e4db9a663b7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tower: {fileID: 8458371139374482302}

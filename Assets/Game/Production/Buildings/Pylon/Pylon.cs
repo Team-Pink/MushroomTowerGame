@@ -1,18 +1,11 @@
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using UnityEngine;
 using BuildingList = System.Collections.Generic.List<Building>;
 
 public class Pylon : Building
 {
     public MeshRenderer healthDisplay;
-    public bool isResidual
-    {
-        get;
-        private set;
-    }
-
-    [HideInInspector] public bool budDetached = false;
+    private bool isResidual;
 
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
@@ -21,6 +14,37 @@ public class Pylon : Building
     [SerializeField] GameObject baseBud;
     [SerializeField] GameObject deactivatedBasePylon;
     static readonly int baseCost = 10;
+
+    [Header("Enhancement")]
+    [SerializeField] bool enhanced;
+    public bool Enhanced
+    {
+        get;
+        private set;
+    }
+    [SerializeField] GameObject enhancedPylon;
+    [SerializeField] GameObject enhancedBud;
+    [SerializeField] GameObject deactivatedEnhancedPylon;
+    [SerializeField] GameObject pylonPlacementRange;
+    [SerializeField] int XPEnhanceRequirement = 2;
+    private int currentXP;
+    public int CurrentXP
+    {
+        get => currentXP;
+        set
+        {
+            currentXP = value;
+
+            if (currentXP >= XPEnhanceRequirement * costMultiplier)
+            {
+                Enhance();
+            }
+        }
+    }
+    private int ForceEnhanceCost
+    {
+        get => 2 * costMultiplier * baseCost;
+    }
 
     [Header("Destruction")]
     [SerializeField] float pylonHealth = 5;
@@ -39,8 +63,7 @@ public class Pylon : Building
             if (currentHealth <= float.Epsilon)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
-                if (CanTurnIntoResidual())
-                    ToggleResidual(true);
+                ToggleResidual(true);
             }
         }
     }
@@ -49,7 +72,6 @@ public class Pylon : Building
 
     [Header("Connections")]
     [SerializeField] BuildingList connectedBuildings = new();
-    public bool AtMaxBuildings { get => AtMaxTowers && AtMaxPylons; }
     public int connectedTowersCount
     {
         get
@@ -100,18 +122,6 @@ public class Pylon : Building
         }
         private set { }
     }
-    private bool atMaxTowers;
-    public bool AtMaxTowers { get => atMaxTowers; }
-    private bool atMaxPylons;
-    public bool AtMaxPylons { get => atMaxPylons; }
-
-    public GameObject displayLinePrefab;
-    public Material displayLineDefault;
-    public Material displayLineSell;
-    public Material displayLineDeactivate;
-    private List<GameObject> displayLines = new();
-    private Vector3 lineRendererOffset = new(0, 1.0f, 0);
-
 
     [Header("Sounds")]
     [SerializeField] AudioClip placeAudio;
@@ -124,36 +134,36 @@ public class Pylon : Building
 
     private void Start()
     {
-        bud = baseBud;
         CurrentHealth = pylonHealth;
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
     private void Update()
     {
-        if (isResidual && connectedPylonsCount == 0 && connectedTowersCount == 0)
-            Destroy(gameObject);
+        GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
+    }
 
-        if (atMaxTowers != (connectedTowersCount == InteractionManager.pylonMaxTowers))
+
+    public void Enhance()
+    {
+        Enhanced = true;
+        if (!isResidual)
         {
-            atMaxTowers = connectedTowersCount == InteractionManager.pylonMaxTowers;
-            radiusDisplay.transform.GetChild(2).gameObject.SetActive(!atMaxTowers);
-        }
-        if (atMaxPylons != (connectedPylonsCount == InteractionManager.pylonMaxPylons))
-        {
-            atMaxPylons = connectedPylonsCount == InteractionManager.pylonMaxPylons;
-            radiusDisplay.transform.GetChild(0).gameObject.SetActive(!atMaxPylons);
-            radiusDisplay.transform.GetChild(1).gameObject.SetActive(!atMaxPylons);
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
         }
 
-        bool showBud = !(AtMaxBuildings || budDetached) && !isResidual;
-        bud.SetActive(showBud);
+        pylonPlacementRange.SetActive(true);
+
+        basePylon.SetActive(false);
+        baseBud.SetActive(false);
     }
 
     public void AddBuilding(Building building)
     {
         connectedBuildings.Add(building);
     }
+
     public void RemoveBuilding(Building building)
     {
         connectedBuildings.Remove(building);
@@ -168,10 +178,18 @@ public class Pylon : Building
             building.Deactivate();
         }
 
-
-        deactivatedBasePylon.SetActive(true);
-        basePylon.SetActive(false);
-        baseBud.SetActive(false);
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(true);
+            enhancedPylon.SetActive(false);
+            enhancedBud.SetActive(false);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(true);
+            basePylon.SetActive(false);
+            baseBud.SetActive(false);
+        }
     }
     public override void Reactivate()
     {
@@ -182,9 +200,18 @@ public class Pylon : Building
             building.Reactivate();
         }
 
-        deactivatedBasePylon.SetActive(false);
-        basePylon.SetActive(true);
-        baseBud.SetActive(true);
+        if (Enhanced)
+        {
+            deactivatedEnhancedPylon.SetActive(false);
+            enhancedPylon.SetActive(true);
+            enhancedBud.SetActive(true);
+        }
+        else
+        {
+            deactivatedBasePylon.SetActive(false);
+            basePylon.SetActive(true);
+            baseBud.SetActive(true);
+        }
     }
 
     public void ToggleResidual(bool value)
@@ -206,80 +233,58 @@ public class Pylon : Building
             }
         }
 
-        if (Active)
+        if (Enhanced)
         {
-            basePylon.SetActive(!isResidual);
-            baseBud.SetActive(!isResidual);
+            if (Active)
+            {
+                enhancedPylon.SetActive(!isResidual);
+                enhancedBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedEnhancedPylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
         else
         {
-            deactivatedBasePylon.SetActive(!isResidual);
+            if (Active)
+            {
+                basePylon.SetActive(!isResidual);
+                baseBud.SetActive(!isResidual);
+            }
+            else
+            {
+                deactivatedBasePylon.SetActive(!isResidual);
+            }
+            pylonResidual.SetActive(isResidual);
         }
-        pylonResidual.SetActive(isResidual);
-    }
-    public bool CanTurnIntoResidual()
-    {
-        if (connectedBuildings.Count > 0)
-            return true;
-        else
-            Destroy(gameObject);
-        return false;
     }
 
     #region PYLON COST
-    public int GetPylonCost() => baseCost * (costMultiplier);
-    public int GetPylonCost(int instance) => baseCost * (instance);
-    public int GetMultiplier() => costMultiplier;
-    public void SetMultiplier(int number) => costMultiplier = number;
-    public static int GetPylonBaseCurrency() => baseCost;
-    public int GetPylonSellAmount()
+    public int GetPylonCost()
     {
-        if (isResidual == false)
-            return (int)((baseCost * costMultiplier) * sellReturnPercent);
-        else
-            return 0;
+        return baseCost * (costMultiplier);
     }
-    public int GetPylonSellAllAmount()
+    public int GetPylonCost(int instance)
     {
-        int returnCost = 0;
-        List<Pylon> openList = new List<Pylon>();
-        bool exitLoop = false;
-
-        openList.Add(this);
-
-        while(!exitLoop)
-        {
-            if (openList.Count == 0)
-            {
-                exitLoop = true;
-                continue;
-            }
-
-            Pylon pylon = openList[0];
-
-            if (pylon.connectedBuildings.Count <= 0)
-            {
-                if (pylon.isResidual == false)
-                    returnCost += pylon.GetPylonSellAmount();
-                openList.Remove(pylon);
-                continue;
-            }
-
-            foreach (Building building in pylon.connectedBuildings)
-            {
-                if (building is Pylon)
-                    openList.Add(building as Pylon);
-                else
-                    returnCost += (building as Tower).SellPrice();
-            }
-
-            if (pylon.isResidual == false)
-                returnCost += pylon.GetPylonSellAmount();
-
-            openList.Remove(pylon);
-        }
-        
-        return returnCost;
+        return baseCost * (instance);
+    }
+    public int GetForceEnhanceCost()
+    {
+        return ForceEnhanceCost;
+    }
+    public int GetMultiplier()
+    {
+        return costMultiplier;
+    }
+    public void SetMultiplier(int number)
+    {
+        costMultiplier = number;
+    }
+    public static int GetPylonBaseCurrency()
+    {
+        return baseCost;
     }
     #endregion
 
@@ -287,20 +292,28 @@ public class Pylon : Building
     public override void Sell()
     {
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
-
-        if (!isResidual)
-            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
 
         if (connectedBuildings.Count > 0)
+        {
             ToggleResidual(true);
+        }
         else
+        {
             Destroy(gameObject);
+        }
     }
+
     public void SellAll()
     {
         SellAllConnectedBuildings();
+
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+
         Sell();
     }
+
     public void SellAllConnectedBuildings()
     {
         while (connectedBuildings.Count > 0)
@@ -322,87 +335,25 @@ public class Pylon : Building
         }
     }
 
+    public override int GetTowerEXP()
+    {
+        if (!enhanced && connectedBuildings.Count > 0)
+        {
+            int total = 0;
+            foreach (Building building in connectedBuildings)
+            {
+                total += building.GetTowerEXP();
+            }
+            if (total > 0)
+                CurrentXP += total;
+        }
+
+        return base.GetTowerEXP();
+    }
     public void SellTower(Tower tower)
     {
         Debug.Log("Sold Tower", tower);
         connectedBuildings.Remove(tower);
         tower.Sell();
-    }
-
-
-    public override void ShowDefaultLines()
-    {
-        ResetLines();
-
-        for (int i = 0; i < connectedBuildings.Count; i++)
-        {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineDefault;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
-        }
-    }
-    public override void ShowDeactivateLines()
-    {
-        ResetLines();
-
-        //set lines here
-        for (int i = 0; i < connectedBuildings.Count; i++)
-        {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineDeactivate;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
-
-            //Recurse through children
-            if (building is not Tower) building.ShowDeactivateLines();
-        }
-    }
-    public override void ShowSellLines()
-    {
-        ResetLines();
-
-        //set lines here
-        for (int i = 0; i < connectedBuildings.Count; i++)
-        {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineSell;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
-
-            //Recurse through children
-            if (building is not Tower) building.ShowSellLines();
-        }
-    }
-    public override void ResetLines()
-    {
-        int lineAmount = displayLines.Count;
-        for (int i = 0; i < lineAmount; i++)
-        {
-            Destroy(displayLines[i]);
-        }
-        displayLines.Clear();
-
-        //Recurse through children
-        for (int i = 0; i < connectedBuildings.Count; i++)
-        {
-            Building building = connectedBuildings[i];
-            if (building is not Tower) building.ResetLines();
-        }
     }
 }

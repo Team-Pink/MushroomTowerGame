@@ -24,7 +24,8 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 4c8543eb31902b741aa7c90be9b6f371, type: 3}
   m_ValidKeywords:
   - _RECEIVE_SHADOWS_OFF
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _ALPHAMODULATE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -95,7 +96,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _Blend: 0
+    - _Blend: 3
     - _BumpScale: 1
     - _CastShadows: 0
     - _ClearCoatMask: 0
@@ -106,7 +107,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _Fresnel_Strength: 0.465
+    - _Fresnel_Strength: 0.5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -128,10 +129,10 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 0.27420777, g: 0.30671358, b: 0.735849, a: 0.78431374}
-    - _Base_Colour: {r: 0.41960788, g: 0.427451, b: 0.9960785, a: 1}
+    - _Base_Colour: {r: 0, g: 0.022385705, b: 0.3301887, a: 1}
     - _Color: {r: 0.27420774, g: 0.30671355, b: 0.735849, a: 0.78431374}
     - _EmissionColor: {r: 0, g: 0.018123068, b: 0.6886792, a: 1}
-    - _Emission_Colour: {r: 0.043137245, g: 0.071902, b: 0.28627452, a: 1}
-    - _Fresnel_Colour: {r: 0.5613208, g: 0.74586856, b: 1, a: 1}
+    - _Emission_Colour: {r: 0, g: 0, b: 0, a: 0}
+    - _Fresnel_Colour: {r: 0, g: 0.0619315, b: 0.8773585, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
