@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 using BuildingList = System.Collections.Generic.List<Building>;
 
@@ -10,6 +11,8 @@ public class Pylon : Building
         get;
         private set;
     }
+
+    [HideInInspector] public bool budDetached = false;
 
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
@@ -46,6 +49,7 @@ public class Pylon : Building
 
     [Header("Connections")]
     [SerializeField] BuildingList connectedBuildings = new();
+    public bool AtMaxBuildings { get => AtMaxTowers && AtMaxPylons; }
     public int connectedTowersCount
     {
         get
@@ -96,6 +100,18 @@ public class Pylon : Building
         }
         private set { }
     }
+    private bool atMaxTowers;
+    public bool AtMaxTowers { get => atMaxTowers; }
+    private bool atMaxPylons;
+    public bool AtMaxPylons { get => atMaxPylons; }
+
+    public GameObject displayLinePrefab;
+    public Material displayLineDefault;
+    public Material displayLineSell;
+    public Material displayLineDeactivate;
+    private List<GameObject> displayLines = new();
+    private Vector3 lineRendererOffset = new(0, 1.0f, 0);
+
 
     [Header("Sounds")]
     [SerializeField] AudioClip placeAudio;
@@ -115,10 +131,23 @@ public class Pylon : Building
 
     private void Update()
     {
-        GetTowerEXP();// Move this to on wave end in the wave manager when it exists or somewhere else that only triggers a few times a wave.
-
         if (isResidual && connectedPylonsCount == 0 && connectedTowersCount == 0)
             Destroy(gameObject);
+
+        if (atMaxTowers != (connectedTowersCount == InteractionManager.pylonMaxTowers))
+        {
+            atMaxTowers = connectedTowersCount == InteractionManager.pylonMaxTowers;
+            radiusDisplay.transform.GetChild(2).gameObject.SetActive(!atMaxTowers);
+        }
+        if (atMaxPylons != (connectedPylonsCount == InteractionManager.pylonMaxPylons))
+        {
+            atMaxPylons = connectedPylonsCount == InteractionManager.pylonMaxPylons;
+            radiusDisplay.transform.GetChild(0).gameObject.SetActive(!atMaxPylons);
+            radiusDisplay.transform.GetChild(1).gameObject.SetActive(!atMaxPylons);
+        }
+
+        bool showBud = !(AtMaxBuildings || budDetached) && !isResidual;
+        bud.SetActive(showBud);
     }
 
     public void AddBuilding(Building building)
@@ -298,5 +327,82 @@ public class Pylon : Building
         Debug.Log("Sold Tower", tower);
         connectedBuildings.Remove(tower);
         tower.Sell();
+    }
+
+
+    public override void ShowDefaultLines()
+    {
+        ResetLines();
+
+        for (int i = 0; i < connectedBuildings.Count; i++)
+        {
+            Building building = connectedBuildings[i];
+
+            GameObject line = Instantiate(displayLinePrefab, transform);
+            displayLines.Add(line);
+
+            LineRenderer renderer = line.GetComponent<LineRenderer>();
+            renderer.material = displayLineDefault;
+            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
+            renderer.SetPosition(1, lineRendererOffset);
+        }
+    }
+    public override void ShowDeactivateLines()
+    {
+        ResetLines();
+
+        //set lines here
+        for (int i = 0; i < connectedBuildings.Count; i++)
+        {
+            Building building = connectedBuildings[i];
+
+            GameObject line = Instantiate(displayLinePrefab, transform);
+            displayLines.Add(line);
+
+            LineRenderer renderer = line.GetComponent<LineRenderer>();
+            renderer.material = displayLineDeactivate;
+            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
+            renderer.SetPosition(1, lineRendererOffset);
+
+            //Recurse through children
+            if (building is not Tower) building.ShowDeactivateLines();
+        }
+    }
+    public override void ShowSellLines()
+    {
+        ResetLines();
+
+        //set lines here
+        for (int i = 0; i < connectedBuildings.Count; i++)
+        {
+            Building building = connectedBuildings[i];
+
+            GameObject line = Instantiate(displayLinePrefab, transform);
+            displayLines.Add(line);
+
+            LineRenderer renderer = line.GetComponent<LineRenderer>();
+            renderer.material = displayLineSell;
+            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
+            renderer.SetPosition(1, lineRendererOffset);
+
+            //Recurse through children
+            if (building is not Tower) building.ShowSellLines();
+        }
+    }
+    public override void ResetLines()
+    {
+        int lineAmount = displayLines.Count;
+        for (int i = 0; i < lineAmount; i++)
+        {
+            Destroy(displayLines[i]);
+        }
+        displayLines.Clear();
+
+        //Recurse through children
+        for (int i = 0; i < connectedBuildings.Count; i++)
+        {
+            Building building = connectedBuildings[i];
+            if (building is not Tower) building.ResetLines();
+        }
     }
 }

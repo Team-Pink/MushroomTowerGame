@@ -14,12 +14,15 @@ public class OpenPauseUI : MonoBehaviour
     void Start()
     {
         pauseMenu = transform.GetChild(0).gameObject;
+
         pausebutton = this.GetComponent<Button>();
         pausebutton.onClick.AddListener(OpenPauseMenu);
-        quitButton = pauseMenu.transform.GetChild(0).GetComponent<Button>();
-        quitButton.onClick.AddListener(Quit);
-        resumebutton = pauseMenu.transform.GetChild(1).GetComponent<Button>();
+
+        resumebutton = pauseMenu.transform.GetChild(0).GetComponent<Button>();
         resumebutton.onClick.AddListener(OpenPauseMenu);
+        
+        quitButton = pauseMenu.transform.GetChild(1).GetComponent<Button>();
+        quitButton.onClick.AddListener(Quit);
     }
 
     // Update is called once per frame
@@ -28,8 +31,6 @@ public class OpenPauseUI : MonoBehaviour
         Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
 
         activePause = !activePause;
-        Debug.LogWarning("No Pause Menu Exists!");
-        Debug.LogWarning("Opening pause menu does not pause gameplay!");
         // pause game
         pauseMenu.SetActive(activePause);
     }
