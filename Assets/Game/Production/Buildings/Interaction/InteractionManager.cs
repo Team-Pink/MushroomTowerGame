@@ -211,7 +211,6 @@ public class InteractionManager : MonoBehaviour
         {
             case InteractionState.None:
                 DefaultState();
-                cursorManager.ChangeCursor();
                 break;
 
             case InteractionState.BuildingInteraction:
@@ -246,6 +245,8 @@ public class InteractionManager : MonoBehaviour
     private void DefaultState()
     {
         currentHit = GetRayHit(budLayer);
+
+        cursorManager.ChangeCursor("Default");
 
         if (currentHit.collider is null)
         {
@@ -489,11 +490,13 @@ public class InteractionManager : MonoBehaviour
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
-                    cursorManager.ChangeCursor("Default");
+                    cursorManager.ChangeCursor("CanPlace");
                 }
+                else cursorManager.ChangeCursor("CannotPlace");
             }
             else cursorManager.ChangeCursor("CannotPlace");
         }
+        else cursorManager.ChangeCursor("CannotPlace");
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -527,7 +530,7 @@ public class InteractionManager : MonoBehaviour
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider != null)
         {
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
@@ -553,14 +556,18 @@ public class InteractionManager : MonoBehaviour
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
-                    cursorManager.ChangeCursor("Default");
+
+                    //bubble logic for cursor goes here... TODO IN GOLD!!!!
+                    cursorManager.ChangeCursor("CanPlace");
 
                     if (pylonPlacementCriteria)
                         placingPylon = true;
                 }
+                else cursorManager.ChangeCursor("CannotPlace");
             }
             else cursorManager.ChangeCursor("CannotPlace");
         }
+        else cursorManager.ChangeCursor("CannotPlace");
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -568,6 +575,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (canPlace)
             {
+                cursorManager.ChangeCursor("Default");
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
@@ -578,6 +586,7 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
+                cursorManager.ChangeCursor("Default");
                 ResetInteraction();
             }
 

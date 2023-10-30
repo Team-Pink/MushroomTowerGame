@@ -40,7 +40,7 @@ public class CursorManager : MonoBehaviour
         if (!found)
             return;
 
-        Cursor.SetCursor(desiredCursor.cursorTexture, new Vector2(), CursorMode.Auto);
+        Cursor.SetCursor(desiredCursor.cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = desiredCursor.cursorName;
     }
     public void ChangeCursor(int cursorIndex)
@@ -50,12 +50,12 @@ public class CursorManager : MonoBehaviour
         if (desiredCursor == null)
             return;
 
-        Cursor.SetCursor(desiredCursor.cursorTexture, new Vector2(), CursorMode.Auto);
+        Cursor.SetCursor(desiredCursor.cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = desiredCursor.cursorName;
     }
     public void ChangeCursor()
     {
-        Cursor.SetCursor(cursors[0].cursorTexture,new Vector2(), CursorMode.Auto);
+        Cursor.SetCursor(cursors[0].cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = cursors[0].cursorName;
     }
 
