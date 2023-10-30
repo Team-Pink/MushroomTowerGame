@@ -18,7 +18,7 @@ public class SingleAttacker : Attacker
             }
 
             attacking = true;
-            bounceBulletTowersPossession = false;
+            bounceBulletInTowerPossession = false;
 
             foreach (var target in targets)
             {

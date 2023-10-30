@@ -109,7 +109,7 @@ public class AttackObject : MonoBehaviour
         if (originTower.AttackerComponent.bounce && returningToTower) 
         {
             yield return new WaitForSeconds(returnToTowerTime);
-            originTower.AttackerComponent.bounceBulletTowersPossession = true;
+            originTower.AttackerComponent.bounceBulletInTowerPossession = true;
         }//this is for bounce only to allow the tower to shoot again.
 
         Destroy(gameObject); // Destroy this object
