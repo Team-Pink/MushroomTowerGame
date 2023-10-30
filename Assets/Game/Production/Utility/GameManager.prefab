@@ -1870,6 +1870,7 @@ GameObject:
   - component: {fileID: 2029106839798511778}
   - component: {fileID: 6829538405946730101}
   - component: {fileID: 4105631474352096952}
+  - component: {fileID: 2288347274951756725}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1948,8 +1949,8 @@ MonoBehaviour:
     m_Bits: 2496
   placementExclusionSize: 1.2
   maxDistanceFromPylon: 6
-  maxPylonsPerHub: 6
-  maxTowersPerPylon: 5
+  maxPylonsPerHub: 4
+  maxTowersPerPylon: 3
   maxPylonsPerPylon: 2
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
@@ -1984,6 +1985,7 @@ MonoBehaviour:
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
   canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
   sellColour: {r: 0, g: 1, b: 0.00427413, a: 1}
+  cursorManager: {fileID: 0}
   interactKey: 323
   cancelKey: 324
   interactHoldRequirement: 0.15
@@ -2178,6 +2180,25 @@ MonoBehaviour:
   muddySpeedMultiplier: 20
   drawGrid: 0
   drawFlowLines: 0
+--- !u!114 &2288347274951756725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6533875848915131746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 291b124009014714c9c15b19ac8ab074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cursors:
+  - cursorName: Default
+    cursorTexture: {fileID: 2800000, guid: 5f43c0d0bc155074fa549ab66ff2a394, type: 3}
+  - cursorName: CannotPlace
+    cursorTexture: {fileID: 2800000, guid: 920a81019b2be0b4ba8f99f8f6cfb851, type: 3}
+  - cursorName: CanPlace
+    cursorTexture: {fileID: 2800000, guid: 62436c39dd9e78749aea1468225dff26, type: 3}
 --- !u!1 &6597148967594781695
 GameObject:
   m_ObjectHideFlags: 0

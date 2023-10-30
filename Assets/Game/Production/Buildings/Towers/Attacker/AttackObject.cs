@@ -109,7 +109,7 @@ public class AttackObject : MonoBehaviour
         if (originTower.AttackerComponent.bounce && returningToTower) 
         {
             yield return new WaitForSeconds(returnToTowerTime);
-            originTower.AttackerComponent.bounceBulletTowersPossession = true;
+            originTower.AttackerComponent.bounceBulletInTowerPossession = true;
         }//this is for bounce only to allow the tower to shoot again.
 
         Destroy(gameObject); // Destroy this object
@@ -121,16 +121,7 @@ public class AttackObject : MonoBehaviour
     void HandleTargetEnemyDeath()
     {
         if (target.enemy.CheckIfDead())
-        {
-            if (originTower.GetAccelerate()) // Accelerate logic
-            {
-                if (!target.enemy.Dead) // The bool Dead is set in OnDeath() so if it is false we can be sure this attack dealt the killing blow as the enemy has no health but hasn't "died" yet.
-                {
-                    originTower.accelerated = true; // this could be called from elsewhere if neccesary
-                    originTower.accelTimer = 0;
-                    originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
-                }
-            }
+        {            
             target.enemy.OnDeath(); // enemy on death
         }
     }
