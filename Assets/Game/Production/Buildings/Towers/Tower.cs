@@ -123,8 +123,11 @@ public class Tower : Building
     private float lockOnTimer = 0;
     [SerializeField] private float lockOnFiringIntermissionTime = 0;
     private Target lockOnTarget;
-    [SerializeField] GameObject chargeUpObject;
-    private ParticleSystem chargeUpParticleSystem;
+
+    [SerializeField] GameObject ChargeUpTransform;
+    [SerializeField] GameObject chargeUpParticlePrefab;
+    private GameObject chargeDownParticleRef;
+
 
 
 
@@ -133,13 +136,6 @@ public class Tower : Building
     private void Awake()
     {
         attackerComponent.animator = animator;
-        if (chargeUpObject)
-        {
-            chargeUpParticleSystem = chargeUpObject.GetComponent<ParticleSystem>();
-            chargeUpParticleSystem.Clear();
-            chargeUpObject.SetActive(false);
-
-        }
 
         transform = gameObject.transform;
         targeterComponent.transform = transform;
@@ -194,8 +190,7 @@ public class Tower : Building
                     {
                         animator.SetTrigger("Attack Charge Up");
                         chargingLaser = true;
-                        chargeUpObject.SetActive(true);
-                        chargeUpParticleSystem.Play();
+                        chargeDownParticleRef = Instantiate(chargeUpParticlePrefab, ChargeUpTransform.transform);
                     }
 
                     if (LockedOn())
@@ -221,9 +216,8 @@ public class Tower : Building
             {
                 animator.SetTrigger("Attack End");
                 chargingLaser = false;
-                chargeUpParticleSystem.Stop();
-                chargeUpParticleSystem.Clear();
-                chargeUpObject.SetActive(false);
+                Destroy(chargeDownParticleRef);
+                chargeDownParticleRef = null;
             }
         }
     }
