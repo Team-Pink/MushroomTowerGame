@@ -112,6 +112,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] Sprite lockedTowerSprite;
     private readonly Sprite[] towerIconSprites = new Sprite[5];
     private int unlockedTowers = 0;
+    private int maxTowersUnlockable = 5;
+    [SerializeField] bool unlockAllTowers = false;
     [SerializeField] TMP_Text towerSelectionCostText;
 
     [SerializeField, Space()] private Color canPurchaseColour;
@@ -186,6 +188,13 @@ public class InteractionManager : MonoBehaviour
             }
         }
 
+        if (unlockAllTowers) 
+        {
+            for (int i = 1; i < maxTowersUnlockable; i++)
+            {
+                UnlockTower(i);
+            }
+        }
         hubMaxPylons = maxPylonsPerHub;
         pylonMaxTowers = maxTowersPerPylon;
         pylonMaxPylons = maxPylonsPerPylon;
@@ -800,6 +809,7 @@ public class InteractionManager : MonoBehaviour
 
     public void UnlockTower(int towerIndex)
     {
+        if (unlockedTowers > maxTowersUnlockable) return;
         towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
         unlockedTowers++;
     }
