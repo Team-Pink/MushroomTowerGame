@@ -44,6 +44,14 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: renderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: renderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 6577275630696668077}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 6
       objectReference: {fileID: 0}
@@ -52,9 +60,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aa887bcfdabf4cb4e986b2b474fc4d22, type: 2}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441025]
       value: Assembly-CSharp TrapAttacker
@@ -508,21 +524,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4934701682232051942}
     m_Modifications:
+    - target: {fileID: 2237121093598677371, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+      propertyPath: tower
+      value: 
+      objectReference: {fileID: 8458371139374482302}
     - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7247425088026742782, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -570,26 +578,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
---- !u!1 &201437154134488598 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8061397241797465412, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
-  m_PrefabInstance: {fileID: 7860030475742913362}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2237121093598677371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 201437154134488598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0343d5dff0e31264992e4db9a663b7d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tower: {fileID: 8458371139374482302}
 --- !u!95 &1011849591911351348 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7142356912060147558, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
+  m_PrefabInstance: {fileID: 7860030475742913362}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6577275630696668077 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3914575049295968511, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
   m_PrefabInstance: {fileID: 7860030475742913362}
   m_PrefabAsset: {fileID: 0}
