@@ -64,9 +64,17 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 37b080e09fb9d9f4d85daf89d1f279ac, type: 2}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441028]
       value: Assembly-CSharp SingleAttacker
