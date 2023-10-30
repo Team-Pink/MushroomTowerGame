@@ -1,19 +1,21 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TankEnemy : Enemy
 {
-    [Header("Biote Specific Variables")]
+    [Header("Bulk Specific Variables")]
     [SerializeField] int damageReduction = 1;
 
     private float halfHealthMark = 0;
     private bool hasArmour = true;
 
-    public override void SpawnIn()
-    {
-        base.SpawnIn();
+    [SerializeField] GameObject armour;
+    [SerializeField] ParticleSystem armourParticle;
 
-        hasArmour = true;
-        halfHealthMark = health / 2;
+    protected override void Awake()
+    {
+        halfHealthMark = MaxHealth * 0.5f;
+        base.Awake();
     }
 
     public override void TakeDamage(float damage)
@@ -25,13 +27,20 @@ public class TankEnemy : Enemy
             base.TakeDamage(damage - damageReduction);
 
             if (health <= halfHealthMark)
-            {
-                hasArmour = false;
-            }
+                RemoveArmour();
         }
         else
-        {
             base.TakeDamage(damage);
-        }
+    }
+
+    private void RemoveArmour() { 
+    
+        // deactivate mesh
+        armour.SetActive(false);
+
+        // instance particle
+        armourParticle.Play();
+
+        hasArmour = false;
     }
 }

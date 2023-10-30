@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3424538538360231594
 Transform:
   m_ObjectHideFlags: 0
@@ -358,7 +358,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4176715869511682081}
   m_LocalRotation: {x: 0.00000041093176, y: -0.7071068, z: 0.7071068, w: 0.00000041093176}
-  m_LocalPosition: {x: 0.44800073, y: 2.01, z: 0.60799944}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -535,13 +535,16 @@ MonoBehaviour:
   radiusMaterials:
   - {fileID: 2100000, guid: 7c1f3a2c96df59d45881e8ebe22fe2ee, type: 2}
   - {fileID: 2100000, guid: 83bdd160cf119474387ab6f77c4c2ec7, type: 2}
+  bud: {fileID: 7174415430349467487}
   maxHealth: 100
   gameOverDuration: 5
   gameOverText: {fileID: 0}
-  hubHealthText: {fileID: 0}
   healthDisplay: {fileID: 2208848785647668206}
+  budDetached: 0
   connectedPylons: []
   connectedPylonsCount: 0
+  displayLinePrefab: {fileID: 942136504299863035, guid: 42d426f044d1bfb45b9427a15b13c3fc, type: 3}
+  displayLineMaterial: {fileID: 2100000, guid: 8cf634f1ddf0d7b42adcb00a1c391f48, type: 2}
 --- !u!64 &1139820822152035810
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -748,6 +751,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
+--- !u!1 &7174415430349467487 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2228574422893360982, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
+  m_PrefabInstance: {fileID: 9042621616019462153}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7555760888246957541 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1560123496164765164, guid: d6d8b6881b1efa44bbee337676ec71bb, type: 3}
