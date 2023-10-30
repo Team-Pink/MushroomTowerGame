@@ -51,7 +51,7 @@ public class Attacker
     [Header("Bounce Tag")]
     public bool bounce = false;
     public int bounceHitLimit = 10;
-    public bool bounceBulletTowersPossession = true;
+    public bool bounceBulletInTowerPossession = true;
     #endregion
 
     protected List<Target> targetsToShoot = new();
