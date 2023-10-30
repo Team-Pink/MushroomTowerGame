@@ -12,6 +12,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 368986075340424746}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: boomerangCap
+      value: 
+      objectReference: {fileID: 1005101738350300449}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: bulletPrefab
       value: 
       objectReference: {fileID: 511253370973085324, guid: b83f28747113f3540996621eca6d9588, type: 3}
@@ -543,6 +547,10 @@ PrefabInstance:
     - target: {fileID: 4089273845605203325, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
       propertyPath: m_Name
       value: BoomerangTowerArt
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390267885723341568, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5863848715689489742, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

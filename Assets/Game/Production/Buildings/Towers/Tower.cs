@@ -128,6 +128,9 @@ public class Tower : Building
     [HideInInspector] private Material[] activeMaterials;
     [SerializeField, Space()] Material[] deactivatedMaterials;
 
+    [Space(20)]
+    [SerializeField, Tooltip("ONLY FOR USE ON THE BOOMERANG TOWER")] SkinnedMeshRenderer boomerangCap;
+
     private void Awake()
     {
         attackerComponent.animator = animator;
@@ -195,10 +198,12 @@ public class Tower : Building
                     {
                         if (attackerComponent.bounceBulletTowersPossession)
                         {
+                            boomerangCap.enabled = true;
                             attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
                         }
-                            
-                    }                    
+                        else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
+
+                }                    
                 else if (attackerComponent.CheckCooldownTimer())
                 {
                     CalcTimeToTarget(targets, transform.position);
@@ -274,7 +279,7 @@ public class Tower : Building
     public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
 
     /// <summary>
-    /// literally exists because bounce needs to port it's own stuff for 
+    /// literally exists because bounce needs to port it's own stuff
     /// </summary>
     /// <returns></returns>
     public GameObject GetAttackObjectPrefab()
