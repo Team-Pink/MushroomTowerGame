@@ -6,7 +6,7 @@ using UnityEngine;
 public class Targeter
 {
 
-    public float turnRate = 0;
+    public float turnRate = 5;
     public float range = 10;
     public Transform transform;
     protected HashSet<Target> targetsInRange = new();
