@@ -28,8 +28,6 @@ public class OpenPauseUI : MonoBehaviour
         Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
 
         activePause = !activePause;
-        Debug.LogWarning("No Pause Menu Exists!");
-        Debug.LogWarning("Opening pause menu does not pause gameplay!");
         // pause game
         pauseMenu.SetActive(activePause);
     }

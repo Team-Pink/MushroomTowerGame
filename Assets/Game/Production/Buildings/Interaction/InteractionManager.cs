@@ -53,7 +53,7 @@ public class InteractionManager : MonoBehaviour
     private LayerMask budLayer;
 
     private GameObject activeBud;
-    private Vector3 dragStartPosition;
+    //private Vector3 dragStartPosition;
 
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
@@ -61,8 +61,11 @@ public class InteractionManager : MonoBehaviour
 
     [Space]
     [SerializeField] int maxPylonsPerHub = 6;
+    [HideInInspector] public static int hubMaxPylons;
     [SerializeField] int maxTowersPerPylon = 5;
+    [HideInInspector] public static int pylonMaxTowers;
     [SerializeField] int maxPylonsPerPylon = 2;
+    [HideInInspector] public static int pylonMaxPylons;
     #endregion
 
     [Header("Currency")]
@@ -124,6 +127,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] KeyCode cancelKey = KeyCode.Mouse1;
     [SerializeField, Space()] float interactHoldRequirement = 0.25f;
     private bool interactKeyHeld = false;
+    private Vector3 initialInteractPosition;
     private float timeHeld = 0.0f;
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
@@ -181,6 +185,10 @@ public class InteractionManager : MonoBehaviour
                 towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
             }
         }
+
+        hubMaxPylons = maxPylonsPerHub;
+        pylonMaxTowers = maxTowersPerPylon;
+        pylonMaxPylons = maxPylonsPerPylon;
     }
 
     private void OnValidate()
@@ -278,6 +286,15 @@ public class InteractionManager : MonoBehaviour
     {
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
+        if (targetBuilding is not Tower)
+        {
+            if (targetBuilding is Pylon && (targetBuilding as Pylon).isResidual)
+            {
+                targetBuilding.ShowDeactivateLines();
+            }
+            else targetBuilding.ShowDefaultLines();
+        }
+
         if (!interactKeyHeld)
         {
             currentHit = GetRayHit(budLayer);
@@ -297,14 +314,14 @@ public class InteractionManager : MonoBehaviour
         {
             if (timeHeld > interactHoldRequirement)
             {
-                if (targetBuilding is Hub)
+                if (targetBuilding is Hub && !(targetBuilding as Hub).AtMaxPylons)
                 {
                     radiusDisplay.SetActive(false);
                     if (healthDisplay != null) healthDisplay.enabled = false;
                     CurrentInteraction = InteractionState.PlacingFromHub;
                     return;
                 }
-                else if (targetBuilding is Pylon)
+                else if (targetBuilding is Pylon && !(targetBuilding as Pylon).AtMaxBuildings)
                 {
                     radiusDisplay.SetActive(false);
                     if (healthDisplay != null) healthDisplay.enabled = false;
@@ -325,9 +342,13 @@ public class InteractionManager : MonoBehaviour
                 if (targetBuilding is Pylon)
                 {
                     if (!(targetBuilding as Pylon).pylonResidual.activeSelf)
+                    {
                         CurrentInteraction = InteractionState.PylonMenu;
+                    }
                     else
+                    {
                         CurrentInteraction = InteractionState.ResidualMenu;
+                    }
                 }
                 else if (targetBuilding is Tower)
                 {
@@ -340,7 +361,11 @@ public class InteractionManager : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetKeyDown(interactKey)) interactKeyHeld = true;
+        else if (Input.GetKeyDown(interactKey))
+        {
+            interactKeyHeld = true;
+            initialInteractPosition = mouseScreenPosition;
+        }
     }
     private void PylonMenuState()
     {
@@ -354,6 +379,10 @@ public class InteractionManager : MonoBehaviour
         refPylon = targetBuilding as Pylon;
 
         RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
+
+        if (hoveredButtonIndex == 0) refPylon.ShowDeactivateLines();
+        else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
+        else refPylon.ShowDefaultLines();
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -386,6 +415,10 @@ public class InteractionManager : MonoBehaviour
         refPylon = targetPylon;
 
         RadialMenu(residualMenu, residualMenuButtons, out int hoveredButtonIndex);
+
+        if (hoveredButtonIndex == 0) refPylon.ShowDefaultLines();
+        else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
+        else refPylon.ShowDeactivateLines();
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -467,6 +500,8 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.color = Color.red;
         activeBud = targetBuilding.bud;
 
+        (targetBuilding as Hub).budDetached = true;
+
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
         currentHit = GetRayHit(placableLayers);
@@ -482,7 +517,7 @@ public class InteractionManager : MonoBehaviour
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
                 bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
 
-                float distanceFromHub = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+                float distanceFromHub = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
                 bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
 
@@ -526,6 +561,7 @@ public class InteractionManager : MonoBehaviour
         activeBud = targetBuilding.bud;
 
         refPylon = targetBuilding as Pylon;
+        (targetBuilding as Pylon).budDetached = true;
         
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
@@ -536,21 +572,18 @@ public class InteractionManager : MonoBehaviour
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
             else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
-            if (dragStartPosition == Vector3.zero)
-                dragStartPosition = currentHit.point;
-
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
                 bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
 
-                float distanceFromPylon = (dragStartPosition - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+                float distanceFromPylon = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
                 bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
                 bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
 
-                bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace;
-                bool pylonPlacementCriteria = inPylonBuildRange && spaceToPlace && spaceForPylon;
+                bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace && !(targetBuilding as Pylon).AtMaxTowers;
+                bool pylonPlacementCriteria = inPylonBuildRange && spaceToPlace && spaceForPylon && !(targetBuilding as Pylon).AtMaxPylons;
 
                 if (towerPlacementCriteria || pylonPlacementCriteria)
                 {
@@ -782,8 +815,8 @@ public class InteractionManager : MonoBehaviour
 
         if (startingMousePosition == Vector2.zero)
         {
-            startingMousePosition = mouseScreenPosition;
-            radialMenu.GetComponent<RectTransform>().position = mouseScreenPosition;
+            startingMousePosition = initialInteractPosition;
+            radialMenu.GetComponent<RectTransform>().position = initialInteractPosition;
         }
 
         float buttonAngularSize = (360 - reservedDegrees) / radialButtons.Length;
@@ -968,10 +1001,23 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.enabled = false;
         selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
-        dragStartPosition = Vector3.zero;
         CurrentInteraction = InteractionState.None;
         timeHeld = 0.0f;
         interactKeyHeld = false;
+        initialInteractPosition = Vector3.zero;
+
+        if (targetBuilding != null)
+        {
+            if (targetBuilding is not Tower)
+            {
+                targetBuilding.ResetLines();
+
+                if (targetBuilding is Hub)
+                    (targetBuilding as Hub).budDetached = false;
+                else
+                    (targetBuilding as Pylon).budDetached = false;
+            }
+        }
 
         if (activeBud is not null)
         {
