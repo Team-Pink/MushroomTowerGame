@@ -117,6 +117,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField, Space()] private Color canPurchaseColour;
     [SerializeField] private Color canNotPurchaseColour;
     [SerializeField] private Color sellColour;
+
+    [SerializeField, Space(10)] private CursorManager cursorManager;
     #endregion
 
     [Header("Interaction")]
@@ -172,6 +174,7 @@ public class InteractionManager : MonoBehaviour
         budLayer = LayerMask.GetMask("Bud");
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
+        cursorManager = gameObject.GetComponent<CursorManager>();
 
         for (int i = 0; i < towerSelectionMenuButtons.Length; i++)
         {
@@ -250,6 +253,8 @@ public class InteractionManager : MonoBehaviour
     private void DefaultState()
     {
         currentHit = GetRayHit(budLayer);
+
+        cursorManager.ChangeCursor("Default");
 
         if (currentHit.collider is null)
         {
@@ -520,9 +525,13 @@ public class InteractionManager : MonoBehaviour
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
+                    cursorManager.ChangeCursor("CanPlace");
                 }
+                else cursorManager.ChangeCursor("CannotPlace");
             }
+            else cursorManager.ChangeCursor("CannotPlace");
         }
+        else cursorManager.ChangeCursor("CannotPlace");
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -557,7 +566,7 @@ public class InteractionManager : MonoBehaviour
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
         currentHit = GetRayHit(placableLayers);
-        if (currentHit.collider is not null)
+        if (currentHit.collider != null)
         {
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
@@ -581,11 +590,17 @@ public class InteractionManager : MonoBehaviour
                     canPlace = true;
                     selectionIndicator.color = Color.green;
 
+                    //bubble logic for cursor goes here... TODO IN GOLD!!!!
+                    cursorManager.ChangeCursor("CanPlace");
+
                     if (pylonPlacementCriteria)
                         placingPylon = true;
                 }
+                else cursorManager.ChangeCursor("CannotPlace");
             }
+            else cursorManager.ChangeCursor("CannotPlace");
         }
+        else cursorManager.ChangeCursor("CannotPlace");
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -593,6 +608,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (canPlace)
             {
+                cursorManager.ChangeCursor("Default");
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
@@ -603,6 +619,7 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
+                cursorManager.ChangeCursor("Default");
                 ResetInteraction();
             }
 
