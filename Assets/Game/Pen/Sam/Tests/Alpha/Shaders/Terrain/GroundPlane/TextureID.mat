@@ -39,11 +39,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Basecolour:
-        m_Texture: {fileID: 2800000, guid: 7c41aaa09786f9242860dd32d461e5ed, type: 3}
+        m_Texture: {fileID: 2800000, guid: af4bf51614c347342ad0982218c7837f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Normal:
-        m_Texture: {fileID: 2800000, guid: 76a160a1d43761240854b1d8447d97dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: add75eccbb03c9e478c3b1529b73d0e2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Roughness:
@@ -51,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Smoothness:
-        m_Texture: {fileID: 2800000, guid: 3b6913b2cb60f1e4da705135e868181c, type: 3}
+        m_Texture: {fileID: 2800000, guid: c8cbf4d5c928fa2438448828d3ea00b8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_213b6b16de634f7c9f47d6a2e096c6f9_Texture_1:
@@ -67,11 +67,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Stone_Basecolour:
-        m_Texture: {fileID: 2800000, guid: 455b053683aec164da6bc117e05f1171, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7c41aaa09786f9242860dd32d461e5ed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Stone_Normal:
-        m_Texture: {fileID: 2800000, guid: e56f6b3ef2b306f4ebdcc8dff7373c8b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 76a160a1d43761240854b1d8447d97dd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Stone_Roughness:
@@ -79,7 +79,31 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Stone_Smoothness:
-        m_Texture: {fileID: 2800000, guid: 60e0bfec255569d49b684a62a5bf7fad, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3b6913b2cb60f1e4da705135e868181c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex1_Basecolour:
+        m_Texture: {fileID: 2800000, guid: c970076a3a9d5884ebdef555a9ea6d95, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex1_Normal:
+        m_Texture: {fileID: 2800000, guid: 8a1b7fc75ce42334aa7280d28d84c8cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex1_Smoothness:
+        m_Texture: {fileID: 2800000, guid: 1a8dd15a26aae814f957c440f25a0800, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex2_Basecolour:
+        m_Texture: {fileID: 2800000, guid: 3d16d5f8610dae24c933c11a2943f332, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex2_Normal:
+        m_Texture: {fileID: 2800000, guid: 1d72c103d0c2a0d489c8fc7d75f5409d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex2_Smoothness:
+        m_Texture: {fileID: 2800000, guid: 446477dd7bc62054d9dae59b36380c10, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2D:
@@ -119,15 +143,17 @@ Material:
     - _DstBlend: 0
     - _Height_Normal_Strength: 0.58
     - _Height_Strength: 58.48
-    - _Mud_Tiling: 1.7
+    - _Mud_Tiling: 11.58
     - _Normal_Strength: 1.17
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _SrcBlend: 1
-    - _Stone_Tiling: 2.64
+    - _Stone_Tiling: 2.79
     - _Strength: 1
     - _Surface: 0
+    - _Tex1_Tiling: 10
+    - _Tex2_Tiling: 2
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1

@@ -5,39 +5,31 @@ using UnityEngine.UI;
 
 public class OpenPauseUI : MonoBehaviour
 {
-    private GameObject pauseMenu;
-    Button pausebutton;
-    Button quitButton;
-    Button resumebutton;
+    [SerializeField] GameObject pauseMenu;
     bool activePause = false;
 
     void Start()
     {
-        pauseMenu = transform.GetChild(0).gameObject;
-        pausebutton = this.GetComponent<Button>();
-        pausebutton.onClick.AddListener(OpenPauseMenu);
-        quitButton = pauseMenu.transform.GetChild(0).GetComponent<Button>();
-        quitButton.onClick.AddListener(Quit);
-        resumebutton = pauseMenu.transform.GetChild(1).GetComponent<Button>();
-        resumebutton.onClick.AddListener(OpenPauseMenu);
     }
 
     // Update is called once per frame
-    private void OpenPauseMenu()
+    public void TogglePauseMenu()
     {
         Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
 
         activePause = !activePause;
-        Debug.LogWarning("No Pause Menu Exists!");
-        Debug.LogWarning("Opening pause menu does not pause gameplay!");
         // pause game
         pauseMenu.SetActive(activePause);
     }
 
-    private void Quit()
+    public void Quit()
     {
         Debug.Log("Quit button has ben pressed but no unfortunately you can't quit unity.");
         Debug.Log("I meant the editor...");
-        Application.Quit();
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+                    Application.Quit();
+        #endif
     }
 }

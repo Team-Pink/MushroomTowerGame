@@ -55,16 +55,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpinnyEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8060230240511460808, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3a90d68c6f897d24b8a2bea15545b703, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
---- !u!137 &3734572397485585093 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4101700368009031577, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
-  m_PrefabInstance: {fileID: 810638105343106396}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &6916185956099597753 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 6108232893249861861, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
+  m_PrefabInstance: {fileID: 810638105343106396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7270014576426686612 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8060230240511460808, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
   m_PrefabInstance: {fileID: 810638105343106396}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6815624152218815196
@@ -160,19 +164,20 @@ MonoBehaviour:
     cohesionStrength: 0.1
     seperationRange: 1.5
     seperationStrength: 2
+    avoidanceRange: 1.5
+    avoidanceStrength: 2
   damage: 6
   attackCooldown: 0
   attackDelay: 0.5
   attackRadius: 3
   bugBits: 1
-  expValue: 1
   animator: {fileID: 6916185956099597753}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
   hub: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 1
-  meshRenderer: {fileID: 3734572397485585093}
+  meshRenderer: {fileID: 7270014576426686612}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
   attackAudio: {fileID: 8300000, guid: 6ff1de71c4d2dab40b4f10599a4652c9, type: 3}
   deathAudio: {fileID: 8300000, guid: bf2a1ab450a5bc64f87e65baafcc70ec, type: 3}

@@ -55,16 +55,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8823497036355436597, guid: 80b6ee860f4791d40891f5a690b848c5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b755ef9261f2e774ba5b187b5f4acb1b, type: 2}
+    - target: {fileID: 9220347342438129928, guid: 80b6ee860f4791d40891f5a690b848c5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b755ef9261f2e774ba5b187b5f4acb1b, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80b6ee860f4791d40891f5a690b848c5, type: 3}
 --- !u!95 &6382702797799955622 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7989050413034939027, guid: 80b6ee860f4791d40891f5a690b848c5, type: 3}
-  m_PrefabInstance: {fileID: 3912824768862142005}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &8861366947129463151 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5527257238658002778, guid: 80b6ee860f4791d40891f5a690b848c5, type: 3}
   m_PrefabInstance: {fileID: 3912824768862142005}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6637362083703908512
@@ -165,19 +168,20 @@ MonoBehaviour:
     cohesionStrength: 0.05
     seperationRange: 4
     seperationStrength: 3
+    avoidanceRange: 1.5
+    avoidanceStrength: 2
   damage: 4
   attackCooldown: 3
   attackDelay: 1
   attackRadius: 6
   bugBits: 4
-  expValue: 4
   animator: {fileID: 6382702797799955622}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
   hub: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 3
-  meshRenderer: {fileID: 8861366947129463151}
+  meshRenderer: {fileID: 0}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
   attackAudio: {fileID: 8300000, guid: e2982b7acc2fc7049812ab5be5e7e26d, type: 3}
   deathAudio: {fileID: 8300000, guid: 17ce99c49a6364d4d8ceafc9ef90da1f, type: 3}
