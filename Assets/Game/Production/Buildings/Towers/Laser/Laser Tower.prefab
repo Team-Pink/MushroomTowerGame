@@ -8,6 +8,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: lockOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: animator
       value: 
       objectReference: {fileID: 2157652692005259985}
@@ -24,6 +28,10 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: lockOnDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: projectileSpeed
       value: 100
       objectReference: {fileID: 0}
@@ -31,6 +39,10 @@ PrefabInstance:
       propertyPath: recoveryDuration
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: ChargeUpTransform
+      value: 
+      objectReference: {fileID: 7565713062889740429}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent
       value: 4335502593997406211
@@ -52,12 +64,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: chargeUpParticlePrefab
+      value: 
+      objectReference: {fileID: 6140153061000981530, guid: 3e784552b7361d44e842de66266cf5b7, type: 3}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
       objectReference: {fileID: 2399038174809792641}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: lockOnFiringIntermissionTime
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackDelay
@@ -69,7 +89,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
-      value: 2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: deactivatedMaterials.Array.data[0]
@@ -217,7 +237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].attackCooldown
-      value: 2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].bounceHitLimit
@@ -302,7 +322,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].windupParticlePrefab
       value: 
-      objectReference: {fileID: 6140153061000981530, guid: 3e784552b7361d44e842de66266cf5b7, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].strikethroughBeamWidth
       value: 0
@@ -518,5 +538,10 @@ Animator:
 --- !u!137 &2399038174809792641 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 9124110263314182372, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+  m_PrefabInstance: {fileID: 6905216090917687397}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7565713062889740429 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3975146306454063336, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
   m_PrefabInstance: {fileID: 6905216090917687397}
   m_PrefabAsset: {fileID: 0}
