@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static UnityEngine.ParticleSystem;
 
@@ -133,6 +132,10 @@ public class Tower : Building
 
     [SerializeField] AudioClip buildAudio;
 
+    [SerializeField] SkinnedMeshRenderer[] renderers;
+    [HideInInspector] private Material[] activeMaterials;
+    [SerializeField, Space()] Material[] deactivatedMaterials;
+
     private void Awake()
     {
         attackerComponent.animator = animator;
@@ -150,6 +153,12 @@ public class Tower : Building
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
         AudioManager.PlaySoundEffect(buildAudio.name, 1);
+
+        activeMaterials = new Material[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            activeMaterials[i] = renderers[i].sharedMaterial;
+        }
     }
 
     private void Update()
@@ -249,12 +258,22 @@ public class Tower : Building
         base.Deactivate();
         animator.SetTrigger("Deactivate");
         recoveryTime = 0.0f;
+
+        for (int i = 0; i < deactivatedMaterials.Length; i++)
+        {
+            renderers[i].material = deactivatedMaterials[i];
+        }
     }
 
     public override void Reactivate()
     {
         recovering = true;
         animator.SetTrigger("Reactivate");
+
+        for (int i = 0; i < activeMaterials.Length; i++)
+        {
+            renderers[i].material = activeMaterials[i];
+        }
     }
 
     public override void Sell()
