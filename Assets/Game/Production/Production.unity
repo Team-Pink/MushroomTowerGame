@@ -878,6 +878,54 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[0].text
+      value: Pylons are spawned from the meteor
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[1].text
+      value: Pylons can spawn shrooms, and more pylons
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[2].text
+      value: Shrooms kill enemies
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[3].text
+      value: Some enemies can attack pylons
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[4].text
+      value: Shrooms deactivate when pylon dies, but pylons can be rebuilt!
+      objectReference: {fileID: 0}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[1].image
+      value: 
+      objectReference: {fileID: 2800000, guid: 0440386c4ebeb034d85d690b0e26914e, type: 3}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[2].image
+      value: 
+      objectReference: {fileID: 2800000, guid: c4749016fbd509e4cab554a3c137536f, type: 3}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[3].image
+      value: 
+      objectReference: {fileID: 2800000, guid: 2471d820191c4ee4db6c5db5c35fbf5f, type: 3}
+    - target: {fileID: 448761277376744787, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: instructionPages.Array.data[4].image
+      value: 
+      objectReference: {fileID: 2800000, guid: cabeeba76f2a5a24b965fc055ffbb0c8, type: 3}
+    - target: {fileID: 448761277689412594, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 765a950691e6f774f9f5673a9a21e2d7, type: 3}
+    - target: {fileID: 448761277689412594, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
