@@ -1,11 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public struct Target
 {
-    public Vector3 position; // expands in practice to enemy.transform.position if an enemy exists.
+    public Vector3 position; // Be warned this is not a reference to enemy.transform.position it is in most cases it's own self contained value as .position returns a value not a reference.
     public Enemy enemy;
+
+
+    //public Vector3 GetPosition()
+    //{
+    //    if (enemy)
+    //    {
+    //        return enemy.transform.position;
+    //    }
+    //    else
+    //    {
+    //        return position;
+    //    }
+    //}
+
+
     float timeFound
     {
         get => Time.time;
@@ -99,28 +116,20 @@ public class Tower : Building
 
     // Tags from Lochlan
 
-
-    //Multitarget
-    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
-    private int numTargets; // number of targets if multiTarget is true.
-    // private int targetProjectileSpeedCounter; // the current index of targets to be assigned a projectile speed during multitarget.
-
-    //Accelerate
-    private bool accelerate = false;
-    public bool accelerated = false; // determines if a tower is currently accelerated
-    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
-    public float accelTimer = 0; // timer to keep track of the above.
-    public readonly float accelSpeedMod = 0.2f; // on kill multiply the attack delay by this basically increase by 50%
-    private float accelModReverse;
-    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
-
     //Lock On
-    private bool lockOn = false; // determines if the tower will lock on to an enemy.
-    private float lockOnDuration = 1.5f;
-    private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
+    private bool chargingLaser = false;
+    [SerializeField] private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    [SerializeField] private float lockOnDuration = 1.5f;
+    private float lockOnTimer = 0;
+    [SerializeField] private float lockOnFiringIntermissionTime = 0;
+    private Target lockOnTarget;
 
-    //Continuous
-    [SerializeField] private bool continuous = false;
+    [SerializeField] GameObject ChargeUpTransform;
+    [SerializeField] GameObject chargeUpParticlePrefab;
+    private GameObject chargeDownParticleRef;
+
+
+
 
     [SerializeField] AudioClip buildAudio;
 
@@ -147,9 +156,6 @@ public class Tower : Building
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
-        accelModReverse = 1 / accelSpeedMod;
-        if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
-
         AudioManager.PlaySoundEffect(buildAudio.name, 1);
 
         activeMaterials = new Material[renderers.Length];
@@ -161,7 +167,7 @@ public class Tower : Building
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (Time.timeScale == 0) return; // for use by the pause menu.
 
         if (growthTime < growthDuration)
         {
@@ -169,6 +175,7 @@ public class Tower : Building
             return;
         }
 
+        // This will stop the tower from attacking imediately after being reactivated.
         if (recovering)
         {
             if (recoveryTime < recoveryDuration)
@@ -183,40 +190,49 @@ public class Tower : Building
             }
         }
 
+        // Attack Logic.
         if (Active)
         {
-            if (multiTarget)
-                targets = targeterComponent.AcquireTargets(numTargets); // Multi-Target &*
-            else targets = targeterComponent.AcquireTargets(); // &*
+            targets = targeterComponent.AcquireTargets();
             if (targets != null)
             {
-                if (lockOn) // this is terrible code
+                if (lockOn)
                 {
-                    LockOnTag();
+                    // animate laser charge up if an enemy enters range.
+                    if (!chargingLaser)
+                    {
+                        animator.SetTrigger("Attack Charge Up");
+                        chargingLaser = true;
+                        chargeDownParticleRef = Instantiate(chargeUpParticlePrefab, ChargeUpTransform.transform);
+                    }
+
+                    if (LockedOn())
+                    {
+                        CalcTimeToTarget(targets, transform.position);
+                        attackerComponent.Attack(targets);
+                    }
                 }
                 else if (attackerComponent.bounce)
+                {
+                    if (attackerComponent.bounceBulletInTowerPossession)
                     {
-                        if (attackerComponent.bounceBulletTowersPossession)
-                        {
-                            boomerangCap.enabled = true;
-                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
-                        }
-                        else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
-
-                }                    
+                        boomerangCap.enabled = true;
+                        attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                    }
+                    else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
+                }
                 else if (attackerComponent.CheckCooldownTimer())
                 {
                     CalcTimeToTarget(targets, transform.position);
                     attackerComponent.Attack(targets);
                 }
-                    
-
-
-
-
-                // Attack tags
-                AccelerateTag();
-
+            }
+            else if (lockOn && chargingLaser)
+            {
+                animator.SetTrigger("Attack End");
+                chargingLaser = false;
+                Destroy(chargeDownParticleRef);
+                chargeDownParticleRef = null;
             }
         }
     }
@@ -287,114 +303,31 @@ public class Tower : Building
         return attackObjectPrefab;
     }
 
-    public void AccelerateTag()
-    {
-        if (accelerated)
-        {
-            accelTimer += Time.deltaTime;
-            if (accelTimer > accelTimeMax)
-            {
-                accelerated = false;
-                attackerComponent.attackDelay *= accelModReverse;// return attack delay to normal
-                accelTimer = 0; // Reset timer
-            }
-        }
-    }
-
     #region LockOn
 
-    /// <summary>
-    /// Here's the thing this works as far as maintaining locks on the targets in range with the highest max health but in the case a better target enters 
-    /// it's range it will immediately stop and try locking onto the new better target. unfortunately the only way to prevent this would be to forcefully maintain
-    /// a lock until a target goes out of range
-    /// </summary>
-    private void LockOnTag()
+    private bool LockedOn()
     {
+        if (targets.Count == 0) return false; // this is unneccessary due to the targeter returning null so count will never be zero and there is already a null check in the update loop.
 
-        /* PsuedoCode
-         
-        new local hashset of Target marked = targets deep copy           // copy the references stored in targets but not the reference to targets
+        bool lockedOn = false;
 
-        new local hashset of Target targetsLockedFire 
-        
-        for each targetLock in lockOnTargets
-            if targetLlock is in targets
-                update the timer
-                remove that enemy to the marked targets hash
-                if targetLocked is true
-                    add it to the targetsLockedFire set
-                else
-                    if the timer on lockTarget has expired
-                        add it to the targetsLockedFire set
-                        reset timer on lockTarget
-                        if continuous
-                            targetLocked is true
-            else targetLock is not in targets so
-                remove it from lockOnTargets
-
-        for each target in marked
-            add it to lockOnTargets
-
-        call attack on targetsLockedFire
-
-         */
-
-        HashSet<Target> marked = new HashSet<Target>(targets);
-
-        HashSet<Target> targetsLockedFire = new HashSet<Target>(); // to handle the attack call
-
-        for (int i = 0; i < lockOnTargets.Count; i++)
+        if (lockOnTarget.enemy != targets.First().enemy)
         {
-
-            if (targets.Contains(lockOnTargets[i].target))
-            {
-                lockOnTargets[i].IncrementLockTimer();
-                // progress lock on animation
-                marked.Remove(lockOnTargets[i].target);
-                if (lockOnTargets[i].targetLocked)
-                {
-                    Debug.DrawLine(transform.position, lockOnTargets[i].target.position, Color.red, 0.02f);
-                    targetsLockedFire.Add(lockOnTargets[i].target);
-                }
-                else
-                {
-                    if (lockOnTargets[i].lockOnProgress > lockOnDuration)
-                    {
-                        targetsLockedFire.Add(lockOnTargets[i].target);
-                        lockOnTargets[i].lockOnProgress = 0;
-                        if (continuous) lockOnTargets[i].targetLocked = true;
-                    }
-                }
-            }
-            else lockOnTargets.Remove(lockOnTargets[i]);     // this won't work because it modifies the list the loop is dependent on         
+            lockOnTarget = targets.First();
+            lockOnTimer = 0;
+            return lockedOn;
         }
+        //Debug.DrawLine(transform.position, lockOnTarget.position, Color.blue, Time.deltaTime); // This debug line proves that the position value in a Target is not a reference.
 
-        foreach (Target target in marked)
+        lockOnTimer += Time.deltaTime;
+        if (lockOnTimer > lockOnDuration + lockOnFiringIntermissionTime)
         {
-            lockOnTargets.Add(new LockOnTarget(target));
+            lockedOn = true;
+            lockOnTimer = lockOnDuration;
+            Debug.DrawLine(transform.position, lockOnTarget.position, Color.red, Mathf.Infinity);
         }
-
-        if (targetsLockedFire.Count > 0) attackerComponent.Attack(targetsLockedFire);
-
+        return lockedOn;
     }
-
-    // I hate that this is neccesary
-    class LockOnTarget
-    {
-        public Target target;
-        public bool targetLocked;
-        public float lockOnProgress;
-
-        public LockOnTarget(Target inputTarget)
-        {
-            target = inputTarget;
-            targetLocked = false;
-            lockOnProgress = 0;
-        }
-
-        public void IncrementLockTimer() { lockOnProgress += Time.deltaTime; }
-    }
-
     #endregion
 
     /// <summary>
@@ -407,7 +340,7 @@ public class Tower : Building
         //int TargetCounter = 0;
         foreach (Target target in targets)
         {
-            
+
             attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) / projectileSpeed;
             return;
             /*TargetCounter++;
@@ -417,7 +350,7 @@ public class Tower : Building
                     targetProjectileSpeedCounter = 0;
                 return; // yes I am indeed entering a foreach loop just to get a reference to the first object in targets and then returning without examining the other targets.
             }*/
-            
+
         }
 
     }

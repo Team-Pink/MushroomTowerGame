@@ -51,7 +51,7 @@ public class Attacker
     [Header("Bounce Tag")]
     public bool bounce = false;
     public int bounceHitLimit = 10;
-    public bool bounceBulletTowersPossession = true;
+    public bool bounceBulletInTowerPossession = true;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -141,8 +141,10 @@ public class Attacker
         }
 
         Bullet bulletRef;
-
+        if (targetEnemy.enemy != null)
         bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        else
+            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, originReference.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
         bulletRef.timeToTarget = timeToTarget;
         if (lobProjectile) bulletRef.parabola = true;
         bulletRef.InitialiseForNonEnemies(originReference.transform);
@@ -170,9 +172,7 @@ public class Attacker
 
         if (animator == null) return;
 
-        animator.SetTrigger("Attack");
-
-        
+        animator.SetTrigger("Attack");       
     }
 
 
