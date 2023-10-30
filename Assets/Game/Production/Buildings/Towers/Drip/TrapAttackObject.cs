@@ -63,6 +63,8 @@ public class TrapAttackObject : MonoBehaviour
             {
                 Enemy enemy = hit.GetComponent<Enemy>();
 
+                enemy.TakeDamage(details.dps * Time.deltaTime);
+
                 if (details.conditions.Length > 0)
                 {
                     enemy.ApplyConditions(details.conditions);

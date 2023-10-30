@@ -1,4 +1,5 @@
 using UnityEngine;
+using Text = TMPro.TMP_Text;
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -9,33 +10,30 @@ public class Condition
     public enum ConditionType
     {
         None,
+        Infection,
         Poison,
-        Slow
+        Slow,
+        Stagger,
+        Vulnerability
     }
 
     public ConditionType type;
     public float value;
-    [HideInInspector] public float currentDuration;
-    public float totalDuration;
-    [HideInInspector] public float timer;
-    [HideInInspector] public bool applied;
+    public float duration;
 
     public Condition(ConditionType typeInit, float valueInit, float durationInit)
     {
         type = typeInit;
         value = valueInit;
-        totalDuration = durationInit;
-        applied = false;
-        currentDuration = 0;
+        duration = durationInit;
     }
 
     public bool Duration()
     {
-        if (currentDuration >= totalDuration)
+        if (duration < 0)
             return true;
-        else
-            currentDuration += Time.deltaTime;
 
+        duration -= Time.deltaTime;
         return false;
     }
 }
@@ -62,7 +60,7 @@ public class Enemy : MonoBehaviour
     public bool Dead { get => dead; protected set => dead = value; }
     #endregion
 
-    private readonly List<Condition> activeConditions = new List<Condition>();
+    private readonly List<Condition> activeConditions;
 
     #region Movement Values
     public struct BoidReference
@@ -111,9 +109,6 @@ public class Enemy : MonoBehaviour
         [Space()]
         public float seperationRange = 1.5f;
         [Range(0.0f, 5.0f)] public float seperationStrength = 2.0f;
-        [Space()]
-        public float avoidanceRange = 1.5f;
-        [Range(0.0f, 5.0f)] public float avoidanceStrength = 2.0f;
     }
 
     [SerializeField] InfluenceDetails influences = new();
@@ -124,18 +119,14 @@ public class Enemy : MonoBehaviour
     }
 
     private LayerMask enemyLayers;
-    private LayerMask obstacleLayers;
 
     // References
     [HideInInspector] public List<BoidReference> neighbourhood = new();
-    private List<GameObject> obstacles = new();
 
     #endregion
 
     #region Attacking Values
     [Header("Attacking")]
-    protected Building targetBuilding;
-
     [SerializeField] protected int damage;
 
     [SerializeField] protected float attackCooldown = 0;
@@ -150,10 +141,10 @@ public class Enemy : MonoBehaviour
     protected bool attackCoolingDown = false;
     #endregion
 
-    #region OTHER VALUES
     // Drops
     [Header("Drops")]
     [SerializeField] int bugBits = 2;
+    public int expValue = 1;
 
     // Components
     [Header("Components")]
@@ -173,27 +164,20 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip attackAudio;
     [SerializeField] AudioClip deathAudio;
 
-    #endregion
-
-    protected virtual void Awake()
+    private void Awake()
     {
         transform = GetComponent<Transform>();
         rigidbody = GetComponent<Rigidbody>();
         defaultMaterial = meshRenderer.material;
 
         enemyLayers = LayerMask.GetMask("Enemy");
-        obstacleLayers = LayerMask.GetMask("Tower", "Pylon");
 
         health = maxHealth;
     }
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
-
         if (Dead) return;
-
-        ExecuteConditionEffects();
 
         switch (state)
         {
@@ -209,11 +193,24 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public virtual void SpawnIn()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
+        GetComponent<Rigidbody>().detectCollisions = true;
+        Dead = false;
+        state = EnemyState.Approach;
+
+        //whatever else needs to be done before fully spawning in do within here
+
+    }
+
     #region Health Logic
     public virtual void TakeDamage(float damage)
     {
         health -= damage;
-        if (health > 0)
         StartCoroutine(DisplayHurt());
     }
 
@@ -240,25 +237,25 @@ public class Enemy : MonoBehaviour
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponentInChildren<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(bugBits);
 
-        state = EnemyState.None;
-
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
         GetComponent<Rigidbody>().detectCollisions = false;
+
         if (deathParticle != null)
         {
             GameObject particle = Instantiate(deathParticle, transform);
             particle.transform.position += new Vector3(0, particleOriginOffset, 0);
         }
+
+        state = EnemyState.None;
     }
     #endregion
 
     #region Condition Logic
     public void ApplyConditions(Condition[] conditions)
     {
-        
         for (int newIndex = 0; newIndex < conditions.Length; newIndex++)
         {
             bool shouldApply = true;
@@ -278,53 +275,8 @@ public class Enemy : MonoBehaviour
             }
 
             if (shouldApply)
-            {
-
-                Condition detailCondition = conditions[newIndex];
-                Condition condition = new Condition(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
-                activeConditions.Add(condition);
-                conditions[newIndex].applied = false;
-            }
+                activeConditions.Add(conditions[newIndex]);
         }
-    }
-
-    void ExecuteConditionEffects()
-    {
-        List<Condition> markedForRemoval = new();
-        foreach (Condition condition in activeConditions)
-        {
-            if (condition.type == Condition.ConditionType.Poison)
-            {
-                TakeDamage(condition.value * Time.deltaTime);
-
-                if (CheckIfDead())
-                {
-                    OnDeath();
-                    return;
-                }
-
-                if (condition.Duration())
-                    markedForRemoval.Add(condition);
-            }//POISON CONDITION
-            else if (condition.type == Condition.ConditionType.Slow)
-            {
-                if (condition.applied == false)
-                {
-                    speedModifiers.Add(condition.value);
-                    condition.applied = true;
-                }
-                    
-                if (condition.Duration())
-                {
-                    speedModifiers.Remove(condition.value);
-                    markedForRemoval.Add(condition);
-                }
-            }//SLOW CONDITION
-            
-        }//CONDITIONS
-
-        foreach (Condition condition in markedForRemoval)
-            activeConditions.Remove(condition);
     }
     #endregion
 
@@ -336,22 +288,18 @@ public class Enemy : MonoBehaviour
         {
             rigidbody.velocity = Vector2.zero;
             state = EnemyState.Attack;
-            targetBuilding = hub;
             neighbourhood.Clear();
             return;
         }
 
         // Get Boids in Neighbourhood
         PopulateNeighbourhood();
-        PopulateObstacles();
 
         // Flocking
         Vector3 newVelocity = Flock();
 
         // Targeting
         newVelocity += influences.targetingStrength * levelData.GetFlowAtPoint(transform.position);
-
-        newVelocity += Avoid();
 
         // Apply New Velocity
         rigidbody.velocity = Speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
@@ -395,28 +343,6 @@ public class Enemy : MonoBehaviour
                 neighbourhood.RemoveAt(furthestIndex);
             }
         }
-    }
-
-    private void PopulateObstacles()
-    {
-        obstacles.Clear();
-        var obstacleColliderList = Physics.OverlapSphere(transform.position, influences.avoidanceStrength, obstacleLayers);
-
-        for (int colliderIndex = 0; colliderIndex < obstacleColliderList.Length; colliderIndex++)
-        {
-            obstacles.Add(obstacleColliderList[colliderIndex].gameObject);
-        }
-    }
-
-    private Vector3 Avoid()
-    {
-        Vector3 avoidanceInfluence = Vector3.zero;
-        foreach (GameObject obstacle in obstacles)
-        {
-            avoidanceInfluence += -(obstacle.transform.position - gameObject.transform.position).normalized;
-        }
-
-        return avoidanceInfluence;
     }
 
     private Vector3 Flock()
@@ -485,7 +411,6 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
-                Debug.Log(name + " has dealt damage to the hub");
                 AttackAudio();
                 attackInProgress = false;
             }
@@ -511,4 +436,114 @@ public class Enemy : MonoBehaviour
     {
         AudioManager.PlaySoundEffect(attackAudio.name, 0);
     }
+
+
+    /*
+
+    protected virtual void CustomAwakeEvents()
+    {
+
+    }
+
+    private void Awake()
+    {
+        points = pathToFollow.GetPoints();
+
+        CustomAwakeEvents();
+    }
+
+
+    protected virtual void Playing()
+    {
+
+        healthText.text = CurrentHealth.ToString();
+
+        if (AttackMode)
+        {
+            AttackHub();
+            return;
+        }
+
+        Travel();
+    }
+
+
+    #region ALIVE STATUS
+    [Header("Health")]
+    [SerializeField] Text healthText;
+
+    // this is specifically for the ondeath function to replace the functionality of checking
+    // health <= 0, and so that OnDeath() can only run once.
+
+    [Header("Provides On Death")]
+
+    #endregion
+
+    #region MOVEMENT
+    [Header("Movement")]
+    [SerializeField] protected LayerMask range;
+
+    public float mass
+    {
+        get;
+        protected set;
+    }
+
+    public Path pathToFollow;
+
+    float progress = 0.0f;
+    int currentPoint;
+    List<Vector3> points = new();
+
+    protected void Travel()
+    {
+        if (progress < 1)
+            progress += Time.deltaTime * speed;
+
+        if (currentPoint + 1 < points.Count)
+        {
+            if (speed > 0) RotateToFaceTravelDirection();
+            transform.position = Vector3.Lerp(points[currentPoint], points[currentPoint + 1], progress);
+        }
+
+        if (progress >= 1)
+        {
+            if (currentPoint + 1 < points.Count)
+            {
+                progress = 0;
+                currentPoint++;
+            }
+            else
+                AttackMode = true;
+        }
+    }
+
+    private void RotateToFaceTravelDirection()
+    {
+        Vector3 lookDirection = (points[currentPoint + 1] - points[currentPoint]).normalized;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection), progress);
+    }
+    #endregion
+
+    #region Attacking
+    [Header("Attacking")]
+
+    //there are areas I can further optimise and clean up but that will be a later thing
+    protected virtual void AttackHub()
+    {
+
+    }
+    #endregion
+
+    #region MISC
+    [Space]
+
+    #endregion
+
+    #region DEBUG
+    [Header("Debug")]
+    [SerializeField] bool showPath;
+    [SerializeField] bool showLevers;
+    #endregion
+    */
 }
