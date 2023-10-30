@@ -12,9 +12,10 @@ public class TankEnemy : Enemy
     [SerializeField] GameObject armour;
     [SerializeField] ParticleSystem armourParticle;
 
-    private void Awake()
+    protected override void Awake()
     {
         halfHealthMark = MaxHealth * 0.5f;
+        base.Awake();
     }
 
     public override void TakeDamage(float damage)
