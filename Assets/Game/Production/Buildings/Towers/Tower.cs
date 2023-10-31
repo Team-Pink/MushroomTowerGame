@@ -231,9 +231,13 @@ public class Tower : Building
             {
                 animator.SetTrigger("Attack End");
                 chargingLaser = false;
-                Destroy(chargeDownParticleRef);
-                chargeDownParticleRef = null;
+                Destroy(chargeDownParticleRef);              
             }
+        }
+        else if(chargingLaser)
+        {
+            chargingLaser = false;
+            Destroy(chargeDownParticleRef);           
         }
     }
 
