@@ -485,7 +485,6 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
-                Debug.Log(name + " has dealt damage to the hub");
                 AttackAudio();
                 attackInProgress = false;
             }

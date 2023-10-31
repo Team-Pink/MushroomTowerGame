@@ -52,6 +52,7 @@ public class Attacker
     public bool bounce = false;
     public int bounceHitLimit = 10;
     public bool bounceBulletInTowerPossession = true;
+    public bool returning = false;
     #endregion
 
     protected List<Target> targetsToShoot = new();

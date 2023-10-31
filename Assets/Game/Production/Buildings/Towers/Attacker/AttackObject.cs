@@ -38,8 +38,6 @@ public class AttackObject : MonoBehaviour
 
     public IEnumerator CommenceAttack(float animationDelay = 0.0f)
     {
-        
-        
         if (noTracking)
         {
             Vector3 NoTrackingPos = new Vector3() + target.position;
@@ -50,18 +48,18 @@ public class AttackObject : MonoBehaviour
 
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
 
-        if (!target.enemy)
-            Destroy(gameObject);
-
         // play impact animation
-        
-        if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
-        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+        if (target.enemy != null)
+        {
+            if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
+            if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+        }
 
         Attacker attackerComponent = originTower.AttackerComponent;
 
         if (attackerComponent is SingleAttacker)
         {
+
             target.enemy.TakeDamage(damage);
 
             ///Strikethrough Tag
@@ -75,7 +73,6 @@ public class AttackObject : MonoBehaviour
                 Bounce(attackerComponent);
             }
         }
-
         if (attackerComponent is AreaAttacker)
         {
             // get everything in the area of the attack
@@ -86,8 +83,6 @@ public class AttackObject : MonoBehaviour
                 if (enemy is null) continue;
                 areaHitTargets.Add(enemy); // grabs references to all hit enemies which really should be done by the attack object.
             }
-
-
 
             // get everything hit by the attack
             foreach (Enemy enemyHit in areaHitTargets)
@@ -105,11 +100,11 @@ public class AttackObject : MonoBehaviour
 
         HandleTargetEnemyDeath();
 
-        
-        if (originTower.AttackerComponent.bounce && returningToTower) 
+        if (originTower.AttackerComponent.bounce && returningToTower)
         {
             yield return new WaitForSeconds(returnToTowerTime);
             originTower.AttackerComponent.bounceBulletInTowerPossession = true;
+            attackerComponent.returning = returningToTower;
         }//this is for bounce only to allow the tower to shoot again.
 
         Destroy(gameObject); // Destroy this object
@@ -129,7 +124,9 @@ public class AttackObject : MonoBehaviour
     /// <summary>
     /// Checks if a non target enemy has died and if so perform nessesary actions
     /// </summary>
-    /// <param name="enemy"></param>
+    /// <param name="enemy">
+    /// the enemy your reffering to
+    /// </param>
     void HandleNonTargetEnemyDeath(Enemy enemy)
     {
         if (enemy == target.enemy)
@@ -159,6 +156,12 @@ public class AttackObject : MonoBehaviour
         if (_velocity <= 0)
         {
             _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
+        }
+
+        if (target.enemy == null)
+        {
+            Debug.Log("TARGET LOST RETURNING TO TOWER");
+            BounceToNextTarget(true, null);
         }
 
         hitList.Add(target.enemy);
@@ -195,20 +198,12 @@ public class AttackObject : MonoBehaviour
 
         if (newTarget == null)
         {
-            returningToTower = true;
-            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
-            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
-            returnToTowerTime = timeToTower;
+            BounceToNextTarget(true, null);
             return;
         }
         else
         {
-            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
-            Target newTargetEnemy = new Target();
-            newTargetEnemy.enemy = newTarget;
-            AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
-            newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
-            originTower.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
+            BounceToNextTarget(false, newTarget);
         }
     }
 
@@ -237,13 +232,25 @@ public class AttackObject : MonoBehaviour
         attackInProgress._velocity = _velocity;
         return attackInProgress;
     }
-}
 
-//Rundown of current functionality
-// runs a coroutine that waits to delay damage until the attack has reached the target
-// when it does reach the target
-// deal damage to the given targets
-// if the target dies accelerate and then call the enemy's OnDeath()
-// check if originTower uses an area attack
-// if yes get the damaged AffectedEnemies from the AttackerComponent and do death checks on them
-// finally destroy this.
+    void BounceToNextTarget(bool bounceToTower, Enemy newTarget)
+    {
+        if (bounceToTower)
+        {
+            returningToTower = true;
+            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
+            returnToTowerTime = timeToTower;
+            return;
+        }
+        else
+        {
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            Target newTargetEnemy = new Target();
+            newTargetEnemy.enemy = newTarget;
+            AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
+            newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
+            originTower.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
+        }
+    }
+}
