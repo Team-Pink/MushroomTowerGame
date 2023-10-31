@@ -17,6 +17,11 @@ public class TrackTargeter : Targeter
         return targets;
     }
 
+    /// <summary>
+    /// returns attemptnum targets because someone deleted all my logic for rejecting targets.
+    /// </summary>
+    /// <param name="attemptNum"></param>
+    /// <returns></returns>
     private HashSet<Target> GenerateTargetsInRange(int attemptNum)
     {
         HashSet<Target> targets = new();
@@ -28,6 +33,7 @@ public class TrackTargeter : Targeter
             //Debug.DrawLine(transform.position, randpos, Color.red, 0.02f);
 
         }
+
         return targets;
     }
 
