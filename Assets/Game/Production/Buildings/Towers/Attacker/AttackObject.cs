@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,8 @@ public class AttackObject : MonoBehaviour
     public float damageRadius;
     public LayerMask mask;
     public bool noTracking = false;
-    
-    
+
+
 
     #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
@@ -28,9 +29,10 @@ public class AttackObject : MonoBehaviour
     #region BOUNCE
     //Bounce Tag
     List<Enemy> hitList = new List<Enemy>();
+    Vector3 lastHitPosition;
     bool returningToTower = false;
     float returnToTowerTime = 0;
-    float _velocity = 0;
+    private float _velocity = 0;
     #endregion
     #endregion
 
@@ -38,8 +40,8 @@ public class AttackObject : MonoBehaviour
 
     public IEnumerator CommenceAttack(float animationDelay = 0.0f)
     {
-        
-        
+
+
         if (noTracking)
         {
             Vector3 NoTrackingPos = new Vector3() + target.position;
@@ -54,7 +56,7 @@ public class AttackObject : MonoBehaviour
             Destroy(gameObject);
 
         // play impact animation
-        
+
         if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
         if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
 
@@ -105,8 +107,8 @@ public class AttackObject : MonoBehaviour
 
         HandleTargetEnemyDeath();
 
-        
-        if (originTower.AttackerComponent.bounce && returningToTower) 
+
+        if (originTower.AttackerComponent.bounce && returningToTower)
         {
             yield return new WaitForSeconds(returnToTowerTime);
             originTower.AttackerComponent.bounceBulletInTowerPossession = true;
@@ -121,7 +123,7 @@ public class AttackObject : MonoBehaviour
     void HandleTargetEnemyDeath()
     {
         if (target.enemy.CheckIfDead())
-        {            
+        {
             target.enemy.OnDeath(); // enemy on death
         }
     }
@@ -134,7 +136,7 @@ public class AttackObject : MonoBehaviour
     {
         if (enemy == target.enemy)
             return;
-        
+
         if (enemy.CheckIfDead())
         {
             enemy.OnDeath(); // enemy on death
@@ -156,10 +158,10 @@ public class AttackObject : MonoBehaviour
 
     void Bounce(Attacker attackerComponent)
     {
-        if (_velocity <= 0)
-        {
-            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
-        }
+
+        _velocity = originTower.GetProjectileSpeed();
+        if (lastHitPosition == null) lastHitPosition = target.enemy.transform.position;
+
 
         hitList.Add(target.enemy);
 
@@ -196,14 +198,14 @@ public class AttackObject : MonoBehaviour
         if (newTarget == null)
         {
             returningToTower = true;
-            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, originTower.transform.position));
             originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
             returnToTowerTime = timeToTower;
             return;
         }
         else
         {
-            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, newTarget.transform.position));
             Target newTargetEnemy = new Target();
             newTargetEnemy.enemy = newTarget;
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
@@ -233,8 +235,8 @@ public class AttackObject : MonoBehaviour
         attackInProgress.originTower = originTower;
         attackInProgress.target = enemy;
         attackInProgress.hitList = hitList;
+        attackInProgress.lastHitPosition = hitList.Last().transform.position;
         attackInProgress.returningToTower = returningToTower;
-        attackInProgress._velocity = _velocity;
         return attackInProgress;
     }
 }

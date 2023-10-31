@@ -112,7 +112,8 @@ public class Tower : Building
 
     // Tower values
     [SerializeField] private float projectileSpeed = 1.5f; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! assign this properly on prefabs!
-    // setting the above to zero means time to target will equal zero because (Distance * projectileSpeed). Doing this will cause attacks to occur the frame their cooldown ends and they have a target.
+    // setting the above to zero WILL cause a divide by zero error!!!
+    public float GetProjectileSpeed() => projectileSpeed;
 
     // Tags from Lochlan
 
@@ -216,13 +217,16 @@ public class Tower : Building
                 {
                     if (attackerComponent.bounceBulletInTowerPossession)
                     {
-                        if(boomerangCap.enabled == false)
+                        if (boomerangCap.enabled == false)
                         {
                             boomerangCap.enabled = true;
                             animator.SetBool("Attack Recoil", true);
                         }
                         else if (attackerComponent.CheckCooldownTimer())
+                        {
+                            CalcTimeToTarget(targets, transform.position);
                             attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                        }
                     }
                     else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
                 }
@@ -236,13 +240,13 @@ public class Tower : Building
             {
                 animator.SetTrigger("Attack End");
                 chargingLaser = false;
-                Destroy(chargeDownParticleRef);              
+                Destroy(chargeDownParticleRef);
             }
         }
-        else if(chargingLaser)
+        else if (chargingLaser)
         {
             chargingLaser = false;
-            Destroy(chargeDownParticleRef);           
+            Destroy(chargeDownParticleRef);
         }
     }
 
