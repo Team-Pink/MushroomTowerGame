@@ -216,8 +216,13 @@ public class Tower : Building
                 {
                     if (attackerComponent.bounceBulletInTowerPossession)
                     {
-                        boomerangCap.enabled = true;
-                        attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
+                        if(boomerangCap.enabled == false)
+                        {
+                            boomerangCap.enabled = true;
+                            animator.SetBool("Attack Recoil", true);
+                        }
+                        else if (attackerComponent.CheckCooldownTimer())
+                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
                     }
                     else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
                 }
