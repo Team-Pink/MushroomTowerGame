@@ -118,7 +118,7 @@ public class PylonAttacker : Enemy
     {
 
         Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-        bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetPylon.transform.position) * bulletSpeed; ;
+        bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetPylon.transform.position) / bulletSpeed; ;
         bulletRef.InitializeNoTrackParabolaBullet(targetPylon.transform.position);
 
         //bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
