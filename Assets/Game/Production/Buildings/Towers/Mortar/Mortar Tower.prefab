@@ -48,6 +48,14 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: renderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: renderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 6445240992364596585}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 15
       objectReference: {fileID: 0}
@@ -56,9 +64,17 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent.attackCooldown
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: deactivatedMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a76976e600bc7b4db4700ee92abfed0, type: 2}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441025]
       value: Assembly-CSharp TrapAttacker
@@ -480,6 +496,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4934701682232051942}
     m_Modifications:
+    - target: {fileID: 990482064, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
+      propertyPath: tower
+      value: 
+      objectReference: {fileID: 8458371139374482302}
     - target: {fileID: 5072261245787661146, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
       propertyPath: m_Name
       value: MortarTowerArt
@@ -487,18 +507,6 @@ PrefabInstance:
     - target: {fileID: 5561833485072021984, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5561833485072021984, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5561833485072021984, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5561833485072021984, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5561833485072021984, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
       propertyPath: m_LocalPosition.x
@@ -547,21 +555,8 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 5378744272533071649, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
   m_PrefabInstance: {fileID: 5270777639147429857}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1099400495032908987 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5072261245787661146, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
+--- !u!137 &6445240992364596585 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1177560316907213448, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
   m_PrefabInstance: {fileID: 5270777639147429857}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &990482064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1099400495032908987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0343d5dff0e31264992e4db9a663b7d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tower: {fileID: 8458371139374482302}

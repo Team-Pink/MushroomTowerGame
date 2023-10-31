@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class EnemyTargeter : Targeter
 {
     Quaternion defaultRotation = Quaternion.identity;
-    HashSet<Target> bestTargets = new();
+    public HashSet<Target> bestTargets = new();
     public float firingCone = 20;
 
     private bool radiusInitialised = false;
@@ -82,11 +82,10 @@ public abstract class EnemyTargeter : Targeter
             return null;
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
-        {
-            bestTargets.Clear(); // discard best targets 
+        {           
             foreach (Target target in targetsInRange)
             {
-                bestTargets.Add(target); // add any targets you can.
+                if(!bestTargets.Contains(target))bestTargets.Add(target); // add any targets you can.              
             }
             if (CheckRotation(bestTargets)) // rotate towards those targets
                 return bestTargets;

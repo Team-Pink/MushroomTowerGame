@@ -7,10 +7,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3867595276330599367}
     m_Modifications:
-    - target: {fileID: 785965637854786293, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
-      propertyPath: m_Materials.Array.data[2]
-      value: 
-      objectReference: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
     - target: {fileID: 6159546186504947762, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -238,12 +234,13 @@ MonoBehaviour:
     cohesionStrength: 0.1
     seperationRange: 1.5
     seperationStrength: 2
+    avoidanceRange: 1.5
+    avoidanceStrength: 2
   damage: 2
   attackCooldown: 1.5
   attackDelay: 1
   attackRadius: 5
-  bugBits: 6
-  expValue: 1
+  bugBits: 3
   animator: {fileID: 6708249941602146778}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
