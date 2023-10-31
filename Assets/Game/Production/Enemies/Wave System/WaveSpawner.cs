@@ -47,25 +47,36 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
 
+    WaveCounter waveCounterUI; // UI element that needs to be updated at the end of a wave.
+    
     [SerializeField] RectTransform waveIndicator;
     [SerializeField] Image waveTimer;
     [SerializeField] Vector2[] indicatorPositions;
 
+    [Header("Tower Unlocks")]
+    [SerializeField] GameObject towerUnlockTooltip;
+    [SerializeField] Image towerIcon;
+    [SerializeField] Sprite[] towerSprites = new Sprite[4];
+    [SerializeField] float unlockTooltipDuration = 2;
+
     private void Awake()
     {
+        Time.timeScale = 0;
         levelData = GetComponent<LevelDataGrid>();
 
         CalculateSpawns();
 
         currentWave = waves[currentWaveIndex];
-        waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-        waveIndicator.gameObject.SetActive(true);
 
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
+
+        waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
     }
 
     private void Update()
     {
+        if (Time.timeScale == 0) return;
+
         switch (spawnState)
         {
             case State.BetweenWaves:
@@ -95,6 +106,21 @@ public class WaveSpawner : MonoBehaviour
 
     private void BetweenWavesState()
     {
+        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
+        {
+            towerUnlockTooltip.SetActive(false);
+        }
+        else if (currentWaveIndex < 5)
+        {
+            towerUnlockTooltip.SetActive(true);
+            towerIcon.sprite = towerSprites[currentWaveIndex];
+
+            if (elapsedSecondsBetweenWaves == 0.0f)
+            {
+                GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
+            }
+        }
+
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)
         {
             spawnState = State.Spawning;
@@ -104,6 +130,9 @@ public class WaveSpawner : MonoBehaviour
         }
         else
         {
+            waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
+            waveIndicator.gameObject.SetActive(true);
+
             waveTimer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
             elapsedSecondsBetweenWaves += Time.deltaTime;
         }
@@ -135,15 +164,18 @@ public class WaveSpawner : MonoBehaviour
 
     private void WaitingForWaveEndState()
     {
+        
         if (aliveEnemies.Count == 0)
         {
+            //UpdateWaveCounterUI(); // ** commented this out bcs we not using it anymore :) - James
             if (currentWaveIndex + 1 < waves.Length)
             {
-                Debug.Log("Next Wave Starting in " + secondsBetweenWaves + "Seconds");
+
+                Debug.Log("Next Wave Starting in " + secondsBetweenWaves + " Seconds");
+
                 InitialiseNextWave();
 
-                waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-                waveIndicator.gameObject.SetActive(true);
+                GenericUtility.DestroyAllDeadChildren(parentFolder.transform);
             }
             else
             {
@@ -155,6 +187,7 @@ public class WaveSpawner : MonoBehaviour
             }
 
         }
+        
     }
 
     private IEnumerator GameWon()
@@ -168,6 +201,7 @@ public class WaveSpawner : MonoBehaviour
         spawnState = State.BetweenWaves;
 
         currentWaveIndex++;
+        enemyNumber = 0;
         CalculateSpawns();
         currentWave = waves[currentWaveIndex];
 
@@ -189,9 +223,22 @@ public class WaveSpawner : MonoBehaviour
 
         GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, parentFolder);
 
-        enemyObject.name = "Enemy " + enemyNumber;
+        enemyObject.name = "Child " + (currentWaveIndex + 1) + "-" + enemyNumber;
         enemyNumber++;
 
         return enemyObject;
     }
+
+    /* ** commented this out bcs we not using it anymore :) - James
+     * 
+    /// <summary>
+    /// This is Lochlan's code for updating the WaveCounter UI element
+    /// </summary>
+    private void UpdateWaveCounterUI()
+    {
+        float waveProgress = (float)(currentWaveIndex +1)/ (float)waves.Length;
+        waveCounterUI.AnimateBitsFalling();
+        waveCounterUI.SetWaveCounterFill(waveProgress);
+    }
+    */
 }

@@ -7,6 +7,7 @@ public class SingleAttacker : Attacker
     {
         if (!attacking)
         {
+            
             AnimateAttack();
 
             if (windupParticlePrefab != null)
@@ -17,6 +18,7 @@ public class SingleAttacker : Attacker
             }
 
             attacking = true;
+            bounceBulletInTowerPossession = false;
 
             foreach (var target in targets)
             {
@@ -50,7 +52,6 @@ public class SingleAttacker : Attacker
         delayTimer = 0;
         cooldownTimer = 0;
         attacking = false;
-        targetsToShoot.Clear();
     }
 
     HashSet<Enemy> Strikethrough(Target target)

@@ -57,14 +57,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
---- !u!137 &3863218965728110354 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3815281831247788329, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
-  m_PrefabInstance: {fileID: 103147050358545979}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &7282610292993822671 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7241635144816136692, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
+  m_PrefabInstance: {fileID: 103147050358545979}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8578402322954946796 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8530636573784250071, guid: 3d57a026efe716f46aae104af1f1cbaf, type: 3}
   m_PrefabInstance: {fileID: 103147050358545979}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6815624152218815196
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 5
+  maxHealth: 8
   health: 0
   dead: 0
   speed: 2
@@ -160,19 +160,20 @@ MonoBehaviour:
     cohesionStrength: 0.1
     seperationRange: 1.5
     seperationStrength: 2
+    avoidanceRange: 1.5
+    avoidanceStrength: 2
   damage: 1
   attackCooldown: 2
   attackDelay: 1
   attackRadius: 3
   bugBits: 2
-  expValue: 1
   animator: {fileID: 7282610292993822671}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
   hub: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 1
-  meshRenderer: {fileID: 3863218965728110354}
+  meshRenderer: {fileID: 8578402322954946796}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
   attackAudio: {fileID: 8300000, guid: 560b0f1f2c95d6f4990008caa9a6e0a2, type: 3}
   deathAudio: {fileID: 8300000, guid: e5c22d781bc5cc8438bc32bd1a4298da, type: 3}
