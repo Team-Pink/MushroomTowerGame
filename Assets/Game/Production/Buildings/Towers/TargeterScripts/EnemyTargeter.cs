@@ -77,8 +77,8 @@ public abstract class EnemyTargeter : Targeter
         GetTargetsInRange(); // update targets in range
         if (targetsInRange.Count == 0 || targetsInRange == null) // null check out.
         {
-            if (transform.rotation != defaultRotation) // ???
-                transform.rotation = defaultRotation; // ??? If there is no target instantly return to facing the camera?
+           // if (transform.rotation != defaultRotation) // ???
+             //   transform.rotation = defaultRotation; // ??? If there is no target instantly return to facing the camera?
             return null;
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
