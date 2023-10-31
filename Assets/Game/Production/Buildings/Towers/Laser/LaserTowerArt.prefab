@@ -200,6 +200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5021370370831095193}
   - component: {fileID: 4766432118342834868}
+  - component: {fileID: 1078346766}
   m_Layer: 0
   m_Name: LaserTowerArt
   m_TagString: Untagged
@@ -216,8 +217,8 @@ Transform:
   m_GameObject: {fileID: 5684858930753130275}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8924145393687662853}
   - {fileID: 2453586262056026540}
@@ -245,6 +246,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1078346766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5684858930753130275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0343d5dff0e31264992e4db9a663b7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tower: {fileID: 0}
 --- !u!1 &6826779737639777059
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +343,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5427009642715676981, guid: c2f1790c81305964abb3687c60df0dca, type: 3}
+  - {fileID: 2100000, guid: a8751193b5fa08148aa5ef4c9c5cb7a1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
