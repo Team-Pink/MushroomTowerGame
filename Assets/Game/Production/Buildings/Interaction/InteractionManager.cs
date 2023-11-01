@@ -97,14 +97,20 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject pylonMenu;
     [SerializeField, NonReorderable] Image[] pylonMenuButtons;
+    private Sprite[] pylonMenuDefaultButtons;
+    [SerializeField] Sprite[] pylonMenuAltButtons;
     [SerializeField] TMP_Text pylonMenuCostText;
 
     [SerializeField, Space()] GameObject residualMenu;
     [SerializeField, NonReorderable] Image[] residualMenuButtons;
+    private Sprite[] residualMenuDefaultButtons;
+    [SerializeField] Sprite[] residualMenuAltButtons;
     [SerializeField] TMP_Text residualMenuCostText;
 
     [SerializeField, Space()] GameObject towerMenu;
-    [SerializeField, NonReorderable] Image[] towerMenuButtons;
+    [SerializeField, NonReorderable] Image[] towerMenuButton;
+    private Sprite towerMenuDefaultButton;
+    [SerializeField] Sprite towerMenuAltButton;
     [SerializeField] TMP_Text towerMenuCostText;
 
     [SerializeField, Space()] GameObject towerSelectionMenu;
@@ -468,7 +474,7 @@ public class InteractionManager : MonoBehaviour
 
         refTower = targetBuilding as Tower;
 
-        RadialMenu(towerMenu, towerMenuButtons, out int hoveredButtonIndex);
+        RadialMenu(towerMenu, towerMenuButton, out int hoveredButtonIndex);
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -478,7 +484,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
+            Image hoveredButton = towerMenuButton[hoveredButtonIndex];
 
             if (hoveredButtonIndex == 1)
             {
