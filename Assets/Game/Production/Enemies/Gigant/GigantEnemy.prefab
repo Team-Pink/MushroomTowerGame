@@ -5039,10 +5039,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 20
+  maxHealth: 16
   health: 0
   dead: 0
-  speed: 1.5
+  speed: 2
   steeringForce: 0.15
   maxNeighbourhoodSize: 10
   influences:
@@ -5059,7 +5059,7 @@ MonoBehaviour:
   attackCooldown: 3
   attackDelay: 1
   attackRadius: 6
-  bugBits: 4
+  bugBits: 8
   animator: {fileID: 6382702797799955622}
   levelData: {fileID: 0}
   hubTransform: {fileID: 0}
@@ -5072,4 +5072,4 @@ MonoBehaviour:
   deathAudio: {fileID: 8300000, guid: 17ce99c49a6364d4d8ceafc9ef90da1f, type: 3}
   damageReduction: 1
   armour: {fileID: 1831979727425269645}
-  armourParticle: {fileID: 0}
+  armourParticle: {fileID: 5407852760853136985}
