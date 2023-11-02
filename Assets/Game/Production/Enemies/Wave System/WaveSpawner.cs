@@ -61,7 +61,6 @@ public class WaveSpawner : MonoBehaviour
 
     private void Awake()
     {
-        Time.timeScale = 0;
         levelData = GetComponent<LevelDataGrid>();
 
         CalculateSpawns();
@@ -71,11 +70,13 @@ public class WaveSpawner : MonoBehaviour
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
 
         waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
+
+        GetComponent<InteractionManager>().UnlockTower(0);
     }
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (InteractionManager.gamePaused) return;
 
         switch (spawnState)
         {
@@ -110,12 +111,12 @@ public class WaveSpawner : MonoBehaviour
         {
             towerUnlockTooltip.SetActive(false);
         }
-        else if (currentWaveIndex < 5)
+        else if (currentWaveIndex > 0 && currentWaveIndex < 5)
         {
             towerUnlockTooltip.SetActive(true);
             towerIcon.sprite = towerSprites[currentWaveIndex];
 
-            if (elapsedSecondsBetweenWaves == 0.0f)
+            if (elapsedSecondsBetweenWaves == 0.0f && currentWaveIndex > 0)
             {
                 GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
             }

@@ -3,16 +3,24 @@ using UnityEngine;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] GameObject hudIcons;
-    [SerializeField] GameObject tutorial;
-
     [SerializeField] GameObject mainMenu;
+    [SerializeField] GameObject boomy;
+
+    private TutorialManager tutorialManager;
+
+    private void Awake()
+    {
+        tutorialManager = GameObject.Find("GameManager").GetComponent<TutorialManager>();
+        InteractionManager.gamePaused = true;
+    }
 
     public void Play()
     {
         hudIcons.SetActive(true);
-        tutorial.SetActive(true);
-
         mainMenu.SetActive(false);
+        boomy.SetActive(true);
+
+        tutorialManager.StartTutorial(TutorialManager.Tutorial.Placement);
     }
 
     public void Quit()

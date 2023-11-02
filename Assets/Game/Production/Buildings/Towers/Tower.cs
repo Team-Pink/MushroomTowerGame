@@ -167,7 +167,7 @@ public class Tower : Building
 
     private void Update()
     {
-        if (Time.timeScale == 0) return; // for use by the pause menu.
+        if (InteractionManager.gamePaused) return; // for use by the pause menu.
 
         if (growthTime < growthDuration)
         {

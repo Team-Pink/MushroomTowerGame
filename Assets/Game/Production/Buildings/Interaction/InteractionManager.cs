@@ -118,7 +118,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] Sprite lockedTowerSprite;
     private readonly Sprite[] towerIconSprites = new Sprite[5];
     private int unlockedTowers = 0;
-    private int maxTowersUnlockable = 5;
+    private readonly int maxTowersUnlockable = 5;
     [SerializeField] bool unlockAllTowers = false;
     [SerializeField] TMP_Text towerSelectionCostText;
 
@@ -131,7 +131,9 @@ public class InteractionManager : MonoBehaviour
 
     [Header("Interaction")]
     #region Interaction Variables
-    [SerializeField] KeyCode interactKey = KeyCode.Mouse0;
+    public static bool gamePaused = false;
+    public static bool tutorialMode = false;
+    public KeyCode interactKey = KeyCode.Mouse0;
     [SerializeField] KeyCode cancelKey = KeyCode.Mouse1;
     [SerializeField, Space()] float interactHoldRequirement = 0.25f;
     private bool interactKeyHeld = false;
@@ -140,7 +142,7 @@ public class InteractionManager : MonoBehaviour
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
 
-    private InteractionState currentInteraction = InteractionState.None;
+    public InteractionState currentInteraction = InteractionState.None;
     private InteractionState previousInteraction = InteractionState.None;
     private InteractionState CurrentInteraction
     {
@@ -170,6 +172,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] bool logInteractionChange;
     #endregion
 
+    private TutorialManager tutorialManager;
+
     private void Awake()
     {
         ResetInteraction();
@@ -188,15 +192,15 @@ public class InteractionManager : MonoBehaviour
         {
             towerIconSprites[i] = towerSelectionMenuButtons[i].sprite;
 
-            if (i > 0)
+            if (i >= unlockedTowers)
             {
                 towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
             }
         }
 
-        if (unlockAllTowers) 
+        if (unlockAllTowers)
         {
-            for (int i = 1; i < maxTowersUnlockable; i++)
+            for (int i = unlockedTowers - 1; i < maxTowersUnlockable; i++)
             {
                 UnlockTower(i);
             }
@@ -204,6 +208,8 @@ public class InteractionManager : MonoBehaviour
         hubMaxPylons = maxPylonsPerHub;
         pylonMaxTowers = maxTowersPerPylon;
         pylonMaxPylons = maxPylonsPerPylon;
+
+        tutorialManager = GetComponent<TutorialManager>();
     }
 
     private void OnValidate()
@@ -225,7 +231,7 @@ public class InteractionManager : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (tutorialMode == false && gamePaused) return;
 
         mouseScreenPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.1f);
         mouseWorldPosition = mainCamera.ScreenToWorldPoint(mouseScreenPosition);
@@ -270,6 +276,12 @@ public class InteractionManager : MonoBehaviour
         currentHit = GetRayHit(budLayer);
 
         cursorManager.ChangeCursor("Default");
+
+        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        {
+            ResetInteraction();
+            return;
+        }
 
         if (currentHit.collider is null)
         {
@@ -519,6 +531,13 @@ public class InteractionManager : MonoBehaviour
 
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
+        selectionIndicator.rectTransform.position = mouseScreenPosition;
+
+        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        {
+            return;
+        }
+
         currentHit = GetRayHit(placableLayers);
 
         if (currentHit.collider is not null)
@@ -547,8 +566,6 @@ public class InteractionManager : MonoBehaviour
             else cursorManager.ChangeCursor("CannotPlace");
         }
         else cursorManager.ChangeCursor("CannotPlace");
-
-        selectionIndicator.rectTransform.position = mouseScreenPosition;
 
         if (Input.GetKeyUp(interactKey))
         {
@@ -579,6 +596,13 @@ public class InteractionManager : MonoBehaviour
         (targetBuilding as Pylon).budDetached = true;
         
         DisplayBuildingRadius(out GameObject radiusDisplay);
+
+        selectionIndicator.rectTransform.position = mouseScreenPosition;
+
+        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        {
+            return;
+        }
 
         currentHit = GetRayHit(placableLayers);
         if (currentHit.collider != null)
@@ -616,8 +640,6 @@ public class InteractionManager : MonoBehaviour
             else cursorManager.ChangeCursor("CannotPlace");
         }
         else cursorManager.ChangeCursor("CannotPlace");
-
-        selectionIndicator.rectTransform.position = mouseScreenPosition;
 
         if (Input.GetKeyUp(interactKey))
         {
@@ -761,7 +783,10 @@ public class InteractionManager : MonoBehaviour
         if (CurrentInteraction == InteractionState.PlacingFromPylon)
             (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
         else
+        {
             (targetBuilding as Hub).AddPylon(pylonInstance.GetComponent<Pylon>());
+            if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
+        }
 
         ResetInteraction();
     }
@@ -777,6 +802,8 @@ public class InteractionManager : MonoBehaviour
             (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
 
             towerInstance.GetComponent<Tower>().NewPrice(refPylon.GetMultiplier());
+
+            if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
         }  
 
         ResetInteraction();
@@ -816,7 +843,7 @@ public class InteractionManager : MonoBehaviour
     public void UnlockTower(int towerIndex)
     {
         if (unlockedTowers > maxTowersUnlockable) return;
-        towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
+        if (towerIndex != 0) towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
         unlockedTowers++;
     }
     private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
@@ -901,7 +928,7 @@ public class InteractionManager : MonoBehaviour
             Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
             float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
 
-            for (int i = 0; i < (unlockedTowers-1); i++)
+            for (int i = 0; i < unlockedTowers; i++)
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {

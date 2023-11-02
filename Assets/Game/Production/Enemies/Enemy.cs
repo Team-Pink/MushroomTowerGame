@@ -189,7 +189,8 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (InteractionManager.tutorialMode) rigidbody.velocity = Vector3.zero;
+        if (InteractionManager.gamePaused) return;
 
         if (Dead) return;
 

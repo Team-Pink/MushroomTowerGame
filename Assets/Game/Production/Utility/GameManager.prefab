@@ -1871,6 +1871,7 @@ GameObject:
   - component: {fileID: 6829538405946730101}
   - component: {fileID: 4105631474352096952}
   - component: {fileID: 2288347274951756725}
+  - component: {fileID: 5583641233090253150}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1961,17 +1962,17 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  pylonMenuAltButtons: []
   pylonMenuCostText: {fileID: 0}
   residualMenu: {fileID: 0}
   residualMenuButtons:
   - {fileID: 0}
   - {fileID: 0}
+  residualMenuAltButtons: []
   residualMenuCostText: {fileID: 0}
   towerMenu: {fileID: 0}
-  towerMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  towerMenuButton: []
+  towerMenuAltButton: {fileID: 0}
   towerMenuCostText: {fileID: 0}
   towerSelectionMenu: {fileID: 0}
   towerSelectionMenuButtons:
@@ -1981,6 +1982,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   lockedTowerSprite: {fileID: 0}
+  unlockAllTowers: 0
   towerSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
   canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
@@ -1989,6 +1991,8 @@ MonoBehaviour:
   interactKey: 323
   cancelKey: 324
   interactHoldRequirement: 0.15
+  currentInteraction: 0
+  tutorialMode: 0
   showMouseDirection: 0
   showCameraProjection: 1
   logInteractionChange: 0
@@ -2199,6 +2203,28 @@ MonoBehaviour:
     cursorTexture: {fileID: 2800000, guid: 920a81019b2be0b4ba8f99f8f6cfb851, type: 3}
   - cursorName: CanPlace
     cursorTexture: {fileID: 2800000, guid: 62436c39dd9e78749aea1468225dff26, type: 3}
+--- !u!114 &5583641233090253150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6533875848915131746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3b722f0ba9f9384c8e68498a2f3d4c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentTutorial: 0
+  currentPart: 0
+  gracePeriod: 0.5
+  placementParts: []
+  placementSpotlight: {fileID: 0}
+  warningParts: []
+  regrowParts: []
+  regrowSpotlight: {fileID: 0}
+  sellingParts: []
+  sellingSpotlight: {fileID: 0}
 --- !u!1 &6597148967594781695
 GameObject:
   m_ObjectHideFlags: 0
