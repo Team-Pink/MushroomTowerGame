@@ -108,9 +108,9 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] TMP_Text residualMenuCostText;
 
     [SerializeField, Space()] GameObject towerMenu;
-    [SerializeField, NonReorderable] Image[] towerMenuButton;
-    private Sprite towerMenuDefaultButton;
-    [SerializeField] Sprite towerMenuAltButton;
+    [SerializeField, NonReorderable] Image[] towerMenuButtons;
+    private Sprite[] towerMenuDefaultButtons;
+    [SerializeField] Sprite[] towerMenuAltButtons;
     [SerializeField] TMP_Text towerMenuCostText;
 
     [SerializeField, Space()] GameObject towerSelectionMenu;
@@ -197,6 +197,19 @@ public class InteractionManager : MonoBehaviour
                 towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
             }
         }
+
+        pylonMenuDefaultButtons = new Sprite[pylonMenuButtons.Length];
+        for (int i = 0; i < pylonMenuButtons.Length; i++)
+            pylonMenuDefaultButtons[i] = pylonMenuButtons[i].sprite;
+
+        residualMenuDefaultButtons = new Sprite[residualMenuButtons.Length];
+        for (int i = 0; i < residualMenuButtons.Length; i++)
+            residualMenuDefaultButtons[i] = residualMenuButtons[i].sprite;
+
+        towerMenuDefaultButtons = new Sprite[towerMenuButtons.Length];
+        for (int i = 0; i < towerMenuButtons.Length; i++)
+            towerMenuDefaultButtons[i] = towerMenuButtons[i].sprite;
+
 
         if (unlockAllTowers)
         {
@@ -405,7 +418,7 @@ public class InteractionManager : MonoBehaviour
 
         refPylon = targetBuilding as Pylon;
 
-        RadialMenu(pylonMenu, pylonMenuButtons, out int hoveredButtonIndex);
+        RadialMenu(pylonMenu, ref pylonMenuButtons, pylonMenuDefaultButtons, pylonMenuAltButtons, out int hoveredButtonIndex);
 
         if (hoveredButtonIndex == 0) refPylon.ShowDeactivateLines();
         else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
@@ -441,7 +454,7 @@ public class InteractionManager : MonoBehaviour
         Pylon targetPylon = targetBuilding as Pylon;
         refPylon = targetPylon;
 
-        RadialMenu(residualMenu, residualMenuButtons, out int hoveredButtonIndex);
+        RadialMenu(residualMenu, ref residualMenuButtons, residualMenuDefaultButtons, residualMenuAltButtons, out int hoveredButtonIndex);
 
         if (hoveredButtonIndex == 0) refPylon.ShowDefaultLines();
         else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
@@ -486,7 +499,7 @@ public class InteractionManager : MonoBehaviour
 
         refTower = targetBuilding as Tower;
 
-        RadialMenu(towerMenu, towerMenuButton, out int hoveredButtonIndex);
+        RadialMenu(towerMenu, ref towerMenuButtons, towerMenuDefaultButtons, towerMenuAltButtons, out int hoveredButtonIndex, 270);
 
         if (Input.GetKeyDown(interactKey))
         {
@@ -496,15 +509,11 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            Image hoveredButton = towerMenuButton[hoveredButtonIndex];
+            Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
 
-            if (hoveredButtonIndex == 1)
+            if (hoveredButtonIndex == 0)
             {
                 (targetBuilding as Tower).Sell();
-            }
-            else if (!(targetBuilding as Tower).Upgradeable)
-            {
-                (targetBuilding as Tower).Upgrade(hoveredButtonIndex);
             }
 
             Debug.Log(hoveredButton.name + " was selected", hoveredButton);
@@ -846,7 +855,9 @@ public class InteractionManager : MonoBehaviour
         if (towerIndex != 0) towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
         unlockedTowers++;
     }
-    private void RadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
+    private void RadialMenu(GameObject radialMenu, ref Image[] radialButtons,
+        Sprite[] buttonSprites, Sprite[] altbuttonSprites,
+        out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
         towerMenuCostText.text = "";
@@ -881,21 +892,21 @@ public class InteractionManager : MonoBehaviour
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i+1])
                 {
-                    radialButtons[i].color = buttonHoverColour;
+                    radialButtons[i].sprite = altbuttonSprites[i];
                     hoveredButtonIndex = i;
                     RadialCostDisplays(hoveredButtonIndex);
                 }
                 else
                 {
-                    radialButtons[i].color = buttonBaseColour;
+                    radialButtons[i].sprite = buttonSprites[i];
                 }
             }
         }
         else
         {
-            foreach (Image radialButton in radialButtons)
+            for (int i = 0; i < radialButtons.Length; i++)
             {
-                radialButton.color = buttonBaseColour;
+                radialButtons[i].sprite = buttonSprites[i];
             }
         }
     }

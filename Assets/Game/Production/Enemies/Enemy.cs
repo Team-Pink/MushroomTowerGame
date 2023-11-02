@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
     public bool Dead { get => dead; protected set => dead = value; }
     #endregion
 
-    private readonly List<Condition> activeConditions = new List<Condition>();
+    private readonly List<Condition> activeConditions = new();
 
     #region Movement Values
     public struct BoidReference
@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
 
     // References
     [HideInInspector] public List<BoidReference> neighbourhood = new();
-    private List<GameObject> obstacles = new();
+    private readonly List<GameObject> obstacles = new();
 
     #endregion
 
@@ -282,7 +282,7 @@ public class Enemy : MonoBehaviour
             {
 
                 Condition detailCondition = conditions[newIndex];
-                Condition condition = new Condition(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
+                Condition condition = new(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
                 activeConditions.Add(condition);
                 conditions[newIndex].applied = false;
             }
