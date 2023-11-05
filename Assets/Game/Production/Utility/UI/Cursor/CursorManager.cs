@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 [System.Serializable]
 public class CustomCursor
 {
     public string cursorName;
     public Texture2D cursorTexture;
+    public bool displayCost = false;
 }
 
 public class CursorManager : MonoBehaviour
 {
     public CustomCursor[] cursors;
+    [SerializeField] TMP_Text costText;
+    [SerializeField] Vector2 positionFromMousePoint;
     public string currentCursorState
     {
         get;
@@ -21,6 +25,11 @@ public class CursorManager : MonoBehaviour
     void Start()
     {
         ChangeCursor();
+    }
+
+    private void Update()
+    {
+        PutTextOnCursorPosition();
     }
 
     public void ChangeCursor(string cursorName)
@@ -42,6 +51,7 @@ public class CursorManager : MonoBehaviour
 
         Cursor.SetCursor(desiredCursor.cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = desiredCursor.cursorName;
+        costText.gameObject.SetActive(desiredCursor.displayCost);
     }
     public void ChangeCursor(int cursorIndex)
     {
@@ -52,11 +62,20 @@ public class CursorManager : MonoBehaviour
 
         Cursor.SetCursor(desiredCursor.cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = desiredCursor.cursorName;
+        costText.gameObject.SetActive(desiredCursor.displayCost);
     }
     public void ChangeCursor()
     {
         Cursor.SetCursor(cursors[0].cursorTexture, Vector2.zero, CursorMode.Auto);
         currentCursorState = cursors[0].cursorName;
+        costText.gameObject.SetActive(cursors[0].displayCost);
+    }
+
+    public void DisplayCost(int cost) => costText.text = cost.ToString();
+
+    void PutTextOnCursorPosition()
+    {
+        costText.rectTransform.position = Input.mousePosition + new Vector3(positionFromMousePoint.x, positionFromMousePoint.y, 0);
     }
 
 }

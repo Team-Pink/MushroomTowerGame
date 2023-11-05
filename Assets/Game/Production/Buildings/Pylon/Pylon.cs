@@ -117,10 +117,7 @@ public class Pylon : Building
     [SerializeField] AudioClip placeAudio;
     [SerializeField] AudioClip deathAudio;
 
-    public bool IsBuildingInList(Building building)
-    {
-        return connectedBuildings.Contains(building);
-    }
+    public bool IsBuildingInList(Building building) => connectedBuildings.Contains(building);
 
     private void Start()
     {
@@ -150,14 +147,8 @@ public class Pylon : Building
         bud.SetActive(showBud);
     }
 
-    public void AddBuilding(Building building)
-    {
-        connectedBuildings.Add(building);
-    }
-    public void RemoveBuilding(Building building)
-    {
-        connectedBuildings.Remove(building);
-    }
+    public void AddBuilding(Building building) => connectedBuildings.Add(building);
+    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
 
     public override void Deactivate()
     {
@@ -324,7 +315,6 @@ public class Pylon : Building
 
     public void SellTower(Tower tower)
     {
-        Debug.Log("Sold Tower", tower);
         connectedBuildings.Remove(tower);
         tower.Sell();
     }

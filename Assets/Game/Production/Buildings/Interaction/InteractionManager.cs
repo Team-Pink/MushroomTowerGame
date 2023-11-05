@@ -532,9 +532,17 @@ public class InteractionManager : MonoBehaviour
 
                 if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
                 {
-                    canPlace = true;
                     selectionIndicator.color = Color.green;
-                    cursorManager.ChangeCursor("CanPlace");
+                    placementCost = GetNewPylonCost();
+                    cursorManager.DisplayCost(placementCost);
+
+                    if (currencyManager.CanDecreaseCurrencyAmount(placementCost))
+                    { 
+                        cursorManager.ChangeCursor("CanBuy");
+                        canPlace = true;
+                    }
+                    else
+                        cursorManager.ChangeCursor("CannotBuy");
                 }
                 else cursorManager.ChangeCursor("CannotPlace");
             }
@@ -596,16 +604,34 @@ public class InteractionManager : MonoBehaviour
 
                 if (towerPlacementCriteria || pylonPlacementCriteria)
                 {
-                    canPlace = true;
-                    selectionIndicator.color = Color.green;
-
-                    //bubble logic for cursor goes here... TODO IN GOLD!!!!
-                    cursorManager.ChangeCursor("CanPlace");
-
+                    
                     if (pylonPlacementCriteria)
+                    {
                         placingPylon = true;
+                        placementCost = GetNewPylonCost();
+                        cursorManager.DisplayCost(placementCost);
+
+                        if (currencyManager.CanDecreaseCurrencyAmount(placementCost))
+                        {
+                            cursorManager.ChangeCursor("CanBuy");
+                            cursorManager.DisplayCost(placementCost);
+                            selectionIndicator.color = Color.green;
+                            canPlace = true;
+                        }
+                        else
+                            cursorManager.ChangeCursor("CannotBuy");
+                    }
+                    else
+                    {
+                        canPlace = true;
+                        selectionIndicator.color = Color.green;
+                        cursorManager.ChangeCursor("CanPlace");
+                    }
                 }
-                else cursorManager.ChangeCursor("CannotPlace");
+                else
+                {
+                    cursorManager.ChangeCursor("CannotPlace");
+                }
             }
             else cursorManager.ChangeCursor("CannotPlace");
         }
@@ -707,35 +733,26 @@ public class InteractionManager : MonoBehaviour
 
     private void AttemptToSpawnPylon()
     {
-        int cost = 0;
         bool notMaxPylons = false;
 
         Building parent = activeBud.transform.parent.GetComponent<Building>();
 
         if (parent is Hub)
         {
-            Hub parentHub = parent as Hub;
             pylonMultiplier = 1;
-            cost = Pylon.GetPylonBaseCurrency();
-            parentHub.ClearDestroyedPylons();
-            notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;
+            notMaxPylons = (parent as Hub).pylonCount < maxPylonsPerHub;
         }
         else if (parent is Pylon)
         {
-            Pylon parentPylon = parent as Pylon;
-            pylonMultiplier = parentPylon.GetMultiplier() + 1;
-            cost = parentPylon.GetPylonCost(pylonMultiplier);
-            
-            notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
+            pylonMultiplier = (parent as Pylon).GetMultiplier() + 1;
+            notMaxPylons = (parent as Pylon).connectedPylonsCount < maxPylonsPerPylon;
         }
 
-        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
+        if (!TargetIsPlane || !notMaxPylons)
         {
             ResetInteraction();
             return;
         }
-
-        placementCost = cost;
         SpawnPylon();
     }
 
@@ -1004,6 +1021,24 @@ public class InteractionManager : MonoBehaviour
                 else towerSelectionCostText.color = canPurchaseColour;
                 break;
         }
+    }
+    int GetNewPylonCost()
+    {
+        Building parent = activeBud.transform.parent.GetComponent<Building>();
+        int cost = 0;
+
+        if (parent is Hub)
+        {
+            Hub parentHub = parent as Hub;
+            cost = Pylon.GetPylonBaseCurrency();
+            parentHub.ClearDestroyedPylons();
+        }
+        else if (parent is Pylon)
+        {
+            Pylon parentPylon = parent as Pylon;
+            cost = parentPylon.GetPylonCost(parentPylon.GetMultiplier() + 1);
+        }
+        return cost;
     }
 
     public void ResetInteraction(GameObject[] extraObjects = null)
