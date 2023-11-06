@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -13,17 +14,32 @@ public class TutorialManager : MonoBehaviour
     [Header("Boomy")]
     [SerializeField] Animator boomy;
 
+
     [Header("Placement")]
     public GameObject[] placementParts;
     [SerializeField] GameObject[] placementSpotlights;
+    [HideInInspector] public bool placementHasPlayed;
+
     [Header("Warning")]
+    public int warningWave = 2;
+    public float warningWaitTime = 3.0f;
+    [HideInInspector] public float elapsedWarningWaitTime = 0.0f;
     [SerializeField] GameObject[] warningParts;
+    [HideInInspector] public bool warningHasPlayed;
+
     [Header("Regrow")]
     public GameObject[] regrowParts;
     [SerializeField] GameObject[] regrowSpotlights;
+    [HideInInspector] public bool regrowHasPlayed;
+
     [Header("Selling")]
+    public int sellingWave = 3;
     public GameObject[] sellingParts;
     [SerializeField] GameObject[] sellingSpotlights;
+    [HideInInspector] public bool sellingHasPlayed;
+
+
+    private CanvasScaler canvasScaler;
 
     // Components
     InteractionManager interactionManager;
@@ -31,6 +47,8 @@ public class TutorialManager : MonoBehaviour
     private void Awake()
     {
         interactionManager = GetComponent<InteractionManager>();
+
+        canvasScaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
     }
 
     private void Update()
@@ -178,7 +196,7 @@ public class TutorialManager : MonoBehaviour
         if (spotlight == null) return true;
 
         return (new Vector2(Screen.width / 2, Screen.height / 2) +
-            (spotlight.anchoredPosition) - mousePosition).magnitude < 20 * spotlight.localScale.x;
+            (spotlight.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) - mousePosition).magnitude < 20 * spotlight.localScale.x;
     }
 
     public void StartTutorial(Tutorial tutorial)
@@ -196,15 +214,19 @@ public class TutorialManager : MonoBehaviour
                 break;
             case Tutorial.Placement:
                 placementParts[0].SetActive(true);
+                placementHasPlayed = true;
                 break;
             case Tutorial.Warning:
                 warningParts[0].SetActive(true);
+                warningHasPlayed = true;
                 break;
             case Tutorial.Regrow:
                 regrowParts[0].SetActive(true);
+                regrowHasPlayed = true;
                 break;
             case Tutorial.Selling:
                 sellingParts[0].SetActive(true);
+                sellingHasPlayed = true;
                 break;
         }
     }
@@ -224,6 +246,22 @@ public class TutorialManager : MonoBehaviour
         boomy.SetTrigger("Jiggle");
 
         currentPart++;
+        parts[currentPart].SetActive(true);
+    }
+
+    public void ReverseTutorial(ref GameObject[] parts)
+    {
+        elapsedGracePeriod = 0;
+
+        parts[currentPart].SetActive(false);
+
+        if (currentPart == 0)
+        {
+            Debug.LogError("Should not reverse tutorial when on first page.");
+            return;
+        }
+
+        currentPart--;
         parts[currentPart].SetActive(true);
     }
 

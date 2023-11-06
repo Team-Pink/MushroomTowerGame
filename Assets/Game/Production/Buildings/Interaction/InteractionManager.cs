@@ -527,6 +527,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
+            tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
             ResetInteraction();
             return;
         }
@@ -544,6 +545,12 @@ public class InteractionManager : MonoBehaviour
 
         if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
         {
+            if (Input.GetKeyUp(interactKey))
+            {
+                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                ResetInteraction();
+            }
+
             return;
         }
 
@@ -595,6 +602,13 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromPylonState()
     {
+        if (Input.GetKeyDown(cancelKey))
+        {
+            tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+            ResetInteraction();
+            return;
+        }
+
         bool canPlace = false;
         bool placingPylon = false;
         selectionIndicator.enabled = true;
@@ -610,6 +624,12 @@ public class InteractionManager : MonoBehaviour
 
         if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
         {
+            if (Input.GetKeyUp(interactKey))
+            {
+                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                ResetInteraction();
+            }
+
             return;
         }
 
@@ -676,6 +696,12 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
+            if (tutorialMode)
+            {
+                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+            }
+
             ResetInteraction();
             return;
         }
@@ -694,6 +720,12 @@ public class InteractionManager : MonoBehaviour
 
             if (hoveredButtonIndex < 0 || atTowerLimit)
             {
+                if (tutorialMode)
+                {
+                    tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                    tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                }
+
                 ResetInteraction();
                 return;
             }

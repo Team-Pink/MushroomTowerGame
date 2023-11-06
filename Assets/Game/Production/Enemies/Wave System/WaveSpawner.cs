@@ -59,6 +59,9 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Sprite[] towerSprites = new Sprite[4];
     [SerializeField] float unlockTooltipDuration = 2;
 
+    // Tutorial
+    private TutorialManager tutorial;
+
     private void Awake()
     {
         levelData = GetComponent<LevelDataGrid>();
@@ -72,6 +75,8 @@ public class WaveSpawner : MonoBehaviour
         waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
 
         GetComponent<InteractionManager>().UnlockTower(0);
+
+        tutorial = GetComponent<TutorialManager>();
     }
 
     private void Update()
@@ -160,6 +165,21 @@ public class WaveSpawner : MonoBehaviour
         else
         {
             cooldownElapsed += Time.deltaTime;
+        }
+
+        if (currentWaveIndex == tutorial.warningWave && !tutorial.warningHasPlayed)
+        {
+            tutorial.elapsedWarningWaitTime += Time.deltaTime;
+
+            if (tutorial.elapsedWarningWaitTime >= tutorial.warningWaitTime)
+            {
+                tutorial.StartTutorial(TutorialManager.Tutorial.Warning);
+            }
+        }
+
+        if (currentWaveIndex == tutorial.sellingWave && !tutorial.sellingHasPlayed)
+        {
+            tutorial.StartTutorial(TutorialManager.Tutorial.Selling);
         }
     }
 
