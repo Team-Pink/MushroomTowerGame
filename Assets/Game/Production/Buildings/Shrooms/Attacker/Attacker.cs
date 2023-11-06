@@ -29,7 +29,7 @@ public class Attacker
     public AudioClip attackSoundEffect;
     public AudioClip attackHitSoundEffect;
 
-    public Tower originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
+    public Shroom originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
     public Animator animator;
 
     [SerializeField]protected  bool lobProjectile;
@@ -51,7 +51,7 @@ public class Attacker
     [Header("Bounce Tag")]
     public bool bounce = false;
     public int bounceHitLimit = 10;
-    public bool bounceBulletInTowerPossession = true;
+    [HideInInspector] public bool bounceBulletInShroomPossession = true;
     #endregion
 
     protected List<Target> targetsToShoot = new();
@@ -124,7 +124,7 @@ public class Attacker
         bulletRef.target = targetEnemy;
         bulletRef.Initialise();
     }
-    public void AnimateBounceProjectileToTower(Target targetEnemy, float timeToTarget)
+    public void AnimateBounceProjectileToShroom(Target targetEnemy, float timeToTarget)
     {
         if (attackSoundEffect != null)
         {

@@ -11,7 +11,7 @@ public class AttackObject : MonoBehaviour
     public int damage; // damage dealt to target
     public float delayToTarget; // time until the attack reaches the target
     public Target target; // targets of the attack
-    public Tower originTower; // origin of the attack
+    public Shroom originTower; // origin of the attack
     public HashSet<Enemy> areaHitTargets;
     public GameObject hitParticlePrefab;
     public AudioClip hitSoundEffect;
@@ -109,8 +109,8 @@ public class AttackObject : MonoBehaviour
         if (originTower.AttackerComponent.bounce && returningToTower) 
         {
             yield return new WaitForSeconds(returnToTowerTime);
-            originTower.AttackerComponent.bounceBulletInTowerPossession = true;
-        }//this is for bounce only to allow the tower to shoot again.
+            originTower.AttackerComponent.bounceBulletInShroomPossession = true;
+        }//this is for bounce only to allow the shroom to shoot again.
 
         Destroy(gameObject); // Destroy this object
     }
@@ -169,9 +169,9 @@ public class AttackObject : MonoBehaviour
         if (hitCount >= attackerComponent.bounceHitLimit)
         {
             returningToTower = true;
-            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originTower.transform.position));
-            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
-            returnToTowerTime = timeToTower;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originTower.transform.position));
+            originTower.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToTowerTime = timeToShroom;
             return;
         }
 
@@ -196,9 +196,9 @@ public class AttackObject : MonoBehaviour
         if (newTarget == null)
         {
             returningToTower = true;
-            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
-            originTower.AttackerComponent.AnimateBounceProjectileToTower(target, timeToTower);
-            returnToTowerTime = timeToTower;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
+            originTower.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToTowerTime = timeToShroom;
             return;
         }
         else

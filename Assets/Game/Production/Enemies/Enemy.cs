@@ -162,7 +162,7 @@ public class Enemy : MonoBehaviour
     protected new Rigidbody rigidbody;
     [HideInInspector] public LevelDataGrid levelData;
     [HideInInspector] public Transform hubTransform;
-    [HideInInspector] public Hub hub;
+    [HideInInspector] public Meteor hub;
 
     [SerializeField] GameObject deathParticle;
     [SerializeField] protected float particleOriginOffset;
@@ -182,7 +182,7 @@ public class Enemy : MonoBehaviour
         defaultMaterial = meshRenderer.material;
 
         enemyLayers = LayerMask.GetMask("Enemy");
-        obstacleLayers = LayerMask.GetMask("Tower", "Pylon");
+        obstacleLayers = LayerMask.GetMask("Shroom", "Node");
 
         health = maxHealth;
     }
@@ -466,7 +466,7 @@ public class Enemy : MonoBehaviour
     // HUNT
     protected virtual void HuntState()
     {
-        // use this for pylon attacker
+        // use this for node attacker
     }
     #endregion
 
@@ -486,7 +486,7 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 hub.Damage(damage);
-                Debug.Log(name + " has dealt damage to the hub");
+                Debug.Log(name + " has dealt damage to the meteor");
                 AttackAudio();
                 attackInProgress = false;
             }

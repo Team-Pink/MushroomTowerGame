@@ -1087,8 +1087,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3471097511467805223, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6375534183577494712, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: Spore Launcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375534183577494714, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f15ceea03a77b5f42b4346055cb94f55, type: 3}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -1175,6 +1183,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690590, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375534184751154060, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: Crushroom
+      objectReference: {fileID: 0}
+    - target: {fileID: 6375534184751154062, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4131311f370e0e94cad9fb7a55ba3306, type: 3}
+    - target: {fileID: 6375534185213049026, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -3096,7 +3116,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1146967826}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: towerName
+      propertyPath: shroomName
       value: 
       objectReference: {fileID: 1688431258}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
@@ -3111,6 +3131,10 @@ PrefabInstance:
       propertyPath: residualMenu
       value: 
       objectReference: {fileID: 1697896202}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomTooltip
+      value: 
+      objectReference: {fileID: 1461804935}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerTooltips
       value: 
@@ -3132,9 +3156,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1923365276}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescription
+      value: 
+      objectReference: {fileID: 1646853001}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerMenuCostText
       value: 
       objectReference: {fileID: 625561298}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: lockedShroomSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8a120454be707de44af47a46aab972d3, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: selectionIndicator
       value: 
@@ -3164,6 +3196,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: radiusPreviewPrefab
+      value: 
+      objectReference: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenu
+      value: 
+      objectReference: {fileID: 2143670441}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: residualMenuCostText
       value: 
       objectReference: {fileID: 625561299}
@@ -3188,7 +3228,15 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionCostText
+      value: 
+      objectReference: {fileID: 625561297}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionCostText
       value: 
       objectReference: {fileID: 625561297}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
@@ -3201,11 +3249,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerNames.Array.data[2]
-      value: Crushroom
+      value: Spore Launcher
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerNames.Array.data[3]
-      value: Spore Launcher
+      value: Crushroom
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerNames.Array.data[4]
@@ -3213,6 +3261,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerRadiusPreviewPrefab
+      value: 
+      objectReference: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.data[0]
+      value: Shroomiken
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.data[1]
+      value: Sludge Slinger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.data[2]
+      value: Spore Launcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.data[3]
+      value: Crushroom
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomNames.Array.data[4]
+      value: Biolumenaser
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomRadiusPreviewPrefab
       value: 
       objectReference: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
@@ -3224,8 +3296,32 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomPrefabs.Array.data[4]
+      value: 
+      objectReference: {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerMenuButtons.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.size
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerMenuButton.Array.data[0]
@@ -3277,18 +3373,48 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerDescriptions.Array.data[2]
-      value: 'Area Damage
-
-        Slow Attack Rate'
-      objectReference: {fileID: 0}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: towerDescriptions.Array.data[3]
       value: 'Low Area Damage
 
         Large Area of Effect'
       objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: towerDescriptions.Array.data[3]
+      value: 'Area Damage
+
+        Slow Attack Rate'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerDescriptions.Array.data[4]
+      value: 'High Damage
+
+        Slow Charge Up'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.data[0]
+      value: 'Low Damage
+
+        Bouncing Shots'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.data[1]
+      value: 'Damage Over Time
+
+        Slows Enemies'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.data[2]
+      value: 'Low Area Damage
+
+        Large Area of Effect'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.data[3]
+      value: 'Area Damage
+
+        Slow Attack Rate'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomDescriptions.Array.data[4]
       value: 'High Damage
 
         Slow Charge Up'
@@ -3326,6 +3452,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 87978a9a6cc537a43b338ff592cd5fe3, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionMenuButtons.Array.data[0]
       value: 
       objectReference: {fileID: 1364608598}
@@ -3336,13 +3466,33 @@ PrefabInstance:
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionMenuButtons.Array.data[2]
       value: 
-      objectReference: {fileID: 438994661}
+      objectReference: {fileID: 229487027}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionMenuButtons.Array.data[3]
       value: 
-      objectReference: {fileID: 229487027}
+      objectReference: {fileID: 438994661}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSelectionMenuButtons.Array.data[4]
+      value: 
+      objectReference: {fileID: 1839026419}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.data[0]
+      value: 
+      objectReference: {fileID: 1364608598}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.data[1]
+      value: 
+      objectReference: {fileID: 1456180902}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.data[2]
+      value: 
+      objectReference: {fileID: 229487027}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.data[3]
+      value: 
+      objectReference: {fileID: 438994661}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSelectionMenuButtons.Array.data[4]
       value: 
       objectReference: {fileID: 1839026419}
     - target: {fileID: 6533875848915124894, guid: 066cde3769000064188cecd38420fa52, type: 3}

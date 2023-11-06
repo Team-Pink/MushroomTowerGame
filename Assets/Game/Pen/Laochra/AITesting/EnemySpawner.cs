@@ -11,13 +11,13 @@ public class EnemySpawner : MonoBehaviour
     private new Transform transform;
     private LevelDataGrid levelData;
     public Transform hubTransform;
-    private Hub hub;
+    private Meteor hub;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
         levelData = GetComponent<LevelDataGrid>();
-        hub = hubTransform.GetComponent<Hub>();
+        hub = hubTransform.GetComponent<Meteor>();
 
         SpawnBoids();
     }

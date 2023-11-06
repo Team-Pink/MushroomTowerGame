@@ -1,12 +1,11 @@
-using PylonList = System.Collections.Generic.List<Pylon>;
+using System.Collections.Generic;
 using Text = TMPro.TMP_Text;
 using UnityEngine;
 
 using static UnityEngine.Time;
 using static UnityEngine.SceneManagement.SceneManager;
-using System.Collections.Generic;
 
-public class Hub : Building
+public class Meteor : Building
 {
     [SerializeField] float maxHealth = 100;
     private float currentHealth;
@@ -17,18 +16,7 @@ public class Hub : Building
 
     [HideInInspector] public bool budDetached = false;
     
-    public PylonList connectedPylons;
-    public int pylonCount
-    {
-        get
-        {
-            return connectedPylons.Count;
-        }
-        private set { }
-    }
-    public int connectedPylonsCount = 0;
-    private bool atMaxPylons;
-    [HideInInspector] public bool AtMaxPylons { get => pylonCount == InteractionManager.hubMaxPylons; }
+    public List<Node> connectedNodes;
 
     public GameObject displayLinePrefab;
     public Material displayLineMaterial;
@@ -54,19 +42,9 @@ public class Hub : Building
                 RestartScene();
         }
 
-        ClearDestroyedPylons();
-        connectedPylonsCount = pylonCount;
+        ClearDestroyedNodes();
 
-        if (atMaxPylons != AtMaxPylons)
-        {
-            radiusDisplay.transform.GetChild(0).gameObject.SetActive(!AtMaxPylons);
-            radiusDisplay.transform.GetChild(1).gameObject.SetActive(!AtMaxPylons);
-
-            atMaxPylons = AtMaxPylons;
-        }
-
-        bool showBud = !(AtMaxPylons || budDetached);
-        bud.SetActive(showBud);
+        bud.SetActive(!budDetached);
     }
 
     public void Damage(float damageAmount)
@@ -78,33 +56,33 @@ public class Hub : Building
 
     private void RestartScene() => LoadScene(GetActiveScene().name);
 
-    public void ClearDestroyedPylons()
+    public void ClearDestroyedNodes()
     {
-        for (int i = 0; i < connectedPylons.Count; i++)
+        for (int i = 0; i < connectedNodes.Count; i++)
         {
-            Pylon pylon = connectedPylons[i];
-            if (pylon == null)
-                RemovePylon(pylon);
+            Node node = connectedNodes[i];
+            if (node == null)
+                RemoveNode(node);
         }
     }
 
-    public void AddPylon(Pylon pylon)
+    public void AddNode(Node node)
     {
-        connectedPylons.Add(pylon);
+        connectedNodes.Add(node);
     }
 
-    public void RemovePylon(Pylon pylon)
+    public void RemoveNode(Node node)
     {
-        connectedPylons.Remove(pylon);
+        connectedNodes.Remove(node);
     }
 
     public override void ShowDefaultLines()
     {
         ResetLines();
 
-        for (int i = 0; i < connectedPylons.Count; i++)
+        for (int i = 0; i < connectedNodes.Count; i++)
         {
-            Building building = connectedPylons[i];
+            Building building = connectedNodes[i];
 
             GameObject line = Instantiate(displayLinePrefab, transform);
             displayLines.Add(line);

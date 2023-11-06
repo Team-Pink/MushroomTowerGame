@@ -43,7 +43,7 @@ public class WaveSpawner : MonoBehaviour
     private readonly List<Enemy> aliveEnemies = new();
 
     [SerializeField] Transform parentFolder;
-    [SerializeField] Hub hub;
+    [SerializeField] Meteor hub;
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
 
@@ -53,7 +53,7 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Image waveTimer;
     [SerializeField] Vector2[] indicatorPositions;
 
-    [Header("Tower Unlocks")]
+    [Header("Shroom Unlocks")]
     [SerializeField] GameObject towerUnlockTooltip;
     [SerializeField] Image towerIcon;
     [SerializeField] Sprite[] towerSprites = new Sprite[4];
@@ -74,7 +74,7 @@ public class WaveSpawner : MonoBehaviour
 
         waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
 
-        GetComponent<InteractionManager>().UnlockTower(0);
+        GetComponent<InteractionManager>().UnlockShroom(0);
 
         tutorial = GetComponent<TutorialManager>();
     }
@@ -123,7 +123,7 @@ public class WaveSpawner : MonoBehaviour
 
             if (elapsedSecondsBetweenWaves == 0.0f && currentWaveIndex > 0)
             {
-                GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
+                GetComponent<InteractionManager>().UnlockShroom(currentWaveIndex);
             }
         }
 

@@ -1,13 +1,11 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PylonAttacker : Enemy
 {
-    [Header("Pylon Attacker Variables")]
-    private Pylon targetPylon;
+    [Header("Node Attacker Variables")]
+    private Node targetNode;
 
-    //[SerializeField] Pylon targetBuilding;
     public float firingCone = 10;
     private float attackDuration;
     [SerializeField] float detectionRange = 15;
@@ -21,20 +19,20 @@ public class PylonAttacker : Enemy
 
     protected override void ApproachState()
     {
-        base.ApproachState(); //move towards the hub (either gonna have at the start or the end of the function)
+        base.ApproachState(); //move towards the Meteor (either gonna have at the start or the end of the function)
 
-        //Checks for any pylons in range
+        //Checks for any Nodes in range
         foreach (Collider collider in Physics.OverlapSphere(transform.position, detectionRange))
         {
-            if (collider.GetComponent<Pylon>() == null)
+            if (collider.GetComponent<Node>() == null)
                 continue;
 
-            Pylon pylon = collider.GetComponent<Pylon>();
+            Node node = collider.GetComponent<Node>();
 
-            if (pylon.CurrentHealth > 0)
+            if (node.CurrentHealth > 0)
             {
-                targetBuilding = pylon;
-                targetPylon = pylon;
+                targetBuilding = node;
+                targetNode = node;
                 state = EnemyState.Hunt;
                 break;
             }
@@ -44,12 +42,12 @@ public class PylonAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (targetPylon.CurrentHealth <= 0 || targetPylon == null)
+        if (targetNode.CurrentHealth <= 0 || targetNode == null)
         {
             targetBuilding = FindNewTarget();
         }
 
-        //Move Pylon Attacker towards the target
+        //Move Node Attacker towards the target
         bool facingTarget = RotateToTarget(GetRotationToTarget());
 
         float distance = Vector3.Distance(transform.position, targetBuilding.transform.position);
@@ -67,27 +65,26 @@ public class PylonAttacker : Enemy
             targetBuilding = FindNewTarget();
             return;
         }
-        else if (targetBuilding is Hub)
+        else if (targetBuilding is Meteor)
         {
-            base.AttackState(); // Attack Hub
+            base.AttackState(); // Attack Meteor
             return;
         }
 
-        //On Pylon Death or Deactivation
-        if (targetPylon.CurrentHealth <= 0)
+        //On Node Death or Deactivation
+        if (targetNode.CurrentHealth <= 0)
         {
             targetBuilding = FindNewTarget();
             return;
         }
 
-        //Attacking the Pylon
+        //Attacking the Node
         if (!attackInProgress)
         {
             AttackAudio();
             animator.SetTrigger("Attack");
-            //targetPylon.CurrentHealth -= damage;
             FireBullet();
-            StartCoroutine(DamagePylon());
+            StartCoroutine(DamageNode());
             attackInProgress = true;
 
         }
@@ -118,29 +115,29 @@ public class PylonAttacker : Enemy
     {
 
         Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-        bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetPylon.transform.position) / bulletSpeed; ;
-        bulletRef.InitializeNoTrackParabolaBullet(targetPylon.transform.position);
+        bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetNode.transform.position) / bulletSpeed; ;
+        bulletRef.InitializeNoTrackParabolaBullet(targetNode.transform.position);
 
         //bullet.transform.position = Vector3.Lerp(bullet.transform.position, targetBuilding.transform.position + Vector3.up, Time.deltaTime * 2);
     }
 
-    Pylon FindNewTarget()
+    Node FindNewTarget()
     {
-        Pylon pylon = null;
+        Node node = null;
 
         Collider[] collisions = Physics.OverlapSphere(transform.position, detectionRange, mask);
 
         if (collisions.Length < 1)
         {
             state = EnemyState.Approach;
-            return pylon;
+            return node;
         }
 
         foreach (Collider collider in collisions)
         {
-            if (collider.GetComponent<Pylon>().CurrentHealth > 0)
+            if (collider.GetComponent<Node>().CurrentHealth > 0)
             {
-                targetBuilding = collider.GetComponent<Pylon>();
+                targetBuilding = collider.GetComponent<Node>();
                 state = EnemyState.Hunt;
                 break;
             }
@@ -150,12 +147,12 @@ public class PylonAttacker : Enemy
             state = EnemyState.Hunt;
         else
             state = EnemyState.Approach;
-        return pylon;
+        return node;
     }
 
-    public IEnumerator DamagePylon()
+    public IEnumerator DamageNode()
     {
         yield return new WaitForSeconds(attackDuration);
-        targetPylon.CurrentHealth -= damage;
+        targetNode.CurrentHealth -= damage;
     }
 }

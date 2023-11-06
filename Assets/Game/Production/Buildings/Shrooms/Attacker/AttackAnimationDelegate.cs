@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class AttackAnimationDelegate : MonoBehaviour
 {
-    [SerializeField] Tower tower;
+    [SerializeField] Shroom tower;
     private Attacker attacker;
     private void Awake()
     {
-        if (tower == null) attacker = transform.parent.GetComponent<Tower>().AttackerComponent;
+        if (tower == null) attacker = transform.parent.GetComponent<Shroom>().AttackerComponent;
         else attacker = tower.AttackerComponent;
     }
 

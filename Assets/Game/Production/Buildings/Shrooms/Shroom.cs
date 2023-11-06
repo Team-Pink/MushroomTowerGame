@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.ParticleSystem;
 
 public struct Target
 {
@@ -69,7 +68,7 @@ public struct Details
     }
 } // For Editor Use Only
 
-public class Tower : Building
+public class Shroom : Building
 {
     // Startup
     [SerializeField] float growthDuration = 5.0f;
@@ -110,7 +109,7 @@ public class Tower : Building
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] GameObject attackObjectPrefab;
 
-    // Tower values
+    // Shroom values
     [SerializeField] private float projectileSpeed = 1.5f; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! assign this properly on prefabs!
     // setting the above to zero means time to target will equal zero because (Distance * projectileSpeed). Doing this will cause attacks to occur the frame their cooldown ends and they have a target.
 
@@ -118,7 +117,7 @@ public class Tower : Building
 
     //Lock On
     private bool chargingLaser = false;
-    [SerializeField] private bool lockOn = false; // determines if the tower will lock on to an enemy.
+    [SerializeField] private bool lockOn = false; // determines if the shroom will lock on to an enemy.
     [SerializeField] private float lockOnDuration = 1.5f;
     private float lockOnTimer = 0;
     [SerializeField] private float lockOnFiringIntermissionTime = 0;
@@ -138,7 +137,7 @@ public class Tower : Building
     [SerializeField, Space()] Material[] deactivatedMaterials;
 
     [Space(20)]
-    [SerializeField, Tooltip("ONLY FOR USE ON THE BOOMERANG TOWER")] SkinnedMeshRenderer boomerangCap;
+    [SerializeField, Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] SkinnedMeshRenderer boomerangCap;
 
     private void Awake()
     {
@@ -175,7 +174,7 @@ public class Tower : Building
             return;
         }
 
-        // This will stop the tower from attacking imediately after being reactivated.
+        // This will stop the shroom  from attacking imediately after being reactivated.
         if (recovering)
         {
             if (recoveryTime < recoveryDuration)
@@ -214,7 +213,7 @@ public class Tower : Building
                 }
                 else if (attackerComponent.bounce)
                 {
-                    if (attackerComponent.bounceBulletInTowerPossession)
+                    if (attackerComponent.bounceBulletInShroomPossession)
                     {
                         if(boomerangCap.enabled == false)
                         {

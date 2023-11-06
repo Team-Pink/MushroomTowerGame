@@ -10,13 +10,10 @@ public enum InteractionState
     None,
 
     BuildingInteraction,
-    PylonMenu,
-    ResidualMenu,
-    TowerMenu,
 
-    PlacingFromHub,
-    PlacingFromPylon,
-    TowerSelection
+    PlacingFromMeteor,
+    PlacingFromNode,
+    ShroomSelection
 }
 
 public class InteractionManager : MonoBehaviour
@@ -25,22 +22,22 @@ public class InteractionManager : MonoBehaviour
     #region Object Variables
     [SerializeField] GameObject targetPlane;
     [SerializeField] GameObject pylonPrefab;
-    [SerializeField, NonReorderable] private GameObjectList towerPrefabs = new(5);
+    [SerializeField, NonReorderable] private GameObjectList shroomPrefabs = new(5);
     private Camera mainCamera;
-    private const int towerPrefabAmount = 5;
+    private const int shroomPrefabAmount = 5;
     #endregion
 
     [Header("Building Selection")]
     #region Building Selection Variables
     [SerializeField] LayerMask buildingLayers;
     private Building targetBuilding;
-    [SerializeField] GameObject towerTooltips;
-    [SerializeField] TMP_Text towerName;
-    [SerializeField] string[] towerNames;
-    [SerializeField] TMP_Text towerDescription;
-    [SerializeField, TextArea] string[] towerDescriptions;
-    [SerializeField] GameObject towerRadiusPreviewPrefab;
-    private GameObject towerRadiusPreview;
+    [SerializeField] GameObject shroomTooltip;
+    [SerializeField] TMP_Text shroomName;
+    [SerializeField] string[] shroomNames;
+    [SerializeField] TMP_Text shroomDescription;
+    [SerializeField, TextArea] string[] shroomDescriptions;
+    [SerializeField] GameObject radiusPreviewPrefab;
+    private GameObject shroomRadiusPreview;
     #endregion
 
     [Header("Placement")]
@@ -48,7 +45,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] bool placeOnPaths;
     LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
-    private LayerMask pylonLayer;
+    private LayerMask nodeLayer;
     private LayerMask placableLayers;
     private LayerMask budLayer;
 
@@ -58,14 +55,6 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] float placementExclusionSize = 1;
     [SerializeField] float maxDistanceFromPylon = 10;
     private const float capsuleCheckBound = 5;
-
-    [Space]
-    [SerializeField] int maxPylonsPerHub = 6;
-    [HideInInspector] public static int hubMaxPylons;
-    [SerializeField] int maxTowersPerPylon = 5;
-    [HideInInspector] public static int pylonMaxTowers;
-    [SerializeField] int maxPylonsPerPylon = 2;
-    [HideInInspector] public static int pylonMaxPylons;
     #endregion
 
     [Header("Currency")]
@@ -73,16 +62,14 @@ public class InteractionManager : MonoBehaviour
     private int pylonMultiplier = 1;
     private int placementCost = 0;
     private CurrencyManager currencyManager;
-    Pylon refPylon;
-    Tower refTower;
-    RadialType radialType;
+    private Node refNode;
 
     enum RadialType
     {
-        Pylon,
+        Node,
         Residual,
-        Tower,
-        TowerSelection,
+        Shroom,
+        ShroomSelection,
     }
     #endregion
 
@@ -95,32 +82,14 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private float radialExclusionZone = 10.0f;
     private Vector2 startingMousePosition;
 
-    [SerializeField, Space()] GameObject pylonMenu;
-    [SerializeField, NonReorderable] Image[] pylonMenuButtons;
-    private Sprite[] pylonMenuDefaultButtons;
-    [SerializeField] Sprite[] pylonMenuAltButtons;
-    [SerializeField] TMP_Text pylonMenuCostText;
-
-    [SerializeField, Space()] GameObject residualMenu;
-    [SerializeField, NonReorderable] Image[] residualMenuButtons;
-    private Sprite[] residualMenuDefaultButtons;
-    [SerializeField] Sprite[] residualMenuAltButtons;
-    [SerializeField] TMP_Text residualMenuCostText;
-
-    [SerializeField, Space()] GameObject towerMenu;
-    [SerializeField, NonReorderable] Image[] towerMenuButtons;
-    private Sprite[] towerMenuDefaultButtons;
-    [SerializeField] Sprite[] towerMenuAltButtons;
-    [SerializeField] TMP_Text towerMenuCostText;
-
-    [SerializeField, Space()] GameObject towerSelectionMenu;
-    [SerializeField, NonReorderable] Image[] towerSelectionMenuButtons;
-    [SerializeField] Sprite lockedTowerSprite;
-    private readonly Sprite[] towerIconSprites = new Sprite[5];
-    private int unlockedTowers = 0;
-    private readonly int maxTowersUnlockable = 5;
-    [SerializeField] bool unlockAllTowers = false;
-    [SerializeField] TMP_Text towerSelectionCostText;
+    [SerializeField, Space()] GameObject shroomSelectionMenu;
+    [SerializeField, NonReorderable] Image[] shroomSelectionMenuButtons;
+    [SerializeField] Sprite lockedShroomSprite;
+    private readonly Sprite[] shroomIconSprites = new Sprite[5];
+    private int unlockedShrooms = 0;
+    private readonly int maxShroomsUnlockable = 5;
+    [SerializeField] bool unlockAllShrooms = false;
+    [SerializeField] TMP_Text shroomSelectionCostText;
 
     [SerializeField, Space()] private Color canPurchaseColour;
     [SerializeField] private Color canNotPurchaseColour;
@@ -182,63 +151,47 @@ public class InteractionManager : MonoBehaviour
         levelDataGrid = GetComponent<LevelDataGrid>();
 
         placableLayers = LayerMask.GetMask("Ground");
-        pylonLayer = LayerMask.GetMask("Pylon");
+        nodeLayer = LayerMask.GetMask("Node");
         budLayer = LayerMask.GetMask("Bud");
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
         cursorManager = gameObject.GetComponent<CursorManager>();
 
-        for (int i = 0; i < towerSelectionMenuButtons.Length; i++)
+        for (int i = 0; i < shroomSelectionMenuButtons.Length; i++)
         {
-            towerIconSprites[i] = towerSelectionMenuButtons[i].sprite;
+            shroomIconSprites[i] = shroomSelectionMenuButtons[i].sprite;
 
-            if (i >= unlockedTowers)
+            if (i >= unlockedShrooms)
             {
-                towerSelectionMenuButtons[i].sprite = lockedTowerSprite;
+                shroomSelectionMenuButtons[i].sprite = lockedShroomSprite;
             }
         }
 
-        pylonMenuDefaultButtons = new Sprite[pylonMenuButtons.Length];
-        for (int i = 0; i < pylonMenuButtons.Length; i++)
-            pylonMenuDefaultButtons[i] = pylonMenuButtons[i].sprite;
-
-        residualMenuDefaultButtons = new Sprite[residualMenuButtons.Length];
-        for (int i = 0; i < residualMenuButtons.Length; i++)
-            residualMenuDefaultButtons[i] = residualMenuButtons[i].sprite;
-
-        towerMenuDefaultButtons = new Sprite[towerMenuButtons.Length];
-        for (int i = 0; i < towerMenuButtons.Length; i++)
-            towerMenuDefaultButtons[i] = towerMenuButtons[i].sprite;
-
-
-        if (unlockAllTowers)
+        if (unlockAllShrooms)
         {
-            for (int i = unlockedTowers - 1; i < maxTowersUnlockable; i++)
+            for (int i = unlockedShrooms - 1; i < maxShroomsUnlockable; i++)
             {
-                UnlockTower(i);
+                UnlockShroom(i);
             }
         }
-        hubMaxPylons = maxPylonsPerHub;
-        pylonMaxTowers = maxTowersPerPylon;
-        pylonMaxPylons = maxPylonsPerPylon;
 
         tutorialManager = GetComponent<TutorialManager>();
     }
 
     private void OnValidate()
     {
-        if (towerPrefabs.Count == towerPrefabAmount)
+        if (shroomPrefabs.Count == shroomPrefabAmount)
             return;
 
-        Debug.LogWarning("Stop that, the list towerPrefabs should be exactly " + towerPrefabAmount + " elements!", this);
+        Debug.LogWarning("Stop that, the list shroomPrefabs should be exactly " + shroomPrefabAmount + " elements!", this);
 
-        while (towerPrefabs.Count < towerPrefabAmount)
+        while (shroomPrefabs.Count < shroomPrefabAmount)
         {
-            towerPrefabs.Add(null);
+            shroomPrefabs.Add(null);
         }
-        while (towerPrefabs.Count > towerPrefabAmount)
+        while (shroomPrefabs.Count > shroomPrefabAmount)
         {
-            towerPrefabs.RemoveAt(towerPrefabs.Count - 1);
+            shroomPrefabs.RemoveAt(shroomPrefabs.Count - 1);
         }
     }
 
@@ -258,24 +211,15 @@ public class InteractionManager : MonoBehaviour
             case InteractionState.BuildingInteraction:
                 BuildingInteractionState();
                 break;
-            case InteractionState.PylonMenu:
-                PylonMenuState();
-                break;
-            case InteractionState.ResidualMenu:
-                ResidualMenuState();
-                break;
-            case InteractionState.TowerMenu:
-                TowerMenuState();
-                break;
 
-            case InteractionState.PlacingFromHub:
-                PlacingFromHubState();
+            case InteractionState.PlacingFromMeteor:
+                PlacingFromMeteorState();
                 break;
-            case InteractionState.PlacingFromPylon:
-                PlacingFromPylonState();
+            case InteractionState.PlacingFromNode:
+                PlacingFromNodeState();
                 break;
-            case InteractionState.TowerSelection:
-                TowerSelectionState();
+            case InteractionState.ShroomSelection:
+                ShroomSelectionState();
                 break;
         }
 
@@ -326,9 +270,9 @@ public class InteractionManager : MonoBehaviour
     {
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
-        if (targetBuilding is not Tower)
+        if (targetBuilding is not Shroom)
         {
-            if (targetBuilding is Pylon && (targetBuilding as Pylon).isResidual)
+            if (targetBuilding is Node && (targetBuilding as Node).isResidual)
             {
                 targetBuilding.ShowDeactivateLines();
             }
@@ -354,18 +298,21 @@ public class InteractionManager : MonoBehaviour
         {
             if (timeHeld > interactHoldRequirement)
             {
-                if (targetBuilding is Hub && !(targetBuilding as Hub).AtMaxPylons)
+                if (targetBuilding is Meteor)
                 {
                     radiusDisplay.SetActive(false);
                     if (healthDisplay != null) healthDisplay.enabled = false;
-                    CurrentInteraction = InteractionState.PlacingFromHub;
+                    CurrentInteraction = InteractionState.PlacingFromMeteor;
                     return;
                 }
-                else if (targetBuilding is Pylon && !(targetBuilding as Pylon).AtMaxBuildings)
+                else if (targetBuilding is Node)
                 {
-                    radiusDisplay.SetActive(false);
-                    if (healthDisplay != null) healthDisplay.enabled = false;
-                    CurrentInteraction = InteractionState.PlacingFromPylon;
+                    if ((targetBuilding as Node).isResidual == false)
+                    {
+                        radiusDisplay.SetActive(false);
+                        if (healthDisplay != null) healthDisplay.enabled = false;
+                        CurrentInteraction = InteractionState.PlacingFromNode;
+                    }
                     return;
                 }
             }
@@ -379,20 +326,13 @@ public class InteractionManager : MonoBehaviour
                 radiusDisplay.SetActive(false);
                 if (healthDisplay != null) healthDisplay.enabled = false;
 
-                if (targetBuilding is Pylon)
+                if (targetBuilding is Node && (targetBuilding as Node).isResidual == false)
                 {
-                    if (!(targetBuilding as Pylon).pylonResidual.activeSelf)
-                    {
-                        CurrentInteraction = InteractionState.PylonMenu;
-                    }
-                    else
-                    {
-                        CurrentInteraction = InteractionState.ResidualMenu;
-                    }
+                    CurrentInteraction = InteractionState.PlacingFromNode;
                 }
-                else if (targetBuilding is Tower)
+                else if (targetBuilding is Meteor)
                 {
-                    CurrentInteraction = InteractionState.TowerMenu;
+                    CurrentInteraction = InteractionState.PlacingFromMeteor;
                 }
                 else
                 {
@@ -407,123 +347,8 @@ public class InteractionManager : MonoBehaviour
             initialInteractPosition = mouseScreenPosition;
         }
     }
-    private void PylonMenuState()
-    {
-        if (Input.GetKeyDown(cancelKey))
-        {
-            ResetInteraction();
-            return;
-        }
-        radialType = RadialType.Pylon;
 
-        refPylon = targetBuilding as Pylon;
-
-        RadialMenu(pylonMenu, ref pylonMenuButtons, pylonMenuDefaultButtons, pylonMenuAltButtons, out int hoveredButtonIndex);
-
-        if (hoveredButtonIndex == 0) refPylon.ShowDeactivateLines();
-        else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
-        else refPylon.ShowDefaultLines();
-
-        if (Input.GetKeyDown(interactKey))
-        {
-            if (hoveredButtonIndex < 0)
-            {
-                ResetInteraction();
-                return;
-            }
-
-            Image hoveredButton = pylonMenuButtons[hoveredButtonIndex];
-
-            if (hoveredButtonIndex == 0)
-            {
-                targetBuilding.Sell();
-            } // Sell
-            else if (hoveredButtonIndex == 1)
-            {
-                (targetBuilding as Pylon).SellAll();
-            } // Sell All
-            hoveredButton.color = buttonBaseColour;
-
-            ResetInteraction();
-        }
-    }
-    private void ResidualMenuState()
-    {
-        radialType = RadialType.Residual;
-
-        Pylon targetPylon = targetBuilding as Pylon;
-        refPylon = targetPylon;
-
-        RadialMenu(residualMenu, ref residualMenuButtons, residualMenuDefaultButtons, residualMenuAltButtons, out int hoveredButtonIndex);
-
-        if (hoveredButtonIndex == 0) refPylon.ShowDefaultLines();
-        else if (hoveredButtonIndex == 1) refPylon.ShowSellLines();
-        else refPylon.ShowDeactivateLines();
-
-        if (Input.GetKeyDown(interactKey))
-        {
-            if (hoveredButtonIndex < 0)
-            {
-                ResetInteraction();
-                return;
-            }
-
-            Image hoveredButton = pylonMenuButtons[hoveredButtonIndex];
-
-            if (hoveredButtonIndex == 0)
-            {
-                if (currencyManager.CanDecreaseCurrencyAmount(targetPylon.GetPylonCost()))
-                {
-                    currencyManager.DecreaseCurrencyAmount(targetPylon.GetPylonCost());
-                    targetPylon.CurrentHealth = targetPylon.MaxHealth;
-                    targetPylon.ToggleResidual(false);
-                }
-            } // Repair
-            else if (hoveredButtonIndex == 1)
-            {
-                (targetBuilding as Pylon).SellAll();
-            } // Sell All
-            hoveredButton.color = buttonBaseColour;
-
-            ResetInteraction();
-        }
-    }
-    private void TowerMenuState()
-    {
-        if (Input.GetKeyDown(cancelKey))
-        {
-            ResetInteraction();
-            return;
-        }
-        radialType = RadialType.Tower;
-
-        refTower = targetBuilding as Tower;
-
-        RadialMenu(towerMenu, ref towerMenuButtons, towerMenuDefaultButtons, towerMenuAltButtons, out int hoveredButtonIndex, 270);
-
-        if (Input.GetKeyDown(interactKey))
-        {
-            if (hoveredButtonIndex < 0)
-            {
-                ResetInteraction();
-                return;
-            }
-
-            Image hoveredButton = towerMenuButtons[hoveredButtonIndex];
-
-            if (hoveredButtonIndex == 0)
-            {
-                (targetBuilding as Tower).Sell();
-            }
-
-            Debug.Log(hoveredButton.name + " was selected", hoveredButton);
-            hoveredButton.color = buttonBaseColour;
-
-            ResetInteraction();
-        }
-    }
-
-    private void PlacingFromHubState()
+    private void PlacingFromMeteorState()
     {
         if (Input.GetKeyDown(cancelKey))
         {
@@ -537,7 +362,7 @@ public class InteractionManager : MonoBehaviour
         selectionIndicator.color = Color.red;
         activeBud = targetBuilding.bud;
 
-        (targetBuilding as Hub).budDetached = true;
+        (targetBuilding as Meteor).budDetached = true;
 
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
@@ -565,13 +390,13 @@ public class InteractionManager : MonoBehaviour
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromPylon, nodeLayer);
 
-                float distanceFromHub = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+                float distanceFromMeteor = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-                bool inPylonBuildRange = distanceFromHub < 3 * maxDistanceFromPylon;
+                bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromPylon;
 
-                if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
+                if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
@@ -590,7 +415,7 @@ public class InteractionManager : MonoBehaviour
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
-                AttemptToSpawnPylon();
+                AttemptToSpawnNode();
             }
             else
             {
@@ -600,7 +425,7 @@ public class InteractionManager : MonoBehaviour
             radiusDisplay.SetActive(false);
         }
     }
-    private void PlacingFromPylonState()
+    private void PlacingFromNodeState()
     {
         if (Input.GetKeyDown(cancelKey))
         {
@@ -610,13 +435,13 @@ public class InteractionManager : MonoBehaviour
         }
 
         bool canPlace = false;
-        bool placingPylon = false;
+        bool placingNode = false;
         selectionIndicator.enabled = true;
         selectionIndicator.color = Color.red;
         activeBud = targetBuilding.bud;
 
-        refPylon = targetBuilding as Pylon;
-        (targetBuilding as Pylon).budDetached = true;
+        refNode = targetBuilding as Node;
+        (targetBuilding as Node).budDetached = true;
         
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
@@ -643,17 +468,17 @@ public class InteractionManager : MonoBehaviour
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForPylon = SpaceToPlace(2 * maxDistanceFromPylon, pylonLayer);
+                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromPylon, nodeLayer);
 
-                float distanceFromPylon = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+                float distanceFromNode = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-                bool inTowerBuildRange = distanceFromPylon < maxDistanceFromPylon;
-                bool inPylonBuildRange = distanceFromPylon > 2 * maxDistanceFromPylon && distanceFromPylon < 3 * maxDistanceFromPylon;
+                bool inShroomBuildRange = distanceFromNode < maxDistanceFromPylon;
+                bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromPylon && distanceFromNode < 3 * maxDistanceFromPylon;
 
-                bool towerPlacementCriteria = inTowerBuildRange && spaceToPlace && !(targetBuilding as Pylon).AtMaxTowers;
-                bool pylonPlacementCriteria = inPylonBuildRange && spaceToPlace && spaceForPylon && !(targetBuilding as Pylon).AtMaxPylons;
+                bool shroomPlacementCriteria = inShroomBuildRange && spaceToPlace;
+                bool nodePlacementCriteria = inNodeBuildRange && spaceToPlace && spaceForNode;
 
-                if (towerPlacementCriteria || pylonPlacementCriteria)
+                if (shroomPlacementCriteria || nodePlacementCriteria)
                 {
                     canPlace = true;
                     selectionIndicator.color = Color.green;
@@ -661,8 +486,8 @@ public class InteractionManager : MonoBehaviour
                     //bubble logic for cursor goes here... TODO IN GOLD!!!!
                     cursorManager.ChangeCursor("CanPlace");
 
-                    if (pylonPlacementCriteria)
-                        placingPylon = true;
+                    if (nodePlacementCriteria)
+                        placingNode = true;
                 }
                 else cursorManager.ChangeCursor("CannotPlace");
             }
@@ -678,10 +503,10 @@ public class InteractionManager : MonoBehaviour
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
-                if (placingPylon)
-                    AttemptToSpawnPylon();
+                if (placingNode)
+                    AttemptToSpawnNode();
                 else
-                    CurrentInteraction = InteractionState.TowerSelection;
+                    CurrentInteraction = InteractionState.ShroomSelection;
             }
             else
             {
@@ -692,7 +517,7 @@ public class InteractionManager : MonoBehaviour
             radiusDisplay.SetActive(false);
         }
     }
-    private void TowerSelectionState()
+    private void ShroomSelectionState()
     {
         if (Input.GetKeyDown(cancelKey))
         {
@@ -708,17 +533,11 @@ public class InteractionManager : MonoBehaviour
 
         targetBuilding.radiusDisplay.SetActive(false);
 
-        radialType = RadialType.TowerSelection;
-
-        TowerRadialMenu(towerSelectionMenu, towerSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
+        ShroomRadialMenu(shroomSelectionMenu, shroomSelectionMenuButtons, out int hoveredButtonIndex, 30.0f);
         
         if (Input.GetKeyUp(interactKey) || Input.GetKeyDown(interactKey))
         {
-            bool atTowerLimit;
-
-            atTowerLimit = activeBud.transform.parent.GetComponent<Pylon>().connectedTowersCount >= maxTowersPerPylon;
-
-            if (hoveredButtonIndex < 0 || atTowerLimit)
+            if (hoveredButtonIndex < 0)
             {
                 if (tutorialMode)
                 {
@@ -730,7 +549,7 @@ public class InteractionManager : MonoBehaviour
                 return;
             }
 
-            int cost = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>().purchaseCost * refPylon.GetMultiplier();
+            int cost = shroomPrefabs[hoveredButtonIndex].GetComponent<Shroom>().purchaseCost * refNode.GetMultiplier();
 
             if (!currencyManager.CanDecreaseCurrencyAmount(cost))
             {
@@ -739,11 +558,11 @@ public class InteractionManager : MonoBehaviour
             }
 
 
-            Image hoveredButton = towerSelectionMenuButtons[hoveredButtonIndex];
+            Image hoveredButton = shroomSelectionMenuButtons[hoveredButtonIndex];
 
             placementCost = cost;
 
-            SpawnTower(hoveredButtonIndex);
+            SpawnShroom(hoveredButtonIndex);
 
             hoveredButton.color = buttonBaseColour;
 
@@ -774,75 +593,72 @@ public class InteractionManager : MonoBehaviour
         return targets.Count == 0;
     }
 
-    private void AttemptToSpawnPylon()
+    private void AttemptToSpawnNode()
     {
         int cost = 0;
-        bool notMaxPylons = false;
 
         Building parent = activeBud.transform.parent.GetComponent<Building>();
 
-        if (parent is Hub)
+        if (parent is Meteor)
         {
-            Hub parentHub = parent as Hub;
+            Meteor parentMeteor = parent as Meteor;
             pylonMultiplier = 1;
-            cost = Pylon.GetPylonBaseCurrency();
-            parentHub.ClearDestroyedPylons();
-            notMaxPylons = parentHub.pylonCount < maxPylonsPerHub;
+            cost = Node.GetNodeBaseCurrency();
+            parentMeteor.ClearDestroyedNodes();
         }
-        else if (parent is Pylon)
+        else if (parent is Node)
         {
-            Pylon parentPylon = parent as Pylon;
-            pylonMultiplier = parentPylon.GetMultiplier() + 1;
-            cost = parentPylon.GetPylonCost(pylonMultiplier);
+            Node parentNode = parent as Node;
+            pylonMultiplier = parentNode.GetMultiplier() + 1;
+            cost = parentNode.GetNodeCost(pylonMultiplier);
             
-            notMaxPylons = parentPylon.connectedPylonsCount < maxPylonsPerPylon;
         }
 
-        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost) || !notMaxPylons)
+        if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost))
         {
             ResetInteraction();
             return;
         }
 
         placementCost = cost;
-        SpawnPylon();
+        SpawnNode();
     }
 
-    private void SpawnPylon()
+    private void SpawnNode()
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
-        if (activeBud.transform.parent.GetComponent<Hub>() != null)
+        if (activeBud.transform.parent.GetComponent<Meteor>() != null)
         {
-            activeBud.transform.parent.GetComponent<Hub>().ClearDestroyedPylons();
+            activeBud.transform.parent.GetComponent<Meteor>().ClearDestroyedNodes();
         }
 
-        GameObject pylonInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
+        GameObject nodeInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
-        pylonInstance.GetComponent<Pylon>().SetMultiplier(pylonMultiplier);
+        nodeInstance.GetComponent<Node>().SetMultiplier(pylonMultiplier);
         
-        if (CurrentInteraction == InteractionState.PlacingFromPylon)
-            (targetBuilding as Pylon).AddBuilding(pylonInstance.GetComponent<Pylon>());
+        if (CurrentInteraction == InteractionState.PlacingFromNode)
+            (targetBuilding as Node).AddBuilding(nodeInstance.GetComponent<Node>());
         else
         {
-            (targetBuilding as Hub).AddPylon(pylonInstance.GetComponent<Pylon>());
+            (targetBuilding as Meteor).AddNode(nodeInstance.GetComponent<Node>());
             if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
         }
 
         ResetInteraction();
     }
 
-    public void SpawnTower(int towerIndex)
+    public void SpawnShroom(int shroomIndex)
     {
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
-        GameObject towerInstance = Instantiate(towerPrefabs[towerIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
+        GameObject shroomInstance = Instantiate(shroomPrefabs[shroomIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
-        if (previousInteraction == InteractionState.PlacingFromPylon)
+        if (previousInteraction == InteractionState.PlacingFromNode)
         {
-            (targetBuilding as Pylon).AddBuilding(towerInstance.GetComponent<Tower>());
+            (targetBuilding as Node).AddBuilding(shroomInstance.GetComponent<Shroom>());
 
-            towerInstance.GetComponent<Tower>().NewPrice(refPylon.GetMultiplier());
+            shroomInstance.GetComponent<Shroom>().NewPrice(refNode.GetMultiplier());
 
             if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
         }  
@@ -862,15 +678,15 @@ public class InteractionManager : MonoBehaviour
     private void DisplayBuildingHealth(out MeshRenderer healthDisplay)
     {
         healthDisplay = null;
-        if (targetBuilding is Hub)
+        if (targetBuilding is Meteor)
         {
-            healthDisplay = (targetBuilding as Hub).healthDisplay;
+            healthDisplay = (targetBuilding as Meteor).healthDisplay;
         }
-        else if (targetBuilding is Pylon)
+        else if (targetBuilding is Node)
         {
-            Pylon targetPylon = (targetBuilding as Pylon);
-            healthDisplay = targetPylon.healthDisplay;
-            healthDisplay.sharedMaterial.SetFloat("_Value", targetPylon.CurrentHealth / targetPylon.MaxHealth);
+            Node targetNode = (targetBuilding as Node);
+            healthDisplay = targetNode.healthDisplay;
+            healthDisplay.sharedMaterial.SetFloat("_Value", targetNode.CurrentHealth / targetNode.MaxHealth);
         }
         else return;
 
@@ -881,71 +697,17 @@ public class InteractionManager : MonoBehaviour
     }
 
 
-    public void UnlockTower(int towerIndex)
+    public void UnlockShroom(int shroomIndex)
     {
-        if (unlockedTowers > maxTowersUnlockable) return;
-        if (towerIndex != 0) towerSelectionMenuButtons[towerIndex].sprite = towerIconSprites[towerIndex];
-        unlockedTowers++;
+        if (unlockedShrooms > maxShroomsUnlockable) return;
+        if (shroomIndex != 0) shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
+        unlockedShrooms++;
     }
-    private void RadialMenu(GameObject radialMenu, ref Image[] radialButtons,
-        Sprite[] buttonSprites, Sprite[] altbuttonSprites,
-        out int hoveredButtonIndex, float reservedDegrees = 0)
+
+    private void ShroomRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
-        towerMenuCostText.text = "";
-        pylonMenuCostText.text = "";
-        residualMenuCostText.text = "";
-
-        if (!radialMenu.activeSelf)
-            radialMenu.SetActive(true);
-
-        if (startingMousePosition == Vector2.zero)
-        {
-            startingMousePosition = initialInteractPosition;
-            radialMenu.GetComponent<RectTransform>().position = initialInteractPosition;
-        }
-
-        float buttonAngularSize = (360 - reservedDegrees) / radialButtons.Length;
-
-        if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
-        {
-            FloatList angles = new();
-
-            for (int angleIndex = 0; angleIndex < radialButtons.Length + 1; angleIndex++)
-            {
-                float angleToAdd = (reservedDegrees * 0.5f) + (angleIndex * buttonAngularSize);
-                angles.Add(angleToAdd);
-            }
-
-            Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
-            float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
-
-            for (int i = 0; i < radialButtons.Length; i++)
-            {
-                if (currentAngle >= angles[i] && currentAngle < angles[i+1])
-                {
-                    radialButtons[i].sprite = altbuttonSprites[i];
-                    hoveredButtonIndex = i;
-                    RadialCostDisplays(hoveredButtonIndex);
-                }
-                else
-                {
-                    radialButtons[i].sprite = buttonSprites[i];
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < radialButtons.Length; i++)
-            {
-                radialButtons[i].sprite = buttonSprites[i];
-            }
-        }
-    }
-    private void TowerRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
-    {
-        hoveredButtonIndex = -1;
-        towerSelectionCostText.text = "";
+        shroomSelectionCostText.text = "";
 
         if (!radialMenu.activeSelf)
             radialMenu.SetActive(true);
@@ -971,13 +733,12 @@ public class InteractionManager : MonoBehaviour
             Vector2 mouseDirection = (startingMousePosition - (Vector2)mouseScreenPosition).normalized;
             float currentAngle = -Vector2.SignedAngle(Vector2.down, mouseDirection) + 180.0f;
 
-            for (int i = 0; i < unlockedTowers; i++)
+            for (int i = 0; i < unlockedShrooms; i++)
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
-                    RadialCostDisplays(i);
                 }
                 else
                 {
@@ -995,90 +756,31 @@ public class InteractionManager : MonoBehaviour
 
         if (hoveredButtonIndex >= 0)
         {
-            towerTooltips.SetActive(true);
-            towerName.text = towerNames[hoveredButtonIndex];
-            towerDescription.text = towerDescriptions[hoveredButtonIndex];
+            shroomTooltip.SetActive(true);
+            shroomName.text = shroomNames[hoveredButtonIndex];
+            shroomDescription.text = shroomDescriptions[hoveredButtonIndex];
 
-            if (towerRadiusPreview == null)
+            if (shroomRadiusPreview == null)
             {
-                towerRadiusPreview = Instantiate(towerRadiusPreviewPrefab, currentHit.point + new Vector3(0, 0.75f, 0), towerRadiusPreviewPrefab.transform.rotation);
+                shroomRadiusPreview = Instantiate(radiusPreviewPrefab, currentHit.point + new Vector3(0, 0.75f, 0), radiusPreviewPrefab.transform.rotation);
             }
-            Material material = towerRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
+            Material material = shroomRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
 
             if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
             else material.SetFloat("_Hole_Radius", 0.0f);
 
-            Tower tower = towerPrefabs[hoveredButtonIndex].GetComponent<Tower>();
-            towerRadiusPreview.transform.localScale = new Vector3(2 * tower.TargeterComponent.range, 2 * tower.TargeterComponent.range);
+            Shroom shroom = shroomPrefabs[hoveredButtonIndex].GetComponent<Shroom>();
+            shroomRadiusPreview.transform.localScale = new Vector3(2 * shroom.TargeterComponent.range, 2 * shroom.TargeterComponent.range);
         }
         else
         {
-            towerTooltips.SetActive(false);
+            shroomTooltip.SetActive(false);
 
-            if (towerRadiusPreview != null)
+            if (shroomRadiusPreview != null)
             {
-                Destroy(towerRadiusPreview);
-                towerRadiusPreview = null;
+                Destroy(shroomRadiusPreview);
+                shroomRadiusPreview = null;
             }
-        }
-    }
-
-    void RadialCostDisplays(int index)
-    {
-        
-        switch(radialType)
-        {
-            case (RadialType.Pylon):
-                int pylonCost;
-                if (index == 0)
-                {
-                    pylonCost = refPylon.GetPylonSellAmount();
-                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
-                    pylonMenuCostText.color = sellColour;
-                }//Sell
-                if (index == 1)
-                {
-                    pylonCost = refPylon.GetPylonSellAllAmount();
-                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
-                    pylonMenuCostText.color = sellColour;
-                }//Sell All
-                break;
-
-            case (RadialType.Residual):
-                int residualCost;
-                if (index == 0)
-                {
-                    residualCost = refPylon.GetPylonCost();
-                    residualMenuCostText.text = "- " + residualCost.ToString();
-                    if (!currencyManager.CanDecreaseCurrencyAmount(residualCost))
-                        residualMenuCostText.color = canNotPurchaseColour;
-                    else residualMenuCostText.color = canPurchaseColour;
-                }//Repair
-                if (index == 1)
-                {
-                    residualCost = refPylon.GetPylonSellAllAmount();
-                    residualMenuCostText.text = "+ " + residualCost.ToString();
-                    residualMenuCostText.color = sellColour;
-                }//Sell All
-                break;
-
-            case (RadialType.Tower):
-                int towerCost;
-                if (index == 1)
-                {
-                    towerCost = refTower.SellPrice();
-                    towerMenuCostText.text = "+ " + towerCost.ToString();
-                    towerMenuCostText.color = sellColour;
-                }//Sell
-                break;
-
-            case (RadialType.TowerSelection):
-                int towerSelectionCost = 10 * refPylon.GetMultiplier();
-                towerSelectionCostText.text = "- " + towerSelectionCost.ToString();
-                if (!currencyManager.CanDecreaseCurrencyAmount(towerSelectionCost))
-                    towerSelectionCostText.color = canNotPurchaseColour;
-                else towerSelectionCostText.color = canPurchaseColour;
-                break;
         }
     }
 
@@ -1094,14 +796,14 @@ public class InteractionManager : MonoBehaviour
 
         if (targetBuilding != null)
         {
-            if (targetBuilding is not Tower)
+            if (targetBuilding is not Shroom)
             {
                 targetBuilding.ResetLines();
 
-                if (targetBuilding is Hub)
-                    (targetBuilding as Hub).budDetached = false;
+                if (targetBuilding is Meteor)
+                    (targetBuilding as Meteor).budDetached = false;
                 else
-                    (targetBuilding as Pylon).budDetached = false;
+                    (targetBuilding as Node).budDetached = false;
             }
         }
 
@@ -1117,24 +819,15 @@ public class InteractionManager : MonoBehaviour
             targetBuilding = null;
         }
 
-        if (pylonMenu.activeSelf)
-            pylonMenu.SetActive(false);
+        if (shroomSelectionMenu.activeSelf)
+            shroomSelectionMenu.SetActive(false);
+        if (shroomTooltip.activeSelf)
+            shroomTooltip.SetActive(false);
 
-        if (residualMenu.activeSelf)
-            residualMenu.SetActive(false);
-
-        if (towerMenu.activeSelf)
-            towerMenu.SetActive(false);
-
-        if (towerSelectionMenu.activeSelf)
-            towerSelectionMenu.SetActive(false);
-        if (towerTooltips.activeSelf)
-            towerTooltips.SetActive(false);
-
-        if (towerRadiusPreview != null)
+        if (shroomRadiusPreview != null)
         {
-            Destroy(towerRadiusPreview);
-            towerRadiusPreview = null;
+            Destroy(shroomRadiusPreview);
+            shroomRadiusPreview = null;
         }
 
         if (extraObjects is not null)

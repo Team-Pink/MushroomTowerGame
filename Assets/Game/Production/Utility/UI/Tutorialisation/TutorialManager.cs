@@ -77,18 +77,18 @@ public class TutorialManager : MonoBehaviour
         switch (currentPart)
         {
             case 0:
-                if (interactionManager.currentInteraction == InteractionState.PlacingFromHub)
+                if (interactionManager.currentInteraction == InteractionState.PlacingFromMeteor)
                     AdvanceTutorial(ref placementParts);
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager
                 break;
             case 2:
-                if (interactionManager.currentInteraction == InteractionState.PlacingFromPylon)
+                if (interactionManager.currentInteraction == InteractionState.PlacingFromNode)
                     AdvanceTutorial(ref placementParts);
                 break;
             case 3:
-                if (interactionManager.currentInteraction == InteractionState.TowerSelection)
+                if (interactionManager.currentInteraction == InteractionState.ShroomSelection)
                     AdvanceTutorial(ref placementParts);
                 break;
             case 4:
@@ -131,8 +131,8 @@ public class TutorialManager : MonoBehaviour
         switch (currentPart)
         {
             case 0:
-                if (interactionManager.currentInteraction == InteractionState.ResidualMenu)
-                    AdvanceTutorial(ref placementParts);
+                /*if (interactionManager.currentInteraction == InteractionState.ResidualMenu)
+                    AdvanceTutorial(ref placementParts);*/ // WIP
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager
@@ -159,8 +159,8 @@ public class TutorialManager : MonoBehaviour
         switch (currentPart)
         {
             case 0:
-                if (interactionManager.currentInteraction == InteractionState.TowerMenu)
-                    AdvanceTutorial(ref placementParts);
+                /*if (interactionManager.currentInteraction == InteractionState.TowerMenu)
+                    AdvanceTutorial(ref placementParts);*/ //WIP
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager

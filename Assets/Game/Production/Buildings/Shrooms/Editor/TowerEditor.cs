@@ -43,10 +43,10 @@ namespace EditorScripts
         }
     }
 
-    [CustomEditor(typeof(Tower))]
+    [CustomEditor(typeof(Shroom))]
     public class TowerEditor : Editor
     {
-        Tower tower;
+        Shroom tower;
 
         string towerName;
 
@@ -90,7 +90,7 @@ namespace EditorScripts
 
         public void OnEnable()
         {
-            tower = target as Tower;
+            tower = target as Shroom;
 
             {
                 targettingTags[0].requiredTag = targettingTags[1]; // Continuous requires lock-on

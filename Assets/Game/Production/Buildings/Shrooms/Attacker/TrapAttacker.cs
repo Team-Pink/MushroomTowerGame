@@ -65,7 +65,7 @@ public class TrapAttacker : Attacker
     {
         inkDetails = trapPrefab.GetComponent<TrapAttackObject>().details;
 
-        if (obstacles == 0) obstacles = LayerMask.GetMask("Trap", "Tower", "Pylon", "Hub"); 
+        if (obstacles == 0) obstacles = LayerMask.GetMask("Trap", "Shroom", "Node", "Meteor"); 
 
         if (placedTraps.Count >= maxTrapCount || inkPlacementIndex >= targets.Count)
         {

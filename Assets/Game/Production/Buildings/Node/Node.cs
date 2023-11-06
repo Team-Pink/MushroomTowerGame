@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using UnityEngine;
-using BuildingList = System.Collections.Generic.List<Building>;
 
-public class Pylon : Building
+public class Node : Building
 {
     public MeshRenderer healthDisplay;
     public bool isResidual
@@ -48,13 +46,12 @@ public class Pylon : Building
     public GameObject pylonResidual;
 
     [Header("Connections")]
-    [SerializeField] BuildingList connectedBuildings = new();
-    public bool AtMaxBuildings { get => AtMaxTowers && AtMaxPylons; }
-    public int connectedTowersCount
+    [SerializeField] List<Building> connectedBuildings = new();
+    public int connectedShroomsCount
     {
         get
         {
-            int towers = 0;
+            int shroomCount = 0;
             HashSet<Building> buildingsToRemove = new HashSet<Building>();
 
             foreach (var building in connectedBuildings)
@@ -64,22 +61,22 @@ public class Pylon : Building
                     buildingsToRemove.Add(building);
                     continue;
                 }
-                if (building is Tower)
-                    towers++;
+                if (building is Shroom)
+                    shroomCount++;
             }
 
             foreach (var building in buildingsToRemove)
                 connectedBuildings.Remove(building);
 
-            return towers;
+            return shroomCount;
         }
         private set { }
     }
-    public int connectedPylonsCount
+    public int connectedNodesCount
     {
         get
         {
-            int pylons = 0;
+            int nodes = 0;
             HashSet<Building> buildingsToRemove = new HashSet<Building>();
 
             foreach (var building in connectedBuildings)
@@ -89,21 +86,17 @@ public class Pylon : Building
                     buildingsToRemove.Add(building);
                     continue;
                 }
-                if (building is Pylon)
-                    pylons++;
+                if (building is Node)
+                    nodes++;
             }
 
             foreach (var building in buildingsToRemove)
                 connectedBuildings.Remove(building);
 
-            return pylons;
+            return nodes;
         }
         private set { }
     }
-    private bool atMaxTowers;
-    public bool AtMaxTowers { get => atMaxTowers; }
-    private bool atMaxPylons;
-    public bool AtMaxPylons { get => atMaxPylons; }
 
     public GameObject displayLinePrefab;
     public Material displayLineDefault;
@@ -131,22 +124,10 @@ public class Pylon : Building
 
     private void Update()
     {
-        if (isResidual && connectedPylonsCount == 0 && connectedTowersCount == 0)
+        if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0)
             Destroy(gameObject);
 
-        if (atMaxTowers != (connectedTowersCount == InteractionManager.pylonMaxTowers))
-        {
-            atMaxTowers = connectedTowersCount == InteractionManager.pylonMaxTowers;
-            radiusDisplay.transform.GetChild(2).gameObject.SetActive(!atMaxTowers);
-        }
-        if (atMaxPylons != (connectedPylonsCount == InteractionManager.pylonMaxPylons))
-        {
-            atMaxPylons = connectedPylonsCount == InteractionManager.pylonMaxPylons;
-            radiusDisplay.transform.GetChild(0).gameObject.SetActive(!atMaxPylons);
-            radiusDisplay.transform.GetChild(1).gameObject.SetActive(!atMaxPylons);
-        }
-
-        bool showBud = !(AtMaxBuildings || budDetached) && !isResidual;
+        bool showBud = !(budDetached) && !isResidual;
         bud.SetActive(showBud);
     }
 
@@ -226,23 +207,23 @@ public class Pylon : Building
         return false;
     }
 
-    #region PYLON COST
-    public int GetPylonCost() => baseCost * (costMultiplier);
-    public int GetPylonCost(int instance) => baseCost * (instance);
+    #region NODE COST
+    public int GetNodeCost() => baseCost * (costMultiplier);
+    public int GetNodeCost(int instance) => baseCost * (instance);
     public int GetMultiplier() => costMultiplier;
     public void SetMultiplier(int number) => costMultiplier = number;
-    public static int GetPylonBaseCurrency() => baseCost;
-    public int GetPylonSellAmount()
+    public static int GetNodeBaseCurrency() => baseCost;
+    public int GetNodeSellAmount()
     {
         if (isResidual == false)
             return (int)((baseCost * costMultiplier) * sellReturnPercent);
         else
             return 0;
     }
-    public int GetPylonSellAllAmount()
+    public int GetNodeSellAllAmount()
     {
         int returnCost = 0;
-        List<Pylon> openList = new List<Pylon>();
+        List<Node> openList = new List<Node>();
         bool exitLoop = false;
 
         openList.Add(this);
@@ -255,28 +236,28 @@ public class Pylon : Building
                 continue;
             }
 
-            Pylon pylon = openList[0];
+            Node node = openList[0];
 
-            if (pylon.connectedBuildings.Count <= 0)
+            if (node.connectedBuildings.Count <= 0)
             {
-                if (pylon.isResidual == false)
-                    returnCost += pylon.GetPylonSellAmount();
-                openList.Remove(pylon);
+                if (node.isResidual == false)
+                    returnCost += node.GetNodeSellAmount();
+                openList.Remove(node);
                 continue;
             }
 
-            foreach (Building building in pylon.connectedBuildings)
+            foreach (Building building in node.connectedBuildings)
             {
-                if (building is Pylon)
-                    openList.Add(building as Pylon);
+                if (building is Node)
+                    openList.Add(building as Node);
                 else
-                    returnCost += (building as Tower).SellPrice();
+                    returnCost += (building as Shroom).SellPrice();
             }
 
-            if (pylon.isResidual == false)
-                returnCost += pylon.GetPylonSellAmount();
+            if (node.isResidual == false)
+                returnCost += node.GetNodeSellAmount();
 
-            openList.Remove(pylon);
+            openList.Remove(node);
         }
         
         return returnCost;
@@ -289,44 +270,19 @@ public class Pylon : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
 
         if (!isResidual)
-            currencyManager.IncreaseCurrencyAmount(GetPylonCost(), sellReturnPercent);
+            currencyManager.IncreaseCurrencyAmount(GetNodeCost(), sellReturnPercent);
 
         if (connectedBuildings.Count > 0)
             ToggleResidual(true);
         else
             Destroy(gameObject);
     }
-    public void SellAll()
-    {
-        SellAllConnectedBuildings();
-        Sell();
-    }
-    public void SellAllConnectedBuildings()
-    {
-        while (connectedBuildings.Count > 0)
-        {
-            Building building = connectedBuildings[connectedBuildings.Count - 1];
-            connectedBuildings.Remove(building);
 
-            if (building == null)
-                continue;
-
-            if (building is Pylon)
-            {
-                (building as Pylon).SellAll();
-            }
-            else
-            {
-                building.Sell();
-            }
-        }
-    }
-
-    public void SellTower(Tower tower)
+    public void SellShroom(Shroom shroom)
     {
-        Debug.Log("Sold Tower", tower);
-        connectedBuildings.Remove(tower);
-        tower.Sell();
+        Debug.Log("Sold Shroom", shroom);
+        connectedBuildings.Remove(shroom);
+        shroom.Sell();
     }
 
 
@@ -365,7 +321,7 @@ public class Pylon : Building
             renderer.SetPosition(1, lineRendererOffset);
 
             //Recurse through children
-            if (building is not Tower) building.ShowDeactivateLines();
+            if (building is not Shroom) building.ShowDeactivateLines();
         }
     }
     public override void ShowSellLines()
@@ -386,7 +342,7 @@ public class Pylon : Building
             renderer.SetPosition(1, lineRendererOffset);
 
             //Recurse through children
-            if (building is not Tower) building.ShowSellLines();
+            if (building is not Shroom) building.ShowSellLines();
         }
     }
     public override void ResetLines()
@@ -402,7 +358,7 @@ public class Pylon : Building
         for (int i = 0; i < connectedBuildings.Count; i++)
         {
             Building building = connectedBuildings[i];
-            if (building is not Tower) building.ResetLines();
+            if (building is not Shroom) building.ResetLines();
         }
     }
 }
