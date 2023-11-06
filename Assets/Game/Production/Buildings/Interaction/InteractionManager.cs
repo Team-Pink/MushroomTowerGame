@@ -515,8 +515,12 @@ public class InteractionManager : MonoBehaviour
 
         currentHit = GetRayHit(placableLayers);
 
+        placementCost = GetNewPylonCost();
+        bool canBuy = currencyManager.CanDecreaseCurrencyAmount(placementCost);
+
         if (currentHit.collider is not null)
         {
+            cursorManager.DisplayCost(placementCost);
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
             else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
@@ -533,22 +537,41 @@ public class InteractionManager : MonoBehaviour
                 if (inPylonBuildRange && spaceToPlace && spaceForPylon && TargetIsPlane)
                 {
                     selectionIndicator.color = Color.green;
-                    placementCost = GetNewPylonCost();
-                    cursorManager.DisplayCost(placementCost);
 
                     if (currencyManager.CanDecreaseCurrencyAmount(placementCost))
                     { 
-                        cursorManager.ChangeCursor("CanBuy");
+                        cursorManager.ChangeCursor("CanPlaceCanBuy");
                         canPlace = true;
                     }
                     else
-                        cursorManager.ChangeCursor("CannotBuy");
+                    {
+                        cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                    }
+                        
                 }
-                else cursorManager.ChangeCursor("CannotPlace");
+                else
+                {
+                    if (canBuy)
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                }
             }
-            else cursorManager.ChangeCursor("CannotPlace");
+            else
+            {
+                if (canBuy)
+                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                else
+                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+            }
         }
-        else cursorManager.ChangeCursor("CannotPlace");
+        else
+        {
+            if (canBuy)
+                cursorManager.ChangeCursor("CannotPlaceCanBuy");
+            else
+                cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+        }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -582,6 +605,10 @@ public class InteractionManager : MonoBehaviour
         
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
+        placementCost = GetNewPylonCost();
+        bool canBuy = currencyManager.CanDecreaseCurrencyAmount(placementCost);
+        cursorManager.DisplayCost();
+
         currentHit = GetRayHit(placableLayers);
         if (currentHit.collider != null)
         {
@@ -604,38 +631,58 @@ public class InteractionManager : MonoBehaviour
 
                 if (towerPlacementCriteria || pylonPlacementCriteria)
                 {
-                    
                     if (pylonPlacementCriteria)
                     {
                         placingPylon = true;
-                        placementCost = GetNewPylonCost();
-                        cursorManager.DisplayCost(placementCost);
+                        cursorManager.DisplayCost(GetNewPylonCost());
 
-                        if (currencyManager.CanDecreaseCurrencyAmount(placementCost))
+                        if (canBuy)
                         {
-                            cursorManager.ChangeCursor("CanBuy");
-                            cursorManager.DisplayCost(placementCost);
+                            cursorManager.ChangeCursor("CanPlaceCanBuy");
                             selectionIndicator.color = Color.green;
                             canPlace = true;
                         }
                         else
-                            cursorManager.ChangeCursor("CannotBuy");
+                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
                     }
                     else
                     {
-                        canPlace = true;
-                        selectionIndicator.color = Color.green;
-                        cursorManager.ChangeCursor("CanPlace");
+                        cursorManager.DisplayCost(refPylon.GetPylonCost());
+                        canBuy = currencyManager.CanDecreaseCurrencyAmount(refPylon.GetPylonCost());
+
+                        if (canBuy)
+                        {
+                            cursorManager.ChangeCursor("CanPlaceCanBuy");
+                            selectionIndicator.color = Color.green;
+                            canPlace = true;
+                        }
+                        else
+                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
                     }
                 }
                 else
                 {
-                    cursorManager.ChangeCursor("CannotPlace");
+                    if (canBuy)
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
                 }
             }
-            else cursorManager.ChangeCursor("CannotPlace");
+            else
+            {
+                if (canBuy)
+                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                else
+                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+            }
         }
-        else cursorManager.ChangeCursor("CannotPlace");
+        else
+        {
+            if (canBuy)
+                cursorManager.ChangeCursor("CannotPlaceCanBuy");
+            else
+                cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+        }
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
@@ -867,7 +914,7 @@ public class InteractionManager : MonoBehaviour
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
-                    RadialCostDisplays(hoveredButtonIndex);
+                    CostDisplays(hoveredButtonIndex);
                 }
                 else
                 {
@@ -886,7 +933,6 @@ public class InteractionManager : MonoBehaviour
     private void TowerRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
     {
         hoveredButtonIndex = -1;
-        towerSelectionCostText.text = "";
 
         if (!radialMenu.activeSelf)
             radialMenu.SetActive(true);
@@ -918,7 +964,6 @@ public class InteractionManager : MonoBehaviour
                 {
                     radialButtons[i].color = buttonHoverColour;
                     hoveredButtonIndex = i;
-                    RadialCostDisplays(i);
                 }
                 else
                 {
@@ -964,7 +1009,7 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
-    void RadialCostDisplays(int index)
+    void CostDisplays(int index)
     {
         
         switch(radialType)
@@ -974,15 +1019,8 @@ public class InteractionManager : MonoBehaviour
                 if (index == 0)
                 {
                     pylonCost = refPylon.GetPylonSellAmount();
-                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
-                    pylonMenuCostText.color = sellColour;
+                    cursorManager.DisplayCost(pylonCost);
                 }//Sell
-                if (index == 1)
-                {
-                    pylonCost = refPylon.GetPylonSellAllAmount();
-                    pylonMenuCostText.text = "+ " + pylonCost.ToString();
-                    pylonMenuCostText.color = sellColour;
-                }//Sell All
                 break;
 
             case (RadialType.Residual):
@@ -990,17 +1028,11 @@ public class InteractionManager : MonoBehaviour
                 if (index == 0)
                 {
                     residualCost = refPylon.GetPylonCost();
-                    residualMenuCostText.text = "- " + residualCost.ToString();
+                    cursorManager.DisplayCost(residualCost);
                     if (!currencyManager.CanDecreaseCurrencyAmount(residualCost))
-                        residualMenuCostText.color = canNotPurchaseColour;
-                    else residualMenuCostText.color = canPurchaseColour;
+                        cursorManager.ChangeCursor("CanBuy");
+                    else cursorManager.ChangeCursor("CannotBuy");
                 }//Repair
-                if (index == 1)
-                {
-                    residualCost = refPylon.GetPylonSellAllAmount();
-                    residualMenuCostText.text = "+ " + residualCost.ToString();
-                    residualMenuCostText.color = sellColour;
-                }//Sell All
                 break;
 
             case (RadialType.Tower):
@@ -1008,17 +1040,17 @@ public class InteractionManager : MonoBehaviour
                 if (index == 1)
                 {
                     towerCost = refTower.SellPrice();
-                    towerMenuCostText.text = "+ " + towerCost.ToString();
+                    cursorManager.DisplayCost(towerCost);
                     towerMenuCostText.color = sellColour;
                 }//Sell
                 break;
 
             case (RadialType.TowerSelection):
                 int towerSelectionCost = 10 * refPylon.GetMultiplier();
-                towerSelectionCostText.text = "- " + towerSelectionCost.ToString();
+                cursorManager.DisplayCost(towerSelectionCost);
                 if (!currencyManager.CanDecreaseCurrencyAmount(towerSelectionCost))
-                    towerSelectionCostText.color = canNotPurchaseColour;
-                else towerSelectionCostText.color = canPurchaseColour;
+                    cursorManager.ChangeCursor("CannotBuy");
+                else cursorManager.ChangeCursor("CanBuy");
                 break;
         }
     }
