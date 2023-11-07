@@ -15,7 +15,13 @@ public class OpenPauseUI : MonoBehaviour
     // Update is called once per frame
     public void TogglePauseMenu()
     {
-        Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
+        if (!InteractionManager.tutorialMode)
+        {
+            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+        }
+
+        InteractionManager.gamePaused = !InteractionManager.gamePaused;
+
 
         activePause = !activePause;
         // pause game
