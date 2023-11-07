@@ -1,15 +1,18 @@
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Linq.Enumerable;
-using FloatList = System.Collections.Generic.List<float>;
-using GameObjectList = System.Collections.Generic.List<UnityEngine.GameObject>;
+using System.Linq;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.Experimental.GlobalIllumination;
+using UnityEditor.ShaderGraph.Internal;
 
 public enum InteractionState
 {
     None,
 
     BuildingInteraction,
+    Selling,
+    SellingHover,
 
     PlacingFromMeteor,
     PlacingFromNode,
@@ -21,8 +24,8 @@ public class InteractionManager : MonoBehaviour
     [Header("Objects")]
     #region Object Variables
     [SerializeField] GameObject targetPlane;
-    [SerializeField] GameObject pylonPrefab;
-    [SerializeField, NonReorderable] private GameObjectList shroomPrefabs = new(5);
+    [SerializeField] GameObject nodePrefab;
+    [SerializeField, NonReorderable] private List<GameObject> shroomPrefabs = new(5);
     private Camera mainCamera;
     private const int shroomPrefabAmount = 5;
     #endregion
@@ -53,13 +56,13 @@ public class InteractionManager : MonoBehaviour
     //private Vector3 dragStartPosition;
 
     [SerializeField] float placementExclusionSize = 1;
-    [SerializeField] float maxDistanceFromPylon = 10;
+    [SerializeField] float maxDistanceFromNode = 10;
     private const float capsuleCheckBound = 5;
     #endregion
 
     [Header("Currency")]
     #region Cost Of Placement
-    private int pylonMultiplier = 1;
+    private int nodeMultiplier = 1;
     private int placementCost = 0;
     private CurrencyManager currencyManager;
     private Node refNode;
@@ -77,6 +80,12 @@ public class InteractionManager : MonoBehaviour
     #region UI Variables
     [SerializeField] private Color buttonBaseColour;
     [SerializeField] private Color buttonHoverColour;
+
+    [SerializeField, Space()] Image sellButton;
+    [SerializeField] Sprite sellButtonHighlight;
+    [SerializeField] Sprite sellButtonActive;
+    private Sprite sellButtonDefault;
+    private RectTransform sellButtonTransform;
 
     [SerializeField, Space()] Image selectionIndicator;
     [SerializeField] private float radialExclusionZone = 10.0f;
@@ -106,7 +115,6 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] KeyCode cancelKey = KeyCode.Mouse1;
     [SerializeField, Space()] float interactHoldRequirement = 0.25f;
     private bool interactKeyHeld = false;
-    private Vector3 initialInteractPosition;
     private float timeHeld = 0.0f;
     private Vector3 mouseScreenPosition;
     private Vector3 mouseWorldPosition;
@@ -141,7 +149,8 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] bool logInteractionChange;
     #endregion
 
-    private TutorialManager tutorialManager;
+    private TutorialManager tutorial;
+    private CanvasScaler canvasScaler;
 
     private void Awake()
     {
@@ -153,6 +162,9 @@ public class InteractionManager : MonoBehaviour
         placableLayers = LayerMask.GetMask("Ground");
         nodeLayer = LayerMask.GetMask("Node");
         budLayer = LayerMask.GetMask("Bud");
+
+        sellButtonDefault = sellButton.sprite;
+        sellButtonTransform = sellButton.GetComponent<RectTransform>();
 
         currencyManager = gameObject.GetComponent<CurrencyManager>();
         cursorManager = gameObject.GetComponent<CursorManager>();
@@ -175,7 +187,8 @@ public class InteractionManager : MonoBehaviour
             }
         }
 
-        tutorialManager = GetComponent<TutorialManager>();
+        tutorial = GetComponent<TutorialManager>();
+        canvasScaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
     }
 
     private void OnValidate()
@@ -211,6 +224,12 @@ public class InteractionManager : MonoBehaviour
             case InteractionState.BuildingInteraction:
                 BuildingInteractionState();
                 break;
+            case InteractionState.Selling:
+                SellingState();
+                break;
+            case InteractionState.SellingHover:
+                SellingHoverState();
+                break;
 
             case InteractionState.PlacingFromMeteor:
                 PlacingFromMeteorState();
@@ -234,7 +253,7 @@ public class InteractionManager : MonoBehaviour
 
         cursorManager.ChangeCursor("Default");
 
-        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
         {
             ResetInteraction();
             return;
@@ -246,8 +265,26 @@ public class InteractionManager : MonoBehaviour
 
             if (currentHit.collider is null)
             {
-                if (targetBuilding is not null)
-                    ResetInteraction();
+                if ((new Vector2(0, Screen.height) +
+                    (sellButtonTransform.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) -
+                    new Vector2(mouseScreenPosition.x, mouseScreenPosition.y)).magnitude < 60 * sellButtonTransform.localScale.x)
+                {
+                    sellButton.sprite = sellButtonHighlight;
+                    if (Input.GetKeyDown(interactKey))
+                    {
+                        sellButton.sprite = sellButtonActive;
+                        CurrentInteraction = InteractionState.Selling;
+                    }
+                }
+                else
+                {
+                    sellButton.sprite = sellButtonDefault;
+
+                    if (targetBuilding is not null)
+                    {
+                        ResetInteraction();
+                    }
+                }
             }
             else
             {
@@ -272,7 +309,7 @@ public class InteractionManager : MonoBehaviour
 
         if (targetBuilding is not Shroom)
         {
-            if (targetBuilding is Node && (targetBuilding as Node).isResidual)
+            if (targetBuilding is Node && ((targetBuilding as Node).isResidual || !targetBuilding.Active))
             {
                 targetBuilding.ShowDeactivateLines();
             }
@@ -307,7 +344,7 @@ public class InteractionManager : MonoBehaviour
                 }
                 else if (targetBuilding is Node)
                 {
-                    if ((targetBuilding as Node).isResidual == false)
+                    if ((targetBuilding as Node).isResidual == false && targetBuilding.Active)
                     {
                         radiusDisplay.SetActive(false);
                         if (healthDisplay != null) healthDisplay.enabled = false;
@@ -326,7 +363,7 @@ public class InteractionManager : MonoBehaviour
                 radiusDisplay.SetActive(false);
                 if (healthDisplay != null) healthDisplay.enabled = false;
 
-                if (targetBuilding is Node && (targetBuilding as Node).isResidual == false)
+                if (targetBuilding is Node && (targetBuilding as Node).isResidual == false && targetBuilding.Active)
                 {
                     CurrentInteraction = InteractionState.PlacingFromNode;
                 }
@@ -343,8 +380,117 @@ public class InteractionManager : MonoBehaviour
         }
         else if (Input.GetKeyDown(interactKey))
         {
-            interactKeyHeld = true;
-            initialInteractPosition = mouseScreenPosition;
+            if (targetBuilding is Meteor ||
+                (targetBuilding is Node && targetBuilding.Active && (targetBuilding as Node).isResidual == false))
+            {
+                interactKeyHeld = true;
+            }
+        }
+    }
+    private void SellingState()
+    {
+        currentHit = GetRayHit(budLayer);
+
+        cursorManager.ChangeCursor("Default");
+
+        if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
+            && tutorial.currentPart == 1)
+        {
+            tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+        }
+
+        if (currentHit.collider is null)
+        {
+            currentHit = GetRayHit(buildingLayers);
+
+            if (currentHit.collider is null)
+            {
+                if (targetBuilding is not null)
+                {
+                    Building tempBuilding = targetBuilding;
+                    ResetInteraction();
+                    targetBuilding = tempBuilding;
+
+                    CurrentInteraction = InteractionState.Selling;
+                    sellButton.sprite = sellButtonActive;
+                }
+            }
+            else
+            {
+                targetBuilding = currentHit.collider.gameObject.GetComponent<Building>();
+
+                if (targetBuilding is Meteor || (targetBuilding is Node && (targetBuilding as Node).isResidual))
+                {
+                    Building tempBuilding = targetBuilding;
+                    ResetInteraction();
+                    targetBuilding = tempBuilding;
+
+                    CurrentInteraction = InteractionState.Selling;
+                    sellButton.sprite = sellButtonActive;
+                }
+                else
+                {
+                    CurrentInteraction = InteractionState.SellingHover;
+                    return;
+                }
+            }
+        }
+        else
+        {
+            targetBuilding = currentHit.collider.transform.parent.GetComponent<Building>();
+
+            if (targetBuilding is Meteor || (targetBuilding is Node && (targetBuilding as Node).isResidual))
+            {
+                Building tempBuilding = targetBuilding;
+                ResetInteraction();
+                targetBuilding = tempBuilding;
+
+                CurrentInteraction = InteractionState.Selling;
+                sellButton.sprite = sellButtonActive;
+            }
+            else
+            {
+                CurrentInteraction = InteractionState.SellingHover;
+                return;
+            }
+        }
+
+        if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(cancelKey))
+        {
+            ResetInteraction();
+        }
+    }
+    private void SellingHoverState()
+    {
+        currentHit = GetRayHit(budLayer);
+        if (currentHit.collider is null) currentHit = GetRayHit(buildingLayers);
+
+        if (currentHit.collider is null)
+        {
+            Building tempBuilding = targetBuilding;
+            ResetInteraction();
+            targetBuilding = tempBuilding;
+            CurrentInteraction = InteractionState.Selling;
+            sellButton.sprite = sellButtonActive;
+            return;
+        }
+
+        if (targetBuilding is Node)
+        {
+            targetBuilding.ShowDeactivateLines();
+        }
+
+        if (Input.GetKeyDown(interactKey) || Input.GetKeyUp(interactKey))
+        {
+            targetBuilding.Sell();
+
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
+                && tutorial.currentPart == 1)
+            {
+                tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+            }
+
+            ResetInteraction();
         }
     }
 
@@ -352,7 +498,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+            tutorial.ReverseTutorial(ref tutorial.placementParts);
             ResetInteraction();
             return;
         }
@@ -368,11 +514,11 @@ public class InteractionManager : MonoBehaviour
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
         {
             if (Input.GetKeyUp(interactKey))
             {
-                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                tutorial.ReverseTutorial(ref tutorial.placementParts);
                 ResetInteraction();
             }
 
@@ -390,11 +536,11 @@ public class InteractionManager : MonoBehaviour
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromPylon, nodeLayer);
+                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
 
                 float distanceFromMeteor = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-                bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromPylon;
+                bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromNode;
 
                 if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
@@ -429,7 +575,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+            tutorial.ReverseTutorial(ref tutorial.placementParts);
             ResetInteraction();
             return;
         }
@@ -447,11 +593,11 @@ public class InteractionManager : MonoBehaviour
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorialManager.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
         {
             if (Input.GetKeyUp(interactKey))
             {
-                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                tutorial.ReverseTutorial(ref tutorial.placementParts);
                 ResetInteraction();
             }
 
@@ -468,12 +614,12 @@ public class InteractionManager : MonoBehaviour
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromPylon, nodeLayer);
+                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
 
                 float distanceFromNode = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-                bool inShroomBuildRange = distanceFromNode < maxDistanceFromPylon;
-                bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromPylon && distanceFromNode < 3 * maxDistanceFromPylon;
+                bool inShroomBuildRange = distanceFromNode < maxDistanceFromNode;
+                bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromNode && distanceFromNode < 3 * maxDistanceFromNode;
 
                 bool shroomPlacementCriteria = inShroomBuildRange && spaceToPlace;
                 bool nodePlacementCriteria = inNodeBuildRange && spaceToPlace && spaceForNode;
@@ -523,8 +669,8 @@ public class InteractionManager : MonoBehaviour
         {
             if (tutorialMode)
             {
-                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
-                tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                tutorial.ReverseTutorial(ref tutorial.placementParts);
+                tutorial.ReverseTutorial(ref tutorial.placementParts);
             }
 
             ResetInteraction();
@@ -541,8 +687,8 @@ public class InteractionManager : MonoBehaviour
             {
                 if (tutorialMode)
                 {
-                    tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
-                    tutorialManager.ReverseTutorial(ref tutorialManager.placementParts);
+                    tutorial.ReverseTutorial(ref tutorial.placementParts);
+                    tutorial.ReverseTutorial(ref tutorial.placementParts);
                 }
 
                 ResetInteraction();
@@ -602,15 +748,15 @@ public class InteractionManager : MonoBehaviour
         if (parent is Meteor)
         {
             Meteor parentMeteor = parent as Meteor;
-            pylonMultiplier = 1;
+            nodeMultiplier = 1;
             cost = Node.GetNodeBaseCurrency();
             parentMeteor.ClearDestroyedNodes();
         }
         else if (parent is Node)
         {
             Node parentNode = parent as Node;
-            pylonMultiplier = parentNode.GetMultiplier() + 1;
-            cost = parentNode.GetNodeCost(pylonMultiplier);
+            nodeMultiplier = parentNode.GetMultiplier() + 1;
+            cost = parentNode.GetNodeCost(nodeMultiplier);
             
         }
 
@@ -633,16 +779,16 @@ public class InteractionManager : MonoBehaviour
             activeBud.transform.parent.GetComponent<Meteor>().ClearDestroyedNodes();
         }
 
-        GameObject nodeInstance = Instantiate(pylonPrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
+        GameObject nodeInstance = Instantiate(nodePrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
-        nodeInstance.GetComponent<Node>().SetMultiplier(pylonMultiplier);
+        nodeInstance.GetComponent<Node>().SetMultiplier(nodeMultiplier);
         
         if (CurrentInteraction == InteractionState.PlacingFromNode)
             (targetBuilding as Node).AddBuilding(nodeInstance.GetComponent<Node>());
         else
         {
             (targetBuilding as Meteor).AddNode(nodeInstance.GetComponent<Node>());
-            if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
+            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
         }
 
         ResetInteraction();
@@ -660,7 +806,7 @@ public class InteractionManager : MonoBehaviour
 
             shroomInstance.GetComponent<Shroom>().NewPrice(refNode.GetMultiplier());
 
-            if (tutorialMode) tutorialManager.AdvanceTutorial(ref tutorialManager.placementParts);
+            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
         }  
 
         ResetInteraction();
@@ -696,7 +842,6 @@ public class InteractionManager : MonoBehaviour
         }
     }
 
-
     public void UnlockShroom(int shroomIndex)
     {
         if (unlockedShrooms > maxShroomsUnlockable) return;
@@ -722,7 +867,7 @@ public class InteractionManager : MonoBehaviour
 
         if ((startingMousePosition - (Vector2)mouseScreenPosition).magnitude > radialExclusionZone)
         {
-            FloatList angles = new();
+            List<float> angles = new();
 
             for (int angleIndex = 0; angleIndex < radialButtons.Length + 1; angleIndex++)
             {
@@ -792,7 +937,9 @@ public class InteractionManager : MonoBehaviour
         CurrentInteraction = InteractionState.None;
         timeHeld = 0.0f;
         interactKeyHeld = false;
-        initialInteractPosition = Vector3.zero;
+
+        if (sellButton.sprite == sellButtonActive || sellButton.sprite == sellButtonHighlight)
+            sellButton.sprite = sellButtonDefault;
 
         if (targetBuilding != null)
         {

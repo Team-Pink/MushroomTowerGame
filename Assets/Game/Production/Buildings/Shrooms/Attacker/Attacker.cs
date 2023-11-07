@@ -158,7 +158,7 @@ public class Attacker
         AttackObject attackInProgress = MonoBehaviour.Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
         attackInProgress.damage = damage;
         attackInProgress.delayToTarget = attackDelay;
-        attackInProgress.originTower = originReference;
+        attackInProgress.originShroom = originReference;
         attackInProgress.target = enemy;
         return attackInProgress;
     }

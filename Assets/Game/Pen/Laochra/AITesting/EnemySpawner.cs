@@ -36,8 +36,8 @@ public class EnemySpawner : MonoBehaviour
             Enemy boidLogic = boidGameObject.GetComponent<Enemy>();
 
             boidLogic.levelData = levelData;
-            boidLogic.hubTransform = hubTransform;
-            boidLogic.hub = hub;
+            boidLogic.meteorTransform = hubTransform;
+            boidLogic.meteor = hub;
 
             boidList.Add(new Enemy.BoidReference(boidTransform, boidRigidbody, boidLogic));
         }

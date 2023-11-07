@@ -36,6 +36,7 @@ public class TutorialManager : MonoBehaviour
     public int sellingWave = 3;
     public GameObject[] sellingParts;
     [SerializeField] GameObject[] sellingSpotlights;
+    [SerializeField] GameObject sellButton;
     [HideInInspector] public bool sellingHasPlayed;
 
 
@@ -131,8 +132,7 @@ public class TutorialManager : MonoBehaviour
         switch (currentPart)
         {
             case 0:
-                /*if (interactionManager.currentInteraction == InteractionState.ResidualMenu)
-                    AdvanceTutorial(ref placementParts);*/ // WIP
+                // WIP
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager
@@ -159,18 +159,29 @@ public class TutorialManager : MonoBehaviour
         switch (currentPart)
         {
             case 0:
-                /*if (interactionManager.currentInteraction == InteractionState.TowerMenu)
-                    AdvanceTutorial(ref placementParts);*/ //WIP
+                if (elapsedGracePeriod >= gracePeriod)
+                {
+                    if (Input.GetKeyDown(interactionManager.interactKey))
+                    {
+                        AdvanceTutorial(ref sellingParts);
+                    }
+                }
+                else
+                {
+                    elapsedGracePeriod += Time.deltaTime;
+                }
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager
                 break;
             case 2:
+                // Waits for Advancement from Interaction Manager
+            case 3:
                 if (elapsedGracePeriod >= gracePeriod)
                 {
                     if (Input.GetKeyDown(interactionManager.interactKey))
                     {
-                        AdvanceTutorial(ref placementParts);
+                        AdvanceTutorial(ref sellingParts);
                     }
                 }
                 else
@@ -184,19 +195,31 @@ public class TutorialManager : MonoBehaviour
 
     public bool CorrectTutorialPlacement(Vector2 mousePosition)
     {
-
-        RectTransform spotlight = currentTutorial switch
+        RectTransform spotlight = null;
+        switch (currentTutorial)
         {
-            Tutorial.Placement => currentPart < placementSpotlights.Length ? placementSpotlights[currentPart].GetComponent<RectTransform>() : null,
-            Tutorial.Regrow => regrowSpotlights[currentPart].GetComponent<RectTransform>(),
-            Tutorial.Selling => sellingSpotlights[currentPart].GetComponent<RectTransform>(),
-            _ => null,
-        };
+            case Tutorial.Placement:
+                if (currentPart >= placementSpotlights.Length) break;
+                if (placementSpotlights[currentPart] == null) break;
+                placementSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+            case Tutorial.Regrow:
+                if (currentPart >= regrowSpotlights.Length) break;
+                if (regrowSpotlights[currentPart] == null) break;
+                regrowSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+            case Tutorial.Selling:
+                if (currentPart >= sellingSpotlights.Length) break;
+                if (sellingSpotlights[currentPart] == null) break;
+                sellingSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+        }
 
         if (spotlight == null) return true;
 
         return (new Vector2(Screen.width / 2, Screen.height / 2) +
-            (spotlight.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) - mousePosition).magnitude < 20 * spotlight.localScale.x;
+            (spotlight.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) - mousePosition).magnitude
+            < 20 * spotlight.localScale.x;
     }
 
     public void StartTutorial(Tutorial tutorial)
@@ -227,6 +250,7 @@ public class TutorialManager : MonoBehaviour
             case Tutorial.Selling:
                 sellingParts[0].SetActive(true);
                 sellingHasPlayed = true;
+                sellButton.SetActive(true);
                 break;
         }
     }

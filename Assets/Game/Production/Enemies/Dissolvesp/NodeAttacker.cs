@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PylonAttacker : Enemy
+public class NodeAttacker : Enemy
 {
     [Header("Node Attacker Variables")]
     private Node targetNode;

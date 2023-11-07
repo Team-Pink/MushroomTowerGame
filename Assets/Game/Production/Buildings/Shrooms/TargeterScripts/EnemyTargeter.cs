@@ -10,7 +10,7 @@ public abstract class EnemyTargeter : Targeter
 
     private bool radiusInitialised = false;
     public Material radiusMaterial;
-    public float exclusionZoneRadius = 0; // the variable that will exclude enemies from targets in range if they are in a radius around the tower
+    public float exclusionZoneRadius = 0; // the variable that will exclude enemies from targets in range if they are in a radius around the shroom
 
     public void GetTargetsInRange()
     {
@@ -145,7 +145,7 @@ public abstract class EnemyTargeter : Targeter
         Vector3 lookDirection = (enemyPosAverage - tempTransform).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * turnRate); // rotate to target
-        if (turnRate <= float.Epsilon || Quaternion.Angle(transform.rotation, lookRotation) < firingCone) // setting the turn rate of a tower to 0 means it doesn't nedd to turn at all.
+        if (turnRate <= float.Epsilon || Quaternion.Angle(transform.rotation, lookRotation) < firingCone) // setting the turn rate of a shroom to 0 means it doesn't nedd to turn at all.
             return true;
         else
         {
@@ -159,7 +159,7 @@ public abstract class EnemyTargeter : Targeter
 }
 
 /// <summary>
-/// Priority Enemies closest to the tower.
+/// Priority Enemies closest to the shroom.
 /// </summary>
 public class CloseTargeter : EnemyTargeter
 {

@@ -633,11 +633,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &462979243 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2156576598158300453, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-  m_PrefabInstance: {fileID: 625561294}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &487731624
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +717,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &552459400 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3165232134677134348, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &571542162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,18 +1085,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
-    - target: {fileID: 3471097511467805223, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+    - target: {fileID: 1013141047748801827, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6375534183577494712, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Name
-      value: Spore Launcher
+    - target: {fileID: 1061631000422692173, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6375534183577494714, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: f15ceea03a77b5f42b4346055cb94f55, type: 3}
+    - target: {fileID: 3471097511467805223, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -1183,18 +1183,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690590, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6375534184751154060, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Name
-      value: Crushroom
-      objectReference: {fileID: 0}
-    - target: {fileID: 6375534184751154062, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 4131311f370e0e94cad9fb7a55ba3306, type: 3}
-    - target: {fileID: 6375534185213049026, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1530,6 +1518,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0162f70d554e5184eaa571118e45ef8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &893996366 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1061631000422692173, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &893996370 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1947962067632648231, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893996366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &899418154 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4353430000265963969, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1137309331 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1137309331, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
@@ -2752,6 +2761,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 877326253}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: meteor
+      value: 
+      objectReference: {fileID: 877326253}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: wonText
       value: 
       objectReference: {fileID: 625561296}
@@ -2763,6 +2776,10 @@ PrefabInstance:
       propertyPath: waveTimer
       value: 
       objectReference: {fileID: 2103462417}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomIcon
+      value: 
+      objectReference: {fileID: 1137309331}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: parentFolder
       value: 
@@ -2780,11 +2797,19 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomUnlockTooltip
+      value: 
+      objectReference: {fileID: 1293111785}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: unlockTooltipDuration
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerSprites.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.size
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
@@ -2864,6 +2889,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: c19b8150224c79244992d8042cf21688, type: 3}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: b7c40eb5d96faf449af4d78524216cfc, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 4514d4f52632fc14fb1bff367d53e863, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 4b733e71aa13747488b8d49a6b1d9e75, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: f1c5f6730e1e1de4ca8f608e5e234a0f, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: shroomSprites.Array.data[4]
+      value: 
+      objectReference: {fileID: 21300000, guid: c19b8150224c79244992d8042cf21688, type: 3}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[15].enemyCount
       value: 90
       objectReference: {fileID: 0}
@@ -2928,6 +2973,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 395160187}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButton
+      value: 
+      objectReference: {fileID: 893996366}
+    - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellingWave
       value: 1
       objectReference: {fileID: 0}
@@ -2953,7 +3002,7 @@ PrefabInstance:
       objectReference: {fileID: 107243853}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellingParts.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerPlacementSpotlight
@@ -2989,6 +3038,10 @@ PrefabInstance:
       objectReference: {fileID: 1630288920}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellingParts.Array.data[2]
+      value: 
+      objectReference: {fileID: 552459400}
+    - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellingParts.Array.data[3]
       value: 
       objectReference: {fileID: 1486820192}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
@@ -3029,7 +3082,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: placementSpotlights.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: regrowSpotlights.Array.data[0]
@@ -3042,7 +3095,7 @@ PrefabInstance:
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellingSpotlights.Array.data[0]
       value: 
-      objectReference: {fileID: 462979243}
+      objectReference: {fileID: 0}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellingSpotlights.Array.data[1]
       value: 
@@ -3063,6 +3116,10 @@ PrefabInstance:
       propertyPath: placementSpotlights.Array.data[3]
       value: 
       objectReference: {fileID: 849343953}
+    - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: placementSpotlights.Array.data[4]
+      value: 
+      objectReference: {fileID: 899418154}
     - target: {fileID: 6533875848915124892, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -3116,6 +3173,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1146967826}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: nodePrefab
+      value: 
+      objectReference: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButton
+      value: 
+      objectReference: {fileID: 893996370}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomName
       value: 
       objectReference: {fileID: 1688431258}
@@ -3132,6 +3197,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1697896202}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButtonAlt
+      value: 
+      objectReference: {fileID: 21300000, guid: 7fbfca1230013f6409eb14e9b216b721, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomTooltip
       value: 
       objectReference: {fileID: 1461804935}
@@ -3143,6 +3212,10 @@ PrefabInstance:
       propertyPath: unlockAllTowers
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButtonActive
+      value: 
+      objectReference: {fileID: 21300000, guid: 7fbfca1230013f6409eb14e9b216b721, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: towerDescription
       value: 
@@ -3199,6 +3272,10 @@ PrefabInstance:
       propertyPath: radiusPreviewPrefab
       value: 
       objectReference: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButtonHighlight
+      value: 
+      objectReference: {fileID: 21300000, guid: 2249266ab6968d34db2ec08f0a2f3b05, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomSelectionMenu
       value: 

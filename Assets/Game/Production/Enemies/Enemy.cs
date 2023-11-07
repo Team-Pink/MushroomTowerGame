@@ -161,8 +161,8 @@ public class Enemy : MonoBehaviour
     protected new Transform transform;
     protected new Rigidbody rigidbody;
     [HideInInspector] public LevelDataGrid levelData;
-    [HideInInspector] public Transform hubTransform;
-    [HideInInspector] public Meteor hub;
+    [HideInInspector] public Transform meteorTransform;
+    [HideInInspector] public Meteor meteor;
 
     [SerializeField] GameObject deathParticle;
     [SerializeField] protected float particleOriginOffset;
@@ -333,11 +333,11 @@ public class Enemy : MonoBehaviour
     //APPROACH
     protected virtual void ApproachState()
     {
-        if ((hubTransform.position - transform.position).sqrMagnitude < AttackRadiusSqr)
+        if ((meteorTransform.position - transform.position).sqrMagnitude < AttackRadiusSqr)
         {
             rigidbody.velocity = Vector2.zero;
             state = EnemyState.Attack;
-            targetBuilding = hub;
+            targetBuilding = meteor;
             neighbourhood.Clear();
             return;
         }
@@ -485,7 +485,7 @@ public class Enemy : MonoBehaviour
 
             if (elapsedDelay >= attackDelay)
             {
-                hub.Damage(damage);
+                meteor.Damage(damage);
                 Debug.Log(name + " has dealt damage to the meteor");
                 AttackAudio();
                 attackInProgress = false;

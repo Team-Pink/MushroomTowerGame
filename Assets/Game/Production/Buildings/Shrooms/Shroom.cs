@@ -8,25 +8,6 @@ public struct Target
     public Vector3 position; // Be warned this is not a reference to enemy.transform.position it is in most cases it's own self contained value as .position returns a value not a reference.
     public Enemy enemy;
 
-
-    //public Vector3 GetPosition()
-    //{
-    //    if (enemy)
-    //    {
-    //        return enemy.transform.position;
-    //    }
-    //    else
-    //    {
-    //        return position;
-    //    }
-    //}
-
-
-    float timeFound
-    {
-        get => Time.time;
-    }
-
     public Target(Vector3 targetPos, Enemy targetEnemy = null)
     {
         position = targetPos;
@@ -95,10 +76,6 @@ public class Shroom : Building
     // Upgrading
     [SerializeField] bool upgradeable;
     public bool Upgradeable { get; private set; }
-    private GameObject upgradePrefabL;
-    public int upgradeCostL;
-    private GameObject upgradePrefabR;
-    public int upgradeCostR;
 
     // Purchasing
     public int purchaseCost = 10;
@@ -246,26 +223,6 @@ public class Shroom : Building
     }
 
 
-
-    public void Upgrade(int upgradePath)
-    {
-        if (upgradePath == 0 || upgradePath == 1)
-        {
-            GameObject selectedUpgradePrefab;
-
-            if (upgradePath == 1)
-                selectedUpgradePrefab = upgradePrefabL;
-            else
-                selectedUpgradePrefab = upgradePrefabR;
-
-            Instantiate(selectedUpgradePrefab, transform.position, transform.rotation, transform.parent);
-            Destroy(gameObject);
-        }
-        else
-        {
-            Debug.LogError("Upgrade only accepts an int value of 0 or 1", this);
-        }
-    }
 
     public override void Deactivate()
     {

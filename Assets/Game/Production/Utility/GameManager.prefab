@@ -1908,82 +1908,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPlane: {fileID: 0}
-  pylonPrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
-  towerPrefabs:
-  - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
-  - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
-  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
-  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
-  - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
+  nodePrefab: {fileID: 0}
+  shroomPrefabs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   buildingLayers:
     serializedVersion: 2
     m_Bits: 448
-  towerTooltips: {fileID: 0}
-  towerName: {fileID: 0}
-  towerNames:
-  - Crushroom
-  - Biolumenaser
-  - Shroomiken
-  - Spore Launcher
-  - Sludge Slinger
-  towerDescription: {fileID: 0}
-  towerDescriptions:
-  - 'Area Damage
-
-    Slow Attack Rate'
-  - 'High Damage
-
-    Slow Charge Up'
-  - 'Low Damage
-
-    Bouncing Shots'
-  - 'Low Area Damage
-
-    Large Area of Effect'
-  - 'Damage Over Time
-
-    Slows Enemies'
-  towerRadiusPreviewPrefab: {fileID: 0}
+  shroomTooltip: {fileID: 0}
+  shroomName: {fileID: 0}
+  shroomNames: []
+  shroomDescription: {fileID: 0}
+  shroomDescriptions: []
+  radiusPreviewPrefab: {fileID: 0}
   placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
     m_Bits: 2496
   placementExclusionSize: 1.2
-  maxDistanceFromPylon: 6
-  maxPylonsPerHub: 4
-  maxTowersPerPylon: 3
-  maxPylonsPerPylon: 2
+  maxDistanceFromNode: 6
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   selectionIndicator: {fileID: 0}
   radialExclusionZone: 40
-  pylonMenu: {fileID: 0}
-  pylonMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  pylonMenuAltButtons: []
-  pylonMenuCostText: {fileID: 0}
-  residualMenu: {fileID: 0}
-  residualMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  residualMenuAltButtons: []
-  residualMenuCostText: {fileID: 0}
-  towerMenu: {fileID: 0}
-  towerMenuButton: []
-  towerMenuAltButton: {fileID: 0}
-  towerMenuCostText: {fileID: 0}
-  towerSelectionMenu: {fileID: 0}
-  towerSelectionMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  lockedTowerSprite: {fileID: 0}
-  unlockAllTowers: 0
-  towerSelectionCostText: {fileID: 0}
+  shroomSelectionMenu: {fileID: 0}
+  shroomSelectionMenuButtons: []
+  lockedShroomSprite: {fileID: 0}
+  unlockAllShrooms: 0
+  shroomSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
   canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
   sellColour: {r: 0, g: 1, b: 0.00427413, a: 1}
@@ -1992,7 +1947,6 @@ MonoBehaviour:
   cancelKey: 324
   interactHoldRequirement: 0.15
   currentInteraction: 0
-  tutorialMode: 0
   showMouseDirection: 0
   showCameraProjection: 1
   logInteractionChange: 0
@@ -2218,13 +2172,22 @@ MonoBehaviour:
   currentTutorial: 0
   currentPart: 0
   gracePeriod: 0.5
+  boomy: {fileID: 0}
   placementParts: []
-  placementSpotlight: {fileID: 0}
+  placementSpotlights: []
+  placementHasPlayed: 0
+  warningWave: 2
+  warningWaitTime: 3
+  elapsedWarningWaitTime: 0
   warningParts: []
+  warningHasPlayed: 0
   regrowParts: []
-  regrowSpotlight: {fileID: 0}
+  regrowSpotlights: []
+  regrowHasPlayed: 0
+  sellingWave: 3
   sellingParts: []
-  sellingSpotlight: {fileID: 0}
+  sellingSpotlights: []
+  sellingHasPlayed: 0
 --- !u!1 &6597148967594781695
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,16 +15,15 @@ public class Node : Building
     [Header("Purchasing and Selling")]
     [SerializeField] int costMultiplier = 1;
     [SerializeField, Range(0, 1)] float sellReturnPercent = 0.5f;
-    [SerializeField] GameObject basePylon;
-    [SerializeField] GameObject baseBud;
-    [SerializeField] GameObject deactivatedBasePylon;
+    [SerializeField] GameObject nodeMesh;
+    [SerializeField] GameObject deactivatedMesh;
     static readonly int baseCost = 10;
 
     [Header("Destruction")]
-    [SerializeField] float pylonHealth = 5;
+    [SerializeField] float nodeHealth = 5;
     public float MaxHealth
     {
-        get => pylonHealth;
+        get => nodeHealth;
         private set { }
     }
     private float currentHealth;
@@ -43,7 +42,8 @@ public class Node : Building
         }
     }
 
-    public GameObject pylonResidual;
+    public GameObject nodeResidual;
+    [SerializeField] GameObject regrowCanvas;
 
     [Header("Connections")]
     [SerializeField] List<Building> connectedBuildings = new();
@@ -52,7 +52,7 @@ public class Node : Building
         get
         {
             int shroomCount = 0;
-            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+            HashSet<Building> buildingsToRemove = new();
 
             foreach (var building in connectedBuildings)
             {
@@ -77,7 +77,7 @@ public class Node : Building
         get
         {
             int nodes = 0;
-            HashSet<Building> buildingsToRemove = new HashSet<Building>();
+            HashSet<Building> buildingsToRemove = new();
 
             foreach (var building in connectedBuildings)
             {
@@ -102,7 +102,7 @@ public class Node : Building
     public Material displayLineDefault;
     public Material displayLineSell;
     public Material displayLineDeactivate;
-    private List<GameObject> displayLines = new();
+    private readonly List<GameObject> displayLines = new();
     private Vector3 lineRendererOffset = new(0, 1.0f, 0);
 
 
@@ -110,15 +110,9 @@ public class Node : Building
     [SerializeField] AudioClip placeAudio;
     [SerializeField] AudioClip deathAudio;
 
-    public bool IsBuildingInList(Building building)
-    {
-        return connectedBuildings.Contains(building);
-    }
-
     private void Start()
     {
-        bud = baseBud;
-        CurrentHealth = pylonHealth;
+        CurrentHealth = nodeHealth;
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
@@ -127,7 +121,7 @@ public class Node : Building
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0)
             Destroy(gameObject);
 
-        bool showBud = !(budDetached) && !isResidual;
+        bool showBud = !budDetached && !isResidual && Active;
         bud.SetActive(showBud);
     }
 
@@ -149,10 +143,8 @@ public class Node : Building
             building.Deactivate();
         }
 
-
-        deactivatedBasePylon.SetActive(true);
-        basePylon.SetActive(false);
-        baseBud.SetActive(false);
+        deactivatedMesh.SetActive(true);
+        nodeMesh.SetActive(false);
     }
     public override void Reactivate()
     {
@@ -163,9 +155,8 @@ public class Node : Building
             building.Reactivate();
         }
 
-        deactivatedBasePylon.SetActive(false);
-        basePylon.SetActive(true);
-        baseBud.SetActive(true);
+        deactivatedMesh.SetActive(false);
+        nodeMesh.SetActive(true);
     }
 
     public void ToggleResidual(bool value)
@@ -189,17 +180,20 @@ public class Node : Building
 
         if (Active)
         {
-            basePylon.SetActive(!isResidual);
-            baseBud.SetActive(!isResidual);
+            nodeMesh.SetActive(!isResidual);
         }
         else
         {
-            deactivatedBasePylon.SetActive(!isResidual);
+            deactivatedMesh.SetActive(!isResidual);
         }
-        pylonResidual.SetActive(isResidual);
+        nodeResidual.SetActive(isResidual);
+
+        regrowCanvas.SetActive(isResidual);
     }
     public bool CanTurnIntoResidual()
     {
+        RemoveNullBuildings();
+
         if (connectedBuildings.Count > 0)
             return true;
         else
@@ -220,53 +214,13 @@ public class Node : Building
         else
             return 0;
     }
-    public int GetNodeSellAllAmount()
-    {
-        int returnCost = 0;
-        List<Node> openList = new List<Node>();
-        bool exitLoop = false;
-
-        openList.Add(this);
-
-        while(!exitLoop)
-        {
-            if (openList.Count == 0)
-            {
-                exitLoop = true;
-                continue;
-            }
-
-            Node node = openList[0];
-
-            if (node.connectedBuildings.Count <= 0)
-            {
-                if (node.isResidual == false)
-                    returnCost += node.GetNodeSellAmount();
-                openList.Remove(node);
-                continue;
-            }
-
-            foreach (Building building in node.connectedBuildings)
-            {
-                if (building is Node)
-                    openList.Add(building as Node);
-                else
-                    returnCost += (building as Shroom).SellPrice();
-            }
-
-            if (node.isResidual == false)
-                returnCost += node.GetNodeSellAmount();
-
-            openList.Remove(node);
-        }
-        
-        return returnCost;
-    }
     #endregion
 
 
     public override void Sell()
     {
+        RemoveNullBuildings();
+
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
 
         if (!isResidual)
@@ -278,17 +232,11 @@ public class Node : Building
             Destroy(gameObject);
     }
 
-    public void SellShroom(Shroom shroom)
-    {
-        Debug.Log("Sold Shroom", shroom);
-        connectedBuildings.Remove(shroom);
-        shroom.Sell();
-    }
-
 
     public override void ShowDefaultLines()
     {
         ResetLines();
+        RemoveNullBuildings();
 
         for (int i = 0; i < connectedBuildings.Count; i++)
         {
@@ -306,6 +254,7 @@ public class Node : Building
     public override void ShowDeactivateLines()
     {
         ResetLines();
+        RemoveNullBuildings();
 
         //set lines here
         for (int i = 0; i < connectedBuildings.Count; i++)
@@ -327,6 +276,7 @@ public class Node : Building
     public override void ShowSellLines()
     {
         ResetLines();
+        RemoveNullBuildings();
 
         //set lines here
         for (int i = 0; i < connectedBuildings.Count; i++)
@@ -359,6 +309,16 @@ public class Node : Building
         {
             Building building = connectedBuildings[i];
             if (building is not Shroom) building.ResetLines();
+        }
+    }
+
+    private void RemoveNullBuildings()
+    {
+        int i = 0;
+        while (i < connectedBuildings.Count)
+        {
+            if (connectedBuildings[i] != null) i++;
+            else connectedBuildings.RemoveAt(i);
         }
     }
 }

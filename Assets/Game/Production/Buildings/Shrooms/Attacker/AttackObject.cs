@@ -11,7 +11,7 @@ public class AttackObject : MonoBehaviour
     public int damage; // damage dealt to target
     public float delayToTarget; // time until the attack reaches the target
     public Target target; // targets of the attack
-    public Shroom originTower; // origin of the attack
+    public Shroom originShroom; // origin of the attack
     public HashSet<Enemy> areaHitTargets;
     public GameObject hitParticlePrefab;
     public AudioClip hitSoundEffect;
@@ -28,8 +28,8 @@ public class AttackObject : MonoBehaviour
     #region BOUNCE
     //Bounce Tag
     List<Enemy> hitList = new List<Enemy>();
-    bool returningToTower = false;
-    float returnToTowerTime = 0;
+    bool returningToShroom = false;
+    float returnToShroomTime = 0;
     float _velocity = 0;
     #endregion
     #endregion
@@ -58,7 +58,7 @@ public class AttackObject : MonoBehaviour
         if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
         if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
 
-        Attacker attackerComponent = originTower.AttackerComponent;
+        Attacker attackerComponent = originShroom.AttackerComponent;
 
         if (attackerComponent is SingleAttacker)
         {
@@ -106,10 +106,10 @@ public class AttackObject : MonoBehaviour
         HandleTargetEnemyDeath();
 
         
-        if (originTower.AttackerComponent.bounce && returningToTower) 
+        if (originShroom.AttackerComponent.bounce && returningToShroom) 
         {
-            yield return new WaitForSeconds(returnToTowerTime);
-            originTower.AttackerComponent.bounceBulletInShroomPossession = true;
+            yield return new WaitForSeconds(returnToShroomTime);
+            originShroom.AttackerComponent.bounceBulletInShroomPossession = true;
         }//this is for bounce only to allow the shroom to shoot again.
 
         Destroy(gameObject); // Destroy this object
@@ -158,7 +158,7 @@ public class AttackObject : MonoBehaviour
     {
         if (_velocity <= 0)
         {
-            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originTower.transform.position, target.position), delayToTarget);
+            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originShroom.transform.position, target.position), delayToTarget);
         }
 
         hitList.Add(target.enemy);
@@ -168,15 +168,15 @@ public class AttackObject : MonoBehaviour
 
         if (hitCount >= attackerComponent.bounceHitLimit)
         {
-            returningToTower = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originTower.transform.position));
-            originTower.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
-            returnToTowerTime = timeToShroom;
+            returningToShroom = true;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originShroom.transform.position));
+            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToShroomTime = timeToShroom;
             return;
         }
 
         Enemy newTarget = null;
-        Collider[] potentialTargets = Physics.OverlapSphere(originTower.transform.position, originTower.TargeterComponent.range, mask);
+        Collider[] potentialTargets = Physics.OverlapSphere(originShroom.transform.position, originShroom.TargeterComponent.range, mask);
 
         foreach (var potentialTarget in potentialTargets)
         {
@@ -195,10 +195,10 @@ public class AttackObject : MonoBehaviour
 
         if (newTarget == null)
         {
-            returningToTower = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originTower.transform.position));
-            originTower.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
-            returnToTowerTime = timeToShroom;
+            returningToShroom = true;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
+            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToShroomTime = timeToShroom;
             return;
         }
         else
@@ -208,7 +208,7 @@ public class AttackObject : MonoBehaviour
             newTargetEnemy.enemy = newTarget;
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
             newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
-            originTower.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
+            originShroom.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
         }
     }
 
@@ -227,13 +227,13 @@ public class AttackObject : MonoBehaviour
 
     AttackObject GenerateBounceAttackObject(Target enemy, float timeToNextTarget)
     {
-        AttackObject attackInProgress = MonoBehaviour.Instantiate(originTower.GetAttackObjectPrefab()).GetComponent<AttackObject>();
+        AttackObject attackInProgress = MonoBehaviour.Instantiate(originShroom.GetAttackObjectPrefab()).GetComponent<AttackObject>();
         attackInProgress.damage = damage;
         attackInProgress.delayToTarget = timeToNextTarget;
-        attackInProgress.originTower = originTower;
+        attackInProgress.originShroom = originShroom;
         attackInProgress.target = enemy;
         attackInProgress.hitList = hitList;
-        attackInProgress.returningToTower = returningToTower;
+        attackInProgress.returningToShroom = returningToShroom;
         attackInProgress._velocity = _velocity;
         return attackInProgress;
     }
@@ -244,6 +244,6 @@ public class AttackObject : MonoBehaviour
 // when it does reach the target
 // deal damage to the given targets
 // if the target dies accelerate and then call the enemy's OnDeath()
-// check if originTower uses an area attack
+// check if originShroom uses an area attack
 // if yes get the damaged AffectedEnemies from the AttackerComponent and do death checks on them
 // finally destroy this.

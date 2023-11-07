@@ -43,20 +43,18 @@ public class WaveSpawner : MonoBehaviour
     private readonly List<Enemy> aliveEnemies = new();
 
     [SerializeField] Transform parentFolder;
-    [SerializeField] Meteor hub;
+    [SerializeField] Meteor meteor;
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
-
-    WaveCounter waveCounterUI; // UI element that needs to be updated at the end of a wave.
-    
+        
     [SerializeField] RectTransform waveIndicator;
     [SerializeField] Image waveTimer;
     [SerializeField] Vector2[] indicatorPositions;
 
     [Header("Shroom Unlocks")]
-    [SerializeField] GameObject towerUnlockTooltip;
-    [SerializeField] Image towerIcon;
-    [SerializeField] Sprite[] towerSprites = new Sprite[4];
+    [SerializeField] GameObject shroomUnlockTooltip;
+    [SerializeField] Image shroomIcon;
+    [SerializeField] Sprite[] shroomSprites = new Sprite[4];
     [SerializeField] float unlockTooltipDuration = 2;
 
     // Tutorial
@@ -71,8 +69,6 @@ public class WaveSpawner : MonoBehaviour
         currentWave = waves[currentWaveIndex];
 
         spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
-
-        waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
 
         GetComponent<InteractionManager>().UnlockShroom(0);
 
@@ -114,12 +110,12 @@ public class WaveSpawner : MonoBehaviour
     {
         if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
         {
-            towerUnlockTooltip.SetActive(false);
+            shroomUnlockTooltip.SetActive(false);
         }
         else if (currentWaveIndex > 0 && currentWaveIndex < 5)
         {
-            towerUnlockTooltip.SetActive(true);
-            towerIcon.sprite = towerSprites[currentWaveIndex];
+            shroomUnlockTooltip.SetActive(true);
+            shroomIcon.sprite = shroomSprites[currentWaveIndex];
 
             if (elapsedSecondsBetweenWaves == 0.0f && currentWaveIndex > 0)
             {
@@ -149,8 +145,8 @@ public class WaveSpawner : MonoBehaviour
         if (cooldownElapsed >= spawnCooldown)
         {
             Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.hub = hub;
-            enemy.hubTransform = hub.transform;
+            enemy.meteor = meteor;
+            enemy.meteorTransform = meteor.transform;
             enemy.levelData = levelData;
             enemy.transform.gameObject.SetActive(true);
             aliveEnemies.Add(enemy);
