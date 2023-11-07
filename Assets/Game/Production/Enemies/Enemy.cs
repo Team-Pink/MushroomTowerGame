@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
     public bool Dead { get => dead; protected set => dead = value; }
     #endregion
 
-    private readonly List<Condition> activeConditions = new List<Condition>();
+    private readonly List<Condition> activeConditions = new();
 
     #region Movement Values
     public struct BoidReference
@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
 
     // References
     [HideInInspector] public List<BoidReference> neighbourhood = new();
-    private List<GameObject> obstacles = new();
+    private readonly List<GameObject> obstacles = new();
 
     #endregion
 
@@ -161,8 +161,8 @@ public class Enemy : MonoBehaviour
     protected new Transform transform;
     protected new Rigidbody rigidbody;
     [HideInInspector] public LevelDataGrid levelData;
-    [HideInInspector] public Transform hubTransform;
-    [HideInInspector] public Hub hub;
+    [HideInInspector] public Transform meteorTransform;
+    [HideInInspector] public Meteor meteor;
 
     [SerializeField] GameObject deathParticle;
     [SerializeField] protected float particleOriginOffset;
@@ -182,14 +182,15 @@ public class Enemy : MonoBehaviour
         defaultMaterial = meshRenderer.material;
 
         enemyLayers = LayerMask.GetMask("Enemy");
-        obstacleLayers = LayerMask.GetMask("Tower", "Pylon");
+        obstacleLayers = LayerMask.GetMask("Shroom", "Node");
 
         health = maxHealth;
     }
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (InteractionManager.tutorialMode) rigidbody.velocity = Vector3.zero;
+        if (InteractionManager.gamePaused) return;
 
         if (Dead) return;
 
@@ -281,7 +282,7 @@ public class Enemy : MonoBehaviour
             {
 
                 Condition detailCondition = conditions[newIndex];
-                Condition condition = new Condition(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
+                Condition condition = new(detailCondition.type, detailCondition.value, detailCondition.totalDuration);
                 activeConditions.Add(condition);
                 conditions[newIndex].applied = false;
             }
@@ -332,11 +333,11 @@ public class Enemy : MonoBehaviour
     //APPROACH
     protected virtual void ApproachState()
     {
-        if ((hubTransform.position - transform.position).sqrMagnitude < AttackRadiusSqr)
+        if ((meteorTransform.position - transform.position).sqrMagnitude < AttackRadiusSqr)
         {
             rigidbody.velocity = Vector2.zero;
             state = EnemyState.Attack;
-            targetBuilding = hub;
+            targetBuilding = meteor;
             neighbourhood.Clear();
             return;
         }
@@ -465,7 +466,7 @@ public class Enemy : MonoBehaviour
     // HUNT
     protected virtual void HuntState()
     {
-        // use this for pylon attacker
+        // use this for node attacker
     }
     #endregion
 
@@ -484,8 +485,8 @@ public class Enemy : MonoBehaviour
 
             if (elapsedDelay >= attackDelay)
             {
-                hub.Damage(damage);
-                Debug.Log(name + " has dealt damage to the hub");
+                meteor.Damage(damage);
+                Debug.Log(name + " has dealt damage to the meteor");
                 AttackAudio();
                 attackInProgress = false;
             }
