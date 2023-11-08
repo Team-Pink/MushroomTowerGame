@@ -169,8 +169,6 @@ public class WaveSpawner : MonoBehaviour
 
         spawnCooldown = currentWave.duration / currentWave.GetGroupedEnemyCount();
 
-        GetComponent<InteractionManager>().UnlockShroom(0);
-
         tutorial = GetComponent<TutorialManager>();
     }
 

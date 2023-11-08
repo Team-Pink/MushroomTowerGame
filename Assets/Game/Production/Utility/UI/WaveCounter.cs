@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using UnityEditor.Build.Content;
-using UnityEngine.Scripting;
 
 public class WaveCounter : MonoBehaviour
 {

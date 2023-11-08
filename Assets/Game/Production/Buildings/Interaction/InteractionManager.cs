@@ -167,6 +167,8 @@ public class InteractionManager : MonoBehaviour
         currencyManager = gameObject.GetComponent<CurrencyManager>();
         cursorManager = gameObject.GetComponent<CursorManager>();
 
+        UnlockShroom(0);
+
         for (int i = 0; i < shroomSelectionMenuButtons.Length; i++)
         {
             shroomIconSprites[i] = shroomSelectionMenuButtons[i].sprite;
@@ -176,10 +178,10 @@ public class InteractionManager : MonoBehaviour
                 shroomSelectionMenuButtons[i].sprite = lockedShroomSprite;
             }
         }
-
+        
         if (unlockAllShrooms)
         {
-            for (int i = unlockedShrooms - 1; i < maxShroomsUnlockable; i++)
+            for (int i = unlockedShrooms; i < maxShroomsUnlockable; i++)
             {
                 UnlockShroom(i);
             }
@@ -395,7 +397,7 @@ public class InteractionManager : MonoBehaviour
         if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
             && tutorial.currentPart == 1)
         {
-            tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+            tutorial.AdvanceTutorial();
         }
 
         if (currentHit.collider is null)
@@ -489,9 +491,9 @@ public class InteractionManager : MonoBehaviour
             targetBuilding.Sell();
 
             if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
-                && tutorial.currentPart == 1)
+                && tutorial.currentPart == 2)
             {
-                tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+                tutorial.AdvanceTutorial();
             }
 
             ResetInteraction();
@@ -502,7 +504,12 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorial.ReverseTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
+            {
+                tutorial.ReverseTutorial();
+            }
+
             ResetInteraction();
             return;
         }
@@ -518,15 +525,19 @@ public class InteractionManager : MonoBehaviour
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
         {
-            if (Input.GetKeyUp(interactKey))
+            if (!tutorial.CorrectTutorialPlacement(mouseScreenPosition))
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                ResetInteraction();
-            }
+                if (Input.GetKeyUp(interactKey))
+                {
+                    tutorial.ReverseTutorial();
+                    ResetInteraction();
+                }
 
-            return;
+                return;
+            }
         }
 
         currentHit = GetRayHit(placableLayers);
@@ -608,7 +619,12 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorial.ReverseTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 3)
+            {
+                tutorial.ReverseTutorial();
+            }
+            
             ResetInteraction();
             return;
         }
@@ -628,15 +644,19 @@ public class InteractionManager : MonoBehaviour
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 3)
         {
-            if (Input.GetKeyUp(interactKey))
+            if (!tutorial.CorrectTutorialPlacement(mouseScreenPosition))
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                ResetInteraction();
-            }
+                if (Input.GetKeyUp(interactKey))
+                {
+                    tutorial.ReverseTutorial();
+                    ResetInteraction();
+                }
 
-            return;
+                return;
+            }
         }
 
         currentHit = GetRayHit(placableLayers);
@@ -762,6 +782,12 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
+                if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                    && tutorial.currentPart == 3)
+                {
+                    tutorial.ReverseTutorial();
+                }
+
                 cursorManager.ChangeCursor("Default");
                 ResetInteraction();
             }
@@ -773,10 +799,11 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            if (tutorialMode)
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
+                tutorial.ReverseTutorial();
+                tutorial.ReverseTutorial();
             }
 
             ResetInteraction();
@@ -791,10 +818,11 @@ public class InteractionManager : MonoBehaviour
         {
             if (hoveredButtonIndex < 0)
             {
-                if (tutorialMode)
+                if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
                 {
-                    tutorial.ReverseTutorial(ref tutorial.placementParts);
-                    tutorial.ReverseTutorial(ref tutorial.placementParts);
+                    tutorial.ReverseTutorial();
+                    tutorial.ReverseTutorial();
                 }
 
                 ResetInteraction();
@@ -847,7 +875,6 @@ public class InteractionManager : MonoBehaviour
 
     private void AttemptToSpawnNode()
     {
-
         int cost = 0;
 
         Building parent = activeBud.transform.parent.GetComponent<Building>();
@@ -894,7 +921,11 @@ public class InteractionManager : MonoBehaviour
         else
         {
             (targetBuilding as Meteor).AddNode(nodeInstance.GetComponent<Node>());
-            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
+            {
+                tutorial.AdvanceTutorial();
+            }
         }
 
         ResetInteraction();
@@ -912,8 +943,12 @@ public class InteractionManager : MonoBehaviour
 
             shroomInstance.GetComponent<Shroom>().NewPrice(refNode.GetMultiplier());
 
-            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
-        }  
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
+            {
+                tutorial.AdvanceTutorial();
+            }
+        }
 
         ResetInteraction();
     }
@@ -1019,7 +1054,7 @@ public class InteractionManager : MonoBehaviour
             }
             Material material = shroomRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
 
-            if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
+            if (hoveredButtonIndex == 2) material.SetFloat("_Hole_Radius", 0.1667f);
             else material.SetFloat("_Hole_Radius", 0.0f);
 
             Shroom shroom = shroomPrefabs[hoveredButtonIndex].GetComponent<Shroom>();
