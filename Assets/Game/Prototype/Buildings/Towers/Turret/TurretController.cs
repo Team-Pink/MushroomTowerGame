@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Obsolete("Functionality moved to Tower", true)]
+[Obsolete("Functionality moved to Shroom", true)]
 public class TurretController : MonoBehaviour
 {
     
@@ -19,11 +19,11 @@ public class TurretController : MonoBehaviour
     Vector3 bulletSpawn2;
     bool barrelAlternate;
 
-    // pylon data
-    public bool towerActive = true;
+    // node data
+    public bool shroomActive = true;
     public int storedExperience;
 
-    // tower values
+    // shroom values
     public float damage = 100;
     public float firingInterval = 3;
     private float firingClock = 2;
@@ -44,7 +44,7 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!towerActive)
+        if (!shroomActive)
             return;
 
         firingClock += Time.fixedDeltaTime;
