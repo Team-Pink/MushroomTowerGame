@@ -2140,13 +2140,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 291b124009014714c9c15b19ac8ab074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorType: 1
   cursors:
   - cursorName: Default
     cursorTexture: {fileID: 2800000, guid: 5f43c0d0bc155074fa549ab66ff2a394, type: 3}
+    displayCost: 0
   - cursorName: CannotPlace
-    cursorTexture: {fileID: 2800000, guid: 920a81019b2be0b4ba8f99f8f6cfb851, type: 3}
-  - cursorName: CanPlace
+    cursorTexture: {fileID: 2800000, guid: 5f79ddec959c99f4aa7d4d1d300e5fff, type: 3}
+    displayCost: 0
+  - cursorName: CannotPlaceCannotBuy
+    cursorTexture: {fileID: 2800000, guid: 6248d3eb5bd9f8b4784527ba8d0549ac, type: 3}
+    displayCost: 1
+  - cursorName: CannotPlaceCanBuy
     cursorTexture: {fileID: 2800000, guid: 62436c39dd9e78749aea1468225dff26, type: 3}
+    displayCost: 1
+  - cursorName: CanPlaceCanBuy
+    cursorTexture: {fileID: 2800000, guid: 7d732fbd91f1b0c478f415579922a0a7, type: 3}
+    displayCost: 1
+  - cursorName: CanPlaceCannotBuy
+    cursorTexture: {fileID: 2800000, guid: 3a8cd8015a51c97478ac5e09fb47560e, type: 3}
+    displayCost: 1
+  - cursorName: Shovel
+    cursorTexture: {fileID: 2800000, guid: 543c9e4418ee19943989dd11e673617b, type: 3}
+    displayCost: 0
+  - cursorName: HighlightedShovel
+    cursorTexture: {fileID: 2800000, guid: 125008253412bc54ba649c50ab5d0bd3, type: 3}
+    displayCost: 1
+  costText: {fileID: 0}
+  costPositionFromSoftwareMousePoint: {x: 40, y: -40}
+  costPositionFromHardwareMousePoint: {x: 30, y: 0}
+  softwareCursorImage: {fileID: 0}
 --- !u!114 &5583641233090253150
 MonoBehaviour:
   m_ObjectHideFlags: 0
