@@ -486,7 +486,6 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 meteor.Damage(damage);
-                Debug.Log(name + " has dealt damage to the meteor");
                 AttackAudio();
                 attackInProgress = false;
             }
