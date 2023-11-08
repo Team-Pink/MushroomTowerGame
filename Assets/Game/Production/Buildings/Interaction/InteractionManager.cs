@@ -3,8 +3,6 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEditor.ShaderGraph.Internal;
 
 public enum InteractionState
 {
@@ -1049,14 +1047,14 @@ public class InteractionManager : MonoBehaviour
 
         if (parent is Meteor)
         {
-            Meteor parentHub = parent as Meteor;
+            Meteor parentMeteor = parent as Meteor;
             cost = Node.GetNodeBaseCurrency();
-            parentHub.ClearDestroyedNodes();
+            parentMeteor.ClearDestroyedNodes();
         }
         else if (parent is Node)
         {
-            Node parentPylon = parent as Node;
-            cost = parentPylon.GetNodeCost(parentPylon.GetMultiplier() + 1);
+            Node parentNode = parent as Node;
+            cost = parentNode.GetNodeCost(parentNode.GetMultiplier() + 1);
         }
         return cost;
     }

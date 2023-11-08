@@ -160,7 +160,7 @@ public class AttackObject : MonoBehaviour
 
         if (target.enemy == null)
         {
-            Debug.Log("TARGET LOST RETURNING TO TOWER");
+            Debug.Log("TARGET LOST RETURNING TO SHROOM");
             BounceToNextTarget(true, null);
         }
 
@@ -243,14 +243,14 @@ public class AttackObject : MonoBehaviour
         return attackInProgress;
     }
 
-    void BounceToNextTarget(bool bounceToTower, Enemy newTarget)
+    void BounceToNextTarget(bool bounceToShroom, Enemy newTarget)
     {
-        if (bounceToTower)
+        if (bounceToShroom)
         {
             returningToShroom = true;
-            float timeToTower = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
-            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToTower);
-            returnToShroomTime = timeToTower;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
+            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToShroomTime = timeToShroom;
             return;
         }
         else
