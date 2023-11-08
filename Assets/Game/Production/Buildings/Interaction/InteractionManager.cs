@@ -249,7 +249,8 @@ public class InteractionManager : MonoBehaviour
     {
         currentHit = GetRayHit(budLayer);
 
-        cursorManager.ChangeCursor("Default");
+        if (cursorManager.currentCursorState != "Default")
+            cursorManager.ChangeCursor("Default");
 
         if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
         {
@@ -389,7 +390,8 @@ public class InteractionManager : MonoBehaviour
     {
         currentHit = GetRayHit(budLayer);
 
-        cursorManager.ChangeCursor("Shovel");
+        if (cursorManager.currentCursorState != "Shovel")
+            cursorManager.ChangeCursor("Shovel");
         cursorManager.DisplayCost();
 
         if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
@@ -480,9 +482,15 @@ public class InteractionManager : MonoBehaviour
         {
             targetBuilding.ShowDeactivateLines();
             cursorManager.DisplayCost((targetBuilding as Node).GetNodeSellAmount());
+            if(cursorManager.currentCursorState != "HighlightedShovel")
+                cursorManager.ChangeCursor("HighlightedShovel");
         }
         else if (targetBuilding is Shroom)
+        {
+            if (cursorManager.currentCursorState != "HighlightedShovel")
+                cursorManager.ChangeCursor("HighlightedShovel");
             cursorManager.DisplayCost((targetBuilding as Shroom).SellPrice());
+        }
 
         if (Input.GetKeyDown(interactKey) || Input.GetKeyUp(interactKey))
         {
@@ -555,36 +563,44 @@ public class InteractionManager : MonoBehaviour
                     selectionIndicator.color = Color.green;
 
                     if (canBuy)
-                    { 
-                        cursorManager.ChangeCursor("CanPlaceCanBuy");
+                    {
+                        if (cursorManager.currentCursorState != "CanPlaceCanBuy")
+                            cursorManager.ChangeCursor("CanPlaceCanBuy");
                         canPlace = true;
                     }
                     else
-                        cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CanPlaceCannotBuy")
+                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
                         
                 }
                 else
                 {
                     if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                        if (cursorManager.currentCursorState != "CannotPlaceCanBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
                     else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CannotPlaceCannotBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
                 }
             }
             else
             {
                 if (canBuy)
-                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                else
-                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                    if (cursorManager.currentCursorState != "CannotPlaceCanBuy")
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                    if (cursorManager.currentCursorState != "CannotPlaceCannotBuy")
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
             }
         }
         else
         {
             if (canBuy)
-                cursorManager.ChangeCursor("CannotPlaceCanBuy");
-            else
-                cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                if (cursorManager.currentCursorState != "CannotPlaceCanBuy")
+                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                else
+                if (cursorManager.currentCursorState != "CannotPlaceCannotBuy")
+                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
         }
 
         if (Input.GetKeyUp(interactKey))
@@ -727,31 +743,38 @@ public class InteractionManager : MonoBehaviour
                     canBuy = currencyManager.CanDecreaseCurrencyAmount(refNode.GetNodeCost());
                     cursorManager.DisplayCost(refNode.GetNodeCost());
                     if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                    else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CannotPlaceCanBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                        else
+                        if (cursorManager.currentCursorState != "CannotPlaceCannotBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
                 }
                 else if (inNodeBuildRange)
                 {
                     canBuy = currencyManager.CanDecreaseCurrencyAmount(GetNewNodeCost());
                     cursorManager.DisplayCost(GetNewNodeCost());
                     if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                    else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CannotPlaceCanBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                        else
+                        if (cursorManager.currentCursorState != "CannotPlaceCannotBuy")
+                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
                 }
                 else
-                    cursorManager.ChangeCursor("CannotPlace");
+                    if (cursorManager.currentCursorState != "CannotPlace") 
+                        cursorManager.ChangeCursor("CannotPlace");
             }
         }
         else
-            cursorManager.ChangeCursor("CannotPlace");
+            if (cursorManager.currentCursorState != "CannotPlace")
+                cursorManager.ChangeCursor("CannotPlace");
 
         if (Input.GetKeyUp(interactKey))
         {
             if (canPlace)
             {
-                cursorManager.ChangeCursor("Default");
+                if (cursorManager.currentCursorState != "Default")
+                    cursorManager.ChangeCursor("Default");
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
@@ -762,7 +785,8 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
-                cursorManager.ChangeCursor("Default");
+                if (cursorManager.currentCursorState != "Default")
+                    cursorManager.ChangeCursor("Default");
                 ResetInteraction();
             }
 
@@ -1010,7 +1034,8 @@ public class InteractionManager : MonoBehaviour
             shroomTooltip.SetActive(true);
             shroomName.text = shroomNames[hoveredButtonIndex];
             shroomDescription.text = shroomDescriptions[hoveredButtonIndex];
-            cursorManager.ChangeCursor("CanBuy");
+            if (cursorManager.currentCursorState != "CanBuy")
+                cursorManager.ChangeCursor("CanBuy");
             cursorManager.DisplayCost(placementCost);
 
             if (shroomRadiusPreview == null)
@@ -1029,7 +1054,8 @@ public class InteractionManager : MonoBehaviour
         {
             shroomTooltip.SetActive(false);
 
-            cursorManager.ChangeCursor("Default");
+            if (cursorManager.currentCursorState != "Default")
+                cursorManager.ChangeCursor("Default");
             cursorManager.DisplayCost();
 
             if (shroomRadiusPreview != null)
