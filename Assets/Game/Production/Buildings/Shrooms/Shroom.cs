@@ -169,6 +169,16 @@ public class Shroom : Building
         // Attack Logic.
         if (Active)
         {
+            if (attackerComponent.bounce && attackerComponent.bounceBulletInShroomPossession)
+            {
+                if (attackerComponent.returning)
+                {
+                    boomerangCap.enabled = true;
+                    attackerComponent.returning = false;
+                    animator.SetBool("Attack Recoil", true);
+                }
+            }
+
             targets = targeterComponent.AcquireTargets();
             if (targets != null)
             {
@@ -192,12 +202,7 @@ public class Shroom : Building
                 {
                     if (attackerComponent.bounceBulletInShroomPossession)
                     {
-                        if(boomerangCap.enabled == false)
-                        {
-                            boomerangCap.enabled = true;
-                            animator.SetBool("Attack Recoil", true);
-                        }
-                        else if (attackerComponent.CheckCooldownTimer())
+                        if (attackerComponent.CheckCooldownTimer())
                             attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
                     }
                     else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
