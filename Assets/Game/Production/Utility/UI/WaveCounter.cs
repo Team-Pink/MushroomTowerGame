@@ -3,9 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEditor.Build.Content;
+using UnityEngine.Scripting;
 
 public class WaveCounter : MonoBehaviour
 {
+
+    [SerializeField] TMP_Text currentWave;
+    [SerializeField] TMP_Text maxWaves;
+
+
+    private void Start()
+    {
+        currentWave.text = "0";
+        //maxWaves.text = waveManager.maxWaves; // not its actual name
+    }
+
+    public void IncWaveCounter() {
+
+        //currentWave.text = waveManager.currentWave; // not its actual name
+    
+    }
+
+
+
+
+
+    // All old stuff for the visual wave counter which has now been scrapped - James
+    /*
     private class FallingBit
     {
         private GameObject bit;
@@ -91,4 +117,6 @@ public class WaveCounter : MonoBehaviour
             bits[i].SetFall();
         }
     }
+
+    */
 }
