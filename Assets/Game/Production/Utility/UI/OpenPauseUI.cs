@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,12 +30,8 @@ public class OpenPauseUI : MonoBehaviour
 
     public void Quit()
     {
-        Debug.Log("Quit button has ben pressed but no unfortunately you can't quit unity.");
-        Debug.Log("I meant the editor...");
-#if UNITY_EDITOR
-        EditorApplication.Exit(0);
-        #else
-                    Application.Quit();
-#endif
+        Debug.Log("Quit button has ben pressed but It doesn't work in the editor.");
+        Application.Quit();
+
     }
 }
