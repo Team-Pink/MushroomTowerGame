@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Obsolete("Functionality moved to Tower", true)]
+[Obsolete("Functionality moved to Shroom", true)]
 public class TurretController : MonoBehaviour
 {
     
@@ -21,11 +21,11 @@ public class TurretController : MonoBehaviour
     Vector3 bulletSpawn2;
     bool barrelAlternate;
 
-    // pylon data
-    public bool towerActive = true;
+    // node data
+    public bool shroomActive = true;
     public int storedExperience;
 
-    // tower values
+    // shroom values
     public float damage = 100;
     public float firingInterval = 3;
     private float firingClock = 2;
@@ -46,7 +46,7 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (!towerActive)
+        if (!shroomActive)
             return;
 
         firingClock += Time.fixedDeltaTime;
@@ -278,12 +278,12 @@ class LockOnTarget
 /*
  //Accelerate
     private bool accelerate = false;
-    public bool accelerated = false; // determines if a tower is currently accelerated
-    readonly float accelTimeMax = 5; // the time a tower will go without killing before accelerate resets
+    public bool accelerated = false; // determines if a shroom is currently accelerated
+    readonly float accelTimeMax = 5; // the time a shroom will go without killing before accelerate resets
     public float accelTimer = 0; // timer to keep track of the above.
     public readonly float accelSpeedMod = 0.2f; // on kill multiply the attack delay by this basically increase by 50%
     private float accelModReverse;
-    public bool GetAccelerate() => accelerate; // determines if a tower can accelerate
+    public bool GetAccelerate() => accelerate; // determines if a shroom can accelerate
 
 private void Start()
 {
@@ -314,16 +314,16 @@ void HandleTargetEnemyDeath()
         if (target.enemy.CheckIfDead())
         {
             // extract exp
-            originTower.storedExperience += target.enemy.expValue;
+            originShroom.storedExperience += target.enemy.expValue;
             target.enemy.expValue = 0;
 
-            if (originTower.GetAccelerate()) // Accelerate logic
+            if (originShroom.GetAccelerate()) // Accelerate logic
             {
                 if (!target.enemy.Dead) // The bool Dead is set in OnDeath() so if it is false we can be sure this attack dealt the killing blow as the enemy has no health but hasn't "died" yet.
                 {
-                    originTower.accelerated = true; // this could be called from elsewhere if neccesary
-                    originTower.accelTimer = 0;
-                    originTower.AttackerComponent.attackDelay *= originTower.accelSpeedMod;// modify attack delay
+                    originShroom.accelerated = true; // this could be called from elsewhere if neccesary
+                    originShroom.accelTimer = 0;
+                    originShroom.AttackerComponent.attackDelay *= originShroom.accelSpeedMod;// modify attack delay
                 }
             }
             target.enemy.OnDeath(); // enemy on death
@@ -335,14 +335,14 @@ void HandleTargetEnemyDeath()
 #region MultiTarget
 /*
  //Multitarget
-    private bool multiTarget = false; // if true tower will have multiple targets otherwise defaults to 1
+    private bool multiTarget = false; // if true shroom will have multiple targets otherwise defaults to 1
     private int numTargets; // number of targets if multiTarget is true.
     // private int targetProjectileSpeedCounter; // the current index of targets to be assigned a projectile speed during multitarget.
 
 private void Start()
 {
 
-        if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this tower will search for 0 targets.");
+        if (multiTarget) if (numTargets <= 0) Debug.LogWarning("variable numTargets has not been assigned this shroom will search for 0 targets.");
 
 }
 

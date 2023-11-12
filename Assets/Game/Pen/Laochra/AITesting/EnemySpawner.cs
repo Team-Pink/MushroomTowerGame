@@ -11,13 +11,13 @@ public class EnemySpawner : MonoBehaviour
     private new Transform transform;
     private LevelDataGrid levelData;
     public Transform hubTransform;
-    private Hub hub;
+    private Meteor hub;
 
     private void Awake()
     {
         transform = GetComponent<Transform>();
         levelData = GetComponent<LevelDataGrid>();
-        hub = hubTransform.GetComponent<Hub>();
+        hub = hubTransform.GetComponent<Meteor>();
 
         SpawnBoids();
     }
@@ -36,8 +36,8 @@ public class EnemySpawner : MonoBehaviour
             Enemy boidLogic = boidGameObject.GetComponent<Enemy>();
 
             boidLogic.levelData = levelData;
-            boidLogic.hubTransform = hubTransform;
-            boidLogic.hub = hub;
+            boidLogic.meteorTransform = hubTransform;
+            boidLogic.meteor = hub;
 
             boidList.Add(new Enemy.BoidReference(boidTransform, boidRigidbody, boidLogic));
         }
