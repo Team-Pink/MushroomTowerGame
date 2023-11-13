@@ -160,7 +160,7 @@ public class AttackObject : MonoBehaviour
 
         if (_velocity <= 0)
         {
-            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originShroom.transform.position, target.position), delayToTarget);
+            _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originShroom.transform.position, lastHitPosition), delayToTarget);
         }
 
         if (target.enemy == null)
@@ -177,7 +177,7 @@ public class AttackObject : MonoBehaviour
         if (hitCount >= attackerComponent.bounceHitLimit)
         {
             returningToShroom = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(target.enemy.transform.position, originShroom.transform.position));
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, originShroom.transform.position));
             originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
             returnToShroomTime = timeToShroom;
             return;
