@@ -251,7 +251,8 @@ public class InteractionManager : MonoBehaviour
     {
         currentHit = GetRayHit(budLayer);
 
-        cursorManager.ChangeCursor("Default");
+        if (cursorManager.currentCursorState != "Default")
+            cursorManager.ChangeCursor("Default");
 
         if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
         {
@@ -391,7 +392,8 @@ public class InteractionManager : MonoBehaviour
     {
         currentHit = GetRayHit(budLayer);
 
-        cursorManager.ChangeCursor("Shovel");
+        if (cursorManager.currentCursorState != "Shovel")
+            cursorManager.ChangeCursor("Shovel");
         cursorManager.DisplayCost();
 
         if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
@@ -482,9 +484,19 @@ public class InteractionManager : MonoBehaviour
         {
             targetBuilding.ShowDeactivateLines();
             cursorManager.DisplayCost((targetBuilding as Node).GetNodeSellAmount());
+            if(cursorManager.currentCursorState != "HighlightedShovel")
+            {
+                cursorManager.ChangeCursor("HighlightedShovel");
+            }
         }
         else if (targetBuilding is Shroom)
+        {
+            if (cursorManager.currentCursorState != "HighlightedShovel")
+            {
+                cursorManager.ChangeCursor("HighlightedShovel");
+            }
             cursorManager.DisplayCost((targetBuilding as Shroom).SellPrice());
+        }
 
         if (Input.GetKeyDown(interactKey) || Input.GetKeyUp(interactKey))
         {
@@ -552,51 +564,51 @@ public class InteractionManager : MonoBehaviour
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
             else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
 
+            float distanceFromMeteor = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+            bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromNode;
+
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
                 bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
-
-                float distanceFromMeteor = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
-
-                bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromNode;
 
                 if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
                     selectionIndicator.color = Color.green;
 
                     if (canBuy)
-                    { 
-                        cursorManager.ChangeCursor("CanPlaceCanBuy");
+                    {
+                        if (cursorManager.currentCursorState != "CanPlace")
+                            cursorManager.ChangeCursor("CanPlace");
                         canPlace = true;
                     }
                     else
-                        cursorManager.ChangeCursor("CanPlaceCannotBuy");
-                        
+                        if (cursorManager.currentCursorState != "CannotPlace")
+                            cursorManager.ChangeCursor("CannotPlace");
+
                 }
                 else
-                {
-                    if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                    else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
-                }
+                    if (cursorManager.currentCursorState != "CannotPlace")
+                        cursorManager.ChangeCursor("CannotPlace");
             }
             else
             {
-                if (canBuy)
-                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                if (inNodeBuildRange)
+                {
+                    if (cursorManager.currentCursorState != "CannotPlace")
+                        cursorManager.ChangeCursor("CannotPlace");
+                }
                 else
-                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                {
+                    if (cursorManager.currentCursorState != "Default")
+                        cursorManager.ChangeCursor("Default");
+                }
             }
         }
         else
-        {
-            if (canBuy)
-                cursorManager.ChangeCursor("CannotPlaceCanBuy");
-            else
-                cursorManager.ChangeCursor("CannotPlaceCannotBuy");
-        }
+            if (cursorManager.currentCursorState != "Default")
+                cursorManager.ChangeCursor("Default");
 
         if (Input.GetKeyUp(interactKey))
         {
@@ -693,12 +705,14 @@ public class InteractionManager : MonoBehaviour
 
                         if (canBuy)
                         {
-                            cursorManager.ChangeCursor("CanPlaceCanBuy");
+                            if (cursorManager.currentCursorState != "CanPlace")
+                                cursorManager.ChangeCursor("CanPlace");
                             selectionIndicator.color = Color.green;
                             canPlace = true;
                         }
                         else
-                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                            if (cursorManager.currentCursorState != "CannotPlace")
+                            cursorManager.ChangeCursor("CannotPlace");
                     }
                     else
                     {
@@ -708,70 +722,64 @@ public class InteractionManager : MonoBehaviour
 
                         if (canBuy)
                         {
-                            cursorManager.ChangeCursor("CanPlaceCanBuy");
+                            if (cursorManager.currentCursorState != "CanPlace")
+                                cursorManager.ChangeCursor("CanPlace");
                             selectionIndicator.color = Color.green;
                             canPlace = true;
                         }
                         else
-                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                            if (cursorManager.currentCursorState != "CannotPlace")
+                            cursorManager.ChangeCursor("CannotPlace");
                     }
                 }
                 else
                 {
                     if (inShroomBuildRange)
                     {
-                        canBuy = currencyManager.CanDecreaseCurrencyAmount(refNode.GetNodeCost());
                         cursorManager.DisplayCost(refNode.GetNodeCost());
-                        if (canBuy)
-                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                        else
-                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CannotPlace")
+                            cursorManager.ChangeCursor("CannotPlace");
                     }
                     else if (inNodeBuildRange)
                     {
-                        canBuy = currencyManager.CanDecreaseCurrencyAmount(GetNewNodeCost());
                         cursorManager.DisplayCost(GetNewNodeCost());
-                        if (canBuy)
-                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                        else
-                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                        if (cursorManager.currentCursorState != "CannotPlace")
+                            cursorManager.ChangeCursor("CannotPlace");
                     }
                     else
-                        cursorManager.ChangeCursor("CannotPlace");
+                        if (cursorManager.currentCursorState != "Default")
+                        cursorManager.ChangeCursor("Default");
                 }
             }
             else
             {
                 if (inShroomBuildRange)
                 {
-                    canBuy = currencyManager.CanDecreaseCurrencyAmount(refNode.GetNodeCost());
                     cursorManager.DisplayCost(refNode.GetNodeCost());
-                    if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                    else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                    if (cursorManager.currentCursorState != "CannotPlace")
+                        cursorManager.ChangeCursor("CannotPlace");
                 }
                 else if (inNodeBuildRange)
                 {
-                    canBuy = currencyManager.CanDecreaseCurrencyAmount(GetNewNodeCost());
                     cursorManager.DisplayCost(GetNewNodeCost());
-                    if (canBuy)
-                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
-                    else
-                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                    if (cursorManager.currentCursorState != "CannotPlace")
+                        cursorManager.ChangeCursor("CannotPlace");
                 }
                 else
-                    cursorManager.ChangeCursor("CannotPlace");
+                    if (cursorManager.currentCursorState != "Default") 
+                        cursorManager.ChangeCursor("Default");
             }
         }
         else
-            cursorManager.ChangeCursor("CannotPlace");
+            if (cursorManager.currentCursorState != "Default")
+                cursorManager.ChangeCursor("Default");
 
         if (Input.GetKeyUp(interactKey))
         {
             if (canPlace)
             {
-                cursorManager.ChangeCursor("Default");
+                if (cursorManager.currentCursorState != "Default")
+                    cursorManager.ChangeCursor("Default");
                 selectionIndicator.color = Color.white;
                 selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
 
@@ -788,7 +796,9 @@ public class InteractionManager : MonoBehaviour
                     tutorial.ReverseTutorial();
                 }
 
-                cursorManager.ChangeCursor("Default");
+                if (cursorManager.currentCursorState != "Default")
+                    cursorManager.ChangeCursor("Default");
+
                 ResetInteraction();
             }
 
@@ -1045,7 +1055,8 @@ public class InteractionManager : MonoBehaviour
             shroomTooltip.SetActive(true);
             shroomName.text = shroomNames[hoveredButtonIndex];
             shroomDescription.text = shroomDescriptions[hoveredButtonIndex];
-            cursorManager.ChangeCursor("CanBuy");
+            if (cursorManager.currentCursorState != "CanPlace")
+                cursorManager.ChangeCursor("CanPlace");
             cursorManager.DisplayCost(placementCost);
 
             if (shroomRadiusPreview == null)
@@ -1064,7 +1075,8 @@ public class InteractionManager : MonoBehaviour
         {
             shroomTooltip.SetActive(false);
 
-            cursorManager.ChangeCursor("Default");
+            if (cursorManager.currentCursorState != "Default")
+                cursorManager.ChangeCursor("Default");
             cursorManager.DisplayCost();
 
             if (shroomRadiusPreview != null)
