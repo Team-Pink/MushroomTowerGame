@@ -541,10 +541,11 @@ MonoBehaviour:
   gameOverText: {fileID: 0}
   healthDisplay: {fileID: 2208848785647668206}
   budDetached: 0
-  connectedPylons: []
-  connectedPylonsCount: 0
+  connectedNodes: []
   displayLinePrefab: {fileID: 942136504299863035, guid: 42d426f044d1bfb45b9427a15b13c3fc, type: 3}
-  displayLineMaterial: {fileID: 2100000, guid: 8cf634f1ddf0d7b42adcb00a1c391f48, type: 2}
+  displayLineDefault: {fileID: 2100000, guid: 138adaa9a4c1c4541b0e5d80b2cc1868, type: 2}
+  displayLineHighlighted: {fileID: 2100000, guid: 8cf634f1ddf0d7b42adcb00a1c391f48, type: 2}
+  displayLineSell: {fileID: 2100000, guid: 3bddf1698741f77479d342dca69f4967, type: 2}
 --- !u!64 &1139820822152035810
 MeshCollider:
   m_ObjectHideFlags: 0
