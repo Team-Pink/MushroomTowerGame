@@ -56,6 +56,7 @@ public class CursorManager : MonoBehaviour
 
         if (desiredCursor == null || desiredCursor.cursorName == currentCursorState)
             return;
+
         SetSoftwareCursor(desiredCursor);
     }
     public void ChangeCursor(int cursorIndex)
@@ -64,12 +65,14 @@ public class CursorManager : MonoBehaviour
 
         if (desiredCursor == null || desiredCursor.cursorName == currentCursorState)
             return;
+
         SetSoftwareCursor(desiredCursor);
     }
     public void ChangeCursor()
     {
         if (cursors[0].cursorName == currentCursorState)
             return;
+
         SetSoftwareCursor(cursors[0]);
     }
 
