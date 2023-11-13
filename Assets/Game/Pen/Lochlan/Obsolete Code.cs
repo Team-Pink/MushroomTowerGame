@@ -1,4 +1,4 @@
-// Turret controller.
+#region Turret Controller
 /*
 using System;
 using System.Collections.Generic;
@@ -166,8 +166,9 @@ public class TurretController : MonoBehaviour
 }
 
  */
+#endregion
 
-// LockOnTag
+#region LockOnTag
 /*
   [Obsolete]private List<LockOnTarget> lockOnTargets = new List<LockOnTarget>();
 
@@ -271,8 +272,9 @@ class LockOnTarget
 }
 
 */
+#endregion
 
-// Accelerate
+#region Accelerate
 /*
  //Accelerate
     private bool accelerate = false;
@@ -328,8 +330,9 @@ void HandleTargetEnemyDeath()
         }
     }
  */
+#endregion
 
-// MultiTarget
+#region MultiTarget
 /*
  //Multitarget
     private bool multiTarget = false; // if true shroom will have multiple targets otherwise defaults to 1
@@ -351,5 +354,34 @@ private void Update()
 }
 
 */
+#endregion
+
+#region Quit Script
+/*
+ [Obsolete("Functionality moved to OpenPause UI", true)]
+public class QuitScript : MonoBehaviour
+{
+    Button button;
+
+    private void Start()
+    {
+        button = this.GetComponent<Button>();
+        button.onClick.AddListener(Quit);
+    }
+    
+    // get rid of this script when you have an actual dedicated quit or pause UI manager.
+    private void Quit()
+    {
+        Debug.Log("Quit button has ben pressed but no unfortunately you can't quit unity.");
+        Debug.Log("I meant the editor...");
+        Application.Quit();
+    }
+}
+ */
+#endregion
+
+
+
+
 
 

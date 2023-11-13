@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,8 @@ public class AttackObject : MonoBehaviour
     public float damageRadius;
     public LayerMask mask;
     public bool noTracking = false;
-    
-    
+
+
 
     #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
@@ -28,6 +29,7 @@ public class AttackObject : MonoBehaviour
     #region BOUNCE
     //Bounce Tag
     List<Enemy> hitList = new List<Enemy>();
+    Vector3 lastHitPosition;
     bool returningToShroom = false;
     float returnToShroomTime = 0;
     float _velocity = 0;
@@ -116,7 +118,7 @@ public class AttackObject : MonoBehaviour
     void HandleTargetEnemyDeath()
     {
         if (target.enemy.CheckIfDead())
-        {            
+        {
             target.enemy.OnDeath(); // enemy on death
         }
     }
@@ -131,7 +133,7 @@ public class AttackObject : MonoBehaviour
     {
         if (enemy == target.enemy)
             return;
-        
+
         if (enemy.CheckIfDead())
         {
             enemy.OnDeath(); // enemy on death
@@ -153,6 +155,9 @@ public class AttackObject : MonoBehaviour
 
     void Bounce(Attacker attackerComponent)
     {
+
+        if (lastHitPosition == null) lastHitPosition = target.enemy.transform.position;
+
         if (_velocity <= 0)
         {
             _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originShroom.transform.position, target.position), delayToTarget);
@@ -200,7 +205,7 @@ public class AttackObject : MonoBehaviour
         {
             BounceToNextTarget(true, null);
             returningToShroom = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, originShroom.transform.position));
             originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
             returnToShroomTime = timeToShroom;
             return;
@@ -208,7 +213,7 @@ public class AttackObject : MonoBehaviour
         else
         {
             BounceToNextTarget(false, newTarget);
-            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, newTarget.transform.position));
             Target newTargetEnemy = new Target();
             newTargetEnemy.enemy = newTarget;
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
@@ -238,6 +243,7 @@ public class AttackObject : MonoBehaviour
         attackInProgress.originShroom = originShroom;
         attackInProgress.target = enemy;
         attackInProgress.hitList = hitList;
+        attackInProgress.lastHitPosition = hitList.Last().transform.position;
         attackInProgress.returningToShroom = returningToShroom;
         attackInProgress._velocity = _velocity;
         return attackInProgress;
