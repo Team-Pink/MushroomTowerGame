@@ -3,8 +3,6 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEditor.ShaderGraph.Internal;
 
 public enum InteractionState
 {
@@ -169,6 +167,8 @@ public class InteractionManager : MonoBehaviour
         currencyManager = gameObject.GetComponent<CurrencyManager>();
         cursorManager = gameObject.GetComponent<CursorManager>();
 
+        UnlockShroom(0);
+
         for (int i = 0; i < shroomSelectionMenuButtons.Length; i++)
         {
             shroomIconSprites[i] = shroomSelectionMenuButtons[i].sprite;
@@ -178,10 +178,10 @@ public class InteractionManager : MonoBehaviour
                 shroomSelectionMenuButtons[i].sprite = lockedShroomSprite;
             }
         }
-
+        
         if (unlockAllShrooms)
         {
-            for (int i = unlockedShrooms - 1; i < maxShroomsUnlockable; i++)
+            for (int i = unlockedShrooms; i < maxShroomsUnlockable; i++)
             {
                 UnlockShroom(i);
             }
@@ -391,12 +391,13 @@ public class InteractionManager : MonoBehaviour
     {
         currentHit = GetRayHit(budLayer);
 
-        cursorManager.ChangeCursor("Default");
+        cursorManager.ChangeCursor("Shovel");
+        cursorManager.DisplayCost();
 
         if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
             && tutorial.currentPart == 1)
         {
-            tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+            tutorial.AdvanceTutorial();
         }
 
         if (currentHit.collider is null)
@@ -424,6 +425,8 @@ public class InteractionManager : MonoBehaviour
                     Building tempBuilding = targetBuilding;
                     ResetInteraction();
                     targetBuilding = tempBuilding;
+
+                    cursorManager.DisplayCost();
 
                     CurrentInteraction = InteractionState.Selling;
                     sellButton.sprite = sellButtonActive;
@@ -478,16 +481,19 @@ public class InteractionManager : MonoBehaviour
         if (targetBuilding is Node)
         {
             targetBuilding.ShowDeactivateLines();
+            cursorManager.DisplayCost((targetBuilding as Node).GetNodeSellAmount());
         }
+        else if (targetBuilding is Shroom)
+            cursorManager.DisplayCost((targetBuilding as Shroom).SellPrice());
 
         if (Input.GetKeyDown(interactKey) || Input.GetKeyUp(interactKey))
         {
             targetBuilding.Sell();
 
             if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Selling
-                && tutorial.currentPart == 1)
+                && tutorial.currentPart == 2)
             {
-                tutorial.AdvanceTutorial(ref tutorial.sellingParts);
+                tutorial.AdvanceTutorial();
             }
 
             ResetInteraction();
@@ -498,7 +504,12 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorial.ReverseTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
+            {
+                tutorial.ReverseTutorial();
+            }
+
             ResetInteraction();
             return;
         }
@@ -514,21 +525,29 @@ public class InteractionManager : MonoBehaviour
 
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
         {
-            if (Input.GetKeyUp(interactKey))
+            if (!tutorial.CorrectTutorialPlacement(mouseScreenPosition))
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                ResetInteraction();
-            }
+                if (Input.GetKeyUp(interactKey))
+                {
+                    tutorial.ReverseTutorial();
+                    ResetInteraction();
+                }
 
-            return;
+                return;
+            }
         }
 
         currentHit = GetRayHit(placableLayers);
 
+        placementCost = GetNewNodeCost();
+        bool canBuy = currencyManager.CanDecreaseCurrencyAmount(placementCost);
+
         if (currentHit.collider is not null)
         {
+            cursorManager.DisplayCost(placementCost);
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
             else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
@@ -544,15 +563,40 @@ public class InteractionManager : MonoBehaviour
 
                 if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
-                    canPlace = true;
                     selectionIndicator.color = Color.green;
-                    cursorManager.ChangeCursor("CanPlace");
+
+                    if (canBuy)
+                    { 
+                        cursorManager.ChangeCursor("CanPlaceCanBuy");
+                        canPlace = true;
+                    }
+                    else
+                        cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                        
                 }
-                else cursorManager.ChangeCursor("CannotPlace");
+                else
+                {
+                    if (canBuy)
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                }
             }
-            else cursorManager.ChangeCursor("CannotPlace");
+            else
+            {
+                if (canBuy)
+                    cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                else
+                    cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+            }
         }
-        else cursorManager.ChangeCursor("CannotPlace");
+        else
+        {
+            if (canBuy)
+                cursorManager.ChangeCursor("CannotPlaceCanBuy");
+            else
+                cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+        }
 
         if (Input.GetKeyUp(interactKey))
         {
@@ -575,7 +619,12 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            tutorial.ReverseTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 3)
+            {
+                tutorial.ReverseTutorial();
+            }
+            
             ResetInteraction();
             return;
         }
@@ -591,55 +640,132 @@ public class InteractionManager : MonoBehaviour
         
         DisplayBuildingRadius(out GameObject radiusDisplay);
 
+        cursorManager.DisplayCost();
+
         selectionIndicator.rectTransform.position = mouseScreenPosition;
 
-        if (tutorialMode && !tutorial.CorrectTutorialPlacement(mouseScreenPosition))
+        if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 3)
         {
-            if (Input.GetKeyUp(interactKey))
+            if (!tutorial.CorrectTutorialPlacement(mouseScreenPosition))
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                ResetInteraction();
-            }
+                if (Input.GetKeyUp(interactKey))
+                {
+                    tutorial.ReverseTutorial();
+                    ResetInteraction();
+                }
 
-            return;
+                return;
+            }
         }
 
         currentHit = GetRayHit(placableLayers);
         if (currentHit.collider != null)
         {
+            bool canBuy;
+
             bool isPlaceable;
             if (placeOnPaths) isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Path;
             else isPlaceable = levelDataGrid.GetTileTypeAtPoint(currentHit.point) == TileType.Mud;
+
+            float distanceFromNode = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
+
+            bool inShroomBuildRange = distanceFromNode < maxDistanceFromNode;
+            bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromNode && distanceFromNode < 3 * maxDistanceFromNode;
 
             if (isPlaceable)
             {
                 bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
                 bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
 
-                float distanceFromNode = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
-
-                bool inShroomBuildRange = distanceFromNode < maxDistanceFromNode;
-                bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromNode && distanceFromNode < 3 * maxDistanceFromNode;
-
                 bool shroomPlacementCriteria = inShroomBuildRange && spaceToPlace;
                 bool nodePlacementCriteria = inNodeBuildRange && spaceToPlace && spaceForNode;
 
                 if (shroomPlacementCriteria || nodePlacementCriteria)
                 {
-                    canPlace = true;
-                    selectionIndicator.color = Color.green;
-
-                    //bubble logic for cursor goes here... TODO IN GOLD!!!!
-                    cursorManager.ChangeCursor("CanPlace");
-
                     if (nodePlacementCriteria)
+                    {
+                        placementCost = GetNewNodeCost();
+                        canBuy = currencyManager.CanDecreaseCurrencyAmount(placementCost);
+                        cursorManager.DisplayCost(GetNewNodeCost());
+
                         placingNode = true;
+
+                        if (canBuy)
+                        {
+                            cursorManager.ChangeCursor("CanPlaceCanBuy");
+                            selectionIndicator.color = Color.green;
+                            canPlace = true;
+                        }
+                        else
+                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                    }
+                    else
+                    {
+                        placementCost = refNode.GetNodeCost();
+                        canBuy = currencyManager.CanDecreaseCurrencyAmount(placementCost);
+                        cursorManager.DisplayCost(refNode.GetNodeCost());
+
+                        if (canBuy)
+                        {
+                            cursorManager.ChangeCursor("CanPlaceCanBuy");
+                            selectionIndicator.color = Color.green;
+                            canPlace = true;
+                        }
+                        else
+                            cursorManager.ChangeCursor("CanPlaceCannotBuy");
+                    }
                 }
-                else cursorManager.ChangeCursor("CannotPlace");
+                else
+                {
+                    if (inShroomBuildRange)
+                    {
+                        canBuy = currencyManager.CanDecreaseCurrencyAmount(refNode.GetNodeCost());
+                        cursorManager.DisplayCost(refNode.GetNodeCost());
+                        if (canBuy)
+                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                        else
+                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                    }
+                    else if (inNodeBuildRange)
+                    {
+                        canBuy = currencyManager.CanDecreaseCurrencyAmount(GetNewNodeCost());
+                        cursorManager.DisplayCost(GetNewNodeCost());
+                        if (canBuy)
+                            cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                        else
+                            cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                    }
+                    else
+                        cursorManager.ChangeCursor("CannotPlace");
+                }
             }
-            else cursorManager.ChangeCursor("CannotPlace");
+            else
+            {
+                if (inShroomBuildRange)
+                {
+                    canBuy = currencyManager.CanDecreaseCurrencyAmount(refNode.GetNodeCost());
+                    cursorManager.DisplayCost(refNode.GetNodeCost());
+                    if (canBuy)
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                }
+                else if (inNodeBuildRange)
+                {
+                    canBuy = currencyManager.CanDecreaseCurrencyAmount(GetNewNodeCost());
+                    cursorManager.DisplayCost(GetNewNodeCost());
+                    if (canBuy)
+                        cursorManager.ChangeCursor("CannotPlaceCanBuy");
+                    else
+                        cursorManager.ChangeCursor("CannotPlaceCannotBuy");
+                }
+                else
+                    cursorManager.ChangeCursor("CannotPlace");
+            }
         }
-        else cursorManager.ChangeCursor("CannotPlace");
+        else
+            cursorManager.ChangeCursor("CannotPlace");
 
         if (Input.GetKeyUp(interactKey))
         {
@@ -656,6 +782,12 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
+                if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                    && tutorial.currentPart == 3)
+                {
+                    tutorial.ReverseTutorial();
+                }
+
                 cursorManager.ChangeCursor("Default");
                 ResetInteraction();
             }
@@ -667,10 +799,11 @@ public class InteractionManager : MonoBehaviour
     {
         if (Input.GetKeyDown(cancelKey))
         {
-            if (tutorialMode)
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
             {
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
-                tutorial.ReverseTutorial(ref tutorial.placementParts);
+                tutorial.ReverseTutorial();
+                tutorial.ReverseTutorial();
             }
 
             ResetInteraction();
@@ -685,10 +818,11 @@ public class InteractionManager : MonoBehaviour
         {
             if (hoveredButtonIndex < 0)
             {
-                if (tutorialMode)
+                if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
                 {
-                    tutorial.ReverseTutorial(ref tutorial.placementParts);
-                    tutorial.ReverseTutorial(ref tutorial.placementParts);
+                    tutorial.ReverseTutorial();
+                    tutorial.ReverseTutorial();
                 }
 
                 ResetInteraction();
@@ -757,7 +891,6 @@ public class InteractionManager : MonoBehaviour
             Node parentNode = parent as Node;
             nodeMultiplier = parentNode.GetMultiplier() + 1;
             cost = parentNode.GetNodeCost(nodeMultiplier);
-            
         }
 
         if (!TargetIsPlane || !currencyManager.CanDecreaseCurrencyAmount(cost))
@@ -788,7 +921,11 @@ public class InteractionManager : MonoBehaviour
         else
         {
             (targetBuilding as Meteor).AddNode(nodeInstance.GetComponent<Node>());
-            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
+            {
+                tutorial.AdvanceTutorial();
+            }
         }
 
         ResetInteraction();
@@ -806,8 +943,12 @@ public class InteractionManager : MonoBehaviour
 
             shroomInstance.GetComponent<Shroom>().NewPrice(refNode.GetMultiplier());
 
-            if (tutorialMode) tutorial.AdvanceTutorial(ref tutorial.placementParts);
-        }  
+            if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 4)
+            {
+                tutorial.AdvanceTutorial();
+            }
+        }
 
         ResetInteraction();
     }
@@ -904,6 +1045,8 @@ public class InteractionManager : MonoBehaviour
             shroomTooltip.SetActive(true);
             shroomName.text = shroomNames[hoveredButtonIndex];
             shroomDescription.text = shroomDescriptions[hoveredButtonIndex];
+            cursorManager.ChangeCursor("CanBuy");
+            cursorManager.DisplayCost(placementCost);
 
             if (shroomRadiusPreview == null)
             {
@@ -911,7 +1054,7 @@ public class InteractionManager : MonoBehaviour
             }
             Material material = shroomRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
 
-            if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
+            if (hoveredButtonIndex == 2) material.SetFloat("_Hole_Radius", 0.1667f);
             else material.SetFloat("_Hole_Radius", 0.0f);
 
             Shroom shroom = shroomPrefabs[hoveredButtonIndex].GetComponent<Shroom>();
@@ -921,12 +1064,34 @@ public class InteractionManager : MonoBehaviour
         {
             shroomTooltip.SetActive(false);
 
+            cursorManager.ChangeCursor("Default");
+            cursorManager.DisplayCost();
+
             if (shroomRadiusPreview != null)
             {
                 Destroy(shroomRadiusPreview);
                 shroomRadiusPreview = null;
             }
         }
+    }
+
+    int GetNewNodeCost()
+    {
+        Building parent = activeBud.transform.parent.GetComponent<Building>();
+        int cost = 0;
+
+        if (parent is Meteor)
+        {
+            Meteor parentMeteor = parent as Meteor;
+            cost = Node.GetNodeBaseCurrency();
+            parentMeteor.ClearDestroyedNodes();
+        }
+        else if (parent is Node)
+        {
+            Node parentNode = parent as Node;
+            cost = parentNode.GetNodeCost(parentNode.GetMultiplier() + 1);
+        }
+        return cost;
     }
 
     public void ResetInteraction(GameObject[] extraObjects = null)

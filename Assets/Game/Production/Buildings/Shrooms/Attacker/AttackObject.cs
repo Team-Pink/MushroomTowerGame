@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,8 @@ public class AttackObject : MonoBehaviour
     public float damageRadius;
     public LayerMask mask;
     public bool noTracking = false;
-    
-    
+
+
 
     #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
@@ -28,6 +29,7 @@ public class AttackObject : MonoBehaviour
     #region BOUNCE
     //Bounce Tag
     List<Enemy> hitList = new List<Enemy>();
+    Vector3 lastHitPosition;
     bool returningToShroom = false;
     float returnToShroomTime = 0;
     float _velocity = 0;
@@ -38,8 +40,6 @@ public class AttackObject : MonoBehaviour
 
     public IEnumerator CommenceAttack(float animationDelay = 0.0f)
     {
-        
-        
         if (noTracking)
         {
             Vector3 NoTrackingPos = new Vector3() + target.position;
@@ -50,18 +50,18 @@ public class AttackObject : MonoBehaviour
 
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
 
-        if (!target.enemy)
-            Destroy(gameObject);
-
         // play impact animation
-        
-        if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
-        if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+        if (target.enemy != null)
+        {
+            if (hitParticlePrefab != null) Instantiate(hitParticlePrefab, target.position, Quaternion.identity);
+            if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+        }
 
         Attacker attackerComponent = originShroom.AttackerComponent;
 
         if (attackerComponent is SingleAttacker)
         {
+
             target.enemy.TakeDamage(damage);
 
             ///Strikethrough Tag
@@ -75,7 +75,6 @@ public class AttackObject : MonoBehaviour
                 Bounce(attackerComponent);
             }
         }
-
         if (attackerComponent is AreaAttacker)
         {
             // get everything in the area of the attack
@@ -86,8 +85,6 @@ public class AttackObject : MonoBehaviour
                 if (enemy is null) continue;
                 areaHitTargets.Add(enemy); // grabs references to all hit enemies which really should be done by the attack object.
             }
-
-
 
             // get everything hit by the attack
             foreach (Enemy enemyHit in areaHitTargets)
@@ -105,11 +102,11 @@ public class AttackObject : MonoBehaviour
 
         HandleTargetEnemyDeath();
 
-        
         if (originShroom.AttackerComponent.bounce && returningToShroom) 
         {
             yield return new WaitForSeconds(returnToShroomTime);
             originShroom.AttackerComponent.bounceBulletInShroomPossession = true;
+            attackerComponent.returning = returningToShroom;
         }//this is for bounce only to allow the shroom to shoot again.
 
         Destroy(gameObject); // Destroy this object
@@ -121,7 +118,7 @@ public class AttackObject : MonoBehaviour
     void HandleTargetEnemyDeath()
     {
         if (target.enemy.CheckIfDead())
-        {            
+        {
             target.enemy.OnDeath(); // enemy on death
         }
     }
@@ -129,12 +126,14 @@ public class AttackObject : MonoBehaviour
     /// <summary>
     /// Checks if a non target enemy has died and if so perform nessesary actions
     /// </summary>
-    /// <param name="enemy"></param>
+    /// <param name="enemy">
+    /// the enemy your reffering to
+    /// </param>
     void HandleNonTargetEnemyDeath(Enemy enemy)
     {
         if (enemy == target.enemy)
             return;
-        
+
         if (enemy.CheckIfDead())
         {
             enemy.OnDeath(); // enemy on death
@@ -156,9 +155,18 @@ public class AttackObject : MonoBehaviour
 
     void Bounce(Attacker attackerComponent)
     {
+
+        if (lastHitPosition == null) lastHitPosition = target.enemy.transform.position;
+
         if (_velocity <= 0)
         {
             _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateDistance(originShroom.transform.position, target.position), delayToTarget);
+        }
+
+        if (target.enemy == null)
+        {
+            Debug.Log("TARGET LOST RETURNING TO SHROOM");
+            BounceToNextTarget(true, null);
         }
 
         hitList.Add(target.enemy);
@@ -195,15 +203,17 @@ public class AttackObject : MonoBehaviour
 
         if (newTarget == null)
         {
+            BounceToNextTarget(true, null);
             returningToShroom = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, originShroom.transform.position));
             originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
             returnToShroomTime = timeToShroom;
             return;
         }
         else
         {
-            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            BounceToNextTarget(false, newTarget);
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, newTarget.transform.position));
             Target newTargetEnemy = new Target();
             newTargetEnemy.enemy = newTarget;
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
@@ -233,17 +243,30 @@ public class AttackObject : MonoBehaviour
         attackInProgress.originShroom = originShroom;
         attackInProgress.target = enemy;
         attackInProgress.hitList = hitList;
+        attackInProgress.lastHitPosition = hitList.Last().transform.position;
         attackInProgress.returningToShroom = returningToShroom;
         attackInProgress._velocity = _velocity;
         return attackInProgress;
     }
-}
 
-//Rundown of current functionality
-// runs a coroutine that waits to delay damage until the attack has reached the target
-// when it does reach the target
-// deal damage to the given targets
-// if the target dies accelerate and then call the enemy's OnDeath()
-// check if originShroom uses an area attack
-// if yes get the damaged AffectedEnemies from the AttackerComponent and do death checks on them
-// finally destroy this.
+    void BounceToNextTarget(bool bounceToShroom, Enemy newTarget)
+    {
+        if (bounceToShroom)
+        {
+            returningToShroom = true;
+            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, originShroom.transform.position));
+            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
+            returnToShroomTime = timeToShroom;
+            return;
+        }
+        else
+        {
+            float timeToTarget = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(transform.position, newTarget.transform.position));
+            Target newTargetEnemy = new Target();
+            newTargetEnemy.enemy = newTarget;
+            AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
+            newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
+            originShroom.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
+        }
+    }
+}
