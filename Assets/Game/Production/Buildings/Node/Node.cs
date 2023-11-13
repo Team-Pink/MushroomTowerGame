@@ -105,6 +105,8 @@ public class Node : Building
 
     private void Update()
     {
+        RemoveNullBuildings();
+
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0)
             Destroy(gameObject);
 
@@ -139,11 +141,11 @@ public class Node : Building
 
         AddLine(building);
     }
-    public void RemoveBuilding(Building building)
+    public void RemoveBuilding(int index)
     {
-        RemoveLine(building);
+        RemoveLine(index);
 
-        connectedBuildings.Remove(building);
+        connectedBuildings.RemoveAt(index);
     }
 
     public override void Deactivate()
@@ -287,6 +289,11 @@ public class Node : Building
         Destroy(displayLines[index]);
         displayLines.Remove(displayLines[index]);
     }
+    public void RemoveLine(int index)
+    {
+        Destroy(displayLines[index]);
+        displayLines.Remove(displayLines[index]);
+    }
 
     public override void SetLineDefault(Building target)
     {
@@ -363,7 +370,7 @@ public class Node : Building
         while (i < connectedBuildings.Count)
         {
             if (connectedBuildings[i] != null) i++;
-            else RemoveBuilding(connectedBuildings[i]);
+            else RemoveBuilding(i);
         }
     }
 }
