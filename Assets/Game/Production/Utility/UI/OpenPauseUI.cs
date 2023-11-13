@@ -30,12 +30,8 @@ public class OpenPauseUI : MonoBehaviour
 
     public void Quit()
     {
-        Debug.Log("Quit button has ben pressed but no unfortunately you can't quit unity.");
-        Debug.Log("I meant the editor...");
-        #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-        #else
-                    Application.Quit();
-        #endif
+        Debug.Log("Quit button has ben pressed but It doesn't work in the editor.");
+        Application.Quit();
+
     }
 }

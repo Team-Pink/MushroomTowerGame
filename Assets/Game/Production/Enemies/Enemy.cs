@@ -187,6 +187,14 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
     }
 
+    public void Initialise(Meteor meteorInit, LevelDataGrid levelDataInit)
+    {
+        meteor = meteorInit;
+        meteorTransform = meteor.transform;
+        levelData = levelDataInit;
+        gameObject.SetActive(true);
+    }
+
     private void Update()
     {
         if (InteractionManager.tutorialMode) rigidbody.velocity = Vector3.zero;
@@ -486,7 +494,6 @@ public class Enemy : MonoBehaviour
             if (elapsedDelay >= attackDelay)
             {
                 meteor.Damage(damage);
-                Debug.Log(name + " has dealt damage to the meteor");
                 AttackAudio();
                 attackInProgress = false;
             }

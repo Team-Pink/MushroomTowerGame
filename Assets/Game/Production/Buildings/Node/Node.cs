@@ -125,14 +125,8 @@ public class Node : Building
         bud.SetActive(showBud);
     }
 
-    public void AddBuilding(Building building)
-    {
-        connectedBuildings.Add(building);
-    }
-    public void RemoveBuilding(Building building)
-    {
-        connectedBuildings.Remove(building);
-    }
+    public void AddBuilding(Building building) => connectedBuildings.Add(building);
+    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
 
     public override void Deactivate()
     {
@@ -214,6 +208,33 @@ public class Node : Building
         else
             return 0;
     }
+
+    public void SetCursorCostToResidualCost()
+    {
+        CursorManager cursorManager = GameObject.Find("GameManager").GetComponent<CursorManager>();
+        cursorManager.DisplayCost(GetNodeCost());
+
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        if (currencyManager.CanDecreaseCurrencyAmount(GetNodeCost()))
+            cursorManager.ChangeCursor("CanBuy");
+        else
+            cursorManager.ChangeCursor("CannotBuy");
+    }
+    public void SetCursorCostToNull()
+    {
+        CursorManager cm = GameObject.Find("GameManager").GetComponent<CursorManager>();
+        cm.DisplayCost();
+        cm.ChangeCursor("Default");
+    }
+    public void CheckIfCanToggleResidual()
+    {
+        CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
+        if (currencyManager.CanDecreaseCurrencyAmount(GetNodeCost()))
+        {
+            currencyManager.DecreaseCurrencyAmount(GetNodeCost());
+            ToggleResidual(false);
+        }
+    }
     #endregion
 
 
@@ -231,7 +252,6 @@ public class Node : Building
         else
             Destroy(gameObject);
     }
-
 
     public override void ShowDefaultLines()
     {
