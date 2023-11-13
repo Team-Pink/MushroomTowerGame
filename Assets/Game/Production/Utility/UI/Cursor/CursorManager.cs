@@ -9,6 +9,9 @@ public class CustomCursor
     public string cursorName;
     public Texture2D cursorTexture;
     public bool displayCost = false;
+
+    [HideInInspector]
+    public Sprite cursorSprite;
 }
 
 public class CursorManager : MonoBehaviour
@@ -38,6 +41,12 @@ public class CursorManager : MonoBehaviour
 
     void Start()
     {
+        foreach(CustomCursor cursor in cursors)
+        {
+            Texture2D tex = cursor.cursorTexture;
+            cursor.cursorSprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
+        }
+
         if (cursorType == CursorType.HardwareCursor)
         {
             ChangeCursor();
@@ -113,7 +122,7 @@ public class CursorManager : MonoBehaviour
     {
         CustomCursor desiredCursor = cursors[cursorIndex];
 
-        if (desiredCursor == null)
+        if (desiredCursor == null || desiredCursor.cursorName != currentCursorState)
             return;
 
         if (cursorType == CursorType.HardwareCursor)
@@ -175,8 +184,7 @@ public class CursorManager : MonoBehaviour
     void SetSoftwareCursor(CustomCursor cursor)
     {
         Texture2D tex = cursor.cursorTexture;
-        Sprite cursorSprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
-        softwareCursorImage.sprite = cursorSprite;
+        softwareCursorImage.sprite = cursor.cursorSprite;
         costText.gameObject.SetActive(cursor.displayCost);
         currentCursorState = cursor.cursorName;
     }
