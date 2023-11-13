@@ -216,15 +216,18 @@ public class Node : Building
 
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         if (currencyManager.CanDecreaseCurrencyAmount(GetNodeCost()))
-            cursorManager.ChangeCursor("CanBuy");
+            if (cursorManager.currentCursorState != "CanBuy")
+                cursorManager.ChangeCursor("CanBuy");
         else
+            if (cursorManager.currentCursorState != "CannotBuy")
             cursorManager.ChangeCursor("CannotBuy");
     }
     public void SetCursorCostToNull()
     {
         CursorManager cm = GameObject.Find("GameManager").GetComponent<CursorManager>();
         cm.DisplayCost();
-        cm.ChangeCursor("Default");
+        if (cm.currentCursorState != "Default")
+            cm.ChangeCursor("Default");
     }
     public void CheckIfCanToggleResidual()
     {
