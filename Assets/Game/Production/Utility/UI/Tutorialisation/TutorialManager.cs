@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static TutorialManager;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -79,18 +80,18 @@ public class TutorialManager : MonoBehaviour
         {
             case 0:
                 if (interactionManager.currentInteraction == InteractionState.PlacingFromMeteor)
-                    AdvanceTutorial(ref placementParts);
+                    AdvanceTutorial();
                 break;
             case 1:
                 // Waits for Advancement from Interaction Manager
                 break;
             case 2:
                 if (interactionManager.currentInteraction == InteractionState.PlacingFromNode)
-                    AdvanceTutorial(ref placementParts);
+                    AdvanceTutorial();
                 break;
             case 3:
                 if (interactionManager.currentInteraction == InteractionState.ShroomSelection)
-                    AdvanceTutorial(ref placementParts);
+                    AdvanceTutorial();
                 break;
             case 4:
                 // Waits for Advancement from Interaction Manager
@@ -100,7 +101,7 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (Input.GetKeyDown(interactionManager.interactKey))
                     {
-                        AdvanceTutorial(ref placementParts);
+                        AdvanceTutorial();
                     }
                 }
                 else
@@ -118,7 +119,7 @@ public class TutorialManager : MonoBehaviour
         {
             if (Input.GetKeyDown(interactionManager.interactKey))
             {
-                AdvanceTutorial(ref warningParts);
+                AdvanceTutorial();
             }
         }
         else
@@ -142,7 +143,7 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (Input.GetKeyDown(interactionManager.interactKey))
                     {
-                        AdvanceTutorial(ref placementParts);
+                        AdvanceTutorial();
                     }
                 }
                 else
@@ -163,7 +164,7 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (Input.GetKeyDown(interactionManager.interactKey))
                     {
-                        AdvanceTutorial(ref sellingParts);
+                        AdvanceTutorial();
                     }
                 }
                 else
@@ -181,7 +182,7 @@ public class TutorialManager : MonoBehaviour
                 {
                     if (Input.GetKeyDown(interactionManager.interactKey))
                     {
-                        AdvanceTutorial(ref sellingParts);
+                        AdvanceTutorial();
                     }
                 }
                 else
@@ -191,35 +192,6 @@ public class TutorialManager : MonoBehaviour
                 break;
             default: break;
         }
-    }
-
-    public bool CorrectTutorialPlacement(Vector2 mousePosition)
-    {
-        RectTransform spotlight = null;
-        switch (currentTutorial)
-        {
-            case Tutorial.Placement:
-                if (currentPart >= placementSpotlights.Length) break;
-                if (placementSpotlights[currentPart] == null) break;
-                placementSpotlights[currentPart].TryGetComponent(out spotlight);
-                break;
-            case Tutorial.Regrow:
-                if (currentPart >= regrowSpotlights.Length) break;
-                if (regrowSpotlights[currentPart] == null) break;
-                regrowSpotlights[currentPart].TryGetComponent(out spotlight);
-                break;
-            case Tutorial.Selling:
-                if (currentPart >= sellingSpotlights.Length) break;
-                if (sellingSpotlights[currentPart] == null) break;
-                sellingSpotlights[currentPart].TryGetComponent(out spotlight);
-                break;
-        }
-
-        if (spotlight == null) return true;
-
-        return (new Vector2(Screen.width / 2, Screen.height / 2) +
-            (spotlight.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) - mousePosition).magnitude
-            < 20 * spotlight.localScale.x;
     }
 
     public void StartTutorial(Tutorial tutorial)
@@ -255,13 +227,14 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    public void AdvanceTutorial(ref GameObject[] parts)
+    public void AdvanceTutorial()
     {
+        GameObject[] tutorialParts = GetCurrentTutorialParts();
         elapsedGracePeriod = 0;
 
-        parts[currentPart].SetActive(false);
+        tutorialParts[currentPart].SetActive(false);
 
-        if (currentPart + 1 == parts.Length)
+        if (currentPart + 1 == tutorialParts.Length)
         {
             EndTutorial();
             return;
@@ -270,14 +243,16 @@ public class TutorialManager : MonoBehaviour
         boomy.SetTrigger("Jiggle");
 
         currentPart++;
-        parts[currentPart].SetActive(true);
+        tutorialParts[currentPart].SetActive(true);
     }
 
-    public void ReverseTutorial(ref GameObject[] parts)
+    public void ReverseTutorial()
     {
+        GameObject[] tutorialParts = GetCurrentTutorialParts();
+
         elapsedGracePeriod = 0;
 
-        parts[currentPart].SetActive(false);
+        tutorialParts[currentPart].SetActive(false);
 
         if (currentPart == 0)
         {
@@ -286,7 +261,7 @@ public class TutorialManager : MonoBehaviour
         }
 
         currentPart--;
-        parts[currentPart].SetActive(true);
+        tutorialParts[currentPart].SetActive(true);
     }
 
     public void EndTutorial()
@@ -309,5 +284,46 @@ public class TutorialManager : MonoBehaviour
 
         InteractionManager.tutorialMode = false;
         InteractionManager.gamePaused = false;
+    }
+
+    public bool CorrectTutorialPlacement(Vector2 mousePosition)
+    {
+        RectTransform spotlight = null;
+        switch (currentTutorial)
+        {
+            case Tutorial.Placement:
+                if (currentPart >= placementSpotlights.Length) break;
+                if (placementSpotlights[currentPart] == null) break;
+                placementSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+            case Tutorial.Regrow:
+                if (currentPart >= regrowSpotlights.Length) break;
+                if (regrowSpotlights[currentPart] == null) break;
+                regrowSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+            case Tutorial.Selling:
+                if (currentPart >= sellingSpotlights.Length) break;
+                if (sellingSpotlights[currentPart] == null) break;
+                sellingSpotlights[currentPart].TryGetComponent(out spotlight);
+                break;
+        }
+
+        if (spotlight == null) return true;
+
+        return (new Vector2(Screen.width / 2, Screen.height / 2) +
+            (spotlight.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) - mousePosition).magnitude
+            < 20 * spotlight.localScale.x;
+    }
+
+    private GameObject[] GetCurrentTutorialParts()
+    {
+        switch (currentTutorial)
+        {
+            case Tutorial.Placement: return placementParts;
+            case Tutorial.Warning: return warningParts;
+            case Tutorial.Regrow: return regrowParts;
+            case Tutorial.Selling: return sellingParts;
+        }
+        return null;
     }
 }

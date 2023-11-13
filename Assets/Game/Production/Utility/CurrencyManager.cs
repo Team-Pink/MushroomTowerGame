@@ -50,8 +50,4 @@ public class CurrencyManager : MonoBehaviour
     {
         return currencyAmount;
     }
-
-    private void Update()
-    {
-    }
 }
