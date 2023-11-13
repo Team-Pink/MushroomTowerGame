@@ -86,6 +86,8 @@ public class InteractionManager : MonoBehaviour
     private RectTransform sellButtonTransform;
 
     [SerializeField, Space()] Image selectionIndicator;
+    [SerializeField] Sprite greenBud;
+    [SerializeField] Sprite redBud;
     [SerializeField] private float radialExclusionZone = 10.0f;
     private Vector2 startingMousePosition;
 
@@ -516,7 +518,7 @@ public class InteractionManager : MonoBehaviour
 
         bool canPlace = false;
         selectionIndicator.enabled = true;
-        selectionIndicator.color = Color.red;
+        selectionIndicator.sprite = redBud;
         activeBud = targetBuilding.bud;
 
         (targetBuilding as Meteor).budDetached = true;
@@ -563,7 +565,7 @@ public class InteractionManager : MonoBehaviour
 
                 if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
-                    selectionIndicator.color = Color.green;
+                    selectionIndicator.sprite = greenBud;
 
                     if (canBuy)
                     { 
@@ -602,8 +604,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (canPlace)
             {
-                selectionIndicator.color = Color.white;
-                selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
+                selectionIndicator.sprite = greenBud;
 
                 AttemptToSpawnNode();
             }
@@ -632,7 +633,7 @@ public class InteractionManager : MonoBehaviour
         bool canPlace = false;
         bool placingNode = false;
         selectionIndicator.enabled = true;
-        selectionIndicator.color = Color.red;
+        selectionIndicator.sprite = redBud;
         activeBud = targetBuilding.bud;
 
         refNode = targetBuilding as Node;
@@ -694,7 +695,7 @@ public class InteractionManager : MonoBehaviour
                         if (canBuy)
                         {
                             cursorManager.ChangeCursor("CanPlaceCanBuy");
-                            selectionIndicator.color = Color.green;
+                            selectionIndicator.sprite = greenBud;
                             canPlace = true;
                         }
                         else
@@ -709,7 +710,7 @@ public class InteractionManager : MonoBehaviour
                         if (canBuy)
                         {
                             cursorManager.ChangeCursor("CanPlaceCanBuy");
-                            selectionIndicator.color = Color.green;
+                            selectionIndicator.sprite = greenBud;
                             canPlace = true;
                         }
                         else
@@ -772,8 +773,7 @@ public class InteractionManager : MonoBehaviour
             if (canPlace)
             {
                 cursorManager.ChangeCursor("Default");
-                selectionIndicator.color = Color.white;
-                selectionIndicator.rectTransform.sizeDelta = new Vector2(10, 10);
+                selectionIndicator.sprite = greenBud;
 
                 if (placingNode)
                     AttemptToSpawnNode();
@@ -1097,7 +1097,6 @@ public class InteractionManager : MonoBehaviour
     public void ResetInteraction(GameObject[] extraObjects = null)
     {
         selectionIndicator.enabled = false;
-        selectionIndicator.rectTransform.sizeDelta = new Vector2(25, 25);
         startingMousePosition = Vector2.zero;
         CurrentInteraction = InteractionState.None;
         timeHeld = 0.0f;

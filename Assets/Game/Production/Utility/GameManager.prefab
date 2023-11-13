@@ -1953,8 +1953,8 @@ MonoBehaviour:
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   sellButton: {fileID: 0}
-  sellButtonHighlight: {fileID: 21300000, guid: 2249266ab6968d34db2ec08f0a2f3b05, type: 3}
-  sellButtonActive: {fileID: 21300000, guid: 7fbfca1230013f6409eb14e9b216b721, type: 3}
+  sellButtonHighlight: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
+  sellButtonActive: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
   selectionIndicator: {fileID: 0}
   radialExclusionZone: 40
   shroomSelectionMenu: {fileID: 0}
@@ -2074,6 +2074,7 @@ MonoBehaviour:
   parentFolder: {fileID: 0}
   meteor: {fileID: 0}
   wonText: {fileID: 0}
+  waveCounter: {fileID: 0}
   waveIndicator: {fileID: 0}
   waveTimer: {fileID: 0}
   indicatorPositions:
@@ -2143,28 +2144,28 @@ MonoBehaviour:
   cursorType: 1
   cursors:
   - cursorName: Default
-    cursorTexture: {fileID: 2800000, guid: 5f43c0d0bc155074fa549ab66ff2a394, type: 3}
+    cursorTexture: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
     displayCost: 0
   - cursorName: CannotPlace
-    cursorTexture: {fileID: 2800000, guid: 5f79ddec959c99f4aa7d4d1d300e5fff, type: 3}
+    cursorTexture: {fileID: 2800000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
     displayCost: 0
   - cursorName: CannotPlaceCannotBuy
-    cursorTexture: {fileID: 2800000, guid: 6248d3eb5bd9f8b4784527ba8d0549ac, type: 3}
+    cursorTexture: {fileID: 2800000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
     displayCost: 1
   - cursorName: CannotPlaceCanBuy
-    cursorTexture: {fileID: 2800000, guid: 62436c39dd9e78749aea1468225dff26, type: 3}
+    cursorTexture: {fileID: 2800000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
     displayCost: 1
   - cursorName: CanPlaceCanBuy
-    cursorTexture: {fileID: 2800000, guid: 7d732fbd91f1b0c478f415579922a0a7, type: 3}
+    cursorTexture: {fileID: 2800000, guid: 7ee54e8576e0e7244a21167dc7c6f017, type: 3}
     displayCost: 1
   - cursorName: CanPlaceCannotBuy
-    cursorTexture: {fileID: 2800000, guid: 3a8cd8015a51c97478ac5e09fb47560e, type: 3}
+    cursorTexture: {fileID: 2800000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
     displayCost: 1
   - cursorName: Shovel
-    cursorTexture: {fileID: 2800000, guid: 543c9e4418ee19943989dd11e673617b, type: 3}
+    cursorTexture: {fileID: 2800000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
     displayCost: 0
   - cursorName: HighlightedShovel
-    cursorTexture: {fileID: 2800000, guid: 125008253412bc54ba649c50ab5d0bd3, type: 3}
+    cursorTexture: {fileID: 2800000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
     displayCost: 1
   costText: {fileID: 0}
   costPositionFromSoftwareMousePoint: {x: 40, y: -40}
