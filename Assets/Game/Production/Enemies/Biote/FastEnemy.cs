@@ -6,6 +6,10 @@ public class FastEnemy : Enemy
     [SerializeField] float speedUpMultiplier = 3.0f;
     private bool damaged = false;
 
+    // Particles
+    [SerializeField] GameObject spinParticle;
+    [SerializeField] GameObject explosionParticle;
+
     protected override void Awake()
     {
         base.Awake();
@@ -23,6 +27,7 @@ public class FastEnemy : Enemy
 
             animator.SetBool("Crawling", false);
             animator.SetBool("Spinning", true);
+            Instantiate(spinParticle, transform);
         }
     }
 
@@ -39,6 +44,7 @@ public class FastEnemy : Enemy
         if (!attackInProgress && !attackCoolingDown)
         {
             //Explosion logic goes here
+            Instantiate(explosionParticle);
             AttackAudio();
             TakeDamage(CurrentHealth);
             OnDeath();
