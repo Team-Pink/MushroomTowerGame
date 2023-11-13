@@ -35,6 +35,7 @@ public class CursorManager : MonoBehaviour
         private set;
     }
 
+
     void Start()
     {
         if (cursorType == CursorType.HardwareCursor)
@@ -177,6 +178,7 @@ public class CursorManager : MonoBehaviour
         Sprite cursorSprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100);
         softwareCursorImage.sprite = cursorSprite;
         costText.gameObject.SetActive(cursor.displayCost);
+        currentCursorState = cursor.cursorName;
     }
 
 }
