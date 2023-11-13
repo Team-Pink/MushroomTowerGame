@@ -51,6 +51,7 @@ public class Attacker
     [Header("Bounce Tag")]
     public bool bounce = false;
     public int bounceHitLimit = 10;
+    public bool returning = false;
     [HideInInspector] public bool bounceBulletInShroomPossession = true;
     #endregion
 
