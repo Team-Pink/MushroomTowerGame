@@ -38,7 +38,7 @@ public class Bullet : MonoBehaviour
     public void Initialise()
     {
         startPos = transform.position;
-        targetTransform = target.enemy.transform; // this will fail if it is called at the end of a wave.
+        targetTransform = target.enemy.transform; // this will fail if it is called on an enemy that no longer exists.
         targetPos = targetTransform.position;
         initialised = true;
     }
