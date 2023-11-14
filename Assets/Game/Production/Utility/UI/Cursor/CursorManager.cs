@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class CustomCursor
@@ -24,12 +25,14 @@ public class CursorManager : MonoBehaviour
         private set;
     }
 
+    CanvasScaler canvasScaler;
 
     void Start()
     {
         Cursor.visible = false;
         softwareCursorImage.gameObject.SetActive(true);
         ChangeCursor();
+        canvasScaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
     }
 
     private void Update()
@@ -81,14 +84,18 @@ public class CursorManager : MonoBehaviour
 
     void PlaceCursorUIOnCursorPosition()
     {
-        costText.rectTransform.position = Input.mousePosition + new Vector3(costPositionFromSoftwareMousePoint.x, costPositionFromSoftwareMousePoint.y, 0);
-        softwareCursorImage.rectTransform.position = Input.mousePosition + new Vector3(softwareCursorImage.rectTransform.rect.width/2, softwareCursorImage.rectTransform.rect.height/-2, 0);
+        Vector3 mousePos = Input.mousePosition;        
+        float refRatio = Screen.height / canvasScaler.referenceResolution.y;
+        Vector3 costPushPosition = costPositionFromSoftwareMousePoint;
+
+        costText.rectTransform.position = mousePos + (costPushPosition * refRatio);
+        softwareCursorImage.rectTransform.position = mousePos;
     }
 
     bool IsCursorNotInWindowBounds()
     {
         Camera camera = transform.parent.GetComponentInChildren<Camera>();
-        var view = camera.ScreenToViewportPoint(Input.mousePosition);
+        Vector3 view = camera.ScreenToViewportPoint(Input.mousePosition);
         return view.x < 0 || view.x > 1 || view.y < 0 || view.y > 1;
     }
 
