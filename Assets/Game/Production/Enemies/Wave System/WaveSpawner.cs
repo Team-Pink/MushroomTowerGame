@@ -27,17 +27,16 @@ public class Batch
 
     [Space()]
 
-    [SerializeField] Transform spawnOverride = null;
-    public Vector3 spawnPosition
+    [SerializeField] Spawnpoint spawnOverride = null;
+    public Spawnpoint spawn
     {
         get
         {
             if (spawnOverride == null)
             {
                 Debug.LogError("No spawn point set");
-                return Vector3.zero;
             }
-            return spawnOverride.position;
+            return spawnOverride;
         }
     }
 
@@ -61,17 +60,16 @@ public class Wave
 {
     [Tooltip("Seconds")] public float duration;
 
-    [SerializeField] Transform defaultSpawn = null;
-    public Vector3 spawnPosition
+    [SerializeField] Spawnpoint defaultSpawn = null;
+    public Spawnpoint spawn
     {
         get
         {
             if (defaultSpawn == null)
             {
                 Debug.LogError("No wave default spawn point set");
-                return Vector3.zero;
             }
-            return defaultSpawn.position;
+            return defaultSpawn;
         }
     }
 
@@ -193,6 +191,13 @@ public class WaveSpawner : MonoBehaviour
                 break;
         }
 
+        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
+        {
+            shroomUnlockTooltip.SetActive(false);
+
+            if (spawnState != State.BetweenWaves) elapsedSecondsBetweenWaves = 0.0f;
+        }
+
         List<Enemy> enemiesToRemove = new();
         foreach (Enemy enemy in aliveEnemies)
         {
@@ -209,11 +214,7 @@ public class WaveSpawner : MonoBehaviour
 
     private void BetweenWavesState()
     {
-        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
-        {
-            shroomUnlockTooltip.SetActive(false);
-        }
-        else if (currentWaveIndex > 0 && currentWaveIndex < 5)
+        if (elapsedSecondsBetweenWaves < unlockTooltipDuration && currentWaveIndex > 0 && currentWaveIndex < 5)
         {
             shroomUnlockTooltip.SetActive(true);
             shroomIcon.sprite = shroomSprites[currentWaveIndex];
@@ -229,22 +230,49 @@ public class WaveSpawner : MonoBehaviour
             waveCounter.IncWaveCounter();
 
             spawnState = State.Spawning;
-            elapsedSecondsBetweenWaves = 0.0f;
 
-            //waveIndicator.gameObject.SetActive(false);
+            if (shroomUnlockTooltip.activeSelf == false)
+            {
+                elapsedSecondsBetweenWaves = 0.0f;
+            }
+
+            if (currentWave.spawn != null)
+            {
+                currentWave.spawn.waveIndicator.SetActive(false);
+            }
+
+            foreach (Batch batch in currentWave.batches)
+            {
+                if (batch.useDefaultSpawn == false)
+                {
+                    batch.spawn.waveIndicator.SetActive(false);
+                }
+            }
         }
         else
         {
-            //waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-            //waveIndicator.gameObject.SetActive(true);
+            if (currentWave.spawn != null)
+            {
+                currentWave.spawn.waveIndicator.SetActive(true);
+                currentWave.spawn.timer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+            }
 
-            //waveTimer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+            foreach (Batch batch in currentWave.batches)
+            {
+                if (batch.useDefaultSpawn == false)
+                {
+                    batch.spawn.waveIndicator.SetActive(true);
+                    batch.spawn.timer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+                }
+            }
             elapsedSecondsBetweenWaves += Time.deltaTime;
         }
     }
 
     private void SpawningState()
     {
+        if (shroomUnlockTooltip.activeSelf == true) elapsedSecondsBetweenWaves += Time.deltaTime;
+
         if (cooldownElapsed < spawnCooldown)
         {
             cooldownElapsed += Time.deltaTime;
@@ -329,8 +357,8 @@ public class WaveSpawner : MonoBehaviour
         GameObject prefabToSpawn = batch.Enemy;
 
         Vector3 spawnPos;
-        if (batch.useDefaultSpawn) spawnPos = currentWave.spawnPosition;
-        else spawnPos = batch.spawnPosition;
+        if (batch.useDefaultSpawn) spawnPos = currentWave.spawn.position;
+        else spawnPos = batch.spawn.position;
 
 
         GameObject enemyObject = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity, parentFolder);
