@@ -96,7 +96,7 @@ public class Attacker
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
             if (lobProjectile) bulletRef.InitializeNoTrackParabolaBullet(target.position);
-            else bulletRef.Initialise();
+            else if (target.enemy) bulletRef.Initialise();
             
         }
         targetsToShoot.Clear();
