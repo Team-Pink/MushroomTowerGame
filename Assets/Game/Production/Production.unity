@@ -1096,10 +1096,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
-    - target: {fileID: 1013141047748801827, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1203363520936353662, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: waveSpawner
       value: 
@@ -1770,6 +1766,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1993145570592894166, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
   m_PrefabInstance: {fileID: 625561294}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1325632600 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1380549658670050093, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+  m_PrefabInstance: {fileID: 625561294}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1355529935
 GameObject:
   m_ObjectHideFlags: 0
@@ -2215,7 +2216,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 426490397650034098, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
   m_PrefabInstance: {fileID: 625561294}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1325632600}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -2653,30 +2654,14 @@ PrefabInstance:
       propertyPath: softwareCursorImage
       value: 
       objectReference: {fileID: 625561299}
-    - target: {fileID: 2288347274951756725, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: cursors.Array.data[1].cursorTexture
-      value: 
-      objectReference: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
-    - target: {fileID: 2288347274951756725, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: cursors.Array.data[2].cursorTexture
-      value: 
-      objectReference: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
-    - target: {fileID: 2288347274951756725, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: cursors.Array.data[3].cursorTexture
-      value: 
-      objectReference: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
-    - target: {fileID: 2288347274951756725, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: cursors.Array.data[4].cursorTexture
-      value: 
-      objectReference: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
-    - target: {fileID: 2288347274951756725, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: cursors.Array.data[5].cursorTexture
-      value: 
-      objectReference: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: boomy
       value: 
       objectReference: {fileID: 395160187}
+    - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: sellButton
+      value: 
+      objectReference: {fileID: 1325632600}
     - target: {fileID: 5583641233090253150, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: regrowParts.Array.data[0]
       value: 
@@ -2809,14 +2794,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: redBud
-      value: 
-      objectReference: {fileID: 21300000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: greenBud
-      value: 
-      objectReference: {fileID: 21300000, guid: 7ee54e8576e0e7244a21167dc7c6f017, type: 3}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: sellButton
       value: 
