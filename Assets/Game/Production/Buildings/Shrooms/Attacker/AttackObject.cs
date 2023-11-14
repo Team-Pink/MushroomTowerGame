@@ -20,9 +20,7 @@ public class AttackObject : MonoBehaviour
     public LayerMask mask;
     public bool noTracking = false;
 
-    int numberOfAtkObjsMade = 0;
-    int numberOfReturnsMade = 0;
-    int numberOfBounceObjsMade = 0;
+    public List<float> times;
 
     #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
@@ -50,7 +48,7 @@ public class AttackObject : MonoBehaviour
 
         }
 
-        Debug.Log(delayToTarget);
+        times.Add(delayToTarget);
 
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
 
@@ -111,8 +109,6 @@ public class AttackObject : MonoBehaviour
             yield return new WaitForSeconds(returnToShroomTime);
             originShroom.AttackerComponent.bounceBulletInShroomPossession = true;
             attackerComponent.returning = returningToShroom;
-
-            Debug.Log("End Bullet Data");
         }//this is for bounce only to allow the shroom to shoot again.
 
         //Debug.Log("Objects Made To return To Shroom: " + numberOfReturnsMade + ", Number of Attack Objects made: " + numberOfAtkObjsMade + ", And Bounce Attack Objects Made: " + numberOfBounceObjsMade);
@@ -163,13 +159,7 @@ public class AttackObject : MonoBehaviour
 
     void Bounce(Attacker attackerComponent)
     {
-
-        if (lastHitPosition == null) lastHitPosition = target.enemy.transform.position;
-
-        if (_velocity <= 0)
-        {
-            _velocity = originShroom.GetProjectileSpeed();
-        }
+        if (_velocity <= 0) _velocity = originShroom.GetProjectileSpeed();
 
         if (target.enemy == null)
         {
@@ -178,6 +168,8 @@ public class AttackObject : MonoBehaviour
             return;
         }
 
+        lastHitPosition = target.enemy.transform.position;
+
         hitList.Add(target.enemy);
 
         int hitCount = hitList.Count;
@@ -185,10 +177,7 @@ public class AttackObject : MonoBehaviour
 
         if (hitCount >= attackerComponent.bounceHitLimit)
         {
-            returningToShroom = true;
-            float timeToShroom = GenericUtility.CalculateTime(_velocity, GenericUtility.CalculateDistance(lastHitPosition, originShroom.transform.position));
-            originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
-            returnToShroomTime = timeToShroom;
+            BounceToNextTarget(true, null);
             return;
         }
 
@@ -203,22 +192,15 @@ public class AttackObject : MonoBehaviour
             if (newTarget == null) newTarget = enemy;
             else
             {
-                float distanceFromCurrentTargetA = GenericUtility.CalculateDistance(target.enemy.transform.position, newTarget.transform.position);
-                float distanceFromCurrentTargetB = GenericUtility.CalculateDistance(target.enemy.transform.position, enemy.transform.position);
+                float distanceFromCurrentTargetA = Vector3.Distance(lastHitPosition, newTarget.transform.position);
+                float distanceFromCurrentTargetB = Vector3.Distance(lastHitPosition, enemy.transform.position);
 
                 if (distanceFromCurrentTargetA > distanceFromCurrentTargetB) newTarget = enemy;
             }
         }
 
-        if (newTarget == null)
-        {
-            BounceToNextTarget(true, null);
-            return;
-        }
-        else
-        {
-            BounceToNextTarget(false, newTarget);
-        }
+        if (newTarget == null) BounceToNextTarget(true, null);
+        else BounceToNextTarget(false, newTarget);
     }
 
     void Spray()
@@ -246,7 +228,8 @@ public class AttackObject : MonoBehaviour
         attackInProgress.returningToShroom = returningToShroom;
         attackInProgress._velocity = _velocity;
 
-        numberOfBounceObjsMade++;
+        attackInProgress.times = times;
+
         return attackInProgress;
     }
 
@@ -254,20 +237,18 @@ public class AttackObject : MonoBehaviour
     {
         if (bounceToShroom)
         {
-            numberOfReturnsMade++;
-
             returningToShroom = true;
             float timeToShroom = Vector3.Distance(lastHitPosition, originShroom.transform.position) / _velocity;
             originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
             returnToShroomTime = timeToShroom;
-            
-            Debug.Log(timeToShroom);
+
+            times.Add(timeToShroom);
         }
         else
         {
-            numberOfAtkObjsMade++;
+            float distance = Vector3.Distance(lastHitPosition, newTarget.transform.position);
 
-            float timeToTarget = Vector3.Distance(lastHitPosition, newTarget.transform.position) / _velocity;
+            float timeToTarget = distance / _velocity;
             Target newTargetEnemy = new Target();
             newTargetEnemy.enemy = newTarget;
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);

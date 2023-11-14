@@ -28,10 +28,10 @@ public class Bullet : MonoBehaviour
         initialised = true;
     }
 
-    public void InitialiseForNonEnemies(Transform _transform) // what do you mean by non enemies
+    public void InitialiseForTargetPosition(Vector3 tPosition) // what do you mean by non enemies
     {
         startPos = transform.position;
-        targetTransform = _transform;
+        targetPos = tPosition;
         initialised = true;
     }
 

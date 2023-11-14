@@ -88,7 +88,7 @@ public class CursorManager : MonoBehaviour
         float refRatio = Screen.height / canvasScaler.referenceResolution.y;
         Vector3 costPushPosition = costPositionFromSoftwareMousePoint;
 
-        costText.rectTransform.position = mousePos + (costPushPosition * refRatio);
+        costText.rectTransform.position = costText.transform.parent.position + costPushPosition * refRatio;
         softwareCursorImage.rectTransform.position = mousePos;
     }
 
