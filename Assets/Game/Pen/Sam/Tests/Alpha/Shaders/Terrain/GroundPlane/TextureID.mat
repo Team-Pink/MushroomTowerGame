@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
-        m_Texture: {fileID: 2800000, guid: 29d692cfe6aa43d4791eb952f185ef4f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 036cef3e043534e4787c2f7134674246, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Basecolour:
@@ -58,6 +58,26 @@ Material:
         m_Texture: {fileID: 2800000, guid: c8cbf4d5c928fa2438448828d3ea00b8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Normal0:
+        m_Texture: {fileID: 2800000, guid: 9ab83571860bd164c988fffc0e95af48, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal1:
+        m_Texture: {fileID: 2800000, guid: d964df7df2bcb0a4abd5830481bb6286, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal2:
+        m_Texture: {fileID: 2800000, guid: dbde8e7ef9eb2214c9fdb06d12083cb3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal3:
+        m_Texture: {fileID: 2800000, guid: ab57372f1e163984383d03819e32695a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalArray:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_213b6b16de634f7c9f47d6a2e096c6f9_Texture_1:
         m_Texture: {fileID: 2800000, guid: d5b0b3bd6f0eb4440af09f306100aa26, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -70,8 +90,12 @@ Material:
         m_Texture: {fileID: 2800000, guid: 7a3395ca8048ff243b1032c5fe4aa8ac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SmoothnessArray:
+        m_Texture: {fileID: 18700000, guid: 911a3da4f1bc1e54fa861d8c29bd82c6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SplatMap:
-        m_Texture: {fileID: 2800000, guid: 62d05012c13922549a4d3b313e944521, type: 3}
+        m_Texture: {fileID: 2800000, guid: 03a6b27823fbe3041b647c30fd5bfb52, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Stone_Basecolour:
@@ -95,7 +119,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Normal:
-        m_Texture: {fileID: 2800000, guid: 1d72c103d0c2a0d489c8fc7d75f5409d, type: 3}
+        m_Texture: {fileID: 2800000, guid: dbde8e7ef9eb2214c9fdb06d12083cb3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Smoothness:
@@ -115,15 +139,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex3_Basecolour:
-        m_Texture: {fileID: 2800000, guid: de4b17a6f65a6bd488e556513a91fe59, type: 3}
+        m_Texture: {fileID: 2800000, guid: 924e903998aa99f4dbf85ce12d4bef70, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex3_Normal:
-        m_Texture: {fileID: 2800000, guid: 699b8932a11082448b80d16bc2e72260, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9ab83571860bd164c988fffc0e95af48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex3_Smoothness:
-        m_Texture: {fileID: 2800000, guid: db09f6b579ab9d34093232ce98cae50d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 00826ade5111f36438d621fd76a2311c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex4_Basecolour:
@@ -138,6 +162,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_53ef38df36304b5c9e49ebd46c140783_Out_0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2DAsset_74490ae9d9394e64aff63cd3cbd798a0_Out_0:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -147,7 +175,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture_ID_Map:
-        m_Texture: {fileID: 2800000, guid: 7b9104a95a1e1bc42b6ec06b90f8211a, type: 3}
+        m_Texture: {fileID: 2800000, guid: a1861f5d4901e6d43b1b56f6d3350281, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -170,27 +198,27 @@ Material:
     - _CastShadows: 1
     - _Cull: 2
     - _DstBlend: 0
-    - _Height_Normal_Strength: 1
-    - _Height_Strength: 0
+    - _Height_Normal_Strength: 5
+    - _Height_Strength: 50
     - _Mud_Tiling: 11.58
     - _Normal_Strength: 1.17
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Splat_Height_Centre: 0.25
-    - _Splat_Height_Squish: 7.4
+    - _Splat_Height_Centre: 0.18
+    - _Splat_Height_Squish: 1.88
     - _SrcBlend: 1
     - _Stone_Tiling: 2.79
     - _Strength: 1
     - _Surface: 0
     - _Tex1_Tiling: 2.9
     - _Tex2_Tiling: 10.55
-    - _Tex3_Tiling: 12.04
+    - _Tex3_Tiling: 10.27
     - _Tex4_Tiling: 0
-    - _UV_Tiling1: 16.52
-    - _UV_Tiling2: 6.27
-    - _UV_Tiling3: 18.12
-    - _UV_Tiling4: 3.94
+    - _UV_Tiling1: 16.74
+    - _UV_Tiling2: 10.31
+    - _UV_Tiling3: 6.24
+    - _UV_Tiling4: 17.36
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1
