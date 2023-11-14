@@ -51,24 +51,17 @@ public class Node : Building
     {
         get
         {
-            int shroomCount = 0;
-            HashSet<Building> buildingsToRemove = new();
+            RemoveNullBuildings();
+
+            int shrooms = 0;
 
             foreach (var building in connectedBuildings)
             {
-                if (building == null)
-                {
-                    buildingsToRemove.Add(building);
-                    continue;
-                }
                 if (building is Shroom)
-                    shroomCount++;
+                    shrooms++;
             }
 
-            foreach (var building in buildingsToRemove)
-                connectedBuildings.Remove(building);
-
-            return shroomCount;
+            return shrooms;
         }
         private set { }
     }
@@ -76,32 +69,26 @@ public class Node : Building
     {
         get
         {
+            RemoveNullBuildings();
+
             int nodes = 0;
-            HashSet<Building> buildingsToRemove = new();
 
             foreach (var building in connectedBuildings)
             {
-                if (building == null)
-                {
-                    buildingsToRemove.Add(building);
-                    continue;
-                }
                 if (building is Node)
                     nodes++;
             }
-
-            foreach (var building in buildingsToRemove)
-                connectedBuildings.Remove(building);
 
             return nodes;
         }
         private set { }
     }
 
+    private LineMode lineMode = LineMode.Default;
     public GameObject displayLinePrefab;
     public Material displayLineDefault;
+    public Material displayLineHighlighted;
     public Material displayLineSell;
-    public Material displayLineDeactivate;
     private readonly List<GameObject> displayLines = new();
     private Vector3 lineRendererOffset = new(0, 1.0f, 0);
 
@@ -118,15 +105,48 @@ public class Node : Building
 
     private void Update()
     {
+        RemoveNullBuildings();
+
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0)
             Destroy(gameObject);
 
         bool showBud = !budDetached && !isResidual && Active;
         bud.SetActive(showBud);
+
+        if (lineMode == LineMode.Default)
+        {
+            recurseHighlight = false;
+            for (int i = 0; i < connectedBuildings.Count; i++)
+            {
+                if (connectedBuildings[i].recurseHighlight)
+                {
+                    recurseHighlight = true;
+                    SetLineHighlighted(connectedBuildings[i]);
+                }
+                else if (connectedBuildings[i].showSelling)
+                {
+                    SetLineSell(connectedBuildings[i]);
+                }
+                else
+                {
+                    SetLineDefault(connectedBuildings[i]);
+                }
+            }
+        }
     }
 
-    public void AddBuilding(Building building) => connectedBuildings.Add(building);
-    public void RemoveBuilding(Building building) => connectedBuildings.Remove(building);
+    public void AddBuilding(Building building)
+    {
+        connectedBuildings.Add(building);
+
+        AddLine(building);
+    }
+    public void RemoveBuilding(int index)
+    {
+        RemoveLine(index);
+
+        connectedBuildings.RemoveAt(index);
+    }
 
     public override void Deactivate()
     {
@@ -151,6 +171,8 @@ public class Node : Building
 
         deactivatedMesh.SetActive(false);
         nodeMesh.SetActive(true);
+
+        currentHealth = nodeHealth;
     }
 
     public void ToggleResidual(bool value)
@@ -159,17 +181,11 @@ public class Node : Building
 
         if (isResidual)
         {
-            foreach (Building connectedBuilding in connectedBuildings)
-            {
-                connectedBuilding.Deactivate();
-            }
+            Deactivate();
         }
-        else if (Active)
+        else
         {
-            foreach (Building connectedBuilding in connectedBuildings)
-            {
-                connectedBuilding.Reactivate();
-            }
+            Reactivate();
         }
 
         if (Active)
@@ -256,82 +272,94 @@ public class Node : Building
             Destroy(gameObject);
     }
 
-    public override void ShowDefaultLines()
+    public override void AddLine(Building target)
     {
-        ResetLines();
-        RemoveNullBuildings();
+        GameObject line = Instantiate(displayLinePrefab, transform);
+        displayLines.Add(line);
 
-        for (int i = 0; i < connectedBuildings.Count; i++)
+        LineRenderer renderer = line.GetComponent<LineRenderer>();
+        renderer.material = displayLineDefault;
+        renderer.SetPosition(0, target.transform.position - transform.position + lineRendererOffset);
+        renderer.SetPosition(1, lineRendererOffset);
+    }
+    public override void RemoveLine(Building target)
+    {
+        int index = connectedBuildings.IndexOf(target);
+        Destroy(displayLines[index]);
+        displayLines.Remove(displayLines[index]);
+    }
+    public void RemoveLine(int index)
+    {
+        Destroy(displayLines[index]);
+        displayLines.Remove(displayLines[index]);
+    }
+
+    public override void SetLineDefault(Building target)
+    {
+        int index = connectedBuildings.IndexOf(target);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineDefault;
+    }
+
+    public override void SetLinesDefault()
+    {
+        lineMode = LineMode.Default;
+
+        foreach (GameObject line in displayLines)
         {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineDefault;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
+            line.GetComponent<LineRenderer>().material = displayLineDefault;
+        }
+        foreach (Building building in connectedBuildings)
+        {
+            if (building is Node)
+            {
+                building.SetLinesDefault();
+            }
         }
     }
-    public override void ShowDeactivateLines()
+
+    public override void SetLineHighlighted(Building target)
     {
-        ResetLines();
-        RemoveNullBuildings();
+        int index = connectedBuildings.IndexOf(target);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineHighlighted;
+    }
 
-        //set lines here
-        for (int i = 0; i < connectedBuildings.Count; i++)
+    public override void SetLinesHighlighted()
+    {
+        lineMode = LineMode.Highlighted;
+
+        foreach (GameObject line in displayLines)
         {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineDeactivate;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
-
-            //Recurse through children
-            if (building is not Shroom) building.ShowDeactivateLines();
+            line.GetComponent<LineRenderer>().material = displayLineHighlighted;
+        }
+        foreach (Building building in connectedBuildings)
+        {
+            if (building is Node)
+            {
+                building.SetLinesHighlighted();
+            }
         }
     }
-    public override void ShowSellLines()
+
+    public override void SetLineSell(Building target)
     {
-        ResetLines();
-        RemoveNullBuildings();
-
-        //set lines here
-        for (int i = 0; i < connectedBuildings.Count; i++)
-        {
-            Building building = connectedBuildings[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineSell;
-            renderer.SetPosition(0, building.transform.position - transform.position + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
-
-            //Recurse through children
-            if (building is not Shroom) building.ShowSellLines();
-        }
+        int index = connectedBuildings.IndexOf(target);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineSell;
     }
-    public override void ResetLines()
-    {
-        int lineAmount = displayLines.Count;
-        for (int i = 0; i < lineAmount; i++)
-        {
-            Destroy(displayLines[i]);
-        }
-        displayLines.Clear();
 
-        //Recurse through children
-        for (int i = 0; i < connectedBuildings.Count; i++)
+    public override void SetLinesSell()
+    {
+        lineMode = LineMode.Sell;
+
+        foreach (GameObject line in displayLines)
         {
-            Building building = connectedBuildings[i];
-            if (building is not Shroom) building.ResetLines();
+            line.GetComponent<LineRenderer>().material = displayLineSell;
+        }
+        foreach (Building building in connectedBuildings)
+        {
+            if (building is Node)
+            {
+                building.SetLinesSell();
+            }
         }
     }
 
@@ -341,7 +369,7 @@ public class Node : Building
         while (i < connectedBuildings.Count)
         {
             if (connectedBuildings[i] != null) i++;
-            else connectedBuildings.RemoveAt(i);
+            else RemoveBuilding(i);
         }
     }
 }

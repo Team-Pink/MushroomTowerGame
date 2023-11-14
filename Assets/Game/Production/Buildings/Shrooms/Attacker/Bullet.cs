@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class Bullet : MonoBehaviour
 {
@@ -17,29 +18,48 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
 
+    // spin variables
+    [SerializeField] bool spin;
+    private GameObject spinSFXprefab;
+    //public float spinSpeed = 1;
+
+
+
+
+
     /// <summary>
     /// Do not use this on moving targets this does not track.
     /// </summary>
     public void InitializeNoTrackParabolaBullet(Vector3 pos)
     {
-        startPos = transform.position;
+
         targetPos = pos;
         parabola = true;
-        initialised = true;
+        CommonVariablesToInitialize();
     }
 
-    public void InitialiseForNonEnemies(Transform _transform) // what do you mean by non enemies
+    public void InitialiseForNonEnemies(Transform _transform) // what do you mean by non enemies also I might change _transform to be a position that is fed to targetPos at some point for safety.
     {
-        startPos = transform.position;
+
         targetTransform = _transform;
-        initialised = true;
+        CommonVariablesToInitialize();
     }
 
     public void Initialise()
     {
-        startPos = transform.position;
-        targetTransform = target.enemy.transform; // this will fail if it is called at the end of a wave.
+        if (!target.enemy) Destroy(gameObject);
+        targetTransform = target.enemy.transform; // this will fail if it is called on an enemy that no longer exists.
         targetPos = targetTransform.position;
+        CommonVariablesToInitialize();
+    }
+
+    public void CommonVariablesToInitialize()
+    {
+        startPos = transform.position;
+        if (spin)
+        {
+            spinSFXprefab.GetComponent<VisualEffect>().Play();
+        }
         initialised = true;
     }
 
@@ -47,24 +67,22 @@ public class Bullet : MonoBehaviour
     {
         if (!initialised) return;
 
-        if (parabola) MoveParabola();
-        else
-        {
-
-
-            MoveStraightToTarget();
-        }
-
         if (timeElapsed >= timeToTarget)
         {
             Destroy(gameObject);
         }
         timeElapsed += Time.deltaTime;
+
+
+
+        if (parabola) MoveParabola();
+        else MoveStraightToTarget();
+
     }
 
     void MoveStraightToTarget()
     {
-        if(target.enemy || targetTransform != null)
+        if (target.enemy || targetTransform != null)
             targetPos = targetTransform.position; // update target position for moving targets if the targettransform is an Object not null.
 
         transform.position = Vector3.Lerp(startPos, targetPos, Mathf.Min(timeElapsed / timeToTarget, 1));
@@ -94,3 +112,10 @@ public class Bullet : MonoBehaviour
 
     //}
 }
+
+
+
+// Personally as the creator of this script I must say, using a physical bullet is the worst possible way we could have done this. While it has
+// yet to cause any game breaking errors yet the ones it does cause have refused to be put to rest despite many efforts to do so.
+// it doesnn't help that this bullet script was made all the way back in pre production in place of a proper firing animation as a demonstration
+// to show how we wanted our game to work as well as to test out putting an animation trigger into a turret. Unfortunately it's too late now to change.

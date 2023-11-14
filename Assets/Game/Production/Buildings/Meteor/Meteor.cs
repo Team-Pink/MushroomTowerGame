@@ -18,8 +18,11 @@ public class Meteor : Building
     
     public List<Node> connectedNodes;
 
+    private LineMode lineMode = LineMode.Default;
     public GameObject displayLinePrefab;
-    public Material displayLineMaterial;
+    public Material displayLineDefault;
+    public Material displayLineHighlighted;
+    public Material displayLineSell;
     private List<GameObject> displayLines = new();
     private Vector3 lineRendererOffset = new(0, 1.5f, 0);
 
@@ -45,6 +48,26 @@ public class Meteor : Building
         ClearDestroyedNodes();
 
         bud.SetActive(!budDetached);
+
+        if (lineMode == LineMode.Default)
+        {
+            recurseHighlight = false;
+            for (int i = 0; i < connectedNodes.Count; i++)
+            {
+                if (connectedNodes[i].recurseHighlight)
+                {
+                    SetLineHighlighted(connectedNodes[i]);
+                }
+                else if (connectedNodes[i].showSelling)
+                {
+                    SetLineSell(connectedNodes[i]);
+                }
+                else
+                {
+                    SetLineDefault(connectedNodes[i]);
+                }
+            }
+        }
     }
 
     public void Damage(float damageAmount)
@@ -69,37 +92,76 @@ public class Meteor : Building
     public void AddNode(Node node)
     {
         connectedNodes.Add(node);
+
+        AddLine(node);
     }
 
     public void RemoveNode(Node node)
     {
+        RemoveLine(node);
+
         connectedNodes.Remove(node);
     }
 
-    public override void ShowDefaultLines()
+    public override void AddLine(Building target)
     {
-        ResetLines();
+        GameObject line = Instantiate(displayLinePrefab, transform);
+        displayLines.Add(line);
 
-        for (int i = 0; i < connectedNodes.Count; i++)
+        LineRenderer renderer = line.GetComponent<LineRenderer>();
+        renderer.material = displayLineDefault;
+        renderer.SetPosition(0, (transform.position - target.transform.position) + lineRendererOffset);
+        renderer.SetPosition(1, lineRendererOffset);
+    }
+    public override void RemoveLine(Building target)
+    {
+        int index = connectedNodes.IndexOf(target as Node);
+        Destroy(displayLines[index]);
+        displayLines.Remove(displayLines[index]);
+    }
+
+
+
+    public override void SetLineDefault(Building target)
+    {
+        int index = connectedNodes.IndexOf(target as Node);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineDefault;
+    }
+
+    public override void SetLinesDefault()
+    {
+        lineMode = LineMode.Default;
+        foreach (GameObject line in displayLines)
         {
-            Building building = connectedNodes[i];
-
-            GameObject line = Instantiate(displayLinePrefab, transform);
-            displayLines.Add(line);
-
-            LineRenderer renderer = line.GetComponent<LineRenderer>();
-            renderer.material = displayLineMaterial;
-            renderer.SetPosition(0, (transform.position - building.transform.position) + lineRendererOffset);
-            renderer.SetPosition(1, lineRendererOffset);
+            line.GetComponent<LineRenderer>().material = displayLineDefault;
+        }
+        foreach (Node node in connectedNodes)
+        {
+            node.SetLinesDefault();
         }
     }
-    public override void ResetLines()
+
+    public override void SetLineHighlighted(Building target)
     {
-        int lineAmount = displayLines.Count;
-        for (int i = 0; i < lineAmount; i++)
+        int index = connectedNodes.IndexOf(target as Node);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineHighlighted;
+    }
+    public override void SetLinesHighlighted()
+    {
+        lineMode = LineMode.Highlighted;
+        foreach (GameObject line in displayLines)
         {
-            Destroy(displayLines[i]);
+            line.GetComponent<LineRenderer>().material = displayLineHighlighted;
         }
-        displayLines.Clear();
+        foreach (Node node in connectedNodes)
+        {
+            node.SetLinesHighlighted();
+        }
+    }
+
+    public override void SetLineSell(Building target)
+    {
+        int index = connectedNodes.IndexOf(target as Node);
+        displayLines[index].GetComponent<LineRenderer>().material = displayLineSell;
     }
 }
