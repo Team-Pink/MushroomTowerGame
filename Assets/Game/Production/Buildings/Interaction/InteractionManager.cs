@@ -93,7 +93,8 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject shroomSelectionMenu;
     [SerializeField, NonReorderable] Image[] shroomSelectionMenuButtons;
-    [SerializeField] Sprite lockedShroomSprite;
+    [SerializeField] Sprite[] lockedShroomSprites;
+    [SerializeField] Sprite[] highlightedShroomSprites; 
     private readonly Sprite[] shroomIconSprites = new Sprite[5];
     private int unlockedShrooms = 0;
     private readonly int maxShroomsUnlockable = 5;
@@ -177,7 +178,7 @@ public class InteractionManager : MonoBehaviour
 
             if (i >= unlockedShrooms)
             {
-                shroomSelectionMenuButtons[i].sprite = lockedShroomSprite;
+                shroomSelectionMenuButtons[i].sprite = lockedShroomSprites[i];
             }
         }
         
@@ -866,7 +867,7 @@ public class InteractionManager : MonoBehaviour
 
             SpawnShroom(hoveredButtonIndex);
 
-            hoveredButton.color = buttonBaseColour;
+            hoveredButton.sprite = shroomIconSprites[hoveredButtonIndex];
 
             ResetInteraction();
         }
@@ -1045,20 +1046,20 @@ public class InteractionManager : MonoBehaviour
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {
-                    radialButtons[i].color = buttonHoverColour;
+                    radialButtons[i].sprite = highlightedShroomSprites[i];
                     hoveredButtonIndex = i;
                 }
                 else
                 {
-                    radialButtons[i].color = buttonBaseColour;
+                    radialButtons[i].sprite = shroomIconSprites[i];
                 }
             }
         }
         else
         {
-            foreach (Image radialButton in radialButtons)
+            for (int i = 0; i < radialButtons.Length; i++)
             {
-                radialButton.color = buttonBaseColour;
+                if (i < unlockedShrooms) radialButtons[i].sprite = shroomIconSprites[i];
             }
         }
 
