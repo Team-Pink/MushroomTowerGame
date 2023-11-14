@@ -171,6 +171,8 @@ public class Node : Building
 
         deactivatedMesh.SetActive(false);
         nodeMesh.SetActive(true);
+
+        currentHealth = nodeHealth;
     }
 
     public void ToggleResidual(bool value)
@@ -179,17 +181,11 @@ public class Node : Building
 
         if (isResidual)
         {
-            foreach (Building connectedBuilding in connectedBuildings)
-            {
-                connectedBuilding.Deactivate();
-            }
+            Deactivate();
         }
-        else if (Active)
+        else
         {
-            foreach (Building connectedBuilding in connectedBuildings)
-            {
-                connectedBuilding.Reactivate();
-            }
+            Reactivate();
         }
 
         if (Active)

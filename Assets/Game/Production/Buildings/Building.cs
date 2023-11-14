@@ -30,7 +30,6 @@ public abstract class Building : MonoBehaviour
 
     public virtual void Sell()
     {
-        //Debug.Log("Sold", this);
     }
 
     public IEnumerator ExpandRadiusDisplay()

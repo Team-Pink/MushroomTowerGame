@@ -3,6 +3,7 @@ using TMPro;
 
 public class WaveCounter : MonoBehaviour
 {
+    [SerializeField] WaveSpawner waveSpawner;
 
     [SerializeField] TMP_Text currentWave;
     [SerializeField] TMP_Text maxWaves;
@@ -11,13 +12,12 @@ public class WaveCounter : MonoBehaviour
     private void Start()
     {
         currentWave.text = "0";
-        //maxWaves.text = waveManager.maxWaves; // not its actual name
+        maxWaves.text = waveSpawner.Waves.Length.ToString();
     }
 
     public void IncWaveCounter() {
 
-        //currentWave.text = waveManager.currentWave; // not its actual name
-    
+        currentWave.text = (waveSpawner.CurrentWave + 1).ToString();
     }
 
 
