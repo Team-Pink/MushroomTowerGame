@@ -310,13 +310,18 @@ public class InteractionManager : MonoBehaviour
     {
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
+        targetBuilding.recurseHighlight = true;
+
         if (targetBuilding is not Shroom)
         {
-            if (targetBuilding is Node && ((targetBuilding as Node).isResidual || !targetBuilding.Active))
+            if (targetBuilding is Node && ((!targetBuilding.Active) || (targetBuilding as Node).isResidual))
             {
-                targetBuilding.ShowDeactivateLines();
+                targetBuilding.SetLinesDefault();
             }
-            else targetBuilding.ShowDefaultLines();
+            else
+            {
+                targetBuilding.SetLinesHighlighted();
+            }
         }
 
         if (!interactKeyHeld)
@@ -482,9 +487,11 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
+        targetBuilding.showSelling = true;
+
         if (targetBuilding is Node)
         {
-            targetBuilding.ShowDeactivateLines();
+            targetBuilding.SetLinesSell();
             cursorManager.DisplayCost((targetBuilding as Node).GetNodeSellAmount());
             if(cursorManager.currentCursorState != "HighlightedShovel")
             {
@@ -622,7 +629,12 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
-                ResetInteraction();
+                if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
+                && tutorial.currentPart == 1)
+                {
+                    tutorial.ReverseTutorial();
+                }
+                    ResetInteraction();
             }
 
             radiusDisplay.SetActive(false);
@@ -1119,9 +1131,12 @@ public class InteractionManager : MonoBehaviour
 
         if (targetBuilding != null)
         {
+            targetBuilding.recurseHighlight = false;
+            targetBuilding.showSelling = false;
+
             if (targetBuilding is not Shroom)
             {
-                targetBuilding.ResetLines();
+                targetBuilding.SetLinesDefault();
 
                 if (targetBuilding is Meteor)
                     (targetBuilding as Meteor).budDetached = false;
