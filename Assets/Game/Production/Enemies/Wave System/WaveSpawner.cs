@@ -126,8 +126,10 @@ public class WaveSpawner : MonoBehaviour
     public static GameObject[] EnemyPrefabs;
 
     [SerializeField] Wave[] waves;
+    public Wave[] Waves { get => waves; }
     private Wave currentWave;
     private int currentWaveIndex;
+    public int CurrentWave { get => currentWaveIndex; }
     private readonly List<Batch> activeBatches = new();
     private int nextBatch;
 
@@ -145,6 +147,8 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Meteor meteor;
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
+
+    [SerializeField] WaveCounter waveCounter;
         
     [SerializeField] RectTransform waveIndicator;
     [SerializeField] Image waveTimer;
@@ -222,6 +226,8 @@ public class WaveSpawner : MonoBehaviour
 
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)
         {
+            waveCounter.IncWaveCounter();
+
             spawnState = State.Spawning;
             elapsedSecondsBetweenWaves = 0.0f;
 
