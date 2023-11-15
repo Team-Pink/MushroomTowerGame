@@ -177,6 +177,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 2:
                 // Waits for Advancement from Interaction Manager
+                break;
             case 3:
                 if (elapsedGracePeriod >= gracePeriod)
                 {

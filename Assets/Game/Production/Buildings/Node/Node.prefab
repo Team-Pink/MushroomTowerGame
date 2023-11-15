@@ -388,7 +388,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 4}
-  m_SizeDelta: {x: 3, y: 3}
+  m_SizeDelta: {x: 3, y: 3.353}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1820438909734358899
 CanvasRenderer:
@@ -418,7 +418,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 602a1e515250c974fbe054945573cd20, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6c27144bf4ad38447a8d926b6d6dd50c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -457,9 +457,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 17fa71843a4e3304782b960a4a080846, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 17fa71843a4e3304782b960a4a080846, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: 602a1e515250c974fbe054945573cd20, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 31ced74de920a874cadc9a504513de59, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 31ced74de920a874cadc9a504513de59, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 31ced74de920a874cadc9a504513de59, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -839,9 +839,9 @@ MonoBehaviour:
   regrowCanvas: {fileID: 1470488734488510315}
   connectedBuildings: []
   displayLinePrefab: {fileID: 942136504299863035, guid: 42d426f044d1bfb45b9427a15b13c3fc, type: 3}
-  displayLineDefault: {fileID: 2100000, guid: 8cf634f1ddf0d7b42adcb00a1c391f48, type: 2}
+  displayLineDefault: {fileID: 2100000, guid: 138adaa9a4c1c4541b0e5d80b2cc1868, type: 2}
+  displayLineHighlighted: {fileID: 2100000, guid: 8cf634f1ddf0d7b42adcb00a1c391f48, type: 2}
   displayLineSell: {fileID: 2100000, guid: 3bddf1698741f77479d342dca69f4967, type: 2}
-  displayLineDeactivate: {fileID: 2100000, guid: 138adaa9a4c1c4541b0e5d80b2cc1868, type: 2}
   placeAudio: {fileID: 8300000, guid: baa101de40515f048a274cba2bd64e73, type: 3}
   deathAudio: {fileID: 8300000, guid: c0bda499c2a7f83488a3e4f2420c3c00, type: 3}
 --- !u!65 &8614919214301096660
