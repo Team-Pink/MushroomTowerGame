@@ -1947,9 +1947,10 @@ MonoBehaviour:
   placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
-    m_Bits: 2496
-  placementExclusionSize: 1.2
-  maxDistanceFromNode: 6
+    m_Bits: 2432
+  shroomXShroomExclusion: 3
+  nodeXShroomExclusion: 1
+  nodeXNodeExclusion: 6
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   sellButton: {fileID: 0}
