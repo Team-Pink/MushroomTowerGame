@@ -273,24 +273,27 @@ public class InteractionManager : MonoBehaviour
 
             if (currentHit.collider is null)
             {
-                if ((new Vector2(0, Screen.height) +
-                    (sellButtonTransform.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) -
-                    new Vector2(mouseScreenPosition.x, mouseScreenPosition.y)).magnitude < 60 * sellButtonTransform.localScale.x)
+                if (sellButtonTransform.gameObject.activeSelf)
                 {
-                    sellButton.sprite = sellButtonHighlight;
-                    if (Input.GetKeyDown(interactKey))
+                    if ((new Vector2(0, Screen.height) +
+                        (sellButtonTransform.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) -
+                        new Vector2(mouseScreenPosition.x, mouseScreenPosition.y)).magnitude < 60 * sellButtonTransform.localScale.x)
                     {
-                        sellButton.sprite = sellButtonActive;
-                        CurrentInteraction = InteractionState.Selling;
+                        sellButton.sprite = sellButtonHighlight;
+                        if (Input.GetKeyDown(interactKey))
+                        {
+                            sellButton.sprite = sellButtonActive;
+                            CurrentInteraction = InteractionState.Selling;
+                        }
                     }
-                }
-                else
-                {
-                    sellButton.sprite = sellButtonDefault;
-
-                    if (targetBuilding is not null)
+                    else
                     {
-                        ResetInteraction();
+                        sellButton.sprite = sellButtonDefault;
+
+                        if (targetBuilding is not null)
+                        {
+                            ResetInteraction();
+                        }
                     }
                 }
             }
