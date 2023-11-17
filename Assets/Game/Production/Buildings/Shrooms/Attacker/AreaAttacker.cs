@@ -37,7 +37,6 @@ public class AreaAttacker : Attacker
                 areaAttack.hitParticlePrefab = hitParticlePrefab;
                 areaAttack.hitSoundEffect = attackHitSoundEffect;
 
-                areaAttack.areaHitTargets = new(); 
                 areaAttack.damageRadius = damageRadius;
                 areaAttack.mask = mask;
 
@@ -52,8 +51,7 @@ public class AreaAttacker : Attacker
                 
                 if(lobProjectile)
                 {
-                    areaAttack.noTracking = true;
-                    targetsToShoot.Add(new Target(new Vector3() + target.position, null));
+                    targetsToShoot.Add(new Target(target.position, null));
                 }
                 else targetsToShoot.Add(target);
 

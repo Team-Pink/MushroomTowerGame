@@ -37,8 +37,10 @@ public static class GenericUtility
     /// <param name="posA"></param>
     /// <param name="posB"></param>
     /// <returns></returns>
-    public static float CalculateDistance(Vector3 posA, Vector3 posB)
+    public static float CalculateFlatDistance(Vector3 posA, Vector3 posB)
     {
-        return Mathf.Sqrt(Mathf.Pow(posB.x - posA.x, 2) + Mathf.Pow(posB.z - posA.z, 2));
+        Vector3 displacement = posB - posA;
+        displacement.y = 0;
+        return displacement.magnitude;
     }
 }
