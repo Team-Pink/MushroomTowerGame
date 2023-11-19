@@ -60,7 +60,7 @@ public class Bullet : MonoBehaviour
     public void CommonVariablesToInitialize()
     {
         startPos = transform.position;
-        if (spin) spinSFXprefab.GetComponent<VisualEffect>().Play();
+        if (spin) GetComponent<VisualEffect>().Play();
         initialised = true;
     }
 

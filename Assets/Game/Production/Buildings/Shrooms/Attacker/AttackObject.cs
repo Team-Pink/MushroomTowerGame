@@ -20,8 +20,6 @@ public class AttackObject : MonoBehaviour
     public LayerMask mask;
     public bool noTracking = false;
 
-    public List<float> times;
-
     #region TAG SPECIFIC VARIABLES
     public int tagSpecificDamage;
     public HashSet<Enemy> tagSpecificEnemiesHit = new HashSet<Enemy>(); //enemies that were hit as a result of tags like spray
@@ -47,8 +45,6 @@ public class AttackObject : MonoBehaviour
             Debug.DrawLine(target.position + Vector3.up * 5, target.position, Color.blue, 10);
 
         }
-
-        times.Add(delayToTarget);
 
         yield return new WaitForSeconds(delayToTarget + animationDelay); //this was originally a timer in the update loop but if you want coroutine's then sure I'll see what I can do.
 
@@ -110,8 +106,6 @@ public class AttackObject : MonoBehaviour
             originShroom.AttackerComponent.bounceBulletInShroomPossession = true;
             attackerComponent.returning = returningToShroom;
         }//this is for bounce only to allow the shroom to shoot again.
-
-        //Debug.Log("Objects Made To return To Shroom: " + numberOfReturnsMade + ", Number of Attack Objects made: " + numberOfAtkObjsMade + ", And Bounce Attack Objects Made: " + numberOfBounceObjsMade);
 
         Destroy(gameObject); // Destroy this object
     }
@@ -228,8 +222,6 @@ public class AttackObject : MonoBehaviour
         attackInProgress.returningToShroom = returningToShroom;
         attackInProgress._velocity = _velocity;
 
-        attackInProgress.times = times;
-
         return attackInProgress;
     }
 
@@ -241,8 +233,6 @@ public class AttackObject : MonoBehaviour
             float timeToShroom = Vector3.Distance(lastHitPosition, originShroom.transform.position) / _velocity;
             originShroom.AttackerComponent.AnimateBounceProjectileToShroom(target, timeToShroom);
             returnToShroomTime = timeToShroom;
-
-            times.Add(timeToShroom);
         }
         else
         {
@@ -254,7 +244,6 @@ public class AttackObject : MonoBehaviour
             AttackObject newAttackObject = GenerateBounceAttackObject(newTargetEnemy, timeToTarget);
             newAttackObject.StartCoroutine(newAttackObject.CommenceAttack());
             originShroom.AttackerComponent.AnimateBounceProjectileToEnemy(target, newTargetEnemy, timeToTarget);
-
         }
     }
 }
