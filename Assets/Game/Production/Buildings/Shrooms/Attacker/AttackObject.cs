@@ -150,10 +150,11 @@ public class AttackObject : MonoBehaviour
             _velocity = GenericUtility.CalculateVelocity(GenericUtility.CalculateFlatDistance(originShroom.transform.position, lastHitPosition), delayToTarget);
         }
 
-        if (target.enemy == null)
+        if (!target.enemy)
         {
+            
             Debug.Log("TARGET LOST RETURNING TO SHROOM");
-            BounceToNextTarget(true, null);
+            BounceToNextTarget(true, null); // this might be what's causing the hovering bullets.
         }
 
         hitList.Add(target.enemy);
