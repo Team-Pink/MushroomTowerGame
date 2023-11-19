@@ -155,7 +155,7 @@ public class AttackObject : MonoBehaviour
     {
         if (_velocity <= 0) _velocity = originShroom.GetProjectileSpeed();
 
-        if (target.enemy == null)
+        if (!target.enemy)
         {
             Debug.Log("TARGET LOST RETURNING TO SHROOM");
             BounceToNextTarget(true, null);
