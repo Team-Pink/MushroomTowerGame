@@ -18,14 +18,14 @@ public class OpenPauseUI : MonoBehaviour
         if (!InteractionManager.tutorialMode)
         {
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+
+            InteractionManager.gamePaused = !InteractionManager.gamePaused;
+
+
+            activePause = !activePause;
+            // pause game
+            pauseMenu.SetActive(activePause);
         }
-
-        InteractionManager.gamePaused = !InteractionManager.gamePaused;
-
-
-        activePause = !activePause;
-        // pause game
-        pauseMenu.SetActive(activePause);
     }
 
     public void Quit()
