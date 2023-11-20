@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: animator
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 797732874162817271}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: details.name
       value: Mortar Tower
@@ -54,7 +54,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 628930401514738422}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 15
@@ -562,3 +562,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
+--- !u!137 &628930401514738422 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5263958542978301216, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
+  m_PrefabInstance: {fileID: 4735322499777064918}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &797732874162817271 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5378744272533071649, guid: 4a657ab0c725b754391ddc205617a5fe, type: 3}
+  m_PrefabInstance: {fileID: 4735322499777064918}
+  m_PrefabAsset: {fileID: 0}

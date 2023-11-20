@@ -14,7 +14,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: animator
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4496494230783388719}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: bulletPrefab
       value: 
@@ -42,7 +42,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: ChargeUpTransform
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8288381317044618151}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: attackerComponent
       value: 4335502593997406211
@@ -70,7 +70,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4229981299636255659}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 10
@@ -493,6 +493,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -538,3 +550,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+--- !u!137 &4229981299636255659 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5111846141337832752, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+  m_PrefabInstance: {fileID: 8954006462665438875}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &4496494230783388719 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4766432118342834868, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+  m_PrefabInstance: {fileID: 8954006462665438875}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8288381317044618151 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1100351152665687356, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
+  m_PrefabInstance: {fileID: 8954006462665438875}
+  m_PrefabAsset: {fileID: 0}
