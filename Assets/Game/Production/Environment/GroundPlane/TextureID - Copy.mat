@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TextureID
+  m_Name: TextureID - Copy
   m_Shader: {fileID: -6465566751694194690, guid: c0bb93d095241fc4686765d16b9683d5, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -127,27 +127,27 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex2_Basecolour:
-        m_Texture: {fileID: 2800000, guid: aece16f5659f1aa47b30162122908fd1, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Tex2_Normal:
-        m_Texture: {fileID: 2800000, guid: d964df7df2bcb0a4abd5830481bb6286, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Tex2_Smoothness:
-        m_Texture: {fileID: 2800000, guid: 818d1bbebbb24a04486b27368f820656, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Tex3_Basecolour:
         m_Texture: {fileID: 2800000, guid: 924e903998aa99f4dbf85ce12d4bef70, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Tex3_Normal:
+    - _Tex2_Normal:
         m_Texture: {fileID: 2800000, guid: 9ab83571860bd164c988fffc0e95af48, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Tex3_Smoothness:
+    - _Tex2_Smoothness:
         m_Texture: {fileID: 2800000, guid: 00826ade5111f36438d621fd76a2311c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex3_Basecolour:
+        m_Texture: {fileID: 2800000, guid: aece16f5659f1aa47b30162122908fd1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex3_Normal:
+        m_Texture: {fileID: 2800000, guid: d964df7df2bcb0a4abd5830481bb6286, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Tex3_Smoothness:
+        m_Texture: {fileID: 2800000, guid: 818d1bbebbb24a04486b27368f820656, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex4_Basecolour:
