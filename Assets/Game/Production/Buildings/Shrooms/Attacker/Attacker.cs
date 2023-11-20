@@ -120,7 +120,7 @@ public class Attacker
 
         Bullet bulletRef;
 
-        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
         bulletRef.timeToTarget = timeToTarget;
         bulletRef.target = targetEnemy;
         bulletRef.Initialise();
@@ -143,12 +143,12 @@ public class Attacker
 
         Bullet bulletRef;
         if (targetEnemy.enemy != null)
-        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
         else
-            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, originReference.transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, originReference.transform.position, Quaternion.identity).GetComponent<Bullet>();
         bulletRef.timeToTarget = timeToTarget;
         if (lobProjectile) bulletRef.parabola = true;
-        bulletRef.InitialiseForNonEnemies(originReference.transform);
+        bulletRef.InitialiseForTargetPosition(originReference.transform.position + Vector3.up * 2);
     }
 
     /// <summary>
