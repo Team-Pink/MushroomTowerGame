@@ -1954,8 +1954,8 @@ MonoBehaviour:
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   sellButton: {fileID: 0}
-  sellButtonHighlight: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
-  sellButtonActive: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
+  sellButtonHighlight: {fileID: 21300000, guid: 150dd55336a9b184a81fe81d4f1ac43a, type: 3}
+  sellButtonActive: {fileID: 21300000, guid: 150dd55336a9b184a81fe81d4f1ac43a, type: 3}
   selectionIndicator: {fileID: 0}
   greenBud: {fileID: 21300000, guid: 7ee54e8576e0e7244a21167dc7c6f017, type: 3}
   redBud: {fileID: 21300000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
@@ -2442,19 +2442,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursors:
   - cursorName: Default
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 0
   - cursorName: CannotPlace
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
   - cursorName: CanPlace
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
   - cursorName: Shovel
-    cursorSprite: {fileID: 21300000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 18d67692fe3a3f64994c88b3c64c3f94, type: 3}
     displayCost: 0
   - cursorName: HighlightedShovel
-    cursorSprite: {fileID: 21300000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 8f24f2161365c3b4891b13b51b410ed4, type: 3}
     displayCost: 1
   costText: {fileID: 0}
   costPositionFromSoftwareMousePoint: {x: 40, y: -40}
@@ -2503,7 +2503,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   regrowHasPlayed: 0
-  sellingWave: 7
+  sellingWave: 1
   sellingParts:
   - {fileID: 0}
   - {fileID: 0}
