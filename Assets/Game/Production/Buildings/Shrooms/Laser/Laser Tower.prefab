@@ -14,7 +14,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: animator
       value: 
-      objectReference: {fileID: 2157652692005259985}
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: bulletPrefab
       value: 
@@ -70,7 +70,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
-      objectReference: {fileID: 1811763751289970005}
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 10
@@ -154,7 +154,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4335502593997406211].animator
       value: 
-      objectReference: {fileID: 2157652692005259985}
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: managedReferences[4951535851181441032].turnRate
       value: 5
@@ -477,17 +477,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23cbdd097d57c7f4ebf48502456b6355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &6905216090917687397
+--- !u!1001 &8954006462665438875
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 4934701682232051942}
     m_Modifications:
-    - target: {fileID: 1078346766, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
-      propertyPath: tower
-      value: 
-      objectReference: {fileID: 8458371139374482302}
     - target: {fileID: 1078346766, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: shroom
       value: 
@@ -514,15 +510,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5021370370831095193, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -542,13 +538,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
---- !u!137 &1811763751289970005 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5111846141337832752, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
-  m_PrefabInstance: {fileID: 6905216090917687397}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &2157652692005259985 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 4766432118342834868, guid: c65a48e4309afb04cb0e2b25f99bbd90, type: 3}
-  m_PrefabInstance: {fileID: 6905216090917687397}
-  m_PrefabAsset: {fileID: 0}
