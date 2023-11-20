@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -18,10 +19,6 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
 
-    // spin variables
-    [SerializeField] bool spin;
-    private GameObject spinSFXprefab;
-    //public float spinSpeed = 1;
 
 
 
@@ -38,11 +35,15 @@ public class Bullet : MonoBehaviour
         CommonVariablesToInitialize();
     }
 
-    public void InitialiseForNonEnemies(Transform _transform) // what do you mean by non enemies also I might change _transform to be a position that is fed to targetPos at some point for safety.
+    /// <summary>
+    /// This does not track moving targets but a singular position.
+    /// </summary>
+    public void InitialiseForTargetPosition(Vector3 tPosition)
     {
-
-        targetTransform = _transform;
+        startPos = transform.position;
+        targetPos = tPosition;
         CommonVariablesToInitialize();
+
     }
 
     public void Initialise()
@@ -56,22 +57,19 @@ public class Bullet : MonoBehaviour
     public void CommonVariablesToInitialize()
     {
         startPos = transform.position;
-        if (spin)
-        {
-            spinSFXprefab.GetComponent<VisualEffect>().Play();
-        }
-        initialised = true;
+        initialised = true;        
+        StartCoroutine(SelfDestruct());
     }
 
     void Update()
     {
         if (!initialised) return;
 
-        if (timeElapsed >= timeToTarget)
-        {
-            Destroy(gameObject);
-        }
-        timeElapsed += Time.deltaTime;
+       if (timeElapsed >= timeToTarget)
+       {
+           Destroy(gameObject);
+       }
+       timeElapsed += Time.deltaTime;
 
 
 
@@ -105,6 +103,17 @@ public class Bullet : MonoBehaviour
         transform.position = currentPos; // Update position
 
     }
+
+    /// <summary>
+    /// This is a failed measure to try stopping the ghost bullets
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SelfDestruct()
+    {
+        yield return new WaitForSeconds(4);
+        Destroy(gameObject);
+    }
+
 
     //void LooseTargetTracking()
     //{
