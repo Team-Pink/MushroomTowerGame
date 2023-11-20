@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
-        m_Texture: {fileID: 2800000, guid: 036cef3e043534e4787c2f7134674246, type: 3}
+        m_Texture: {fileID: 2800000, guid: 03399aac9319ea94d8e0ddb407312dfe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mud_Basecolour:
@@ -56,6 +56,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Mud_Smoothness:
         m_Texture: {fileID: 2800000, guid: c8cbf4d5c928fa2438448828d3ea00b8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: dc03835f01ebbc34faf385f1364119d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal0:
@@ -75,6 +79,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalArray:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalFromTexture_34dfd22dd264499ca953a37a5105406e_Texture_0:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -115,15 +123,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Basecolour:
-        m_Texture: {fileID: 2800000, guid: 3d16d5f8610dae24c933c11a2943f332, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2cb2a7931988f314690eef220bede3bc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Normal:
-        m_Texture: {fileID: 2800000, guid: dbde8e7ef9eb2214c9fdb06d12083cb3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 64512ec20beadbc4bb27ab5e28fbceb6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Smoothness:
-        m_Texture: {fileID: 2800000, guid: 446477dd7bc62054d9dae59b36380c10, type: 3}
+        m_Texture: {fileID: 2800000, guid: daf92d5b4616f4343bafec845c2970b6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex2_Basecolour:
@@ -175,7 +183,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture_ID_Map:
-        m_Texture: {fileID: 2800000, guid: a1861f5d4901e6d43b1b56f6d3350281, type: 3}
+        m_Texture: {fileID: 2800000, guid: 88409cf2b6b82bf49ac79bb35a505cd7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -198,9 +206,11 @@ Material:
     - _CastShadows: 1
     - _Cull: 2
     - _DstBlend: 0
+    - _Edge_Noise_Scale: 3.1
     - _Height_Normal_Strength: 1
     - _Height_Strength: 50
     - _Mud_Tiling: 11.58
+    - _Normal_Noise_Scale: 32.63
     - _Normal_Strength: 1.17
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -211,7 +221,7 @@ Material:
     - _Stone_Tiling: 2.79
     - _Strength: 1
     - _Surface: 0
-    - _Tex1_Tiling: 1.79
+    - _Tex1_Tiling: 11.3
     - _Tex2_Tiling: 10.55
     - _Tex3_Tiling: 10.27
     - _Tex4_Tiling: 1
