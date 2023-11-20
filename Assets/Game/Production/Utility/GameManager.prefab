@@ -1871,6 +1871,7 @@ GameObject:
   - component: {fileID: 6829538405946730101}
   - component: {fileID: 4105631474352096952}
   - component: {fileID: 2288347274951756725}
+  - component: {fileID: 5583641233090253150}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1907,81 +1908,79 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPlane: {fileID: 0}
-  pylonPrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
-  towerPrefabs:
+  nodePrefab: {fileID: 5090340476508024332, guid: 57dc6abcd36ae7e4e89533ca3bc1f966, type: 3}
+  shroomPrefabs:
   - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
   - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
-  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
   - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
+  - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
   - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   buildingLayers:
     serializedVersion: 2
     m_Bits: 448
-  towerTooltips: {fileID: 0}
-  towerName: {fileID: 0}
-  towerNames:
+  shroomTooltip: {fileID: 0}
+  shroomName: {fileID: 0}
+  shroomNames:
+  - Shroomiken
+  - Sludge Slinger
+  - Spore Launcher
   - Crushroom
   - Biolumenaser
-  - Shroomiken
-  - Spore Launcher
-  - Sludge Slinger
-  towerDescription: {fileID: 0}
-  towerDescriptions:
+  shroomDescription: {fileID: 0}
+  shroomDescriptions:
+  - 'Low Damage
+
+    Bouncing Shots'
+  - 'Damage Over Time
+
+    Slows Enemies'
+  - 'Low Area Damage
+
+    Large Area of Effect'
   - 'Area Damage
 
     Slow Attack Rate'
   - 'High Damage
 
     Slow Charge Up'
-  - 'Low Damage
-
-    Bouncing Shots'
-  - 'Low Area Damage
-
-    Large Area of Effect'
-  - 'Damage Over Time
-
-    Slows Enemies'
-  towerRadiusPreviewPrefab: {fileID: 0}
+  radiusPreviewPrefab: {fileID: 5336379278011127067, guid: 9d8093351fdca6d4bbdb8e43ccdf17a2, type: 3}
   placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
-    m_Bits: 2496
-  placementExclusionSize: 1.2
-  maxDistanceFromPylon: 6
-  maxPylonsPerHub: 4
-  maxTowersPerPylon: 3
-  maxPylonsPerPylon: 2
+    m_Bits: 2432
+  shroomXShroomExclusion: 3
+  nodeXShroomExclusion: 1
+  nodeXNodeExclusion: 6
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
+  sellButton: {fileID: 0}
+  sellButtonHighlight: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
+  sellButtonActive: {fileID: 21300000, guid: eb5775b67882b284fa8f4eaf2c18f0ff, type: 3}
   selectionIndicator: {fileID: 0}
+  greenBud: {fileID: 21300000, guid: 7ee54e8576e0e7244a21167dc7c6f017, type: 3}
+  redBud: {fileID: 21300000, guid: dc4ce9144c269744c882ebf2120bf08c, type: 3}
   radialExclusionZone: 40
-  pylonMenu: {fileID: 0}
-  pylonMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  pylonMenuCostText: {fileID: 0}
-  residualMenu: {fileID: 0}
-  residualMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  residualMenuCostText: {fileID: 0}
-  towerMenu: {fileID: 0}
-  towerMenuButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  towerMenuCostText: {fileID: 0}
-  towerSelectionMenu: {fileID: 0}
-  towerSelectionMenuButtons:
+  shroomSelectionMenu: {fileID: 0}
+  shroomSelectionMenuButtons:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  lockedTowerSprite: {fileID: 0}
-  towerSelectionCostText: {fileID: 0}
+  lockedShroomSprites:
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 5b267e90a11108e4fb2555db8e52c878, type: 3}
+  - {fileID: 21300000, guid: cd6dfe42544879b44a5627f2eca4b150, type: 3}
+  - {fileID: 21300000, guid: a34c78ce2058e3c468e3d3374a797f04, type: 3}
+  - {fileID: 21300000, guid: db272a6ffe53bcf4789430293ab80b2f, type: 3}
+  highlightedShroomSprites:
+  - {fileID: 21300000, guid: 19774a58540c59241980c06bf42094b7, type: 3}
+  - {fileID: 21300000, guid: a3b606935af052a47a428d9970172f04, type: 3}
+  - {fileID: 21300000, guid: 2f27c99badbaef24485ee502e49441e0, type: 3}
+  - {fileID: 21300000, guid: 9218ac99d5e29174b9cd4bbba62ab266, type: 3}
+  - {fileID: 21300000, guid: 83bc98ff42c49b844bc5f4babf0fe55a, type: 3}
+  unlockAllShrooms: 0
+  shroomSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
   canNotPurchaseColour: {r: 1, g: 0, b: 0, a: 1}
   sellColour: {r: 0, g: 1, b: 0.00427413, a: 1}
@@ -1989,6 +1988,7 @@ MonoBehaviour:
   interactKey: 323
   cancelKey: 324
   interactHoldRequirement: 0.15
+  currentInteraction: 0
   showMouseDirection: 0
   showCameraProjection: 1
   logInteractionChange: 0
@@ -2018,115 +2018,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbf2c7b46357f7446840d36b7672b637, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  enemyPrefabs:
+  - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
+  - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
+  - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
+  - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
   waves:
-  - enemyPrefabs:
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    durationInSeconds: 20
-    enemyCount: 15
-  - enemyPrefabs:
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    durationInSeconds: 40
-    enemyCount: 35
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    durationInSeconds: 50
-    enemyCount: 35
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 50
-    enemyCount: 50
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 80
-    enemyCount: 90
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 80
-    enemyCount: 100
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 60
-    enemyCount: 80
-  - enemyPrefabs:
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    durationInSeconds: 60
-    enemyCount: 100
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 60
-    enemyCount: 100
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 70
-    enemyCount: 110
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 80
-    enemyCount: 132
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    durationInSeconds: 100
-    enemyCount: 70
-  - enemyPrefabs:
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 110
-    enemyCount: 110
-  - enemyPrefabs:
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    durationInSeconds: 50
-    enemyCount: 90
-  - enemyPrefabs:
-    - {fileID: 1008108567171407266, guid: 676cf70db3386324093b2c430351023f, type: 3}
-    - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
-    - {fileID: 1008108567171407266, guid: c1c0ee4102bc9ee48b902cb9964ff2a3, type: 3}
-    - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
-    durationInSeconds: 10
-    enemyCount: 275
-  secondsBetweenWaves: 3
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 20
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  - duration: 30
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 1
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  - duration: 30
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 1
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  - duration: 30
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 2
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  secondsBetweenWaves: 5
   parentFolder: {fileID: 0}
-  hub: {fileID: 0}
+  meteor: {fileID: 0}
   wonText: {fileID: 0}
+  waveCounter: {fileID: 0}
   waveIndicator: {fileID: 0}
   waveTimer: {fileID: 0}
   indicatorPositions:
@@ -2142,14 +2109,15 @@ MonoBehaviour:
   - {x: 1185, y: 60}
   - {x: 480, y: 60}
   - {x: 400, y: 60}
-  towerUnlockTooltip: {fileID: 0}
-  towerIcon: {fileID: 0}
-  towerSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  unlockTooltipDuration: 2
+  shroomUnlockTooltip: {fileID: 0}
+  shroomIcon: {fileID: 0}
+  shroomSprites:
+  - {fileID: 21300000, guid: 502afc4fa79c6ac479e30779913fd2fa, type: 3}
+  - {fileID: 21300000, guid: 343b91bfc307735409c06b43625231e1, type: 3}
+  - {fileID: 21300000, guid: b78cd8e395a0cfb49a3a90924853828d, type: 3}
+  - {fileID: 21300000, guid: b73dae983eb291a4da66c6d27af8d778, type: 3}
+  - {fileID: 21300000, guid: c4723ebfd7db21643a84d343f35fa2c5, type: 3}
+  unlockTooltipDuration: 3
 --- !u!114 &6829538405946730101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2194,11 +2162,78 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursors:
   - cursorName: Default
-    cursorTexture: {fileID: 2800000, guid: 5f43c0d0bc155074fa549ab66ff2a394, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    displayCost: 0
   - cursorName: CannotPlace
-    cursorTexture: {fileID: 2800000, guid: 920a81019b2be0b4ba8f99f8f6cfb851, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    displayCost: 1
   - cursorName: CanPlace
-    cursorTexture: {fileID: 2800000, guid: 62436c39dd9e78749aea1468225dff26, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    displayCost: 1
+  - cursorName: Shovel
+    cursorSprite: {fileID: 21300000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
+    displayCost: 0
+  - cursorName: HighlightedShovel
+    cursorSprite: {fileID: 21300000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
+    displayCost: 1
+  costText: {fileID: 0}
+  costPositionFromSoftwareMousePoint: {x: 40, y: -40}
+  softwareCursorImage: {fileID: 0}
+--- !u!114 &5583641233090253150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6533875848915131746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3b722f0ba9f9384c8e68498a2f3d4c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentTutorial: 0
+  currentPart: 0
+  gracePeriod: 0.5
+  boomy: {fileID: 0}
+  placementParts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  placementSpotlights:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  placementHasPlayed: 0
+  warningWave: 4
+  warningWaitTime: 3
+  elapsedWarningWaitTime: 0
+  warningParts:
+  - {fileID: 0}
+  warningHasPlayed: 0
+  regrowParts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  regrowSpotlights:
+  - {fileID: 0}
+  - {fileID: 0}
+  regrowHasPlayed: 0
+  sellingWave: 3
+  sellingParts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  sellingSpotlights:
+  - {fileID: 0}
+  - {fileID: 0}
+  sellButton: {fileID: 0}
+  sellingHasPlayed: 0
 --- !u!1 &6597148967594781695
 GameObject:
   m_ObjectHideFlags: 0

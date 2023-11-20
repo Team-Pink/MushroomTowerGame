@@ -51,6 +51,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6108232893249861861, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 5f53c145ca5d877439bba8cb392ef7c0, type: 2}
     - target: {fileID: 6342656681044953870, guid: 75d6b6131401c5c48a83a802e3a8d795, type: 3}
       propertyPath: m_Name
       value: SpinnyEnemy
@@ -173,8 +177,8 @@ MonoBehaviour:
   bugBits: 2
   animator: {fileID: 6916185956099597753}
   levelData: {fileID: 0}
-  hubTransform: {fileID: 0}
-  hub: {fileID: 0}
+  meteorTransform: {fileID: 0}
+  meteor: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 1
   meshRenderer: {fileID: 7270014576426686612}
@@ -182,6 +186,8 @@ MonoBehaviour:
   attackAudio: {fileID: 8300000, guid: 6ff1de71c4d2dab40b4f10599a4652c9, type: 3}
   deathAudio: {fileID: 8300000, guid: bf2a1ab450a5bc64f87e65baafcc70ec, type: 3}
   speedUpMultiplier: 2
+  spinParticle: {fileID: 1143478770292234643, guid: 7e3b33dadfa884a4d94b9594b762e85b, type: 3}
+  explosionParticle: {fileID: 5583761525243034406, guid: bda618b5ea136484299eb858e4602664, type: 3}
 --- !u!4 &1008108567171407452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}

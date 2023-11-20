@@ -1,17 +1,113 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
 using Text = TMPro.TMP_Text;
 
 [System.Serializable]
+public class Batch
+{
+    public enum EnemyType
+    {
+        Mastic,
+        Biote,
+        Dissolvesp,
+        Gigant
+    }
+
+    [SerializeField] EnemyType enemy = EnemyType.Mastic;
+    public GameObject Enemy
+    {
+        get => WaveSpawner.EnemyPrefabs[(int)enemy];
+    }
+
+    [Range(1, 100)] public int amount = 1;
+
+    [Space()]
+
+    [SerializeField] Spawnpoint spawnOverride = null;
+    public Spawnpoint spawn
+    {
+        get
+        {
+            if (spawnOverride == null)
+            {
+                Debug.LogError("No spawn point set");
+            }
+            return spawnOverride;
+        }
+    }
+
+    public bool useDefaultSpawn
+    {
+        get
+        {
+            return spawnOverride == null;
+        }
+    }
+
+    [Space()]
+
+    [Tooltip("Play with previous batch")] public bool withPrevious = false;
+
+    [HideInInspector] public int nextEnemy;
+}
+
+[System.Serializable]
 public class Wave
 {
-    public List<GameObject> enemyPrefabs;
+    [Tooltip("Seconds")] public float duration;
 
-    public float durationInSeconds;
-    public int enemyCount;
+    [SerializeField] Spawnpoint defaultSpawn = null;
+    public Spawnpoint spawn
+    {
+        get
+        {
+            if (defaultSpawn == null)
+            {
+                Debug.LogError("No wave default spawn point set");
+            }
+            return defaultSpawn;
+        }
+    }
+
+    [Space()]
+
+    public Batch[] batches;
+
+    public int GetTotalEnemyCount()
+    {
+        int result = 0;
+
+        foreach (Batch batch in batches)
+        {
+            result += batch.amount;
+        }
+
+        return result;
+    }
+    public int GetGroupedEnemyCount()
+    {
+        int result = 0;
+
+        int currentMax = 0;
+        for (int i = 0; i < batches.Length; i++)
+        {
+            if (currentMax != 0 && batches[i].withPrevious == false)
+            {
+                result += currentMax;
+                currentMax = 0;
+            }
+
+            if (batches[i].amount > currentMax) currentMax = batches[i].amount;
+        }
+
+        result += currentMax;
+
+        return result;
+    }
 }
 
 
@@ -24,13 +120,16 @@ public class WaveSpawner : MonoBehaviour
         WaitingForWaveEnd
     }
 
-    [SerializeField] Transform[] spawnPoints;
-    private Transform currentSpawnPoint;
-    private int currentSpawnPointIndex;
+    [SerializeField] GameObject[] enemyPrefabs;
+    public static GameObject[] EnemyPrefabs;
 
     [SerializeField] Wave[] waves;
+    public Wave[] Waves { get => waves; }
     private Wave currentWave;
     private int currentWaveIndex;
+    public int CurrentWave { get => currentWaveIndex; }
+    private readonly List<Batch> activeBatches = new();
+    private int nextBatch;
 
     private State spawnState = State.BetweenWaves;
     private float spawnCooldown;
@@ -43,39 +142,41 @@ public class WaveSpawner : MonoBehaviour
     private readonly List<Enemy> aliveEnemies = new();
 
     [SerializeField] Transform parentFolder;
-    [SerializeField] Hub hub;
+    [SerializeField] Meteor meteor;
     [SerializeField] Text wonText;
     private LevelDataGrid levelData;
 
-    WaveCounter waveCounterUI; // UI element that needs to be updated at the end of a wave.
-    
+    [SerializeField] WaveCounter waveCounter;
+        
     [SerializeField] RectTransform waveIndicator;
     [SerializeField] Image waveTimer;
     [SerializeField] Vector2[] indicatorPositions;
 
-    [Header("Tower Unlocks")]
-    [SerializeField] GameObject towerUnlockTooltip;
-    [SerializeField] Image towerIcon;
-    [SerializeField] Sprite[] towerSprites = new Sprite[4];
+    [Header("Shroom Unlocks")]
+    [SerializeField] GameObject shroomUnlockTooltip;
+    [SerializeField] Image shroomIcon;
+    [SerializeField] Sprite[] shroomSprites = new Sprite[4];
     [SerializeField] float unlockTooltipDuration = 2;
+
+    // Tutorial
+    private TutorialManager tutorial;
 
     private void Awake()
     {
-        Time.timeScale = 0;
-        levelData = GetComponent<LevelDataGrid>();
+        EnemyPrefabs = enemyPrefabs;
 
-        CalculateSpawns();
+        levelData = GetComponent<LevelDataGrid>();
 
         currentWave = waves[currentWaveIndex];
 
-        spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
+        spawnCooldown = currentWave.duration / currentWave.GetGroupedEnemyCount();
 
-        waveCounterUI = FindObjectOfType<WaveCounter>(); // I hope this works ;)
+        tutorial = GetComponent<TutorialManager>();
     }
 
     private void Update()
     {
-        if (Time.timeScale == 0) return;
+        if (InteractionManager.gamePaused) return;
 
         switch (spawnState)
         {
@@ -88,6 +189,13 @@ public class WaveSpawner : MonoBehaviour
             case State.WaitingForWaveEnd:
                 WaitingForWaveEndState();
                 break;
+        }
+
+        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
+        {
+            shroomUnlockTooltip.SetActive(false);
+
+            if (spawnState != State.BetweenWaves) elapsedSecondsBetweenWaves = 0.0f;
         }
 
         List<Enemy> enemiesToRemove = new();
@@ -106,71 +214,126 @@ public class WaveSpawner : MonoBehaviour
 
     private void BetweenWavesState()
     {
-        if (elapsedSecondsBetweenWaves >= unlockTooltipDuration)
+        if (elapsedSecondsBetweenWaves < unlockTooltipDuration && currentWaveIndex > 0 && currentWaveIndex < 5)
         {
-            towerUnlockTooltip.SetActive(false);
-        }
-        else if (currentWaveIndex < 5)
-        {
-            towerUnlockTooltip.SetActive(true);
-            towerIcon.sprite = towerSprites[currentWaveIndex];
+            shroomUnlockTooltip.SetActive(true);
+            shroomIcon.sprite = shroomSprites[currentWaveIndex];
 
-            if (elapsedSecondsBetweenWaves == 0.0f)
+            if (elapsedSecondsBetweenWaves == 0.0f && currentWaveIndex > 0)
             {
-                GetComponent<InteractionManager>().UnlockTower(currentWaveIndex);
+                GetComponent<InteractionManager>().UnlockShroom(currentWaveIndex);
             }
         }
 
         if (elapsedSecondsBetweenWaves >= secondsBetweenWaves)
         {
-            spawnState = State.Spawning;
-            elapsedSecondsBetweenWaves = 0.0f;
+            waveCounter.IncWaveCounter();
 
-            waveIndicator.gameObject.SetActive(false);
+            spawnState = State.Spawning;
+
+            if (shroomUnlockTooltip.activeSelf == false)
+            {
+                elapsedSecondsBetweenWaves = 0.0f;
+            }
+
+            if (currentWave.spawn != null)
+            {
+                currentWave.spawn.waveIndicator.SetActive(false);
+            }
+
+            foreach (Batch batch in currentWave.batches)
+            {
+                if (batch.useDefaultSpawn == false)
+                {
+                    batch.spawn.waveIndicator.SetActive(false);
+                }
+            }
         }
         else
         {
-            waveIndicator.position = indicatorPositions[currentSpawnPointIndex];
-            waveIndicator.gameObject.SetActive(true);
+            if (currentWave.spawn != null)
+            {
+                currentWave.spawn.waveIndicator.SetActive(true);
+                currentWave.spawn.timer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+            }
 
-            waveTimer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+            foreach (Batch batch in currentWave.batches)
+            {
+                if (batch.useDefaultSpawn == false)
+                {
+                    batch.spawn.waveIndicator.SetActive(true);
+                    batch.spawn.timer.fillAmount = 1 - (elapsedSecondsBetweenWaves / secondsBetweenWaves);
+                }
+            }
             elapsedSecondsBetweenWaves += Time.deltaTime;
         }
     }
 
     private void SpawningState()
     {
-        if (cooldownElapsed >= spawnCooldown)
-        {
-            Enemy enemy = SpawnEnemy().GetComponent<Enemy>();
-            enemy.hub = hub;
-            enemy.hubTransform = hub.transform;
-            enemy.levelData = levelData;
-            enemy.transform.gameObject.SetActive(true);
-            aliveEnemies.Add(enemy);
+        if (shroomUnlockTooltip.activeSelf == true) elapsedSecondsBetweenWaves += Time.deltaTime;
 
-            cooldownElapsed = 0.0f;
-
-            spawnedEnemies++;
-
-            if (spawnedEnemies >= currentWave.enemyCount)
-                spawnState = State.WaitingForWaveEnd;
-        }
-        else
+        if (cooldownElapsed < spawnCooldown)
         {
             cooldownElapsed += Time.deltaTime;
+            return;
+        }
+        cooldownElapsed = 0;
+
+        RefillActiveBatches();
+
+        if (activeBatches.Count == 0)
+        {
+            spawnState = State.WaitingForWaveEnd;
+            return;
+        }
+
+        int i = 0;
+        while (i < activeBatches.Count)
+        {
+            Enemy enemy = SpawnNext(activeBatches[i]).GetComponent<Enemy>();
+
+            enemy.Initialise(meteor, levelData);
+
+            aliveEnemies.Add(enemy);
+
+            activeBatches[i].nextEnemy++;
+
+            if (activeBatches[i].nextEnemy >= activeBatches[i].amount)
+            {
+                activeBatches.RemoveAt(i);
+                continue;
+            }
+
+            spawnedEnemies++;
+            i++;
+        }
+
+
+        // Tutorial Activation
+
+        if (currentWaveIndex == tutorial.warningWave && !tutorial.warningHasPlayed)
+        {
+            tutorial.elapsedWarningWaitTime += Time.deltaTime;
+
+            if (tutorial.elapsedWarningWaitTime >= tutorial.warningWaitTime)
+            {
+                tutorial.StartTutorial(TutorialManager.Tutorial.Warning);
+            }
+        }
+
+        if (currentWaveIndex == tutorial.sellingWave && !tutorial.sellingHasPlayed)
+        {
+            tutorial.StartTutorial(TutorialManager.Tutorial.Selling);
         }
     }
 
     private void WaitingForWaveEndState()
     {
-        
         if (aliveEnemies.Count == 0)
         {
-            //UpdateWaveCounterUI(); // ** commented this out bcs we not using it anymore :) - James
             if (currentWaveIndex + 1 < waves.Length)
             {
-
                 Debug.Log("Next Wave Starting in " + secondsBetweenWaves + " Seconds");
 
                 InitialiseNextWave();
@@ -187,13 +350,38 @@ public class WaveSpawner : MonoBehaviour
             }
 
         }
-        
     }
 
-    private IEnumerator GameWon()
+    private GameObject SpawnNext(Batch batch)
     {
-        yield return new WaitForSeconds(5);
-        LoadScene(GetActiveScene().buildIndex);
+        GameObject prefabToSpawn = batch.Enemy;
+
+        Vector3 spawnPos;
+        if (batch.useDefaultSpawn) spawnPos = currentWave.spawn.position;
+        else spawnPos = batch.spawn.position;
+
+
+        GameObject enemyObject = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity, parentFolder);
+
+        enemyObject.name = "Wave " + (currentWaveIndex + 1) + " Enemy";
+
+        return enemyObject;
+    }
+
+    private void RefillActiveBatches()
+    {
+        if (activeBatches.Count == 0)
+        {
+            while (nextBatch < currentWave.batches.Length)
+            {
+                if (activeBatches.Count == 0 || currentWave.batches[nextBatch].withPrevious)
+                {
+                    activeBatches.Add(currentWave.batches[nextBatch]);
+                    nextBatch++;
+                }
+                else break;
+            }
+        }
     }
 
     private void InitialiseNextWave()
@@ -201,44 +389,17 @@ public class WaveSpawner : MonoBehaviour
         spawnState = State.BetweenWaves;
 
         currentWaveIndex++;
-        enemyNumber = 0;
-        CalculateSpawns();
         currentWave = waves[currentWaveIndex];
 
         spawnedEnemies = 0;
-        spawnCooldown = currentWave.durationInSeconds / currentWave.enemyCount;
+        spawnCooldown = currentWave.duration / currentWave.GetGroupedEnemyCount();
+
+        nextBatch = 0;
     }
 
-    private void CalculateSpawns()
+    private IEnumerator GameWon()
     {
-        currentSpawnPointIndex = Random.Range(0, spawnPoints.Length - 1);
-        currentSpawnPoint = spawnPoints[currentSpawnPointIndex];
+        yield return new WaitForSeconds(5);
+        LoadScene(GetActiveScene().buildIndex);
     }
-
-    int enemyNumber = 0;
-    private GameObject SpawnEnemy()
-    {
-        GameObject[] enemyPool = currentWave.enemyPrefabs.ToArray();
-        GameObject prefabToSpawn = enemyPool[Random.Range(0, enemyPool.Length)];
-
-        GameObject enemyObject = Instantiate(prefabToSpawn, currentSpawnPoint.position, Quaternion.identity, parentFolder);
-
-        enemyObject.name = "Child " + (currentWaveIndex + 1) + "-" + enemyNumber;
-        enemyNumber++;
-
-        return enemyObject;
-    }
-
-    /* ** commented this out bcs we not using it anymore :) - James
-     * 
-    /// <summary>
-    /// This is Lochlan's code for updating the WaveCounter UI element
-    /// </summary>
-    private void UpdateWaveCounterUI()
-    {
-        float waveProgress = (float)(currentWaveIndex +1)/ (float)waves.Length;
-        waveCounterUI.AnimateBitsFalling();
-        waveCounterUI.SetWaveCounterFill(waveProgress);
-    }
-    */
 }
