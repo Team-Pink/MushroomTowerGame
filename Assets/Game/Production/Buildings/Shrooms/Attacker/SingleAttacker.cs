@@ -1,14 +1,31 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SingleAttacker : Attacker
 {
     public override void Attack(HashSet<Target> targets)
     {
-        if (!attacking)
+        if (targets == null || targets.Count == 0) return;
+
+        Target target = targets.First();
+
+        if (!attacking && target.enemy is not null)
         {
-            
+            attacking = true;
+            currentTarget = target.enemy.transform;
+
             AnimateAttack();
+
+            //AttackObject singleAttack = GenerateAttackObject(target);
+            //singleAttack.hitParticlePrefab = hitParticlePrefab;
+            //singleAttack.hitSoundEffect = attackHitSoundEffect;
+
+            if (bounce)
+            {
+                bounceBulletInShroomPossession = false;
+            }
+
 
             if (windupParticlePrefab != null)
             {
@@ -17,34 +34,9 @@ public class SingleAttacker : Attacker
                 Object.Destroy(particle, animationLeadIn);
             }
 
-            attacking = true;
-            bounceBulletInShroomPossession = false;
+            //singleAttack.StartCoroutine(singleAttack.CommenceAttack(animationLeadIn));
 
-            foreach (var target in targets)
-            {
-                if (target.enemy is not null)
-                {
-                    AttackObject singleAttack = GenerateAttackObject(target);
-
-                    singleAttack.hitParticlePrefab = hitParticlePrefab;
-                    singleAttack.hitSoundEffect = attackHitSoundEffect;
-
-                    #region TAG IMPLEMENTATION
-                    if (strikethrough)
-                    {
-                        singleAttack.tagSpecificDamage = strikethroughDamage;
-
-                        HashSet<Enemy> hitEnemies = Strikethrough(target);
-
-                        singleAttack.tagSpecificEnemiesHit = hitEnemies;
-                    }
-                    #endregion
-
-                    singleAttack.StartCoroutine(singleAttack.CommenceAttack(animationLeadIn));
-
-                    targetsToShoot.Add(target);
-                }
-            }
+            targetsToShoot.Add(target);
         }
 
         if (!CheckCooldownTimer()) return;

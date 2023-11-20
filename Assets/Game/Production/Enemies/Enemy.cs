@@ -221,6 +221,7 @@ public class Enemy : MonoBehaviour
     #region Health Logic
     public virtual void TakeDamage(float damage)
     {
+        Debug.Log("Enemy took damage");
         health -= damage;
         if (health > 0)
         StartCoroutine(DisplayHurt());

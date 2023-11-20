@@ -87,7 +87,7 @@ public class Shroom : Building
     [SerializeField] GameObject attackObjectPrefab;
 
     // Shroom values
-    [SerializeField] private float projectileSpeed = 1.5f; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! assign this properly on prefabs!
+    [SerializeField] private float projectileSpeed = 1.5f; //assign this properly on prefabs!
     // setting the above to zero WILL cause a divide by zero error!!!
     public float GetProjectileSpeed() => projectileSpeed;
 
@@ -316,21 +316,10 @@ public class Shroom : Building
     /// <param name="originPos"></param>
     public void CalcTimeToTarget(HashSet<Target> targets, Vector3 originPos)
     {
-        //int TargetCounter = 0;
         foreach (Target target in targets)
         {
-
-            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) / projectileSpeed;
+            attackerComponent.attackDelay = GenericUtility.CalculateFlatDistance(originPos, target.position) / projectileSpeed;
             return;
-            /*TargetCounter++;
-            if (TargetCounter == targetProjectileSpeedCounter)
-            {
-                if (targetProjectileSpeedCounter >= numTargets)
-                    targetProjectileSpeedCounter = 0;
-                return; // yes I am indeed entering a foreach loop just to get a reference to the first object in targets and then returning without examining the other targets.
-            }*/
-
         }
-
     }
 }

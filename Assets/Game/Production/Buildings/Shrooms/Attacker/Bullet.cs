@@ -6,7 +6,7 @@ public class Bullet : MonoBehaviour
 {
     private bool initialised;
 
-    public float timeToTarget;
+    public float timeToTarget { get; set; }
     private float timeElapsed;
     private Vector3 startPos;
     public Target target;
@@ -58,23 +58,25 @@ public class Bullet : MonoBehaviour
     {
         startPos = transform.position;
         initialised = true;        
-        StartCoroutine(SelfDestruct());
+        //StartCoroutine(SelfDestruct());
     }
 
     void Update()
     {
         if (!initialised) return;
 
-       if (timeElapsed >= timeToTarget)
-       {
-           Destroy(gameObject);
-       }
-       timeElapsed += Time.deltaTime;
+        if (timeElapsed >= timeToTarget)
+        {
+            Debug.Log("Bullet hit, " + timeToTarget);
+            Destroy(gameObject);
+        }
+        else
+        {
+            timeElapsed += Time.deltaTime;
 
-
-
-        if (parabola) MoveParabola();
-        else MoveStraightToTarget();
+            if (parabola) MoveParabola();
+            else MoveStraightToTarget();
+        }
 
     }
 

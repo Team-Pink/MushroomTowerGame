@@ -33,7 +33,7 @@ public class Attacker
     public Animator animator;
 
     [SerializeField]protected  bool lobProjectile;
-   
+    
 
     #region TAGS
     [Header("Spray Tag")]
@@ -57,6 +57,7 @@ public class Attacker
 
     protected List<Target> targetsToShoot = new();
     public bool attacking = false;
+    protected Transform currentTarget;
 
     public virtual void Attack(HashSet<Target> targets)
     {
@@ -92,6 +93,7 @@ public class Attacker
                 UnityEngine.Object.Destroy(particle, 0.5f);
             }
 
+            Debug.Log("Bullet fired " + attackDelay);
             Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
             bulletRef.timeToTarget = attackDelay;
             bulletRef.target = target;
