@@ -14,7 +14,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: boomerangCap
       value: 
-      objectReference: {fileID: 1005101738350300449}
+      objectReference: {fileID: 1315702639616246243}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: bulletPrefab
       value: 
@@ -58,11 +58,11 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
-      objectReference: {fileID: 1634586046114389801}
+      objectReference: {fileID: 657439207699305451}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[1]
       value: 
-      objectReference: {fileID: 1005101738350300449}
+      objectReference: {fileID: 1315702639616246243}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 12
@@ -509,18 +509,6 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3714295728066504647, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3714295728066504647, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3714295728066504647, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3714295728066504647, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -599,6 +587,11 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 3747396436725880843, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
   m_PrefabInstance: {fileID: 3539701579217575457}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &657439207699305451 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4035289780499762634, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
+  m_PrefabInstance: {fileID: 3539701579217575457}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &711444704695214940 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4089273845605203325, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
@@ -617,13 +610,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shroom: {fileID: 8458371139374482302}
---- !u!137 &1005101738350300449 stripped
+--- !u!137 &1315702639616246243 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 4390267885723341568, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
-  m_PrefabInstance: {fileID: 3539701579217575457}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &1634586046114389801 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2859993073689182472, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2548434038402179010, guid: 0f174e45420ed5a48986ca942039c035, type: 3}
   m_PrefabInstance: {fileID: 3539701579217575457}
   m_PrefabAsset: {fileID: 0}
