@@ -4,6 +4,10 @@ using UnityEngine;
 public class Node : Building
 {
     public MeshRenderer healthDisplay;
+    public override bool IsMaxHealth
+    {
+        get => CurrentHealth == MaxHealth;
+    }
     public bool isResidual
     {
         get;
@@ -100,6 +104,7 @@ public class Node : Building
     private void Start()
     {
         CurrentHealth = nodeHealth;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
     }
 
@@ -109,6 +114,9 @@ public class Node : Building
 
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0)
             Destroy(gameObject);
+
+        if (!isResidual && !IsMaxHealth)
+            ;
 
         bool showBud = !budDetached && !isResidual && Active;
         bud.SetActive(showBud);
@@ -133,6 +141,13 @@ public class Node : Building
                 }
             }
         }
+    }
+
+    public void Damage(float damageAmount)
+    {
+        CurrentHealth -= damageAmount;
+        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
+        if (!healthDisplay.enabled) healthDisplay.enabled = true;
     }
 
     public void AddBuilding(Building building)

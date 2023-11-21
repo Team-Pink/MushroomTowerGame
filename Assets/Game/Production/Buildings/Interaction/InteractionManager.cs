@@ -339,7 +339,7 @@ public class InteractionManager : MonoBehaviour
 
             if (currentHit.collider is null)
             {
-                if (healthDisplay != null) healthDisplay.enabled = false;
+                if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                 ResetInteraction();
                 return;
             }
@@ -354,7 +354,7 @@ public class InteractionManager : MonoBehaviour
                 if (targetBuilding is Meteor)
                 {
                     radiusDisplay.SetActive(false);
-                    if (healthDisplay != null) healthDisplay.enabled = false;
+                    if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                     CurrentInteraction = InteractionState.PlacingFromMeteor;
                     return;
                 }
@@ -363,7 +363,7 @@ public class InteractionManager : MonoBehaviour
                     if ((targetBuilding as Node).isResidual == false && targetBuilding.Active)
                     {
                         radiusDisplay.SetActive(false);
-                        if (healthDisplay != null) healthDisplay.enabled = false;
+                        if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                         CurrentInteraction = InteractionState.PlacingFromNode;
                     }
                     return;
@@ -377,7 +377,7 @@ public class InteractionManager : MonoBehaviour
             if (Input.GetKeyUp(interactKey))
             {
                 radiusDisplay.SetActive(false);
-                if (healthDisplay != null) healthDisplay.enabled = false;
+                if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
 
                 if (targetBuilding is Node && (targetBuilding as Node).isResidual == false && targetBuilding.Active)
                 {
@@ -1005,7 +1005,7 @@ public class InteractionManager : MonoBehaviour
         {
             Node targetNode = (targetBuilding as Node);
             healthDisplay = targetNode.healthDisplay;
-            healthDisplay.sharedMaterial.SetFloat("_Value", targetNode.CurrentHealth / targetNode.MaxHealth);
+            
         }
         else return;
 
