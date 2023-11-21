@@ -26,10 +26,15 @@ public class Meteor : Building
     private List<GameObject> displayLines = new();
     private Vector3 lineRendererOffset = new(0, 1.5f, 0);
 
+    private Animator animator;
+    private bool deathTriggerCalled = false;
+
     private void Awake()
     {
         currentHealth = maxHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / maxHealth);
+
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -38,6 +43,12 @@ public class Meteor : Building
         {
             currentHealth = 0;
             gameOverText.enabled = true;
+
+            if (!deathTriggerCalled)
+            {
+                animator.SetTrigger("Explode");
+                deathTriggerCalled = true;
+            }
 
             if (gameOverDuration > 0)
                 gameOverDuration -= deltaTime;

@@ -1947,9 +1947,10 @@ MonoBehaviour:
   placeOnPaths: 0
   placementBlockers:
     serializedVersion: 2
-    m_Bits: 2496
-  placementExclusionSize: 1.2
-  maxDistanceFromNode: 6
+    m_Bits: 2432
+  shroomXShroomExclusion: 3
+  nodeXShroomExclusion: 1
+  nodeXNodeExclusion: 6
   buttonBaseColour: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
   buttonHoverColour: {r: 1, g: 1, b: 1, a: 1}
   sellButton: {fileID: 0}
@@ -1966,7 +1967,18 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  lockedShroomSprite: {fileID: 21300000, guid: 8a120454be707de44af47a46aab972d3, type: 3}
+  lockedShroomSprites:
+  - {fileID: 0}
+  - {fileID: 21300000, guid: 5b267e90a11108e4fb2555db8e52c878, type: 3}
+  - {fileID: 21300000, guid: cd6dfe42544879b44a5627f2eca4b150, type: 3}
+  - {fileID: 21300000, guid: a34c78ce2058e3c468e3d3374a797f04, type: 3}
+  - {fileID: 21300000, guid: db272a6ffe53bcf4789430293ab80b2f, type: 3}
+  highlightedShroomSprites:
+  - {fileID: 21300000, guid: 19774a58540c59241980c06bf42094b7, type: 3}
+  - {fileID: 21300000, guid: a3b606935af052a47a428d9970172f04, type: 3}
+  - {fileID: 21300000, guid: 2f27c99badbaef24485ee502e49441e0, type: 3}
+  - {fileID: 21300000, guid: 9218ac99d5e29174b9cd4bbba62ab266, type: 3}
+  - {fileID: 21300000, guid: 83bc98ff42c49b844bc5f4babf0fe55a, type: 3}
   unlockAllShrooms: 0
   shroomSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
@@ -2019,6 +2031,11 @@ MonoBehaviour:
       amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
       nextEnemy: 0
   - duration: 20
     defaultSpawn: {fileID: 0}
@@ -2143,26 +2160,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 291b124009014714c9c15b19ac8ab074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorType: 1
   cursors:
   - cursorName: Default
-    cursorTexture: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
     displayCost: 0
   - cursorName: CannotPlace
-    cursorTexture: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
     displayCost: 1
   - cursorName: CanPlace
-    cursorTexture: {fileID: 2800000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
     displayCost: 1
   - cursorName: Shovel
-    cursorTexture: {fileID: 2800000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
     displayCost: 0
   - cursorName: HighlightedShovel
-    cursorTexture: {fileID: 2800000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
+    cursorSprite: {fileID: 21300000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
     displayCost: 1
   costText: {fileID: 0}
   costPositionFromSoftwareMousePoint: {x: 40, y: -40}
-  costPositionFromHardwareMousePoint: {x: 30, y: 0}
   softwareCursorImage: {fileID: 0}
 --- !u!114 &5583641233090253150
 MonoBehaviour:

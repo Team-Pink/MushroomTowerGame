@@ -46,6 +46,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] bool placeOnPaths;
     LevelDataGrid levelDataGrid;
     [SerializeField] LayerMask placementBlockers;
+    private LayerMask shroomLayer;
     private LayerMask nodeLayer;
     private LayerMask placableLayers;
     private LayerMask budLayer;
@@ -53,8 +54,10 @@ public class InteractionManager : MonoBehaviour
     private GameObject activeBud;
     //private Vector3 dragStartPosition;
 
-    [SerializeField] float placementExclusionSize = 1;
-    [SerializeField] float maxDistanceFromNode = 10;
+    //[SerializeField] float placementExclusionSize = 1.2f;
+    [SerializeField] float shroomXShroomExclusion = 3;
+    [SerializeField] float nodeXShroomExclusion = 1.2f;
+    [SerializeField] float nodeXNodeExclusion = 6;
     private const float capsuleCheckBound = 5;
     #endregion
 
@@ -93,7 +96,8 @@ public class InteractionManager : MonoBehaviour
 
     [SerializeField, Space()] GameObject shroomSelectionMenu;
     [SerializeField, NonReorderable] Image[] shroomSelectionMenuButtons;
-    [SerializeField] Sprite lockedShroomSprite;
+    [SerializeField] Sprite[] lockedShroomSprites;
+    [SerializeField] Sprite[] highlightedShroomSprites; 
     private readonly Sprite[] shroomIconSprites = new Sprite[5];
     private int unlockedShrooms = 0;
     private readonly int maxShroomsUnlockable = 5;
@@ -160,6 +164,7 @@ public class InteractionManager : MonoBehaviour
         levelDataGrid = GetComponent<LevelDataGrid>();
 
         placableLayers = LayerMask.GetMask("Ground");
+        shroomLayer = LayerMask.GetMask("Shroom");
         nodeLayer = LayerMask.GetMask("Node");
         budLayer = LayerMask.GetMask("Bud");
 
@@ -177,7 +182,7 @@ public class InteractionManager : MonoBehaviour
 
             if (i >= unlockedShrooms)
             {
-                shroomSelectionMenuButtons[i].sprite = lockedShroomSprite;
+                shroomSelectionMenuButtons[i].sprite = lockedShroomSprites[i];
             }
         }
         
@@ -268,24 +273,27 @@ public class InteractionManager : MonoBehaviour
 
             if (currentHit.collider is null)
             {
-                if ((new Vector2(0, Screen.height) +
-                    (sellButtonTransform.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) -
-                    new Vector2(mouseScreenPosition.x, mouseScreenPosition.y)).magnitude < 60 * sellButtonTransform.localScale.x)
+                if (sellButtonTransform.gameObject.activeSelf)
                 {
-                    sellButton.sprite = sellButtonHighlight;
-                    if (Input.GetKeyDown(interactKey))
+                    if ((new Vector2(0, Screen.height) +
+                        (sellButtonTransform.anchoredPosition * Screen.height / canvasScaler.referenceResolution.y) -
+                        new Vector2(mouseScreenPosition.x, mouseScreenPosition.y)).magnitude < 60 * sellButtonTransform.localScale.x)
                     {
-                        sellButton.sprite = sellButtonActive;
-                        CurrentInteraction = InteractionState.Selling;
+                        sellButton.sprite = sellButtonHighlight;
+                        if (Input.GetKeyDown(interactKey))
+                        {
+                            sellButton.sprite = sellButtonActive;
+                            CurrentInteraction = InteractionState.Selling;
+                        }
                     }
-                }
-                else
-                {
-                    sellButton.sprite = sellButtonDefault;
-
-                    if (targetBuilding is not null)
+                    else
                     {
-                        ResetInteraction();
+                        sellButton.sprite = sellButtonDefault;
+
+                        if (targetBuilding is not null)
+                        {
+                            ResetInteraction();
+                        }
                     }
                 }
             }
@@ -575,12 +583,13 @@ public class InteractionManager : MonoBehaviour
 
             float distanceFromMeteor = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-            bool inNodeBuildRange = distanceFromMeteor < 3 * maxDistanceFromNode;
+            bool inNodeBuildRange = distanceFromMeteor < 3 * nodeXNodeExclusion;
 
             if (isPlaceable)
             {
-                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
+                bool spaceToPlace = SpaceToPlace(shroomXShroomExclusion, shroomLayer) &&
+                                    SpaceToPlace(nodeXShroomExclusion, placementBlockers);
+                bool spaceForNode = SpaceToPlace(2 * nodeXNodeExclusion, nodeLayer);
 
                 if (inNodeBuildRange && spaceToPlace && spaceForNode && TargetIsPlane)
                 {
@@ -695,13 +704,14 @@ public class InteractionManager : MonoBehaviour
 
             float distanceFromNode = (targetBuilding.transform.position - new Vector3(currentHit.point.x, 0, currentHit.point.z)).magnitude;
 
-            bool inShroomBuildRange = distanceFromNode < maxDistanceFromNode;
-            bool inNodeBuildRange = distanceFromNode > 2 * maxDistanceFromNode && distanceFromNode < 3 * maxDistanceFromNode;
+            bool inShroomBuildRange = distanceFromNode < nodeXNodeExclusion;
+            bool inNodeBuildRange = distanceFromNode > 2 * nodeXNodeExclusion && distanceFromNode < 3 * nodeXNodeExclusion;
 
             if (isPlaceable)
             {
-                bool spaceToPlace = SpaceToPlace(placementExclusionSize, placementBlockers);
-                bool spaceForNode = SpaceToPlace(2 * maxDistanceFromNode, nodeLayer);
+                bool spaceToPlace = SpaceToPlace(shroomXShroomExclusion, shroomLayer) &&
+                                    SpaceToPlace(nodeXShroomExclusion, placementBlockers);
+                bool spaceForNode = SpaceToPlace(2 * nodeXNodeExclusion, nodeLayer);
 
                 bool shroomPlacementCriteria = inShroomBuildRange && spaceToPlace;
                 bool nodePlacementCriteria = inNodeBuildRange && spaceToPlace && spaceForNode;
@@ -866,7 +876,7 @@ public class InteractionManager : MonoBehaviour
 
             SpawnShroom(hoveredButtonIndex);
 
-            hoveredButton.color = buttonBaseColour;
+            hoveredButton.sprite = shroomIconSprites[hoveredButtonIndex];
 
             ResetInteraction();
         }
@@ -1045,20 +1055,20 @@ public class InteractionManager : MonoBehaviour
             {
                 if (currentAngle >= angles[i] && currentAngle < angles[i + 1])
                 {
-                    radialButtons[i].color = buttonHoverColour;
+                    radialButtons[i].sprite = highlightedShroomSprites[i];
                     hoveredButtonIndex = i;
                 }
                 else
                 {
-                    radialButtons[i].color = buttonBaseColour;
+                    radialButtons[i].sprite = shroomIconSprites[i];
                 }
             }
         }
         else
         {
-            foreach (Image radialButton in radialButtons)
+            for (int i = 0; i < radialButtons.Length; i++)
             {
-                radialButton.color = buttonBaseColour;
+                if (i < unlockedShrooms) radialButtons[i].sprite = shroomIconSprites[i];
             }
         }
 
