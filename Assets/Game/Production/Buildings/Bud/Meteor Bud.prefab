@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 427139176530171523}
   - component: {fileID: 8555251113640901067}
   - component: {fileID: 3364223425624795044}
-  - component: {fileID: 1393151635185806474}
+  - component: {fileID: 5132919334761132757}
   m_Layer: 13
-  m_Name: BaseBud
+  m_Name: Meteor Bud
   m_TagString: Pylon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2228574422893360982}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.49, y: 6.25, z: -4.68}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f876bdff6d991af4292b3bea67643bb9, type: 2}
+  - {fileID: 2100000, guid: 6e8237eac03d1834090e46283464fd79, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -118,7 +118,7 @@ MonoBehaviour:
   hoverAxis: 1
   intensity: 0.15
   speed: 0.5
---- !u!135 &1393151635185806474
+--- !u!135 &5132919334761132757
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
