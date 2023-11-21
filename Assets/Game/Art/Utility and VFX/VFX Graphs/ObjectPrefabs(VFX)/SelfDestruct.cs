@@ -7,19 +7,27 @@ public class SelfDestruct : MonoBehaviour
 {
     public float secondsTillDestruction;
     private float detonationTime;
+    private VisualEffect VFX;
 
     private void Start()
     {
         detonationTime = Time.time + secondsTillDestruction;
-        GetComponent<VisualEffect>().Play();
+        VFX = GetComponent<VisualEffect>();
+        VFX.Play();
+      //  Destroy(gameObject, 10.0f);
     }
-    // Update is called once per frame
+
     void Update()
     {
-        // I don't understand coroutines or the timer class well enough to make this more efficient using them.
+        // I don't understand the timer class well enough to make this more efficient using it, for the moment.
         if (Time.time > detonationTime)
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // VFX.spawnParticleRate = Vector3.Zero;
+            //VFX.SetFloat("particleSpawnRate", 0.0f);
+
+            if (VFX.aliveParticleCount <= 0) Destroy(gameObject);
         }
+
     }
+    // I prototyped a coroutine but due to the double condition in a loop it just isn't worth it.
 }

@@ -380,7 +380,26 @@ public class QuitScript : MonoBehaviour
  */
 #endregion
 
+#region Bits and bobs
+/*
+     /// <summary>
+    /// This is a failed measure to try stopping the ghost bullets
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SelfDestruct()
+    {
+        yield return new WaitForSeconds(4);
+        Destroy(gameObject);
+    }
 
+
+    //void LooseTargetTracking()
+    //{
+    //    targetPos = Vector3.MoveTowards( targetPos, targetTransform.position, trackingSpeed);
+
+    //}
+ */
+#endregion
 
 
 
