@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+using UnityObject = UnityEngine.Object;
 
 [Serializable]
 public class Attacker
 {
     public int damage = 3;
 
+    public bool areaAttacker;
+
+    private bool onCooldown;
     public float attackCooldown = 3;
     public float cooldownTimer = 0f;
 
@@ -29,43 +35,82 @@ public class Attacker
     public AudioClip attackSoundEffect;
     public AudioClip attackHitSoundEffect;
 
-    public Shroom originReference; // I am very open to a better way of doing this so please if you can rearchitect it go ahead. 
+    public Shroom originReference;
     public Animator animator;
 
     [SerializeField]protected  bool lobProjectile;
     
 
-    #region TAGS
     [Header("Spray Tag")]
     public bool spray = false;
     public int sprayDamage = 1;
     public float additionalSprayRange = 2;
 
-    [Header("Strikethrough Tag")]
-    public bool strikethrough = false;
-    public int strikethroughDamage = 1;
-    public int strikethroughReach = 10;
-    public int strikethroughBeamWidth = 4;
-    public Matrix4x4 strikethroughMatrix;
-
     [Header("Bounce Tag")]
     public bool bounce = false;
     public int bounceHitLimit = 10;
     public bool returning = false;
+    private readonly List<Enemy> hitEnemies = new();
     [HideInInspector] public bool bounceBulletInShroomPossession = true;
-    #endregion
 
+    [Space()]
+    public LayerMask enemyLayers;
+    public float damageRadius = 3f;
     protected List<Target> targetsToShoot = new();
     public bool attacking = false;
-    protected Transform currentTarget;
+    protected Target currentTarget;
 
     public virtual void Attack(HashSet<Target> targets)
     {
-        Debug.LogWarning("Use one of the other methods of attacking");
+        if (onCooldown)
+        {
+            if (CheckAndIncrementCooldown() == false)
+            {
+                return;
+            }
+            else
+            {
+                onCooldown = false;
+                cooldownTimer = 0;
+                delayTimer = 0;
+            }
+        }
+
+        if (targets == null || targets.Count == 0) return;
+
+        currentTarget = targets.First();
+
+        if (!attacking && currentTarget.enemy is not null)
+        {
+            attacking = true;
+
+            AnimateAttack();
+
+            if (bounce)
+            {
+                bounceBulletInShroomPossession = false;
+            }
+
+            if (lobProjectile)
+            {
+                targetsToShoot.Add(new Target(currentTarget.position));
+            }
+            else
+            {
+                targetsToShoot.Add(currentTarget);
+            }
+
+            if (windupParticlePrefab != null)
+            {
+                GameObject particle = UnityObject.Instantiate(windupParticlePrefab, transform);
+                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+                UnityObject.Destroy(particle, animationLeadIn);
+            }
+        }
     }
 
 
-    public bool CheckCooldownTimer()
+    public bool CheckAndIncrementCooldown()
     {
         if (cooldownTimer < attackCooldown)
         {
@@ -82,26 +127,192 @@ public class Attacker
             AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
         }
 
-        if (bulletPrefab == null) return;
-
-        foreach (Target target in targetsToShoot)
+        if (attackParticlePrefab != null)
         {
-            if (attackParticlePrefab != null)
+            GameObject particle = UnityObject.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityObject.Destroy(particle, 0.5f);
+        }
+
+        Debug.Log("Bullet fired " + attackDelay);
+
+        Bullet bullet;
+        if (bulletPrefab != null)
+        {
+            bullet = UnityObject.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        }
+        else
+        {
+            GameObject bulletObject;
+            bulletObject = new GameObject();
+            bulletObject.transform.position = transform.position + Vector3.up * 2;
+            bullet = bulletObject.GetComponent<Bullet>();
+        }
+
+        bullet.timeToTarget = attackDelay;
+        bullet.target = currentTarget;
+        bullet.attacker = this;
+
+        if (bounce && hitEnemies.Count > 0)
+        {
+            Vector3 lastHitPosition = hitEnemies.Last().transform.position;
+            bullet.transform.position = new Vector3( lastHitPosition.x, transform.position.y + 2, lastHitPosition.z);
+        }
+
+        if (lobProjectile)
+        {
+            bullet.InitializeNoTrackParabolaBullet(currentTarget.position);
+        }
+        else
+        {
+            if (currentTarget.enemy)
             {
-                GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
-                particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-                UnityEngine.Object.Destroy(particle, 0.5f);
+                bullet.Initialise();
+            }
+            else
+            {
+                bullet.InitialiseForTargetPosition(originReference.transform.position);
+            }
+        }
+
+        targetsToShoot.Clear();
+    }
+
+    public void AttackHit()
+    {
+        // play impact animation
+        if (currentTarget.enemy != null)
+        {
+            if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.position, Quaternion.identity);
+            //if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
+        }
+
+        if (!areaAttacker)
+        {
+            currentTarget.enemy.TakeDamage(damage);
+
+            if (bounce)
+            {
+                if (returning)
+                {
+                    returning = false;
+                }
+                else
+                {
+                    if (currentTarget.enemy.CheckIfDead())
+                    {
+                        currentTarget.enemy.OnDeath();
+                    }
+
+                    hitEnemies.Add(currentTarget.enemy);
+
+                    currentTarget = FindNewBounceTarget();
+
+                    AnimateProjectile();
+                    return;
+                }
+            }
+        }
+        else
+        {
+            // get everything in the area of the attack
+            Collider[] mainCollisions = Physics.OverlapSphere(currentTarget.position, damageRadius, enemyLayers);
+            foreach (var collision in mainCollisions)
+            {
+                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                if (enemy is null) continue;
+
+                enemy.TakeDamage(damage);
+                if (enemy.CheckIfDead())
+                {
+                    if (enemy != currentTarget.enemy && enemy.CheckIfDead())
+                    {
+                        enemy.OnDeath();
+                    }
+                }
             }
 
-            Debug.Log("Bullet fired " + attackDelay);
-            Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
-            bulletRef.timeToTarget = attackDelay;
-            bulletRef.target = target;
-            if (lobProjectile) bulletRef.InitializeNoTrackParabolaBullet(target.position);
-            else if (target.enemy) bulletRef.Initialise();
-            
+            if (spray)
+            {
+                HashSet<Enemy> secondaryEnemies = Spray(mainCollisions);
+
+                foreach (Enemy enemy in secondaryEnemies)
+                {
+                    enemy.TakeDamage(sprayDamage);
+                }
+            }
         }
-        targetsToShoot.Clear();
+
+        onCooldown = true;
+        attacking = false;
+
+        if (currentTarget.enemy.CheckIfDead())
+        {
+            currentTarget.enemy.OnDeath();
+        }
+    }
+
+    private Target FindNewBounceTarget()
+    {
+        Collider[] potentialTargets = Physics.OverlapSphere(originReference.transform.position, originReference.TargeterComponent.range, enemyLayers);
+
+        Target newTarget = new();
+
+        foreach (Collider potentialTarget in potentialTargets)
+        {
+            if (potentialTarget.gameObject.TryGetComponent(out Enemy enemy))
+            {
+                if (hitEnemies.Contains(enemy) || enemy.CheckIfDead()) continue;
+
+                if (newTarget.enemy == null)
+                {
+                    newTarget.enemy = enemy;
+                    continue;
+                }
+
+                Vector3 lastHitPosition = hitEnemies.Last().transform.position;
+
+                float distanceToCheck = GenericUtility.FlatDistanceSqr(lastHitPosition, enemy.transform.position);
+                float currentBestDistance = GenericUtility.FlatDistanceSqr(lastHitPosition, newTarget.enemy.transform.position);
+
+                if (distanceToCheck < currentBestDistance) newTarget.enemy = enemy;
+            }
+        }
+
+        if (newTarget.enemy == null)
+        {
+            newTarget.position = originReference.transform.position;
+            returning = true;
+        }
+        else
+        {
+            newTarget.position = newTarget.enemy.transform.position;
+        }
+
+        return newTarget;
+    }
+
+    HashSet<Enemy> Spray(Collider[] mainCollisions)
+    {
+        HashSet<Enemy> sprayTargets = new();
+
+        foreach (Collider sprayCollision in Physics.OverlapSphere(currentTarget.position, damageRadius + additionalSprayRange, enemyLayers))
+        {
+            bool isMainCollision = false;
+            Enemy enemy = sprayCollision.gameObject.GetComponent<Enemy>();
+
+            foreach (Collider mainCollision in mainCollisions)
+            {
+                if (mainCollision == sprayCollision)
+                {
+                    isMainCollision = true;
+                    break;
+                }
+            }
+
+            if (!isMainCollision) sprayTargets.Add(enemy);
+        }
+        return sprayTargets;
     }
 
     public void AnimateBounceProjectileToEnemy(Target startingTarget, Target targetEnemy, float timeToTarget)
@@ -117,14 +328,15 @@ public class Attacker
         {
             GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
             particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-            UnityEngine.Object.Destroy(particle, 0.5f);
+            UnityObject.Destroy(particle, 0.5f);
         }
 
         Bullet bulletRef;
 
-        bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, startingTarget.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
+        bulletRef = UnityObject.Instantiate(bulletPrefab, startingTarget.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
         bulletRef.timeToTarget = timeToTarget;
         bulletRef.target = targetEnemy;
+        bulletRef.attacker = this;
         bulletRef.Initialise();
     }
     public void AnimateBounceProjectileToShroom(Target targetEnemy, float timeToTarget)
@@ -177,6 +389,4 @@ public class Attacker
 
         animator.SetTrigger("Attack");       
     }
-
-
 }

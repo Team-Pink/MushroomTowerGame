@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class Bullet : MonoBehaviour
 {
     private bool initialised;
 
-    public float timeToTarget { get; set; }
+    public Attacker attacker;
+
+    public float timeToTarget;
     private float timeElapsed;
     private Vector3 startPos;
     public Target target;
@@ -18,9 +19,6 @@ public class Bullet : MonoBehaviour
     private float progress = 0;
     [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
-
-
-
 
 
 
@@ -67,6 +65,7 @@ public class Bullet : MonoBehaviour
 
         if (timeElapsed >= timeToTarget)
         {
+            attacker.AttackHit();
             Debug.Log("Bullet hit, " + timeToTarget);
             Destroy(gameObject);
         }
@@ -77,7 +76,6 @@ public class Bullet : MonoBehaviour
             if (parabola) MoveParabola();
             else MoveStraightToTarget();
         }
-
     }
 
     void MoveStraightToTarget()
@@ -100,10 +98,7 @@ public class Bullet : MonoBehaviour
         currentPos.y = -progress * progress + progress; // update y position
         currentPos.y *= arcHeight;
 
-        transform.rotation = Quaternion.LookRotation(currentPos); // rotate towards the direction of movement
-
-        transform.position = currentPos; // Update position
-
+        transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(currentPos));
     }
 
     /// <summary>

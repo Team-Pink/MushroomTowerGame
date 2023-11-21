@@ -29,6 +29,7 @@ public enum TargeterType
 public enum AttackerType
 {
     SelectAType,
+    Attacker,
     Area,
     Single,
     Trap
@@ -129,7 +130,7 @@ public class Shroom : Building
 
         attackerComponent.bulletPrefab = bulletPrefab;
         AttackerComponent.attackObjectPrefab = attackObjectPrefab;
-        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
+        attackerComponent.originReference = this;
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
@@ -208,7 +209,7 @@ public class Shroom : Building
                             boomerangCap.enabled = true;
                             animator.SetBool("Attack Recoil", true);
                         }
-                        else if (attackerComponent.CheckCooldownTimer())
+                        else if (attackerComponent.CheckAndIncrementCooldown())
                         {
                             CalcTimeToTarget(targets, transform.position);
                             attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
@@ -216,7 +217,7 @@ public class Shroom : Building
                     }
                     else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
                 }
-                else if (attackerComponent.CheckCooldownTimer())
+                else if (attackerComponent.CheckAndIncrementCooldown())
                 {
                     CalcTimeToTarget(targets, transform.position);
                     attackerComponent.Attack(targets);

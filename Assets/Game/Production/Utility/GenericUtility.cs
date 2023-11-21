@@ -43,4 +43,11 @@ public static class GenericUtility
         displacement.y = 0;
         return displacement.magnitude;
     }
+
+    public static float FlatDistanceSqr(Vector3 posA, Vector3 posB)
+    {
+        Vector3 displacement = posB - posA;
+        displacement.y = 0;
+        return displacement.sqrMagnitude;
+    }
 }

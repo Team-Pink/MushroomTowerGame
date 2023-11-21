@@ -53,7 +53,7 @@ public class TrapAttacker : Attacker
             attacking = true;
         }
 
-        if (!CheckCooldownTimer()) return;
+        if (!CheckAndIncrementCooldown()) return;
 
         placedTraps.Clear();
         delayTimer = 0f;
