@@ -98,7 +98,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField, NonReorderable] Image[] shroomSelectionMenuButtons;
     [SerializeField] Sprite[] lockedShroomSprites;
     [SerializeField] Sprite[] highlightedShroomSprites; 
-    private readonly Sprite[] shroomIconSprites = new Sprite[5];
+    [SerializeField] private Sprite[] shroomIconSprites = new Sprite[5];
     private int unlockedShrooms = 0;
     private readonly int maxShroomsUnlockable = 5;
     [SerializeField] bool unlockAllShrooms = false;
@@ -1017,9 +1017,29 @@ public class InteractionManager : MonoBehaviour
 
     public void UnlockShroom(int shroomIndex)
     {
-        if (unlockedShrooms > maxShroomsUnlockable) return;
-        if (shroomIndex != 0) shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
-        unlockedShrooms++;
+        if (shroomIndex == 0)
+        {
+            unlockedShrooms++;
+        }
+        if (shroomIndex > 0 && shroomIndex < 5)
+        {
+            shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
+            unlockedShrooms++;
+        }
+
+
+
+
+
+        //if (unlockedShrooms > maxShroomsUnlockable) return;
+        //else if (shroomIndex == 10) return; // 10 means dont unlock anything this turn
+        //else if (shroomIndex >= 0 || shroomIndex < 5)
+        //{
+        //    shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
+        //    unlockedShrooms++;
+        //}
+        //else Debug.LogWarning("Shroom Index out of range");
+        
     }
 
     private void ShroomRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
