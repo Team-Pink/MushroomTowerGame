@@ -48,7 +48,8 @@ public class Node : Building
         }
     }
 
-    private bool disappearing = false;
+    [SerializeField] public bool disappearing = false;
+
     [SerializeField] GameObject regrowCanvas;
 
     [Header("Connections")]
@@ -116,12 +117,12 @@ public class Node : Building
 
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0 && !disappearing)
         {
-            budAnimator.SetBool("Residual Disappear", true);
+            budAnimator.SetBool("Sell", true);
             animator.SetBool("Residual Disappear", true);
             disappearing = true;
         }
 
-        bool showBud = !budDetached && !isResidual && Active;
+        bool showBud = !budDetached;
         bud.SetActive(showBud);
 
         if (lineMode == LineMode.Default)
@@ -168,41 +169,25 @@ public class Node : Building
 
     public override void Deactivate()
     {
+        if (!Active) return;
         base.Deactivate();
-        //if (isResidual) return;
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
         }
         budAnimator.SetBool("Deactivate", true);
-        animator.SetBool("Deactivate",true);
-    }
-    private void DeactivateChildren()
-    {
-        foreach (Building building in connectedBuildings)
-        {
-            building.Deactivate();
-        }
     }
     public override void Reactivate()
     {
+        if (Active) return;
         base.Reactivate();
-        //if (isResidual) return;
         foreach (Building building in connectedBuildings)
         {
             building.Reactivate();
         }
         budAnimator.SetBool("Reactivate", true);
-        animator.SetBool("Reactivate", true);
 
         currentHealth = nodeHealth;
-    }
-    private void ReactivateChildren()
-    {
-        foreach (Building building in connectedBuildings)
-        {
-            building.Reactivate();
-        }
     }
 
     public void ToggleResidual(bool value)
@@ -220,12 +205,10 @@ public class Node : Building
 
         if (Active)
         {
-            budAnimator.SetBool("Reactivate", true);
             animator.SetBool("Rebuild", true);
         }
         else
         {
-            budAnimator.SetBool("Become Residual", true);
             animator.SetBool("Become Residual", true);
         }
 
@@ -238,7 +221,10 @@ public class Node : Building
         if (connectedBuildings.Count > 0)
             return true;
         else
-            Destroy(gameObject);
+        {
+            budAnimator.SetBool("Sell", true);
+            animator.SetBool("Residual Disappear", true);
+        }
         return false;
     }
 
@@ -301,6 +287,7 @@ public class Node : Building
             ToggleResidual(true);
         else
         {
+            disappearing = true;
             budAnimator.SetBool("Sell", true);
             animator.SetBool("Sell", true);
         }

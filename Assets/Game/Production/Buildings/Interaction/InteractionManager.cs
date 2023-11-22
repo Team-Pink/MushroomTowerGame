@@ -316,6 +316,8 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        if (!targetBuilding) { targetBuilding = null; ResetInteraction(); return; }
+
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
         targetBuilding.recurseHighlight = true;
