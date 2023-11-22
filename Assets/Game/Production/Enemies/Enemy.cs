@@ -223,8 +223,7 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("Enemy took damage");
         health -= damage;
-        if (health > 0)
-        StartCoroutine(DisplayHurt());
+        if (health > 0) StartCoroutine(DisplayHurt());
     }
 
     private IEnumerator DisplayHurt()

@@ -12,7 +12,7 @@ public class Attacker
 
     public bool areaAttacker;
 
-    private bool onCooldown;
+    protected bool onCooldown;
     public float attackCooldown = 3;
     public float cooldownTimer = 0f;
 
@@ -50,7 +50,7 @@ public class Attacker
     public bool bounce = false;
     public int bounceHitLimit = 10;
     public bool returning = false;
-    private readonly List<Enemy> hitEnemies = new();
+    private readonly List<Target> hitTargets = new();
     [HideInInspector] public bool bounceBulletInShroomPossession = true;
 
     [Space()]
@@ -64,24 +64,26 @@ public class Attacker
     {
         if (onCooldown)
         {
-            if (CheckAndIncrementCooldown() == false)
-            {
-                return;
-            }
-            else
+            if (cooldownTimer >= attackCooldown)
             {
                 onCooldown = false;
                 cooldownTimer = 0;
                 delayTimer = 0;
             }
+            else
+            {
+                cooldownTimer += Time.deltaTime;
+                return;
+            }
         }
 
         if (targets == null || targets.Count == 0) return;
 
-        currentTarget = targets.First();
 
-        if (!attacking && currentTarget.enemy is not null)
+        if (!attacking && targets.First().enemy is not null)
         {
+            currentTarget = targets.First();
+
             attacking = true;
 
             AnimateAttack();
@@ -93,11 +95,11 @@ public class Attacker
 
             if (lobProjectile)
             {
-                targetsToShoot.Add(new Target(currentTarget.position));
+                targetsToShoot.Add(new Target(currentTarget.getPosition()));
             }
             else
             {
-                targetsToShoot.Add(currentTarget);
+                targetsToShoot.Add(new Target(currentTarget.getPosition(), currentTarget.enemy));
             }
 
             if (windupParticlePrefab != null)
@@ -107,17 +109,6 @@ public class Attacker
                 UnityObject.Destroy(particle, animationLeadIn);
             }
         }
-    }
-
-
-    public bool CheckAndIncrementCooldown()
-    {
-        if (cooldownTimer < attackCooldown)
-        {
-            cooldownTimer += Time.deltaTime;
-            return false;
-        }
-        return true;
     }
 
     public void AnimateProjectile()
@@ -152,16 +143,20 @@ public class Attacker
         bullet.timeToTarget = attackDelay;
         bullet.target = currentTarget;
         bullet.attacker = this;
-
-        if (bounce && hitEnemies.Count > 0)
+        
+        if (bounce)
         {
-            Vector3 lastHitPosition = hitEnemies.Last().transform.position;
-            bullet.transform.position = new Vector3( lastHitPosition.x, transform.position.y + 2, lastHitPosition.z);
+            originReference.boomerangCap.enabled = false;
+
+            if (hitTargets.Count > 0)
+            {
+                bullet.transform.position = hitTargets.Last().getPosition();
+            }
         }
 
         if (lobProjectile)
         {
-            bullet.InitializeNoTrackParabolaBullet(currentTarget.position);
+            bullet.InitializeNoTrackParabolaBullet(currentTarget.getPosition());
         }
         else
         {
@@ -183,30 +178,38 @@ public class Attacker
         // play impact animation
         if (currentTarget.enemy != null)
         {
-            if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.position, Quaternion.identity);
+            if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
             //if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
         }
 
         if (!areaAttacker)
         {
-            currentTarget.enemy.TakeDamage(damage);
+            if (currentTarget.enemy != null)
+            {
+                currentTarget.enemy.TakeDamage(damage);
+            }
 
             if (bounce)
             {
                 if (returning)
                 {
                     returning = false;
+                    originReference.boomerangCap.enabled = true;
+                    bounceBulletInShroomPossession = true;
+                    animator.SetBool("Attack Recoil", true);
+                    hitTargets.Clear();
                 }
                 else
                 {
-                    if (currentTarget.enemy.CheckIfDead())
+                    if (currentTarget.enemy != null && currentTarget.enemy.CheckIfDead())
                     {
                         currentTarget.enemy.OnDeath();
                     }
 
-                    hitEnemies.Add(currentTarget.enemy);
+                    hitTargets.Add(new Target (currentTarget.getPosition(), currentTarget.enemy));
 
                     currentTarget = FindNewBounceTarget();
+                    Debug.Log("Found new target", currentTarget.enemy);
 
                     AnimateProjectile();
                     return;
@@ -216,8 +219,8 @@ public class Attacker
         else
         {
             // get everything in the area of the attack
-            Collider[] mainCollisions = Physics.OverlapSphere(currentTarget.position, damageRadius, enemyLayers);
-            foreach (var collision in mainCollisions)
+            Collider[] mainCollisions = Physics.OverlapSphere(currentTarget.getPosition(), damageRadius, enemyLayers);
+            foreach (Collider collision in mainCollisions)
             {
                 Enemy enemy = collision.gameObject.GetComponent<Enemy>();
                 if (enemy is null) continue;
@@ -246,7 +249,7 @@ public class Attacker
         onCooldown = true;
         attacking = false;
 
-        if (currentTarget.enemy.CheckIfDead())
+        if (currentTarget.enemy != null && currentTarget.enemy.CheckIfDead())
         {
             currentTarget.enemy.OnDeath();
         }
@@ -262,7 +265,18 @@ public class Attacker
         {
             if (potentialTarget.gameObject.TryGetComponent(out Enemy enemy))
             {
-                if (hitEnemies.Contains(enemy) || enemy.CheckIfDead()) continue;
+                if (enemy.CheckIfDead()) continue;
+
+                bool alreadyHit = false;
+                foreach (Target target in hitTargets)
+                {
+                    if (target.enemy != null && enemy == target.enemy)
+                    {
+                        alreadyHit = true;
+                        break;
+                    }
+                }
+                if (alreadyHit) continue;
 
                 if (newTarget.enemy == null)
                 {
@@ -270,14 +284,15 @@ public class Attacker
                     continue;
                 }
 
-                Vector3 lastHitPosition = hitEnemies.Last().transform.position;
+                Vector3 lastHitPosition = hitTargets.Last().getPosition();
 
                 float distanceToCheck = GenericUtility.FlatDistanceSqr(lastHitPosition, enemy.transform.position);
-                float currentBestDistance = GenericUtility.FlatDistanceSqr(lastHitPosition, newTarget.enemy.transform.position);
+                float currentBestDistance = GenericUtility.FlatDistanceSqr(lastHitPosition, newTarget.getPosition());
 
                 if (distanceToCheck < currentBestDistance) newTarget.enemy = enemy;
             }
         }
+
 
         if (newTarget.enemy == null)
         {
@@ -286,7 +301,7 @@ public class Attacker
         }
         else
         {
-            newTarget.position = newTarget.enemy.transform.position;
+            newTarget.position = newTarget.getPosition();
         }
 
         return newTarget;
@@ -296,7 +311,7 @@ public class Attacker
     {
         HashSet<Enemy> sprayTargets = new();
 
-        foreach (Collider sprayCollision in Physics.OverlapSphere(currentTarget.position, damageRadius + additionalSprayRange, enemyLayers))
+        foreach (Collider sprayCollision in Physics.OverlapSphere(currentTarget.getPosition(), damageRadius + additionalSprayRange, enemyLayers))
         {
             bool isMainCollision = false;
             Enemy enemy = sprayCollision.gameObject.GetComponent<Enemy>();
@@ -313,69 +328,6 @@ public class Attacker
             if (!isMainCollision) sprayTargets.Add(enemy);
         }
         return sprayTargets;
-    }
-
-    public void AnimateBounceProjectileToEnemy(Target startingTarget, Target targetEnemy, float timeToTarget)
-    {
-        if (attackSoundEffect != null)
-        {
-            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
-        }
-
-        if (bulletPrefab == null) return;
-
-        if (attackParticlePrefab != null)
-        {
-            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
-            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-            UnityObject.Destroy(particle, 0.5f);
-        }
-
-        Bullet bulletRef;
-
-        bulletRef = UnityObject.Instantiate(bulletPrefab, startingTarget.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
-        bulletRef.timeToTarget = timeToTarget;
-        bulletRef.target = targetEnemy;
-        bulletRef.attacker = this;
-        bulletRef.Initialise();
-    }
-    public void AnimateBounceProjectileToShroom(Target targetEnemy, float timeToTarget)
-    {
-        if (attackSoundEffect != null)
-        {
-            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
-        }
-
-        if (bulletPrefab == null) return;
-
-        if (attackParticlePrefab != null)
-        {
-            GameObject particle = UnityEngine.Object.Instantiate(attackParticlePrefab, transform);
-            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
-            UnityEngine.Object.Destroy(particle, 0.5f);
-        }
-
-        Bullet bulletRef;
-        if (targetEnemy.enemy != null)
-            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, targetEnemy.enemy.transform.position, Quaternion.identity).GetComponent<Bullet>();
-        else
-            bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, originReference.transform.position, Quaternion.identity).GetComponent<Bullet>();
-        bulletRef.timeToTarget = timeToTarget;
-        if (lobProjectile) bulletRef.parabola = true;
-        bulletRef.InitialiseForTargetPosition(originReference.transform.position + Vector3.up * 2);
-    }
-
-    /// <summary>
-    /// Instantiates an AttackObject assigns it's universal values.
-    /// </summary>
-    protected AttackObject GenerateAttackObject(Target enemy)
-    {
-        AttackObject attackInProgress = MonoBehaviour.Instantiate(attackObjectPrefab).GetComponent<AttackObject>();
-        attackInProgress.damage = damage;
-        attackInProgress.delayToTarget = attackDelay;
-        attackInProgress.originShroom = originReference;
-        attackInProgress.target = enemy;
-        return attackInProgress;
     }
 
     public void AnimateAttack()

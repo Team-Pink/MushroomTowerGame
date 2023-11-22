@@ -43,22 +43,31 @@ public class TrapAttacker : Attacker
 
     public override void Attack(HashSet<Target> newTargets)
     {
+        if (onCooldown)
+        {
+            if (cooldownTimer >= attackCooldown)
+            {
+                onCooldown = false;
+                cooldownTimer = 0;
+                delayTimer = 0;
+            }
+            else
+            {
+                cooldownTimer += Time.deltaTime;
+                return;
+            }
+        }
+
         if (!attacking)
         {
             AnimateAttack();
 
+            placedTraps.Clear();
             TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
             attacking = true;
         }
-
-        if (!CheckAndIncrementCooldown()) return;
-
-        placedTraps.Clear();
-        delayTimer = 0f;
-        cooldownTimer = 0f;
-        attacking = false;
     }
 
     public bool PlaceTrap()
@@ -71,6 +80,7 @@ public class TrapAttacker : Attacker
         {
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
+            attacking = false;
             return true;
         }
 
@@ -78,16 +88,17 @@ public class TrapAttacker : Attacker
         {
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
+            attacking = false;
             return false;
         }
 
-        if (Physics.OverlapSphere(targets[inkPlacementIndex].position, bufferDistance, obstacles).Length > 0)
+        if (Physics.OverlapSphere(targets[inkPlacementIndex].getPosition(), bufferDistance, obstacles).Length > 0)
         {
             inkPlacementIndex++;
             return PlaceTrap();
         }
 
-        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].position, Quaternion.identity);
+        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].getPosition(), Quaternion.identity);
         TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
 
         trapScript.cleanupDuration = attackCooldown;

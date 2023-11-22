@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,14 @@ public struct Target
     {
         position = targetPos;
         enemy = targetEnemy;
+    }
+
+    public Vector3 getPosition()
+    {
+        if (enemy != null)
+            return enemy.transform.position;
+        else
+            return position;
     }
 }
 
@@ -116,7 +125,7 @@ public class Shroom : Building
     [SerializeField, Space()] Material[] deactivatedMaterials;
 
     [Space(20)]
-    [SerializeField, Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] SkinnedMeshRenderer boomerangCap;
+    [Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] public SkinnedMeshRenderer boomerangCap;
 
     private void Awake()
     {
@@ -171,17 +180,8 @@ public class Shroom : Building
         // Attack Logic.
         if (Active)
         {
-            if (attackerComponent.bounce && attackerComponent.bounceBulletInShroomPossession)
-            {
-                if (attackerComponent.returning)
-                {
-                    boomerangCap.enabled = true;
-                    attackerComponent.returning = false;
-                    animator.SetBool("Attack Recoil", true);
-                }
-            }
-
             targets = targeterComponent.AcquireTargets();
+
             if (targets != null)
             {
                 if (lockOn)
@@ -204,24 +204,12 @@ public class Shroom : Building
                 {
                     if (attackerComponent.bounceBulletInShroomPossession)
                     {
-                        if (boomerangCap.enabled == false)
-                        {
-                            boomerangCap.enabled = true;
-                            animator.SetBool("Attack Recoil", true);
-                        }
-                        else if (attackerComponent.CheckAndIncrementCooldown())
-                        {
-                            CalcTimeToTarget(targets, transform.position);
-                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
-                        }
+                        CalcTimeToTarget(targets, transform.position);
+                        attackerComponent.Attack(targets);
                     }
-                    else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
                 }
-                else if (attackerComponent.CheckAndIncrementCooldown())
-                {
                     CalcTimeToTarget(targets, transform.position);
                     attackerComponent.Attack(targets);
-                }
             }
             else if (lockOn && chargingLaser)
             {
@@ -304,7 +292,7 @@ public class Shroom : Building
         {
             lockedOn = true;
             lockOnTimer = lockOnDuration;
-            Debug.DrawLine(transform.position, lockOnTarget.position, Color.red, Mathf.Infinity);
+            Debug.DrawLine(transform.position, lockOnTarget.getPosition(), Color.red, Mathf.Infinity);
         }
         return lockedOn;
     }
@@ -319,7 +307,7 @@ public class Shroom : Building
     {
         foreach (Target target in targets)
         {
-            attackerComponent.attackDelay = GenericUtility.CalculateFlatDistance(originPos, target.position) / projectileSpeed;
+            attackerComponent.attackDelay = GenericUtility.CalculateFlatDistance(originPos, target.getPosition()) / projectileSpeed;
             return;
         }
     }
