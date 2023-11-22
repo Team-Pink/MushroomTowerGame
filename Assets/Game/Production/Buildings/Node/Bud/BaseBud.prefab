@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8555251113640901067}
   - component: {fileID: 3364223425624795044}
   - component: {fileID: 1393151635185806474}
+  - component: {fileID: 1388766350714669338}
   m_Layer: 13
   m_Name: BaseBud
   m_TagString: Pylon
@@ -131,3 +132,23 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.65
   m_Center: {x: -0.071025595, y: 0, z: -0.000000029802322}
+--- !u!95 &1388766350714669338
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228574422893360982}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f1e0bdbcd35567440affcdf2b42c6896, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
