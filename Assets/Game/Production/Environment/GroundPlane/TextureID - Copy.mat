@@ -42,6 +42,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 03399aac9319ea94d8e0ddb407312dfe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Height_Normal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Mud_Basecolour:
         m_Texture: {fileID: 2800000, guid: af4bf51614c347342ad0982218c7837f, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -60,6 +64,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Noise:
         m_Texture: {fileID: 2800000, guid: dc03835f01ebbc34faf385f1364119d9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise_Normal:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal0:
@@ -122,12 +130,16 @@ Material:
         m_Texture: {fileID: 2800000, guid: 3b6913b2cb60f1e4da705135e868181c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Terrain_Normal:
+        m_Texture: {fileID: 2800000, guid: 7dfc3ae6226a75747af2c991570ee5cd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Tex1_Basecolour:
         m_Texture: {fileID: 2800000, guid: 2cb2a7931988f314690eef220bede3bc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Normal:
-        m_Texture: {fileID: 2800000, guid: 64512ec20beadbc4bb27ab5e28fbceb6, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex1_Smoothness:
@@ -206,8 +218,8 @@ Material:
     - _CastShadows: 1
     - _Cull: 2
     - _DstBlend: 0
-    - _Edge_Noise_Scale: 1.5
-    - _Height_Normal_Strength: 1
+    - _Edge_Noise_Scale: 1.74
+    - _Height_Normal_Strength: 0.34
     - _Height_Strength: 50
     - _Mud_Tiling: 11.58
     - _Normal_Noise_Scale: 32.63
