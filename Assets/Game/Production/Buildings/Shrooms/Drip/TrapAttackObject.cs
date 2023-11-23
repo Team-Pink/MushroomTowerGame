@@ -34,16 +34,9 @@ public class TrapAttackObject : MonoBehaviour
     {
         if (!active)
         {
-            if (details.startupTime > 0)
-            {
-                details.startupTime -= Time.deltaTime; return;
-            }
-            else
-            {
-                meshRenderer.enabled = true;
-                particleSystem.SetActive(true);
-                active = true; return;
-            }
+            meshRenderer.enabled = true;
+            particleSystem.SetActive(true);
+            active = true; return;
         }
 
         if (cleanupTime < cleanupDuration)

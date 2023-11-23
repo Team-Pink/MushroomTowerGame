@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public bool spin;
+    public float spinSpeed;
+
     private bool initialised;
 
     public Attacker attacker;
@@ -61,7 +64,14 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        if (spin)
+        {
+            transform.Rotate(new Vector3(0, -spinSpeed * Time.deltaTime, 0));
+        }
+
         if (!initialised) return;
+
+        if (attacker == null) Destroy(gameObject);
 
         if (timeElapsed >= timeToTarget)
         {

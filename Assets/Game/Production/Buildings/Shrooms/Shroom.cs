@@ -94,7 +94,6 @@ public class Shroom : Building
 
     // prefabs
     [SerializeField] GameObject bulletPrefab;
-    [SerializeField] GameObject attackObjectPrefab;
 
     // Shroom values
     [SerializeField] private float projectileSpeed = 1.5f; //assign this properly on prefabs!
@@ -138,7 +137,6 @@ public class Shroom : Building
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
         attackerComponent.bulletPrefab = bulletPrefab;
-        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
         attackerComponent.originReference = this;
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
@@ -150,6 +148,8 @@ public class Shroom : Building
         {
             activeMaterials[i] = renderers[i].sharedMaterial;
         }
+
+        transform.rotation = Quaternion.Euler(0, 180, 0);
     }
 
     private void Update()
@@ -261,15 +261,6 @@ public class Shroom : Building
     }
     public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
     public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
-
-    /// <summary>
-    /// literally exists because bounce needs to port it's own stuff
-    /// </summary>
-    /// <returns></returns>
-    public GameObject GetAttackObjectPrefab()
-    {
-        return attackObjectPrefab;
-    }
 
     #region LockOn
 

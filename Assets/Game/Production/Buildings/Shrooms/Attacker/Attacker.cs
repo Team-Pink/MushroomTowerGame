@@ -24,7 +24,6 @@ public class Attacker
 
     public Transform transform;
     public GameObject bulletPrefab;
-    public GameObject attackObjectPrefab;
 
     public GameObject windupParticlePrefab;
     public GameObject attackParticlePrefab;
@@ -38,7 +37,7 @@ public class Attacker
     public Shroom originReference;
     public Animator animator;
 
-    [SerializeField]protected  bool lobProjectile;
+    [SerializeField] protected  bool lobProjectile;
     
 
     [Header("Spray Tag")]
@@ -95,6 +94,7 @@ public class Attacker
 
             if (lobProjectile)
             {
+                currentTarget.enemy = null;
                 targetsToShoot.Add(new Target(currentTarget.getPosition()));
             }
             else
@@ -111,7 +111,7 @@ public class Attacker
         }
     }
 
-    public void AnimateProjectile()
+    public virtual void AnimateProjectile()
     {
         if (attackSoundEffect != null)
         {
@@ -130,6 +130,7 @@ public class Attacker
         Bullet bullet;
         if (bulletPrefab != null)
         {
+            if (transform == null) return;
             bullet = UnityObject.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
         }
         else
@@ -175,13 +176,6 @@ public class Attacker
 
     public void AttackHit()
     {
-        // play impact animation
-        if (currentTarget.enemy != null)
-        {
-            if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
-            //if (hitSoundEffect != null) AudioManager.PlaySoundEffect(hitSoundEffect.name, 1);
-        }
-
         if (!areaAttacker)
         {
             if (currentTarget.enemy != null)
@@ -211,13 +205,24 @@ public class Attacker
                     currentTarget = FindNewBounceTarget();
                     Debug.Log("Found new target", currentTarget.enemy);
 
+                    if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
+                    if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+
                     AnimateProjectile();
                     return;
                 }
             }
+            else
+            {
+                if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
+                if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+            }
         }
         else
         {
+            if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
+            if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+
             // get everything in the area of the attack
             Collider[] mainCollisions = Physics.OverlapSphere(currentTarget.getPosition(), damageRadius, enemyLayers);
             foreach (Collider collision in mainCollisions)
@@ -257,6 +262,7 @@ public class Attacker
 
     private Target FindNewBounceTarget()
     {
+        if (originReference == null) return new Target();
         Collider[] potentialTargets = Physics.OverlapSphere(originReference.transform.position, originReference.TargeterComponent.range, enemyLayers);
 
         Target newTarget = new();

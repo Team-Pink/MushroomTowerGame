@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using UnityObject = UnityEngine.Object;
+
 [System.Serializable]
 public class TrapDetails
 {
@@ -63,7 +65,6 @@ public class TrapAttacker : Attacker
             AnimateAttack();
 
             placedTraps.Clear();
-            TrapManager.trapAttackers.Add(this);
 
             targets = newTargets.ToList();
             attacking = true;
@@ -81,6 +82,7 @@ public class TrapAttacker : Attacker
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
             attacking = false;
+            onCooldown = true;
             return true;
         }
 
@@ -89,6 +91,7 @@ public class TrapAttacker : Attacker
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
             attacking = false;
+            onCooldown = true;
             return false;
         }
 
@@ -110,5 +113,24 @@ public class TrapAttacker : Attacker
         placedTraps.Add(newTrap);
         inkPlacementIndex++;
         return true;
+    }
+
+    public override void AnimateProjectile()
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityObject.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityObject.Destroy(particle, 0.5f);
+        }
+
+        Debug.Log("Ink sprayed " + attackDelay);
+
+        TrapManager.trapAttackers.Add(this);
     }
 }
