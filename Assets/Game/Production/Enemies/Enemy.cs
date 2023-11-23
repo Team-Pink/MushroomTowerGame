@@ -335,9 +335,12 @@ public class Enemy : MonoBehaviour
             
         }//CONDITIONS
 
-        if (poisonParticles.activeSelf != poisoned)
+        if (poisonParticles != null)
         {
-            poisonParticles.SetActive(poisoned);
+            if (poisonParticles.activeSelf != poisoned)
+            {
+                poisonParticles.SetActive(poisoned);
+            }
         }
 
         foreach (Condition condition in markedForRemoval)

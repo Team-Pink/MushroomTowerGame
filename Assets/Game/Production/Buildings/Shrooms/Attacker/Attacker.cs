@@ -262,10 +262,18 @@ public class Attacker
 
     private Target FindNewBounceTarget()
     {
-        if (originReference == null) return new Target();
-        Collider[] potentialTargets = Physics.OverlapSphere(originReference.transform.position, originReference.TargeterComponent.range, enemyLayers);
-
         Target newTarget = new();
+
+        if (originReference == null) return newTarget;
+
+        if (hitTargets.Count >= bounceHitLimit)
+        {
+            newTarget.position = originReference.transform.position;
+            returning = true;
+            return newTarget;
+        }
+
+        Collider[] potentialTargets = Physics.OverlapSphere(originReference.transform.position, originReference.TargeterComponent.range, enemyLayers);
 
         foreach (Collider potentialTarget in potentialTargets)
         {
