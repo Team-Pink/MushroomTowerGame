@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,14 @@ public struct Target
     {
         position = targetPos;
         enemy = targetEnemy;
+    }
+
+    public Vector3 getPosition()
+    {
+        if (enemy != null)
+            return enemy.transform.position;
+        else
+            return position;
     }
 }
 
@@ -29,6 +38,7 @@ public enum TargeterType
 public enum AttackerType
 {
     SelectAType,
+    Attacker,
     Area,
     Single,
     Trap
@@ -84,10 +94,9 @@ public class Shroom : Building
 
     // prefabs
     [SerializeField] GameObject bulletPrefab;
-    [SerializeField] GameObject attackObjectPrefab;
 
     // Shroom values
-    [SerializeField] private float projectileSpeed = 1.5f; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! assign this properly on prefabs!
+    [SerializeField] private float projectileSpeed = 1.5f; //assign this properly on prefabs!
     // setting the above to zero WILL cause a divide by zero error!!!
     public float GetProjectileSpeed() => projectileSpeed;
 
@@ -115,7 +124,7 @@ public class Shroom : Building
     [SerializeField, Space()] Material[] deactivatedMaterials;
 
     [Space(20)]
-    [SerializeField, Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] SkinnedMeshRenderer boomerangCap;
+    [Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] public SkinnedMeshRenderer boomerangCap;
 
     private void Awake()
     {
@@ -128,8 +137,7 @@ public class Shroom : Building
         targeterComponent.enemyLayer = LayerMask.GetMask("Enemy");
 
         attackerComponent.bulletPrefab = bulletPrefab;
-        AttackerComponent.attackObjectPrefab = attackObjectPrefab;
-        attackerComponent.originReference = this; // I am very open to a better way of doing this so please if you can rearchitect this go ahead. !!!
+        attackerComponent.originReference = this;
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
@@ -140,6 +148,8 @@ public class Shroom : Building
         {
             activeMaterials[i] = renderers[i].sharedMaterial;
         }
+
+        transform.rotation = Quaternion.Euler(0, 180, 0);
     }
 
     private void Update()
@@ -170,17 +180,8 @@ public class Shroom : Building
         // Attack Logic.
         if (Active)
         {
-            if (attackerComponent.bounce && attackerComponent.bounceBulletInShroomPossession)
-            {
-                if (attackerComponent.returning)
-                {
-                    boomerangCap.enabled = true;
-                    attackerComponent.returning = false;
-                    animator.SetBool("Attack Recoil", true);
-                }
-            }
-
             targets = targeterComponent.AcquireTargets();
+
             if (targets != null)
             {
                 if (lockOn)
@@ -203,24 +204,12 @@ public class Shroom : Building
                 {
                     if (attackerComponent.bounceBulletInShroomPossession)
                     {
-                        if (boomerangCap.enabled == false)
-                        {
-                            boomerangCap.enabled = true;
-                            animator.SetBool("Attack Recoil", true);
-                        }
-                        else if (attackerComponent.CheckCooldownTimer())
-                        {
-                            CalcTimeToTarget(targets, transform.position);
-                            attackerComponent.Attack(targets); // Generates an attack query that will create an attack object.
-                        }
+                        CalcTimeToTarget(targets, transform.position);
+                        attackerComponent.Attack(targets);
                     }
-                    else if (boomerangCap.enabled == true) boomerangCap.enabled = false;
                 }
-                else if (attackerComponent.CheckCooldownTimer())
-                {
                     CalcTimeToTarget(targets, transform.position);
                     attackerComponent.Attack(targets);
-                }
             }
             else if (lockOn && chargingLaser)
             {
@@ -273,15 +262,6 @@ public class Shroom : Building
     public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
     public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
 
-    /// <summary>
-    /// literally exists because bounce needs to port it's own stuff
-    /// </summary>
-    /// <returns></returns>
-    public GameObject GetAttackObjectPrefab()
-    {
-        return attackObjectPrefab;
-    }
-
     #region LockOn
 
     private bool LockedOn()
@@ -303,7 +283,7 @@ public class Shroom : Building
         {
             lockedOn = true;
             lockOnTimer = lockOnDuration;
-            Debug.DrawLine(transform.position, lockOnTarget.position, Color.red, Mathf.Infinity);
+            Debug.DrawLine(transform.position, lockOnTarget.getPosition(), Color.red, Mathf.Infinity);
         }
         return lockedOn;
     }
@@ -316,21 +296,10 @@ public class Shroom : Building
     /// <param name="originPos"></param>
     public void CalcTimeToTarget(HashSet<Target> targets, Vector3 originPos)
     {
-        //int TargetCounter = 0;
         foreach (Target target in targets)
         {
-
-            attackerComponent.attackDelay = Vector3.Distance(originPos, target.position) / projectileSpeed;
+            attackerComponent.attackDelay = GenericUtility.CalculateFlatDistance(originPos, target.getPosition()) / projectileSpeed;
             return;
-            /*TargetCounter++;
-            if (TargetCounter == targetProjectileSpeedCounter)
-            {
-                if (targetProjectileSpeedCounter >= numTargets)
-                    targetProjectileSpeedCounter = 0;
-                return; // yes I am indeed entering a foreach loop just to get a reference to the first object in targets and then returning without examining the other targets.
-            }*/
-
         }
-
     }
 }

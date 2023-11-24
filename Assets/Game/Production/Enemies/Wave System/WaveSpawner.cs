@@ -158,6 +158,12 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] Sprite[] shroomSprites = new Sprite[4];
     [SerializeField] float unlockTooltipDuration = 2;
 
+    [Header("First Wave = 1 // If wave doc says 1, write 2")]
+    [SerializeField] int inkUnlockWave;
+    [SerializeField] int slamUnlockWave;
+    [SerializeField] int mortarUnlockWave;
+    [SerializeField] int laserUnlockWave;
+
     // Tutorial
     private TutorialManager tutorial;
 
@@ -216,12 +222,32 @@ public class WaveSpawner : MonoBehaviour
     {
         if (elapsedSecondsBetweenWaves < unlockTooltipDuration && currentWaveIndex > 0 && currentWaveIndex < 5)
         {
-            shroomUnlockTooltip.SetActive(true);
-            shroomIcon.sprite = shroomSprites[currentWaveIndex];
+            //shroomUnlockTooltip.SetActive(true); // moved this down so that it works with the new unlockIndex var
+            //shroomIcon.sprite = shroomSprites[currentWaveIndex];
 
             if (elapsedSecondsBetweenWaves == 0.0f && currentWaveIndex > 0)
             {
-                GetComponent<InteractionManager>().UnlockShroom(currentWaveIndex);
+                int unlockIndex = -1;
+
+                // what shroom need to be unlocked now?
+                // index: 1=ink, 2=slam, 3=mortar, 4=laser
+
+                
+                if (currentWaveIndex == inkUnlockWave) unlockIndex = 1;
+
+                else if (currentWaveIndex == slamUnlockWave) unlockIndex = 2;
+
+                else if (currentWaveIndex == mortarUnlockWave) unlockIndex = 3;
+
+                else if (currentWaveIndex == laserUnlockWave) unlockIndex = 4;
+
+                GetComponent<InteractionManager>().UnlockShroom(unlockIndex);
+
+                if (unlockIndex != -1)
+                {
+                    shroomUnlockTooltip.SetActive(true);
+                    shroomIcon.sprite = shroomSprites[unlockIndex];
+                }
             }
         }
 

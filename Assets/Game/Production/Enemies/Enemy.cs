@@ -169,6 +169,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] SkinnedMeshRenderer meshRenderer;
     private Material defaultMaterial;
     [SerializeField] Material hurtMaterial;
+    [SerializeField] GameObject poisonParticles;
 
     [SerializeField] AudioClip attackAudio;
     [SerializeField] AudioClip deathAudio;
@@ -221,9 +222,9 @@ public class Enemy : MonoBehaviour
     #region Health Logic
     public virtual void TakeDamage(float damage)
     {
+        Debug.Log("Enemy took damage");
         health -= damage;
-        if (health > 0)
-        StartCoroutine(DisplayHurt());
+        if (health > 0) StartCoroutine(DisplayHurt());
     }
 
     private IEnumerator DisplayHurt()
@@ -267,7 +268,6 @@ public class Enemy : MonoBehaviour
     #region Condition Logic
     public void ApplyConditions(Condition[] conditions)
     {
-        
         for (int newIndex = 0; newIndex < conditions.Length; newIndex++)
         {
             bool shouldApply = true;
@@ -299,11 +299,14 @@ public class Enemy : MonoBehaviour
 
     void ExecuteConditionEffects()
     {
+        bool poisoned = false;
         List<Condition> markedForRemoval = new();
         foreach (Condition condition in activeConditions)
         {
             if (condition.type == Condition.ConditionType.Poison)
             {
+                poisoned = true;
+
                 TakeDamage(condition.value * Time.deltaTime);
 
                 if (CheckIfDead())
@@ -331,6 +334,14 @@ public class Enemy : MonoBehaviour
             }//SLOW CONDITION
             
         }//CONDITIONS
+
+        if (poisonParticles != null)
+        {
+            if (poisonParticles.activeSelf != poisoned)
+            {
+                poisonParticles.SetActive(poisoned);
+            }
+        }
 
         foreach (Condition condition in markedForRemoval)
             activeConditions.Remove(condition);
