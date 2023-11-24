@@ -98,7 +98,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField, NonReorderable] Image[] shroomSelectionMenuButtons;
     [SerializeField] Sprite[] lockedShroomSprites;
     [SerializeField] Sprite[] highlightedShroomSprites; 
-    private readonly Sprite[] shroomIconSprites = new Sprite[5];
+    [SerializeField] private Sprite[] shroomIconSprites = new Sprite[5];
     private int unlockedShrooms = 0;
     private readonly int maxShroomsUnlockable = 5;
     [SerializeField] bool unlockAllShrooms = false;
@@ -316,6 +316,8 @@ public class InteractionManager : MonoBehaviour
 
     private void BuildingInteractionState()
     {
+        if (!targetBuilding) { targetBuilding = null; ResetInteraction(); return; }
+
         DisplayBuildingHealth(out MeshRenderer healthDisplay);
 
         targetBuilding.recurseHighlight = true;
@@ -339,7 +341,7 @@ public class InteractionManager : MonoBehaviour
 
             if (currentHit.collider is null)
             {
-                if (healthDisplay != null) healthDisplay.enabled = false;
+                if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                 ResetInteraction();
                 return;
             }
@@ -354,7 +356,7 @@ public class InteractionManager : MonoBehaviour
                 if (targetBuilding is Meteor)
                 {
                     radiusDisplay.SetActive(false);
-                    if (healthDisplay != null) healthDisplay.enabled = false;
+                    if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                     CurrentInteraction = InteractionState.PlacingFromMeteor;
                     return;
                 }
@@ -363,7 +365,7 @@ public class InteractionManager : MonoBehaviour
                     if ((targetBuilding as Node).isResidual == false && targetBuilding.Active)
                     {
                         radiusDisplay.SetActive(false);
-                        if (healthDisplay != null) healthDisplay.enabled = false;
+                        if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
                         CurrentInteraction = InteractionState.PlacingFromNode;
                     }
                     return;
@@ -377,7 +379,7 @@ public class InteractionManager : MonoBehaviour
             if (Input.GetKeyUp(interactKey))
             {
                 radiusDisplay.SetActive(false);
-                if (healthDisplay != null) healthDisplay.enabled = false;
+                if (healthDisplay != null && targetBuilding.IsMaxHealth) healthDisplay.enabled = false;
 
                 if (targetBuilding is Node && (targetBuilding as Node).isResidual == false && targetBuilding.Active)
                 {
@@ -1005,7 +1007,7 @@ public class InteractionManager : MonoBehaviour
         {
             Node targetNode = (targetBuilding as Node);
             healthDisplay = targetNode.healthDisplay;
-            healthDisplay.sharedMaterial.SetFloat("_Value", targetNode.CurrentHealth / targetNode.MaxHealth);
+            
         }
         else return;
 
@@ -1017,9 +1019,29 @@ public class InteractionManager : MonoBehaviour
 
     public void UnlockShroom(int shroomIndex)
     {
-        if (unlockedShrooms > maxShroomsUnlockable) return;
-        if (shroomIndex != 0) shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
-        unlockedShrooms++;
+        if (shroomIndex == 0)
+        {
+            unlockedShrooms++;
+        }
+        if (shroomIndex > 0 && shroomIndex < 5)
+        {
+            shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
+            unlockedShrooms++;
+        }
+
+
+
+
+
+        //if (unlockedShrooms > maxShroomsUnlockable) return;
+        //else if (shroomIndex == 10) return; // 10 means dont unlock anything this turn
+        //else if (shroomIndex >= 0 || shroomIndex < 5)
+        //{
+        //    shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
+        //    unlockedShrooms++;
+        //}
+        //else Debug.LogWarning("Shroom Index out of range");
+        
     }
 
     private void ShroomRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
