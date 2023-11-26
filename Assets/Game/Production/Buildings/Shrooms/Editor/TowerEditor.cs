@@ -60,7 +60,7 @@ namespace EditorScripts
         bool upgradable;
 
         public TargeterType targeterType = TargeterType.Close;
-        public AttackerType attackerType = AttackerType.Area;
+        public AttackerType attackerType = AttackerType.Attacker;
 
         Color selectedColor = new(1.75f, 1, 1.75f);
 
@@ -129,7 +129,7 @@ namespace EditorScripts
                 else if (tower.AttackerComponent is TrapAttacker)
                     attackerType = AttackerType.Trap;
                 else
-                    attackerType = AttackerType.Single;
+                    attackerType = AttackerType.Attacker;
             } // Get Existing Components
 
             SetComponents();
@@ -218,7 +218,7 @@ namespace EditorScripts
                 EditorGUILayout.Space();
                 BeginHorizontal();
                     EditorGUILayout.Space(); EditorGUILayout.LabelField("Attacking Type", Stylesheet.RightLabel, MaxWidth(100));
-                    attackerType = (AttackerType)EditorGUILayout.EnumPopup(attackerType, MaxWidth(80)); ; EditorGUILayout.Space();
+                    attackerType = (AttackerType)EditorGUILayout.EnumPopup(attackerType, MaxWidth(80)); EditorGUILayout.Space();
                 EndHorizontal();
             EndVertical();
             #endregion
@@ -400,6 +400,10 @@ namespace EditorScripts
                     if (tower.AttackerComponent is not TrapAttacker)
                         tower.AttackerComponent = new TrapAttacker();
                     break;
+                    case AttackerType.Attacker:
+                        if (tower.AttackerComponent is TrapAttacker or AreaAttacker or SingleAttacker)
+                            tower.AttackerComponent = new Attacker();
+                        break;
             }
         }
     }

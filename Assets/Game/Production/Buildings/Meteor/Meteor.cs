@@ -9,6 +9,10 @@ public class Meteor : Building
 {
     [SerializeField] float maxHealth = 100;
     private float currentHealth;
+    public override bool IsMaxHealth
+    {
+        get => currentHealth == maxHealth;
+    }
     [SerializeField] float gameOverDuration = 10;
     [SerializeField] Text gameOverText;
 

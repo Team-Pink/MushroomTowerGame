@@ -10,6 +10,11 @@ public abstract class Building : MonoBehaviour
         Sell
     }
 
+    public virtual bool IsMaxHealth
+    {
+        get { return false; }
+    }
+
     private bool active = true;
     public bool Active
     {

@@ -1,10 +1,14 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class Bullet : MonoBehaviour
 {
+    public bool spin;
+    public float spinSpeed;
+
     private bool initialised;
+
+    public Attacker attacker;
 
     public float timeToTarget;
     private float timeElapsed;
@@ -18,9 +22,6 @@ public class Bullet : MonoBehaviour
     private float progress = 0;
     [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
-
-
-
 
 
 
@@ -63,19 +64,28 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        if (spin)
+        {
+            transform.Rotate(new Vector3(0, -spinSpeed * Time.deltaTime, 0));
+        }
+
         if (!initialised) return;
 
-       if (timeElapsed >= timeToTarget)
-       {
-           Destroy(gameObject);
-       }
-       timeElapsed += Time.deltaTime;
+        if (attacker == null) Destroy(gameObject);
 
+        if (timeElapsed >= timeToTarget)
+        {
+            attacker.AttackHit();
+            Debug.Log("Bullet hit, " + timeToTarget);
+            Destroy(gameObject);
+        }
+        else
+        {
+            timeElapsed += Time.deltaTime;
 
-
-        if (parabola) MoveParabola();
-        else MoveStraightToTarget();
-
+            if (parabola) MoveParabola();
+            else MoveStraightToTarget();
+        }
     }
 
     void MoveStraightToTarget()
@@ -98,10 +108,7 @@ public class Bullet : MonoBehaviour
         currentPos.y = -progress * progress + progress; // update y position
         currentPos.y *= arcHeight;
 
-        transform.rotation = Quaternion.LookRotation(currentPos); // rotate towards the direction of movement
-
-        transform.position = currentPos; // Update position
-
+        transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(currentPos));
     }
 }
 

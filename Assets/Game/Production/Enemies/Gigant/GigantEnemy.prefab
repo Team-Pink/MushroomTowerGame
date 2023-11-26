@@ -4870,6 +4870,72 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1001 &3535148984281224241
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1113751191575444512}
+    m_Modifications:
+    - target: {fileID: 33425099709406101, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_Name
+      value: Poison
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406101, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 33425099709406102, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+--- !u!1 &3565127652713467812 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 33425099709406101, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
+  m_PrefabInstance: {fileID: 3535148984281224241}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3912824768862142005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5062,12 +5128,13 @@ MonoBehaviour:
   bugBits: 8
   animator: {fileID: 6382702797799955622}
   levelData: {fileID: 0}
-  hubTransform: {fileID: 0}
-  hub: {fileID: 0}
+  meteorTransform: {fileID: 0}
+  meteor: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 3
   meshRenderer: {fileID: 5493967869161848320}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
+  poisonParticles: {fileID: 3565127652713467812}
   attackAudio: {fileID: 8300000, guid: e2982b7acc2fc7049812ab5be5e7e26d, type: 3}
   deathAudio: {fileID: 8300000, guid: 17ce99c49a6364d4d8ceafc9ef90da1f, type: 3}
   damageReduction: 1
