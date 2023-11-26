@@ -46,7 +46,10 @@ public abstract class EnemyTargeter : Targeter
 
 
         targetsInRange.Clear();
-        if (enemyColliders == null) return;
+        if (enemyColliders == null)
+        {
+            return;
+        }
 
         foreach (Collider collider in enemyColliders)
         {
@@ -77,8 +80,8 @@ public abstract class EnemyTargeter : Targeter
         GetTargetsInRange(); // update targets in range
         if (targetsInRange.Count == 0 || targetsInRange == null) // null check out.
         {
-           // if (transform.rotation != defaultRotation) // ???
-             //   transform.rotation = defaultRotation; // ??? If there is no target instantly return to facing the camera?
+            if (transform.rotation != defaultRotation)
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, defaultRotation, 100 * Time.deltaTime);
             return null;
         }
         if (targetsInRange.Count <= numTargets) // early out if less targets than numTargets.
