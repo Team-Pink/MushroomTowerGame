@@ -5,6 +5,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject hudIcons;
     [SerializeField] GameObject mainMenu;
     [SerializeField] GameObject boomy;
+    [SerializeField] GameObject creditsScreen;
 
     private TutorialManager tutorialManager;
 
@@ -30,5 +31,12 @@ public class MainMenu : MonoBehaviour
         #else
             Application.Quit();
         #endif
+    }
+
+    public void CreditsToggle() // this function works in theory (I've used this exact code before) but I don't know how to set up Unity's buttons in editor so I can't test it.
+    {
+        mainMenu.SetActive(!mainMenu.activeSelf);
+        creditsScreen.SetActive(!creditsScreen.activeSelf);
+        Debug.Log("Credits button pressed");
     }
 }

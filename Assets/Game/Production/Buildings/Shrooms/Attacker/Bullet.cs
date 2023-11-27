@@ -76,7 +76,7 @@ public class Bullet : MonoBehaviour
         if (timeElapsed >= timeToTarget)
         {
             attacker.AttackHit();
-            Debug.Log("Bullet hit, " + timeToTarget);
+            //Debug.Log("Bullet hit, " + timeToTarget);
             Destroy(gameObject);
         }
         else
@@ -99,7 +99,7 @@ public class Bullet : MonoBehaviour
     void MoveParabola()
     {
         //LooseTargetTracking();
-        Debug.DrawLine(transform.position, targetPos, Color.red, 0.02f);
+        //Debug.DrawLine(transform.position, targetPos, Color.red, 0.02f);
         // update progress to match time elapsed
         progress = timeElapsed / timeToTarget;
 
