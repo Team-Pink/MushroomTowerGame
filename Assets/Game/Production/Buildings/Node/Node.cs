@@ -40,7 +40,7 @@ public class Node : Building
         set
         {
             currentHealth = value;
-            if (currentHealth <= float.Epsilon)
+            if (currentHealth <= float.Epsilon && !isResidual)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 if (CanTurnIntoResidual())
@@ -51,7 +51,8 @@ public class Node : Building
 
     [SerializeField] public bool disappearing = false;
 
-    [SerializeField] GameObject regrowCanvas;
+    public GameObject regrowCanvas;
+    UnityEngine.UI.Button regrowButton;
 
     [Header("Connections")]
     [SerializeField] List<Building> connectedBuildings = new();
@@ -110,10 +111,14 @@ public class Node : Building
         CurrentHealth = nodeHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
+        regrowButton = regrowCanvas.GetComponentInChildren<UnityEngine.UI.Button>();
     }
 
     private void Update()
     {
+        if (InteractionManager.gamePaused && regrowButton.interactable) regrowButton.interactable = false;
+        else if (!InteractionManager.gamePaused && !regrowButton.interactable) regrowButton.interactable = true;
+
         RemoveNullBuildings();
 
         if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0 && !disappearing)
@@ -289,6 +294,8 @@ public class Node : Building
     }
     public void CheckIfCanToggleResidual()
     {
+        if (InteractionManager.gamePaused) return;
+
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         if (currencyManager.CanDecreaseCurrencyAmount(GetNodeCost()))
         {
