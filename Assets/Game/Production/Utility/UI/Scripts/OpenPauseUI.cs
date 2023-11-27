@@ -27,11 +27,6 @@ public class OpenPauseUI : MonoBehaviour
             activePause = !activePause;
             // pause game
             pauseMenu.SetActive(activePause);
-            foreach (Building building in buildings.GetComponentsInChildren<Building>())
-            {
-                if (building == null) continue;
-                else if (building is Node && (building as Node).isResidual) { (building as Node).regrowCanvas.SetActive(!activePause); }
-            }
         }
     }
 
