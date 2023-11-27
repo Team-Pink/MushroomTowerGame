@@ -50,7 +50,7 @@ PrefabInstance:
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: renderers.Array.data[0]
       value: 
-      objectReference: {fileID: 6577275630696668077}
+      objectReference: {fileID: 0}
     - target: {fileID: -580960206788277889, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
       propertyPath: targeterComponent.range
       value: 6
@@ -515,6 +515,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8739140638021269415, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f3b3fd351e6d52488facae47dd55cbc, type: 3}
 --- !u!4 &4934701682232051942 stripped
@@ -605,10 +609,5 @@ PrefabInstance:
 --- !u!95 &1011849591911351348 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7142356912060147558, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
-  m_PrefabInstance: {fileID: 7860030475742913362}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &6577275630696668077 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3914575049295968511, guid: c9196391a51debf449bb7ee2e361396d, type: 3}
   m_PrefabInstance: {fileID: 7860030475742913362}
   m_PrefabAsset: {fileID: 0}

@@ -14,6 +14,9 @@ public class CustomCursor
 
 public class CursorManager : MonoBehaviour
 {
+    [SerializeField] bool useHardwareCursor = false;
+    [Space(50)]
+
     public CustomCursor[] cursors;
     [SerializeField] TMP_Text costText;
     [SerializeField] Vector2 costPositionFromSoftwareMousePoint;
@@ -29,8 +32,11 @@ public class CursorManager : MonoBehaviour
 
     void Start()
     {
-        Cursor.visible = false;
-        softwareCursorImage.gameObject.SetActive(true);
+        if (!useHardwareCursor)
+        { 
+            Cursor.visible = false;
+            softwareCursorImage.gameObject.SetActive(true);
+        }
         ChangeCursor();
         canvasScaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
     }
@@ -38,11 +44,13 @@ public class CursorManager : MonoBehaviour
     private void Update()
     {
         PlaceCursorUIOnCursorPosition();
-        
-        if (IsCursorNotInWindowBounds() && Cursor.visible == false)
-            Cursor.visible = true;
-        else if (!IsCursorNotInWindowBounds() && Cursor.visible != false)
-            Cursor.visible = false;
+        if (!useHardwareCursor)
+        {
+            if (IsCursorNotInWindowBounds() && Cursor.visible == false)
+                Cursor.visible = true;
+            else if (!IsCursorNotInWindowBounds() && Cursor.visible != false)
+                Cursor.visible = false;
+        }
     }
 
     public void ChangeCursor(string cursorName)
