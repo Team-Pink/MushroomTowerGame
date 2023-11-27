@@ -562,7 +562,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6375534184558690590}
-  m_RootOrder: 7
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -921,7 +921,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6974a4df255f8d740843e863d141675a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -960,10 +960,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: e29c5c32473b12448b7d1983ebaee574, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: e29c5c32473b12448b7d1983ebaee574, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 38639c084a401194289800139d3dd54c, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 38639c084a401194289800139d3dd54c, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 6974a4df255f8d740843e863d141675a, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 6974a4df255f8d740843e863d141675a, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1961,7 +1961,7 @@ GameObject:
   - component: {fileID: 4319174034117408333}
   - component: {fileID: 8405734198901305887}
   m_Layer: 5
-  m_Name: Background (change width x height)
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2015,7 +2015,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f58798842f36e414b96f9e2881e22fc0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1f0c54f063dc62a41be01ca044ed2641, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2177,10 +2177,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 324bc72f5b7b544449c00a0908ab5a9f, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 324bc72f5b7b544449c00a0908ab5a9f, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 0929a4434ff8576469b2e66431c548e6, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 0929a4434ff8576469b2e66431c548e6, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 7dce39d84c016b44bac3d6ce8c810426, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 7dce39d84c016b44bac3d6ce8c810426, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -2224,7 +2224,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7dce39d84c016b44bac3d6ce8c810426, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3131,7 +3131,7 @@ GameObject:
   - component: {fileID: 4724562324140084571}
   - component: {fileID: 654030212}
   m_Layer: 5
-  m_Name: Play
+  m_Name: Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3194,10 +3194,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 4445a936a1279ba4896823f6edf0b5eb, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: 4445a936a1279ba4896823f6edf0b5eb, type: 3}
-    m_SelectedSprite: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: cde22639b6e332a418c63df9ba83677f, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: cde22639b6e332a418c63df9ba83677f, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 86afe88dd2aa6c744a2eb6b9af516763, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 86afe88dd2aa6c744a2eb6b9af516763, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -3213,6 +3213,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
         m_MethodName: Play
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6137623224205688881}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3241,7 +3253,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86afe88dd2aa6c744a2eb6b9af516763, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3799,7 +3811,7 @@ RectTransform:
   - {fileID: 8273584500908737175}
   - {fileID: 2255330685894755606}
   m_Father: {fileID: 6375534184558690590}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3884,7 +3896,7 @@ RectTransform:
   - {fileID: 1849769208394759645}
   - {fileID: 7655503101482965240}
   m_Father: {fileID: 6375534184558690590}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4172,7 +4184,7 @@ GameObject:
   - component: {fileID: 7314037344217271551}
   - component: {fileID: 5442615007735514754}
   m_Layer: 5
-  m_Name: ~~~~~~ GameVersion ~~~~~~~~
+  m_Name: GameVersion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4191,7 +4203,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6375534184558690590}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -4361,7 +4373,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cc33fd6f89ee48c4fb31b6e1b0780287, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4bad1a741f21aec4ba698fa7e4f9dd8c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5271,10 +5283,10 @@ RectTransform:
   - {fileID: 4007622695580329831}
   - {fileID: 3592632629252616415}
   - {fileID: 1293111786}
-  - {fileID: 7292871252384846779}
   - {fileID: 6577336143774364496}
   - {fileID: 3792439509119424205}
   - {fileID: 1624035021405776273}
+  - {fileID: 7292871252384846779}
   - {fileID: 8308676717467201896}
   - {fileID: 448761277376744786}
   m_Father: {fileID: 0}
