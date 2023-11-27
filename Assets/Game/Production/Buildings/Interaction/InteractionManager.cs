@@ -653,7 +653,7 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromNodeState()
     {
-        if (targetBuilding == null)
+        if (targetBuilding == null || (targetBuilding as Node).isResidual)
         {
             ResetInteraction();
             return;
@@ -837,7 +837,7 @@ public class InteractionManager : MonoBehaviour
     }
     private void ShroomSelectionState()
     {
-        if (targetBuilding == null)
+        if (targetBuilding == null || (targetBuilding as Node).isResidual)
         {
             ResetInteraction();
             return;
