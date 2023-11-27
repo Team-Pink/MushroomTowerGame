@@ -39,7 +39,7 @@ public class Node : Building
         set
         {
             currentHealth = value;
-            if (currentHealth <= float.Epsilon)
+            if (currentHealth <= float.Epsilon && !isResidual)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 if (CanTurnIntoResidual())
