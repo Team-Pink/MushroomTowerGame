@@ -150,8 +150,11 @@ public class Node : Building
     public void Damage(float damageAmount)
     {
         CurrentHealth -= damageAmount;
-        healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
-        if (!healthDisplay.enabled) healthDisplay.enabled = true;
+        if (healthDisplay != null)
+        {
+            healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
+            if (!healthDisplay.enabled) healthDisplay.enabled = true;
+        }
     }
 
     public void AddBuilding(Building building)
@@ -188,6 +191,8 @@ public class Node : Building
         base.Reactivate();
         foreach (Building building in connectedBuildings)
         {
+            if (building is Node && (building as Node).isResidual) continue;
+
             building.Reactivate();
         }
         budAnimator.SetBool("Reactivate", true);
@@ -227,8 +232,8 @@ public class Node : Building
             return true;
         else
         {
-            budAnimator.SetBool("Sell", true);
-            animator.SetBool("Residual Disappear", true);
+            if (budAnimator != null) budAnimator.SetBool("Sell", true);
+            if (animator != null) animator.SetBool("Residual Disappear", true);
         }
         return false;
     }
