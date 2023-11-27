@@ -10761,7 +10761,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244882}
+  waveIndicator: {fileID: 542244883}
   timer: {fileID: 1023087946}
 --- !u!1001 &425455207
 PrefabInstance:
@@ -13142,7 +13142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244884}
+  waveIndicator: {fileID: 542244885}
   timer: {fileID: 26874649}
 --- !u!1001 &583802244
 PrefabInstance:
@@ -13527,10 +13527,86 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
+    - target: {fileID: 754861052788538513, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: NW WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 754861052788538513, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1203363520936353662, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: waveSpawner
       value: 
       objectReference: {fileID: 6533875848325091997}
+    - target: {fileID: 1664067546489262301, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: E(down) WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 1664067546489262301, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875426412226908392, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: SW(right) WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875426412226908392, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2090020088809978056, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: SW(left) WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 2090020088809978056, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2786070673497779032, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: N(left) WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 2786070673497779032, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3169126794435534504, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: SE WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 3169126794435534504, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3463264026261521974, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: W WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 3463264026261521974, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3471097511467805223, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4318304454706872542, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: N(right WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 4318304454706872542, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4432426392069040175, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: S WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 4432426392069040175, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -13617,6 +13693,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690590, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6535400720309720783, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: E(up) WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 6535400720309720783, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606763025427838413, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_Name
+      value: NE WaveIndicator
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606763025427838413, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -14266,7 +14358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244883}
+  waveIndicator: {fileID: 542244884}
   timer: {fileID: 734329194}
 --- !u!1001 &659783007
 PrefabInstance:
@@ -25875,7 +25967,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244885}
+  waveIndicator: {fileID: 542244886}
   timer: {fileID: 1832440160}
 --- !u!1001 &1500811494
 PrefabInstance:
@@ -26121,7 +26213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244886}
+  waveIndicator: {fileID: 542244881}
   timer: {fileID: 553937413}
 --- !u!1001 &1534507972
 PrefabInstance:
@@ -34701,7 +34793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7013ceb3b6e5d4da1dba103b3888fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveIndicator: {fileID: 542244881}
+  waveIndicator: {fileID: 542244882}
   timer: {fileID: 2132710209}
 --- !u!114 &2132710209 stripped
 MonoBehaviour:
@@ -35901,10 +35993,6 @@ PrefabInstance:
       propertyPath: shroomTooltip
       value: 
       objectReference: {fileID: 1461804935}
-    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: unlockAllShrooms
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomDescription
       value: 
