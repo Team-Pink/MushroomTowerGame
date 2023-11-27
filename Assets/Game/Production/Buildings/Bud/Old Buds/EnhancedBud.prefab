@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 3364223425624795044}
   - component: {fileID: 5132919334761132757}
   m_Layer: 13
-  m_Name: Meteor Bud
-  m_TagString: Pylon
+  m_Name: EnhancedBud
+  m_TagString: Hub
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2228574422893360982}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.49, y: 6.25, z: -4.68}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -98,10 +98,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61d884289ac0bc4ba7e9291b47599a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceType: 1
-  hoverAxis: 0
-  intensity: 0.001
-  speed: 1
+  bounceType: 0
+  hoverAxis: 1
+  intensity: 0.5
+  speed: 0.5
 --- !u!114 &3364223425624795044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,10 +114,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b61d884289ac0bc4ba7e9291b47599a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceType: 0
-  hoverAxis: 1
-  intensity: 0.15
-  speed: 0.5
+  bounceType: 1
+  hoverAxis: 0
+  intensity: 0.3
+  speed: 1
 --- !u!135 &5132919334761132757
 SphereCollider:
   m_ObjectHideFlags: 0
