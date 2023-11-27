@@ -7,11 +7,9 @@ public class OpenPauseUI : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
     bool activePause = false;
-    Transform buildings;
 
     void Start()
     {
-        buildings = GameObject.Find("----|| Buildings ||----").transform;
     }
 
     // Update is called once per frame
