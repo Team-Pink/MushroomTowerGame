@@ -50,7 +50,7 @@ public class Node : Building
 
     [SerializeField] public bool disappearing = false;
 
-    [SerializeField] GameObject regrowCanvas;
+    public GameObject regrowCanvas;
 
     [Header("Connections")]
     [SerializeField] List<Building> connectedBuildings = new();
