@@ -290,7 +290,7 @@ public class InteractionManager : MonoBehaviour
                     {
                         sellButton.sprite = sellButtonDefault;
 
-                        if (targetBuilding is not null)
+                        if (targetBuilding != null)
                         {
                             ResetInteraction();
                         }
@@ -653,6 +653,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromNodeState()
     {
+        if (targetBuilding == null)
+        {
+            ResetInteraction();
+            return;
+        }
+
         if (Input.GetKeyDown(cancelKey))
         {
             if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
@@ -831,6 +837,12 @@ public class InteractionManager : MonoBehaviour
     }
     private void ShroomSelectionState()
     {
+        if (targetBuilding == null)
+        {
+            ResetInteraction();
+            return;
+        }
+
         if (Input.GetKeyDown(cancelKey))
         {
             if (tutorialMode && tutorial.currentTutorial == TutorialManager.Tutorial.Placement
@@ -1161,16 +1173,13 @@ public class InteractionManager : MonoBehaviour
                 else
                     (targetBuilding as Node).budDetached = false;
             }
-        }
 
-        if (activeBud is not null)
-        {
-            activeBud.SetActive(true);
-            activeBud = null;
-        }
+            if (activeBud != null)
+            {
+                activeBud.SetActive(true);
+                activeBud = null;
+            }
 
-        if (targetBuilding is not null)
-        {
             targetBuilding.radiusDisplay.SetActive(false);
             targetBuilding = null;
         }
