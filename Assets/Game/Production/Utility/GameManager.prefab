@@ -256,6 +256,134 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &626181631600271878
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3830349626190581619}
+  - component: {fileID: 8014683731955554064}
+  m_Layer: 0
+  m_Name: LoseMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3830349626190581619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626181631600271878}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1781535955800263503}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &8014683731955554064
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626181631600271878}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 1201292868640293374, guid: ea72515f6b155b04a9dbfa69a1672d4c, type: 2}
+  m_audioClip: {fileID: 8300000, guid: 72702947e617fd14a9eab024cdecfe2c, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1533703022776662504
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,6 +541,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7406207616750984605}
+  - {fileID: 8141513784991004072}
+  - {fileID: 3830349626190581619}
   m_Father: {fileID: 6951641658545601210}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -606,7 +736,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324805702203058379}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &5077879186186134463
 AudioSource:
@@ -734,7 +864,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324805702203058379}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &6169553795588001843
 AudioSource:
@@ -862,7 +992,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324805702203058379}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1746934264434927725
 AudioSource:
@@ -1088,6 +1218,134 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &3620636292017194922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8141513784991004072}
+  - component: {fileID: 3065859537383289389}
+  m_Layer: 0
+  m_Name: WinMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8141513784991004072
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3620636292017194922}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1781535955800263503}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &3065859537383289389
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3620636292017194922}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 1201292868640293374, guid: ea72515f6b155b04a9dbfa69a1672d4c, type: 2}
+  m_audioClip: {fileID: 8300000, guid: df0964fdb75cd054a909c8f2d1354e2d, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &3960951867486615862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,7 +1485,7 @@ GameObject:
   - component: {fileID: 7406207616750984605}
   - component: {fileID: 53043457188617491}
   m_Layer: 0
-  m_Name: Swamp Danger
+  m_Name: GameMusic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1258,7 +1516,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 1201292868640293374, guid: ea72515f6b155b04a9dbfa69a1672d4c, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 3cab0b0fe9fcba445a9eaac18456b806, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 5f48bbd9feede914a9ef676299a1d64d, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1502,7 +1760,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324805702203058379}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &6130553512904334499
 AudioSource:
@@ -1912,8 +2170,8 @@ MonoBehaviour:
   shroomPrefabs:
   - {fileID: 4934701682232051941, guid: df2281042c0fff04ca70a185d24a3750, type: 3}
   - {fileID: 4934701682232051941, guid: e39f4b1c6dbcba54d981a6210757f7eb, type: 3}
-  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
   - {fileID: 4934701682232051941, guid: 1183af305bf443a4589a4739184ea0bb, type: 3}
+  - {fileID: 4934701682232051941, guid: 3d7c40590578956498bff599053a759f, type: 3}
   - {fileID: 4934701682232051941, guid: 4eccdfd4e0f4e754285724f6712f5174, type: 3}
   buildingLayers:
     serializedVersion: 2
@@ -1923,8 +2181,8 @@ MonoBehaviour:
   shroomNames:
   - Shroomiken
   - Sludge Slinger
-  - Spore Launcher
   - Crushroom
+  - Spore Launcher
   - Biolumenaser
   shroomDescription: {fileID: 0}
   shroomDescriptions:
@@ -1934,12 +2192,12 @@ MonoBehaviour:
   - 'Damage Over Time
 
     Slows Enemies'
-  - 'Low Area Damage
-
-    Large Area of Effect'
   - 'Area Damage
 
     Slow Attack Rate'
+  - 'Low Area Damage
+
+    Large Area of Effect'
   - 'High Damage
 
     Slow Charge Up'
@@ -1970,15 +2228,21 @@ MonoBehaviour:
   lockedShroomSprites:
   - {fileID: 0}
   - {fileID: 21300000, guid: 5b267e90a11108e4fb2555db8e52c878, type: 3}
-  - {fileID: 21300000, guid: cd6dfe42544879b44a5627f2eca4b150, type: 3}
   - {fileID: 21300000, guid: a34c78ce2058e3c468e3d3374a797f04, type: 3}
+  - {fileID: 21300000, guid: cd6dfe42544879b44a5627f2eca4b150, type: 3}
   - {fileID: 21300000, guid: db272a6ffe53bcf4789430293ab80b2f, type: 3}
   highlightedShroomSprites:
   - {fileID: 21300000, guid: 19774a58540c59241980c06bf42094b7, type: 3}
   - {fileID: 21300000, guid: a3b606935af052a47a428d9970172f04, type: 3}
-  - {fileID: 21300000, guid: 2f27c99badbaef24485ee502e49441e0, type: 3}
   - {fileID: 21300000, guid: 9218ac99d5e29174b9cd4bbba62ab266, type: 3}
+  - {fileID: 21300000, guid: 2f27c99badbaef24485ee502e49441e0, type: 3}
   - {fileID: 21300000, guid: 83bc98ff42c49b844bc5f4babf0fe55a, type: 3}
+  shroomIconSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   unlockAllShrooms: 0
   shroomSelectionCostText: {fileID: 0}
   canPurchaseColour: {r: 1, g: 1, b: 1, a: 1}
@@ -2024,28 +2288,46 @@ MonoBehaviour:
   - {fileID: 3867595276330598457, guid: 21eb121a492a6a64886940493e9efc2f, type: 3}
   - {fileID: 1113751191575445470, guid: ca8f4c636936de54cb7cf1c680d7b0a9, type: 3}
   waves:
+  - duration: 10
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
   - duration: 15
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 0
-      amount: 5
+      amount: 7
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
     - enemy: 0
-      amount: 5
+      amount: 7
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
-  - duration: 20
+  - duration: 15
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 0
-      amount: 10
+      amount: 7
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
-  - duration: 30
+    - enemy: 0
+      amount: 7
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 4
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 18
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 0
@@ -2054,28 +2336,20 @@ MonoBehaviour:
       withPrevious: 0
       nextEnemy: 0
     - enemy: 1
-      amount: 5
+      amount: 6
       spawnOverride: {fileID: 0}
-      withPrevious: 0
+      withPrevious: 1
       nextEnemy: 0
-  - duration: 30
+    - enemy: 1
+      amount: 6
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 15
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 0
-      amount: 10
-      spawnOverride: {fileID: 0}
-      withPrevious: 0
-      nextEnemy: 0
-    - enemy: 1
-      amount: 5
-      spawnOverride: {fileID: 0}
-      withPrevious: 0
-      nextEnemy: 0
-  - duration: 30
-    defaultSpawn: {fileID: 0}
-    batches:
-    - enemy: 2
-      amount: 1
+      amount: 20
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
@@ -2084,10 +2358,275 @@ MonoBehaviour:
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
-    - enemy: 2
-      amount: 1
+    - enemy: 1
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 18
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 20
       spawnOverride: {fileID: 0}
       withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 30
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 1
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 10
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 3
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 3
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 1
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 15
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 20
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 40
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 40
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+  - duration: 20
+    defaultSpawn: {fileID: 0}
+    batches:
+    - enemy: 0
+      amount: 60
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 60
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 30
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 30
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
       nextEnemy: 0
   secondsBetweenWaves: 5
   parentFolder: {fileID: 0}
@@ -2114,10 +2653,14 @@ MonoBehaviour:
   shroomSprites:
   - {fileID: 21300000, guid: 502afc4fa79c6ac479e30779913fd2fa, type: 3}
   - {fileID: 21300000, guid: 343b91bfc307735409c06b43625231e1, type: 3}
-  - {fileID: 21300000, guid: b78cd8e395a0cfb49a3a90924853828d, type: 3}
   - {fileID: 21300000, guid: b73dae983eb291a4da66c6d27af8d778, type: 3}
+  - {fileID: 21300000, guid: b78cd8e395a0cfb49a3a90924853828d, type: 3}
   - {fileID: 21300000, guid: c4723ebfd7db21643a84d343f35fa2c5, type: 3}
   unlockTooltipDuration: 3
+  inkUnlockWave: 2
+  slamUnlockWave: 4
+  mortarUnlockWave: 6
+  laserUnlockWave: 10
 --- !u!114 &6829538405946730101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2162,22 +2705,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursors:
   - cursorName: Default
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 0
   - cursorName: CannotPlace
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
   - cursorName: CanPlace
-    cursorSprite: {fileID: 21300000, guid: cb3235ec97dbe2f46a69e8cdabfe7c29, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
   - cursorName: Shovel
-    cursorSprite: {fileID: 21300000, guid: 19d2ce3b82b9706479f49e3b835fd25f, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 18d67692fe3a3f64994c88b3c64c3f94, type: 3}
     displayCost: 0
   - cursorName: HighlightedShovel
-    cursorSprite: {fileID: 21300000, guid: a62f8c8500374804eb03d994f6afa358, type: 3}
+    cursorSprite: {fileID: 21300000, guid: 8f24f2161365c3b4891b13b51b410ed4, type: 3}
     displayCost: 1
   costText: {fileID: 0}
-  costPositionFromSoftwareMousePoint: {x: 40, y: -40}
+  costPositionFromSoftwareMousePoint: {x: 60, y: -20}
   softwareCursorImage: {fileID: 0}
 --- !u!114 &5583641233090253150
 MonoBehaviour:
@@ -2209,7 +2752,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   placementHasPlayed: 0
-  warningWave: 4
+  warningWave: 5
   warningWaitTime: 3
   elapsedWarningWaitTime: 0
   warningParts:
@@ -2223,7 +2766,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   regrowHasPlayed: 0
-  sellingWave: 3
+  sellingWave: 7
   sellingParts:
   - {fileID: 0}
   - {fileID: 0}
@@ -2317,7 +2860,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 7108252009233715007, guid: ea72515f6b155b04a9dbfa69a1672d4c, type: 2}
   m_audioClip: {fileID: 8300000, guid: b09d090aab1cee54c9817dcf1fd41d52, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2561,6 +3104,7 @@ Transform:
   - {fileID: 3934247330758654392}
   - {fileID: 5065516131360969953}
   - {fileID: 9111550320838796603}
+  - {fileID: 4031604288573930525}
   - {fileID: 932940370722568742}
   - {fileID: 8203899057479910502}
   - {fileID: 4586274204408478222}
@@ -2727,7 +3271,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7324805702203058379}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &6152124906951442282
 AudioSource:
@@ -2895,6 +3439,7 @@ MonoBehaviour:
     - {fileID: 2072861888923027773}
     - {fileID: 5961196590301497598}
     - {fileID: 5804926040329397249}
+    - {fileID: 4093024207364946435}
     - {fileID: 6152124906951442282}
     - {fileID: 5077879186186134463}
     - {fileID: 1746934264434927725}
@@ -2945,6 +3490,134 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: e5c22d781bc5cc8438bc32bd1a4298da, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!1 &8720882996221479359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4031604288573930525}
+  - component: {fileID: 4093024207364946435}
+  m_Layer: 0
+  m_Name: BoomerangHit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4031604288573930525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8720882996221479359}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7324805702203058379}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &4093024207364946435
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8720882996221479359}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 7108252009233715007, guid: ea72515f6b155b04a9dbfa69a1672d4c, type: 2}
+  m_audioClip: {fileID: 8300000, guid: 4d87048e5e78bde49a758cebe077341b, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0

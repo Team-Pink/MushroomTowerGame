@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+using UnityObject = UnityEngine.Object;
+
 [System.Serializable]
 public class TrapDetails
 {
@@ -43,22 +45,30 @@ public class TrapAttacker : Attacker
 
     public override void Attack(HashSet<Target> newTargets)
     {
+        if (onCooldown)
+        {
+            if (cooldownTimer >= attackCooldown)
+            {
+                onCooldown = false;
+                cooldownTimer = 0;
+                delayTimer = 0;
+            }
+            else
+            {
+                cooldownTimer += Time.deltaTime;
+                return;
+            }
+        }
+
         if (!attacking)
         {
             AnimateAttack();
 
-            TrapManager.trapAttackers.Add(this);
+            placedTraps.Clear();
 
             targets = newTargets.ToList();
             attacking = true;
         }
-
-        if (!CheckCooldownTimer()) return;
-
-        placedTraps.Clear();
-        delayTimer = 0f;
-        cooldownTimer = 0f;
-        attacking = false;
     }
 
     public bool PlaceTrap()
@@ -71,6 +81,8 @@ public class TrapAttacker : Attacker
         {
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
+            attacking = false;
+            onCooldown = true;
             return true;
         }
 
@@ -78,16 +90,18 @@ public class TrapAttacker : Attacker
         {
             inkPlacementIndex = 0;
             TrapManager.trapAttackers.Remove(this);
+            attacking = false;
+            onCooldown = true;
             return false;
         }
 
-        if (Physics.OverlapSphere(targets[inkPlacementIndex].position, bufferDistance, obstacles).Length > 0)
+        if (Physics.OverlapSphere(targets[inkPlacementIndex].getPosition(), bufferDistance, obstacles).Length > 0)
         {
             inkPlacementIndex++;
             return PlaceTrap();
         }
 
-        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].position, Quaternion.identity);
+        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].getPosition(), Quaternion.identity);
         TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
 
         trapScript.cleanupDuration = attackCooldown;
@@ -99,5 +113,24 @@ public class TrapAttacker : Attacker
         placedTraps.Add(newTrap);
         inkPlacementIndex++;
         return true;
+    }
+
+    public override void AnimateProjectile()
+    {
+        if (attackSoundEffect != null)
+        {
+            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+        }
+
+        if (attackParticlePrefab != null)
+        {
+            GameObject particle = UnityObject.Instantiate(attackParticlePrefab, transform);
+            particle.transform.position += new Vector3(0, particleOriginOffset, 0);
+            UnityObject.Destroy(particle, 0.5f);
+        }
+
+        Debug.Log("Ink sprayed " + attackDelay);
+
+        TrapManager.trapAttackers.Add(this);
     }
 }

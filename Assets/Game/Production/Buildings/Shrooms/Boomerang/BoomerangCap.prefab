@@ -28,11 +28,16 @@ Transform:
   m_GameObject: {fileID: 511253370973085324}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3717941247990906464}
   - {fileID: 6485357928903485270}
+  - {fileID: 5825949108823511664}
+  - {fileID: 913410481136495944}
+  - {fileID: 708426353899346324}
+  - {fileID: 7367591257822248219}
+  - {fileID: 7926196762460660634}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -48,10 +53,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1107b574adf9945926831d0dec5ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spin: 1
+  spinSpeed: 1000
+  attacker:
+    damage: 3
+    areaAttacker: 0
+    attackCooldown: 3
+    cooldownTimer: 0
+    attackDelay: 2
+    animationLeadIn: 0
+    transform: {fileID: 0}
+    bulletPrefab: {fileID: 0}
+    windupParticlePrefab: {fileID: 0}
+    attackParticlePrefab: {fileID: 0}
+    hitParticlePrefab: {fileID: 0}
+    particleOriginOffset: 0
+    leadinSoundEffect: {fileID: 0}
+    attackSoundEffect: {fileID: 0}
+    attackHitSoundEffect: {fileID: 0}
+    originReference: {fileID: 0}
+    animator: {fileID: 0}
+    lobProjectile: 0
+    spray: 0
+    sprayDamage: 1
+    additionalSprayRange: 2
+    bounce: 0
+    bounceHitLimit: 10
+    returning: 0
+    bounceBulletInShroomPossession: 1
+    enemyLayers:
+      serializedVersion: 2
+      m_Bits: 0
+    damageRadius: 3
+    attacking: 0
   timeToTarget: 0
   parabola: 0
   arcHeight: 40
-  spin: 1
 --- !u!2083052967 &8846277859254704434
 VisualEffect:
   m_ObjectHideFlags: 0
@@ -212,6 +249,204 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &1376508354233350119
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3425191655894978313}
+    m_Modifications:
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_Name
+      value: Boomerang Projectile Trail Render
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+--- !u!4 &7367591257822248219 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+  m_PrefabInstance: {fileID: 1376508354233350119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1791069039556733286
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3425191655894978313}
+    m_Modifications:
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_Name
+      value: Boomerang Projectile Trail Render
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+--- !u!4 &7926196762460660634 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+  m_PrefabInstance: {fileID: 1791069039556733286}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2737427575134935180
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3425191655894978313}
+    m_Modifications:
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_Name
+      value: Boomerang Projectile Trail Render
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+--- !u!4 &5825949108823511664 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+  m_PrefabInstance: {fileID: 2737427575134935180}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3396902228477685162
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -223,17 +458,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boomerang Projectile Trail Render
       objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
       propertyPath: m_LocalPosition.z
@@ -273,4 +512,136 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
   m_PrefabInstance: {fileID: 3396902228477685162}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8757728616049633204
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3425191655894978313}
+    m_Modifications:
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_Name
+      value: Boomerang Projectile Trail Render
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+--- !u!4 &913410481136495944 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+  m_PrefabInstance: {fileID: 8757728616049633204}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9002819055246709608
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3425191655894978313}
+    m_Modifications:
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_Name
+      value: Boomerang Projectile Trail Render
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095537, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+--- !u!4 &708426353899346324 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8441054363743095548, guid: 57e4fff4ec70fe2478a9e26cf3d52103, type: 3}
+  m_PrefabInstance: {fileID: 9002819055246709608}
   m_PrefabAsset: {fileID: 0}
