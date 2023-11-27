@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Node : Building
 {
+    private bool disabledParent;
+
     public Animator animator;
     public Animator budAnimator;
 
@@ -177,27 +178,41 @@ public class Node : Building
 
     public override void Deactivate()
     {
-        if (!Active) return;
         base.Deactivate();
+        if (!isResidual)
+        {
+            budAnimator.SetBool("Deactivate", true);
+        }
+
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
+            if (building is Node)
+            {
+                (building as Node).disabledParent = true;
+            }
         }
-        budAnimator.SetBool("Deactivate", true);
     }
     public override void Reactivate()
     {
-        if (Active) return;
-        base.Reactivate();
+        if (!isResidual)
+        {
+            base.Reactivate();
+            budAnimator.SetBool("Reactivate", true);
+        }
+
         foreach (Building building in connectedBuildings)
         {
-            if (building is Node && (building as Node).isResidual) continue;
+            if (isResidual && building is Shroom) continue;
+
+            if (building is Node)
+            {
+                (building as Node).disabledParent = false;
+                if ((building as Node).isResidual) continue;
+            }
 
             building.Reactivate();
         }
-        budAnimator.SetBool("Reactivate", true);
-
-        currentHealth = nodeHealth;
     }
 
     public void ToggleResidual(bool value)
@@ -206,20 +221,20 @@ public class Node : Building
 
         if (isResidual)
         {
+            currentHealth = 0;
+
+            animator.SetBool("Become Residual", true);
+            budAnimator.SetBool("Deactivate", true);
+
             Deactivate();
         }
         else
         {
-            Reactivate();
-        }
+            currentHealth = nodeHealth;
 
-        if (Active)
-        {
             animator.SetBool("Rebuild", true);
-        }
-        else
-        {
-            animator.SetBool("Become Residual", true);
+
+            if (disabledParent == false) Reactivate();
         }
 
         regrowCanvas.SetActive(isResidual);
