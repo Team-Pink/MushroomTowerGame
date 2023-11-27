@@ -29,7 +29,7 @@ public class NodeAttacker : Enemy
 
             Node node = collider.GetComponent<Node>();
 
-            if (node.CurrentHealth > 0)
+            if (node.isResidual == false)
             {
                 targetBuilding = node;
                 targetNode = node;
@@ -42,7 +42,7 @@ public class NodeAttacker : Enemy
     protected override void HuntState()
     {
         rigidbody.velocity = Vector3.zero;
-        if (targetNode.CurrentHealth <= 0 || targetNode == null)
+        if (targetNode.isResidual || targetNode == null)
         {
             targetBuilding = FindNewTarget();
         }
@@ -72,7 +72,7 @@ public class NodeAttacker : Enemy
         }
 
         //On Node Death or Deactivation
-        if (targetNode.CurrentHealth <= 0)
+        if (targetNode.isResidual)
         {
             targetBuilding = FindNewTarget();
             return;
@@ -135,7 +135,7 @@ public class NodeAttacker : Enemy
 
         foreach (Collider collider in collisions)
         {
-            if (collider.GetComponent<Node>().CurrentHealth > 0)
+            if (collider.GetComponent<Node>().isResidual == false)
             {
                 targetBuilding = collider.GetComponent<Node>();
                 state = EnemyState.Hunt;
