@@ -1028,20 +1028,6 @@ public class InteractionManager : MonoBehaviour
             shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
             unlockedShrooms++;
         }
-
-
-
-
-
-        //if (unlockedShrooms > maxShroomsUnlockable) return;
-        //else if (shroomIndex == 10) return; // 10 means dont unlock anything this turn
-        //else if (shroomIndex >= 0 || shroomIndex < 5)
-        //{
-        //    shroomSelectionMenuButtons[shroomIndex].sprite = shroomIconSprites[shroomIndex];
-        //    unlockedShrooms++;
-        //}
-        //else Debug.LogWarning("Shroom Index out of range");
-        
     }
 
     private void ShroomRadialMenu(GameObject radialMenu, Image[] radialButtons, out int hoveredButtonIndex, float reservedDegrees = 0)
@@ -1109,7 +1095,7 @@ public class InteractionManager : MonoBehaviour
             }
             Material material = shroomRadiusPreview.GetComponent<MeshRenderer>().sharedMaterial;
 
-            if (hoveredButtonIndex == 2) material.SetFloat("_Hole_Radius", 0.1667f);
+            if (hoveredButtonIndex == 3) material.SetFloat("_Hole_Radius", 0.1667f);
             else material.SetFloat("_Hole_Radius", 0.0f);
 
             Shroom shroom = shroomPrefabs[hoveredButtonIndex].GetComponent<Shroom>();
