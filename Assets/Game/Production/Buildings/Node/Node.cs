@@ -158,6 +158,11 @@ public class Node : Building
     {
         connectedBuildings.Add(building);
 
+        if (!Active || isResidual)
+        {
+            building.Deactivate();
+        }
+
         AddLine(building);
     }
     public void RemoveBuilding(int index)

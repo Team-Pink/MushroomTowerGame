@@ -13002,6 +13002,10 @@ PrefabInstance:
       propertyPath: waveSpawner
       value: 
       objectReference: {fileID: 6533875848325091997}
+    - target: {fileID: 1380549658670050093, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -35349,6 +35353,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1461804935}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: unlockAllShrooms
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomDescription
       value: 
       objectReference: {fileID: 1646853001}
@@ -35375,11 +35383,11 @@ PrefabInstance:
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomSelectionMenuButtons.Array.data[2]
       value: 
-      objectReference: {fileID: 438994661}
+      objectReference: {fileID: 229487027}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomSelectionMenuButtons.Array.data[3]
       value: 
-      objectReference: {fileID: 229487027}
+      objectReference: {fileID: 438994661}
     - target: {fileID: 6533875848915124893, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: shroomSelectionMenuButtons.Array.data[4]
       value: 

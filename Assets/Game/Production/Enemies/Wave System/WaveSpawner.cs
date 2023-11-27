@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
@@ -220,7 +219,7 @@ public class WaveSpawner : MonoBehaviour
 
     private void BetweenWavesState()
     {
-        if (elapsedSecondsBetweenWaves < unlockTooltipDuration && currentWaveIndex > 0 && currentWaveIndex < 5)
+        if (elapsedSecondsBetweenWaves < unlockTooltipDuration && currentWaveIndex > 0)
         {
             //shroomUnlockTooltip.SetActive(true); // moved this down so that it works with the new unlockIndex var
             //shroomIcon.sprite = shroomSprites[currentWaveIndex];
