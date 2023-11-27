@@ -153,6 +153,6 @@ public class NodeAttacker : Enemy
     public IEnumerator DamageNode()
     {
         yield return new WaitForSeconds(attackDuration);
-        targetNode.CurrentHealth -= damage;
+        targetNode.Damage(damage);
     }
 }
