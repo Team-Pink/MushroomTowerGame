@@ -653,7 +653,7 @@ public class InteractionManager : MonoBehaviour
     }
     private void PlacingFromNodeState()
     {
-        if (targetBuilding == null || (targetBuilding as Node).isResidual)
+        if (targetBuilding == null || (targetBuilding as Node).isResidual || (targetBuilding as Node).disappearing)
         {
             ResetInteraction();
             return;
@@ -837,7 +837,7 @@ public class InteractionManager : MonoBehaviour
     }
     private void ShroomSelectionState()
     {
-        if (targetBuilding == null || (targetBuilding as Node).isResidual)
+        if (targetBuilding == null || (targetBuilding as Node).isResidual || (targetBuilding as Node).disappearing)
         {
             ResetInteraction();
             return;
@@ -979,6 +979,12 @@ public class InteractionManager : MonoBehaviour
 
     public void SpawnShroom(int shroomIndex)
     {
+        if ((targetBuilding as Node).disappearing)
+        {
+            ResetInteraction();
+            return;
+        }
+
         currencyManager.DecreaseCurrencyAmount(placementCost);
 
         GameObject shroomInstance = Instantiate(shroomPrefabs[shroomIndex], currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
