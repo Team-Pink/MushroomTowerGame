@@ -40,11 +40,19 @@ public class Node : Building
         set
         {
             currentHealth = value;
-            if (currentHealth <= float.Epsilon && !isResidual)
+            if (currentHealth <= 0 && !isResidual)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 if (CanTurnIntoResidual())
+                {
                     ToggleResidual(true);
+                }
+                else
+                {
+                    if (budAnimator != null) budAnimator.SetBool("Sell", true);
+                    if (animator != null) animator.SetBool("Residual Disappear", true);
+                    disappearing = true;
+                }
             }
         }
     }
@@ -120,13 +128,6 @@ public class Node : Building
         else if (!InteractionManager.gamePaused && !regrowButton.interactable) regrowButton.interactable = true;
 
         RemoveNullBuildings();
-
-        if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0 && !disappearing)
-        {
-            budAnimator.SetBool("Sell", true);
-            animator.SetBool("Residual Disappear", true);
-            disappearing = true;
-        }
 
         bool showBud = !budDetached;
         bud.SetActive(showBud);
@@ -228,8 +229,8 @@ public class Node : Building
         {
             currentHealth = 0;
 
-            animator.SetBool("Become Residual", true);
-            budAnimator.SetBool("Deactivate", true);
+            if (animator != null) animator.SetBool("Become Residual", true);
+            if (budAnimator != null) budAnimator.SetBool("Deactivate", true);
 
             Deactivate();
         }
@@ -237,7 +238,7 @@ public class Node : Building
         {
             currentHealth = nodeHealth;
 
-            animator.SetBool("Rebuild", true);
+            if (animator != null) animator.SetBool("Rebuild", true);
 
             if (disabledParent == false) Reactivate();
         }
@@ -319,9 +320,17 @@ public class Node : Building
             ToggleResidual(true);
         else
         {
-            disappearing = true;
-            budAnimator.SetBool("Sell", true);
-            animator.SetBool("Sell", true);
+            if (isResidual)
+            {
+                if (animator != null) animator.SetBool("Residual Disappear", true);
+                disappearing = true;
+            }
+            else
+            {
+                disappearing = true;
+                if (budAnimator != null) budAnimator.SetBool("Sell", true);
+                if (animator != null) animator.SetBool("Sell", true);
+            }
         }
     }
 
