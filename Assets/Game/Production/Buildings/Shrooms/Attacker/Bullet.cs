@@ -23,6 +23,8 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float arcHeight = 40;
     Vector3 currentPos;
 
+    private bool attackFinished = false;
+
 
 
     /// <summary>
@@ -64,6 +66,8 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        if (attackFinished) return;
+
         if (spin)
         {
             transform.Rotate(new Vector3(0, -spinSpeed * Time.deltaTime, 0));
@@ -75,9 +79,13 @@ public class Bullet : MonoBehaviour
 
         if (timeElapsed >= timeToTarget)
         {
+            attackFinished = true;
             attacker.AttackHit();
+
             Debug.Log("Bullet hit, " + timeToTarget);
-            Destroy(gameObject);
+
+            GetComponent<MeshRenderer>().enabled = false;
+            Destroy(gameObject, 3);
         }
         else
         {
@@ -109,16 +117,6 @@ public class Bullet : MonoBehaviour
         currentPos.y *= arcHeight;
 
         transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(currentPos));
-    }
-
-    /// <summary>
-    /// This is a failed measure to try stopping the ghost bullets
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator SelfDestruct()
-    {
-        yield return new WaitForSeconds(4);
-        Destroy(gameObject);
     }
 
 
