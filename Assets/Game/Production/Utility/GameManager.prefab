@@ -2372,7 +2372,12 @@ MonoBehaviour:
       withPrevious: 0
       nextEnemy: 0
     - enemy: 2
-      amount: 5
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 1
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2380,6 +2385,16 @@ MonoBehaviour:
       amount: 20
       spawnOverride: {fileID: 0}
       withPrevious: 0
+      nextEnemy: 0
+    - enemy: 2
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
       nextEnemy: 0
   - duration: 15
     defaultSpawn: {fileID: 0}
@@ -2390,7 +2405,7 @@ MonoBehaviour:
       withPrevious: 0
       nextEnemy: 0
     - enemy: 2
-      amount: 10
+      amount: 3
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2425,18 +2440,23 @@ MonoBehaviour:
   - duration: 15
     defaultSpawn: {fileID: 0}
     batches:
-    - enemy: 2
-      amount: 15
+    - enemy: 0
+      amount: 25
       spawnOverride: {fileID: 0}
-      withPrevious: 0
+      withPrevious: 1
       nextEnemy: 0
     - enemy: 2
-      amount: 10
+      amount: 3
       spawnOverride: {fileID: 0}
-      withPrevious: 0
+      withPrevious: 1
       nextEnemy: 0
     - enemy: 0
       amount: 25
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 3
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2448,11 +2468,6 @@ MonoBehaviour:
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
-    - enemy: 2
-      amount: 10
-      spawnOverride: {fileID: 0}
-      withPrevious: 1
-      nextEnemy: 0
     - enemy: 1
       amount: 15
       spawnOverride: {fileID: 0}
@@ -2464,12 +2479,32 @@ MonoBehaviour:
       withPrevious: 1
       nextEnemy: 0
     - enemy: 2
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 1
       amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 15
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2477,14 +2512,74 @@ MonoBehaviour:
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 3
-      amount: 5
+      amount: 1
       spawnOverride: {fileID: 0}
       withPrevious: 0
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 0
+      amount: 20
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
       nextEnemy: 0
   - duration: 15
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
+      amount: 10
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 1
       amount: 10
       spawnOverride: {fileID: 0}
       withPrevious: 0
@@ -2499,8 +2594,23 @@ MonoBehaviour:
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
-    - enemy: 1
-      amount: 10
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 0
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 3
+      amount: 1
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2508,22 +2618,22 @@ MonoBehaviour:
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 2
-      amount: 15
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
     - enemy: 2
-      amount: 15
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 2
-      amount: 15
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 2
-      amount: 15
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2536,7 +2646,7 @@ MonoBehaviour:
       withPrevious: 0
       nextEnemy: 0
     - enemy: 2
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2546,17 +2656,17 @@ MonoBehaviour:
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 5
+      amount: 3
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 0
       amount: 20
       spawnOverride: {fileID: 0}
-      withPrevious: 1
+      withPrevious: 0
       nextEnemy: 0
     - enemy: 2
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2566,7 +2676,7 @@ MonoBehaviour:
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 5
+      amount: 3
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2584,22 +2694,22 @@ MonoBehaviour:
     defaultSpawn: {fileID: 0}
     batches:
     - enemy: 0
-      amount: 60
+      amount: 80
       spawnOverride: {fileID: 0}
       withPrevious: 0
       nextEnemy: 0
     - enemy: 0
-      amount: 60
+      amount: 80
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 2
-      amount: 15
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2609,12 +2719,12 @@ MonoBehaviour:
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 10
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2624,7 +2734,12 @@ MonoBehaviour:
       withPrevious: 1
       nextEnemy: 0
     - enemy: 3
-      amount: 10
+      amount: 5
+      spawnOverride: {fileID: 0}
+      withPrevious: 1
+      nextEnemy: 0
+    - enemy: 2
+      amount: 5
       spawnOverride: {fileID: 0}
       withPrevious: 1
       nextEnemy: 0
@@ -2660,7 +2775,7 @@ MonoBehaviour:
   inkUnlockWave: 2
   slamUnlockWave: 4
   mortarUnlockWave: 6
-  laserUnlockWave: 10
+  laserUnlockWave: 8
 --- !u!114 &6829538405946730101
 MonoBehaviour:
   m_ObjectHideFlags: 0
