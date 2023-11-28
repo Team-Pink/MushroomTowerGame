@@ -13587,10 +13587,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3471097511467805223, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4318304454706872542, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: N(right WaveIndicator
@@ -35593,6 +35589,10 @@ PrefabInstance:
       propertyPath: waves.Array.data[14].defaultSpawn
       value: 
       objectReference: {fileID: 76148385}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[0].batches.Array.data[0].enemy
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[0].spawnOverride
       value: 
