@@ -143,7 +143,7 @@ MonoBehaviour:
     linkedSlots:
     - outputSlot: {fileID: 8926484042661614611}
       inputSlot: {fileID: 8926484042661614938}
-    position: {x: 1673, y: 419}
+    position: {x: 1668, y: 485}
     expandedSlots: []
     expanded: 0
 --- !u!114 &8926484042661614611
@@ -2287,7 +2287,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"vector":{"x":6.0,"y":45.0,"z":6.0}}'
+      m_SerializableObject: '{"vector":{"x":6.0,"y":30.0,"z":6.0}}'
     m_Space: 0
   m_Property:
     name: A
@@ -2457,7 +2457,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"vector":{"x":-6.0,"y":40.0,"z":-6.0}}'
+      m_SerializableObject: '{"vector":{"x":-6.0,"y":25.0,"z":-6.0}}'
     m_Space: 0
   m_Property:
     name: B
@@ -2806,7 +2806,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614776}
   - {fileID: 8926484042661614777}
   m_OutputSlots: []
-  m_Disabled: 1
+  m_Disabled: 0
   repeat: 1
   spawnMode: 0
   delayMode: 0
@@ -3187,7 +3187,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 4
+      m_SerializableObject: 2
     m_Space: 2147483647
   m_Property:
     name: Size
@@ -4439,7 +4439,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"vector":{"x":6.0,"y":60.0,"z":6.0}}'
+      m_SerializableObject: '{"vector":{"x":6.0,"y":40.0,"z":6.0}}'
     m_Space: 0
   m_Property:
     name: A
@@ -4609,7 +4609,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"vector":{"x":-6.0,"y":50.0,"z":-6.0}}'
+      m_SerializableObject: '{"vector":{"x":-6.0,"y":35.0,"z":-6.0}}'
     m_Space: 0
   m_Property:
     name: B
@@ -5137,7 +5137,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614870}
   - {fileID: 8926484042661614871}
   m_OutputSlots: []
-  m_Disabled: 1
+  m_Disabled: 0
   repeat: 1
   spawnMode: 0
   delayMode: 0
@@ -5166,7 +5166,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 15
+      m_SerializableObject: 7
     m_Space: 2147483647
   m_Property:
     name: Count
@@ -5260,7 +5260,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 15
+      m_SerializableObject: 7
     m_Space: 2147483647
   m_Property:
     name: Count
@@ -6451,7 +6451,7 @@ MonoBehaviour:
   m_InputSlots:
   - {fileID: 8926484042661614940}
   m_OutputSlots: []
-  m_Disabled: 1
+  m_Disabled: 0
 --- !u!114 &8926484042661614940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6734,7 +6734,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614960}
   - {fileID: 8926484042661614961}
   m_OutputSlots: []
-  m_Disabled: 0
+  m_Disabled: 1
   repeat: 0
   spawnMode: 0
   delayMode: 0
