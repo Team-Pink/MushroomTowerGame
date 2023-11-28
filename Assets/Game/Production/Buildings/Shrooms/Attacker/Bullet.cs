@@ -84,6 +84,11 @@ public class Bullet : MonoBehaviour
 
             Debug.Log("Bullet hit, " + timeToTarget);
 
+            if (spin)
+            {
+                Destroy(gameObject);
+                return;
+            }
             GetComponent<MeshRenderer>().enabled = false;
             Destroy(gameObject, 3);
         }
