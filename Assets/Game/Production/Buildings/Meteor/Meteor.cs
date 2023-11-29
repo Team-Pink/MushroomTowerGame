@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Text = TMPro.TMP_Text;
 using UnityEngine;
 
 using static UnityEngine.Time;
@@ -14,7 +13,7 @@ public class Meteor : Building
         get => currentHealth == maxHealth;
     }
     [SerializeField] float gameOverDuration = 10;
-    [SerializeField] Text gameOverText;
+    [SerializeField] GameObject loseScreen;
 
     public MeshRenderer healthDisplay;
 
@@ -46,7 +45,7 @@ public class Meteor : Building
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            gameOverText.enabled = true;
+            loseScreen.SetActive(true);
 
             if (!deathTriggerCalled)
             {
