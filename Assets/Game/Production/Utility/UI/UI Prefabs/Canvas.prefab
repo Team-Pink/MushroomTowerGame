@@ -4950,12 +4950,12 @@ GameObject:
   - component: {fileID: 7609642329580583176}
   - component: {fileID: 2897023355130234402}
   m_Layer: 5
-  m_Name: GameOverText
+  m_Name: LoseScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6375534184121751947
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5004,7 +5004,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: abe45e907cb88fe41b80fe7957457569, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6059,12 +6059,12 @@ GameObject:
   - component: {fileID: 6930799206835998995}
   - component: {fileID: 7708494752983129148}
   m_Layer: 5
-  m_Name: YouWonText
+  m_Name: WinScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8289554026053803711
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6113,7 +6113,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: d4c8af4971053d6488fa9aa56a81d188, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7604,7 +7604,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 3
+      value: NW WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -8156,7 +8156,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 10
+      value: SW(right) WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -8262,7 +8262,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 1
+      value: SW(left) WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -8710,7 +8710,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 7
+      value: E(down) WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -8816,7 +8816,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 8
+      value: SE WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -9036,7 +9036,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 4
+      value: N(left) WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -9142,7 +9142,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 5
+      value: N(right WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -9248,7 +9248,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 9
+      value: S WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -9471,7 +9471,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 2
+      value: W WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -10368,7 +10368,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 6
+      value: E(up) WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
@@ -10474,7 +10474,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_Name
-      value: WaveIndicator 11
+      value: NE WaveIndicator
       objectReference: {fileID: 0}
     - target: {fileID: 698488397641061684, guid: 7496e8b616517b3419be1a63e0e598a5, type: 3}
       propertyPath: m_IsActive
