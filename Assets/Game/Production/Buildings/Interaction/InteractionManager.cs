@@ -79,6 +79,8 @@ public class InteractionManager : MonoBehaviour
 
     [Header("UI")]
     #region UI Variables
+    [SerializeField] Transform linesTransform;
+
     [SerializeField] private Color buttonBaseColour;
     [SerializeField] private Color buttonHoverColour;
 
@@ -960,8 +962,10 @@ public class InteractionManager : MonoBehaviour
 
         GameObject nodeInstance = Instantiate(nodePrefab, currentHit.point, Quaternion.identity, GameObject.Find("----|| Buildings ||----").transform);
 
-        nodeInstance.GetComponent<Node>().SetMultiplier(nodeMultiplier);
-        
+        Node nodeScript = nodeInstance.GetComponent<Node>();
+        nodeScript.SetMultiplier(nodeMultiplier);
+        nodeScript.linesTransform = linesTransform;
+
         if (CurrentInteraction == InteractionState.PlacingFromNode)
             (targetBuilding as Node).AddBuilding(nodeInstance.GetComponent<Node>());
         else
@@ -1187,6 +1191,7 @@ public class InteractionManager : MonoBehaviour
             }
 
             targetBuilding.radiusDisplay.SetActive(false);
+            if (targetBuilding.cutout != null) targetBuilding.cutout.SetActive(true);
             targetBuilding = null;
         }
 
