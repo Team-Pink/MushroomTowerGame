@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.SceneManagement.SceneManager;
-using Text = TMPro.TMP_Text;
 
 [System.Serializable]
 public class Batch
@@ -142,7 +141,7 @@ public class WaveSpawner : MonoBehaviour
 
     [SerializeField] Transform parentFolder;
     [SerializeField] Meteor meteor;
-    [SerializeField] Text wonText;
+    [SerializeField] GameObject winScreen;
     private LevelDataGrid levelData;
 
     [SerializeField] WaveCounter waveCounter;
@@ -367,7 +366,7 @@ public class WaveSpawner : MonoBehaviour
             }
             else
             {
-                wonText.enabled = true;
+                winScreen.SetActive(true);
 
                 Debug.Log("Final Wave Defeated");
 

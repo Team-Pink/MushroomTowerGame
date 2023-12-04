@@ -23,6 +23,7 @@ public abstract class Building : MonoBehaviour
         private set => active = value;
     }
 
+    public GameObject cutout;
     public GameObject radiusDisplay;
     public Material[] radiusMaterials;
     public GameObject bud;
@@ -39,6 +40,8 @@ public abstract class Building : MonoBehaviour
 
     public IEnumerator ExpandRadiusDisplay()
     {
+        if (cutout != null) cutout.SetActive(false);
+
         float radiusFadeDuration = 0.05f;
         float durationElapsed = 0.0f;
 

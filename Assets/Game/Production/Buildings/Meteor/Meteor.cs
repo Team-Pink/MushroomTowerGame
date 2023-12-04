@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Text = TMPro.TMP_Text;
 using UnityEngine;
 
 using static UnityEngine.Time;
@@ -14,7 +13,7 @@ public class Meteor : Building
         get => currentHealth == maxHealth;
     }
     [SerializeField] float gameOverDuration = 10;
-    [SerializeField] Text gameOverText;
+    [SerializeField] GameObject loseScreen;
 
     public MeshRenderer healthDisplay;
 
@@ -22,6 +21,7 @@ public class Meteor : Building
     
     public List<Node> connectedNodes;
 
+    [SerializeField] Transform linesTransform;
     private LineMode lineMode = LineMode.Default;
     public GameObject displayLinePrefab;
     public Material displayLineDefault;
@@ -46,7 +46,7 @@ public class Meteor : Building
         if (currentHealth <= 0)
         {
             currentHealth = 0;
-            gameOverText.enabled = true;
+            loseScreen.SetActive(true);
 
             if (!deathTriggerCalled)
             {
@@ -120,12 +120,12 @@ public class Meteor : Building
 
     public override void AddLine(Building target)
     {
-        GameObject line = Instantiate(displayLinePrefab, transform);
+        GameObject line = Instantiate(displayLinePrefab, linesTransform);
         displayLines.Add(line);
 
         LineRenderer renderer = line.GetComponent<LineRenderer>();
         renderer.material = displayLineDefault;
-        renderer.SetPosition(0, (transform.position - target.transform.position) + lineRendererOffset);
+        renderer.SetPosition(0, target.transform.position + lineRendererOffset);
         renderer.SetPosition(1, lineRendererOffset);
     }
     public override void RemoveLine(Building target)
