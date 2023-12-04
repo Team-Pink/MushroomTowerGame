@@ -119,7 +119,7 @@ public class TrapAttacker : Attacker
     {
         if (attackSoundEffect != null)
         {
-            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+            //AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
         }
 
         if (attackParticlePrefab != null)

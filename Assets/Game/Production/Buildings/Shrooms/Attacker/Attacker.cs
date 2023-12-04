@@ -115,7 +115,7 @@ public class Attacker
     {
         if (attackSoundEffect != null)
         {
-            AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
+            //AudioManager.PlaySoundEffect(attackSoundEffect.name, 1);
         }
 
         if (attackParticlePrefab != null)
@@ -206,7 +206,7 @@ public class Attacker
                     Debug.Log("Found new target", currentTarget.enemy);
 
                     if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
-                    if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+                    //if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
 
                     AnimateProjectile();
                     return;
@@ -215,13 +215,13 @@ public class Attacker
             else
             {
                 if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
-                if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+                //if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
             }
         }
         else
         {
             if (hitParticlePrefab != null) UnityObject.Instantiate(hitParticlePrefab, currentTarget.getPosition(), Quaternion.identity);
-            if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
+            //if (attackHitSoundEffect != null) AudioManager.PlaySoundEffect(attackHitSoundEffect.name, 1);
 
             // get everything in the area of the attack
             Collider[] mainCollisions = Physics.OverlapSphere(currentTarget.getPosition(), damageRadius, enemyLayers);
@@ -348,7 +348,7 @@ public class Attacker
     {
         if (leadinSoundEffect != null)
         {
-            AudioManager.PlaySoundEffect(leadinSoundEffect.name, 1, animationLeadIn);
+            //AudioManager.PlaySoundEffect(leadinSoundEffect.name, 1, animationLeadIn);
         }
 
         if (animator == null) return;

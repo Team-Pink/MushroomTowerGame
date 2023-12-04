@@ -89,74 +89,74 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
-        {
-            Debug.LogError("Multiple instances of AudioManager exist. " +
-                "This will cause fatal errors. An instance will be destroyed.", Instance);
-            Debug.LogError("An instance of AudioManager attached to this GameObject has been destroyed.", gameObject);
-
-            Destroy(this);
-        }
-        instance = this;
+        //if (instance != null)
+        //{
+        //    Debug.LogError("Multiple instances of AudioManager exist. " +
+        //        "This will cause fatal errors. An instance will be destroyed.", Instance);
+        //    Debug.LogError("An instance of AudioManager attached to this GameObject has been destroyed.", gameObject);
+        //
+        //    Destroy(this);
+        //}
+        //instance = this;
     }
 
     private void OnValidate()
     {
-        foreach (AudioSourceGroup sourceGroup in ambience) { sourceGroup.Validate(); }
-        foreach (AudioSourceGroup sourceGroup in music) { sourceGroup.Validate(); }
-        foreach (AudioSourceGroup sourceGroup in soundEffects) { sourceGroup.Validate(); }
+        //foreach (AudioSourceGroup sourceGroup in ambience) { sourceGroup.Validate(); }
+        //foreach (AudioSourceGroup sourceGroup in music) { sourceGroup.Validate(); }
+        //foreach (AudioSourceGroup sourceGroup in soundEffects) { sourceGroup.Validate(); }
     }
 
     private void Update()
     {
-        List<ActiveClip> clipsToRemove = new();
-        foreach (ActiveClip clip in activeClips)
-        {
-            if (clip.remainingDuration < 0.0f)
-            {
-                clip.audioSource.Stop();
-                clipsToRemove.Add(clip);
-            }
-            else
-            {
-                clip.remainingDuration -= Time.deltaTime;
-            }
-        }
-        foreach (ActiveClip clip in clipsToRemove)
-        {
-            activeClips.Remove(clip);
-        }
-        clipsToRemove.Clear();
+        //List<ActiveClip> clipsToRemove = new();
+        //foreach (ActiveClip clip in activeClips)
+        //{
+        //    if (clip.remainingDuration < 0.0f)
+        //    {
+        //        clip.audioSource.Stop();
+        //        clipsToRemove.Add(clip);
+        //    }
+        //    else
+        //    {
+        //        clip.remainingDuration -= Time.deltaTime;
+        //    }
+        //}
+        //foreach (ActiveClip clip in clipsToRemove)
+        //{
+        //    activeClips.Remove(clip);
+        //}
+        //clipsToRemove.Clear();
     }
 
     public static void PlayAmbience(string clipName)
     {
-        Instance.PlayClip(Instance.ambience[0], clipName);
+        //Instance.PlayClip(Instance.ambience[0], clipName);
     }
     public static void PlayMusic(string clipName)
     {
-        Instance.PlayClip(Instance.music[0], clipName);
+        //Instance.PlayClip(Instance.music[0], clipName);
     }
     /// <param name="groupIndex"> 0 = Enemy Sounds, 1 = Tower Sounds</param>
     public static void PlaySoundEffect(string clipName, int groupIndex, float duration = 0)
     {
-        if (duration == 0) Instance.PlayClip(Instance.soundEffects[groupIndex], clipName);
-        else Instance.PlayClip(Instance.soundEffects[groupIndex], clipName, duration);
+        //if (duration == 0) Instance.PlayClip(Instance.soundEffects[groupIndex], clipName);
+        //else Instance.PlayClip(Instance.soundEffects[groupIndex], clipName, duration);
     }
 
     private void PlayClip(AudioSourceGroup sourceGroup, string clipName)
     {
-        if (sourceGroup.TryGetClip(clipName, out AudioSource audioSource))
-        {
-            audioSource.Play();
-        }
+        //if (sourceGroup.TryGetClip(clipName, out AudioSource audioSource))
+        //{
+        //    audioSource.Play();
+        //}
     }
     private void PlayClip(AudioSourceGroup sourceGroup, string clipName, float duration)
     {
-        if (sourceGroup.TryGetClip(clipName, out AudioSource audioSource))
-        {
-            audioSource.Play();
-            activeClips.Add(new(audioSource, duration));
-        }
+        //if (sourceGroup.TryGetClip(clipName, out AudioSource audioSource))
+        //{
+        //    audioSource.Play();
+        //    activeClips.Add(new(audioSource, duration));
+        //}
     }
 }

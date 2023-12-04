@@ -141,7 +141,7 @@ public class Shroom : Building
 
         radiusDisplay.transform.localScale = new Vector3(2 * targeterComponent.range, 2 * targeterComponent.range);
 
-        AudioManager.PlaySoundEffect(buildAudio.name, 1);
+        //AudioManager.PlaySoundEffect(buildAudio.name, 1);
 
         activeMaterials = new Material[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)

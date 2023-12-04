@@ -42,7 +42,7 @@ public class Node : Building
             currentHealth = value;
             if (currentHealth <= 0 && !isResidual)
             {
-                AudioManager.PlaySoundEffect(deathAudio.name, 1);
+                //AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 if (CanTurnIntoResidual())
                 {
                     ToggleResidual(true);
@@ -118,7 +118,7 @@ public class Node : Building
     {
         CurrentHealth = nodeHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
-        AudioManager.PlaySoundEffect(placeAudio.name, 1);
+        //AudioManager.PlaySoundEffect(placeAudio.name, 1);
         regrowButton = regrowCanvas.GetComponentInChildren<UnityEngine.UI.Button>();
     }
 
