@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 1
-  maxHealth: 8
+  maxHealth: 6
   health: 0
   dead: 0
   speed: 3
@@ -243,12 +243,13 @@ MonoBehaviour:
   bugBits: 6
   animator: {fileID: 6708249941602146778}
   levelData: {fileID: 0}
-  hubTransform: {fileID: 0}
-  hub: {fileID: 0}
+  meteorTransform: {fileID: 0}
+  meteor: {fileID: 0}
   deathParticle: {fileID: 2863792898430472490, guid: 7be1e1d5426fbb5439a9fc7c7b85ac5a, type: 3}
   particleOriginOffset: 3
   meshRenderer: {fileID: 863229067949385281}
   hurtMaterial: {fileID: 2100000, guid: e623f6066edcf754fb2c69a134293960, type: 2}
+  poisonParticles: {fileID: 0}
   attackAudio: {fileID: 8300000, guid: de122cde40614bd4bbc0ec1749f442cc, type: 3}
   deathAudio: {fileID: 8300000, guid: 2ff4d4c78e3b71c4fa6362f00b5b0acd, type: 3}
   firingCone: 0.1

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class Node : Building
 {
+    private bool disabledParent;
+
     public Animator animator;
     public Animator budAnimator;
 
@@ -39,18 +40,27 @@ public class Node : Building
         set
         {
             currentHealth = value;
-            if (currentHealth <= float.Epsilon)
+            if (currentHealth <= 0 && !isResidual)
             {
                 AudioManager.PlaySoundEffect(deathAudio.name, 1);
                 if (CanTurnIntoResidual())
+                {
                     ToggleResidual(true);
+                }
+                else
+                {
+                    if (budAnimator != null) budAnimator.SetBool("Sell", true);
+                    if (animator != null) animator.SetBool("Residual Disappear", true);
+                    disappearing = true;
+                }
             }
         }
     }
 
     [SerializeField] public bool disappearing = false;
 
-    [SerializeField] GameObject regrowCanvas;
+    public GameObject regrowCanvas;
+    UnityEngine.UI.Button regrowButton;
 
     [Header("Connections")]
     [SerializeField] List<Building> connectedBuildings = new();
@@ -109,18 +119,15 @@ public class Node : Building
         CurrentHealth = nodeHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
+        regrowButton = regrowCanvas.GetComponentInChildren<UnityEngine.UI.Button>();
     }
 
     private void Update()
     {
-        RemoveNullBuildings();
+        if (InteractionManager.gamePaused && regrowButton.interactable) regrowButton.interactable = false;
+        else if (!InteractionManager.gamePaused && !regrowButton.interactable) regrowButton.interactable = true;
 
-        if (isResidual && connectedNodesCount == 0 && connectedShroomsCount == 0 && !disappearing)
-        {
-            budAnimator.SetBool("Sell", true);
-            animator.SetBool("Residual Disappear", true);
-            disappearing = true;
-        }
+        RemoveNullBuildings();
 
         bool showBud = !budDetached;
         bud.SetActive(showBud);
@@ -177,27 +184,41 @@ public class Node : Building
 
     public override void Deactivate()
     {
-        if (!Active) return;
         base.Deactivate();
+        if (!isResidual)
+        {
+            budAnimator.SetBool("Deactivate", true);
+        }
+
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
+            if (building is Node)
+            {
+                (building as Node).disabledParent = true;
+            }
         }
-        budAnimator.SetBool("Deactivate", true);
     }
     public override void Reactivate()
     {
-        if (Active) return;
-        base.Reactivate();
+        if (!isResidual)
+        {
+            base.Reactivate();
+            budAnimator.SetBool("Reactivate", true);
+        }
+
         foreach (Building building in connectedBuildings)
         {
-            if (building is Node && (building as Node).isResidual) continue;
+            if (isResidual && building is Shroom) continue;
+
+            if (building is Node)
+            {
+                (building as Node).disabledParent = false;
+                if ((building as Node).isResidual) continue;
+            }
 
             building.Reactivate();
         }
-        budAnimator.SetBool("Reactivate", true);
-
-        currentHealth = nodeHealth;
     }
 
     public void ToggleResidual(bool value)
@@ -206,20 +227,20 @@ public class Node : Building
 
         if (isResidual)
         {
+            currentHealth = 0;
+
+            if (animator != null) animator.SetBool("Become Residual", true);
+            if (budAnimator != null) budAnimator.SetBool("Deactivate", true);
+
             Deactivate();
         }
         else
         {
-            Reactivate();
-        }
+            currentHealth = nodeHealth;
 
-        if (Active)
-        {
-            animator.SetBool("Rebuild", true);
-        }
-        else
-        {
-            animator.SetBool("Become Residual", true);
+            if (animator != null) animator.SetBool("Rebuild", true);
+
+            if (disabledParent == false) Reactivate();
         }
 
         regrowCanvas.SetActive(isResidual);
@@ -274,6 +295,8 @@ public class Node : Building
     }
     public void CheckIfCanToggleResidual()
     {
+        if (InteractionManager.gamePaused) return;
+
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         if (currencyManager.CanDecreaseCurrencyAmount(GetNodeCost()))
         {
@@ -297,9 +320,17 @@ public class Node : Building
             ToggleResidual(true);
         else
         {
-            disappearing = true;
-            budAnimator.SetBool("Sell", true);
-            animator.SetBool("Sell", true);
+            if (isResidual)
+            {
+                if (animator != null) animator.SetBool("Residual Disappear", true);
+                disappearing = true;
+            }
+            else
+            {
+                disappearing = true;
+                if (budAnimator != null) budAnimator.SetBool("Sell", true);
+                if (animator != null) animator.SetBool("Sell", true);
+            }
         }
     }
 

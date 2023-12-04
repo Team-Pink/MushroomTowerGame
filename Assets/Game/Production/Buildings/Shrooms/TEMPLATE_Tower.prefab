@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2366948552776975683}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.25, z: 0}
+  m_LocalPosition: {x: 0, y: 0.383, z: -0}
   m_LocalScale: {x: 18.351, y: 18.351, z: 18.351}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115,6 +115,7 @@ Transform:
   m_Children:
   - {fileID: 439526180075194321}
   - {fileID: 5109823547120926319}
+  - {fileID: 489668706441463789}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -134,6 +135,8 @@ MonoBehaviour:
   radiusMaterials:
   - {fileID: 2100000, guid: 8ecabd1cbcfa5eb45a1b23b596613c8f, type: 2}
   bud: {fileID: 0}
+  recurseHighlight: 0
+  showSelling: 0
   growthDuration: 5
   recoveryDuration: 2
   animator: {fileID: 0}
@@ -146,19 +149,19 @@ MonoBehaviour:
     targeterType: 0
     attackerType: 1
   upgradeable: 0
-  upgradeCostL: 0
-  upgradeCostR: 0
   purchaseCost: 10
   sellReturnPercent: 0.5
   bulletPrefab: {fileID: 2409255044357570341, guid: 5041f6e58f1d2a44b9f4ecedca2bd04c, type: 3}
-  attackObjectPrefab: {fileID: 6026521766592497966, guid: feee843c155b37f41846cd1e0307544f, type: 3}
   projectileSpeed: 1.5
-  accelerated: 0
-  accelTimer: 0
-  continuous: 0
+  lockOn: 0
+  lockOnDuration: 1.5
+  lockOnFiringIntermissionTime: 0
+  ChargeUpTransform: {fileID: 0}
+  chargeUpParticlePrefab: {fileID: 0}
   buildAudio: {fileID: 8300000, guid: ce00c4ad0d6bddc448c4c2c90f66a01e, type: 3}
   renderers: []
   deactivatedMaterials: []
+  boomerangCap: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -166,13 +169,13 @@ MonoBehaviour:
       type: {class: SingleAttacker, ns: , asm: Assembly-CSharp}
       data:
         damage: 3
+        areaAttacker: 0
         attackCooldown: 3
         cooldownTimer: 0
         attackDelay: 2
         animationLeadIn: 0
         transform: {fileID: 0}
         bulletPrefab: {fileID: 0}
-        attackObjectPrefab: {fileID: 0}
         windupParticlePrefab: {fileID: 0}
         attackParticlePrefab: {fileID: 0}
         hitParticlePrefab: {fileID: 0}
@@ -186,30 +189,14 @@ MonoBehaviour:
         spray: 0
         sprayDamage: 1
         additionalSprayRange: 2
-        strikethrough: 1
-        strikethroughDamage: 1
-        strikethroughReach: 10
-        strikethroughBeamWidth: 4
-        strikethroughMatrix:
-          e00: 0
-          e01: 0
-          e02: 0
-          e03: 0
-          e10: 0
-          e11: 0
-          e12: 0
-          e13: 0
-          e20: 0
-          e21: 0
-          e22: 0
-          e23: 0
-          e30: 0
-          e31: 0
-          e32: 0
-          e33: 0
         bounce: 0
         bounceHitLimit: 10
-        bounceBulletTowersPossession: 1
+        returning: 0
+        bounceBulletInShroomPossession: 1
+        enemyLayers:
+          serializedVersion: 2
+          m_Bits: 0
+        damageRadius: 3
         attacking: 0
     - rid: 4335502593997406209
       type: {class: CloseTargeter, ns: , asm: Assembly-CSharp}
@@ -335,3 +322,86 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!1 &7024491297514041786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 489668706441463789}
+  - component: {fileID: 1792438838883376999}
+  - component: {fileID: 5361914897809707391}
+  m_Layer: 0
+  m_Name: PlacementRadiusCutout
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &489668706441463789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024491297514041786}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
+  m_LocalScale: {x: 7, y: 0.2, z: 7}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5109823546609926887}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1792438838883376999
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024491297514041786}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &5361914897809707391
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024491297514041786}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 75dc0001673d7224e9ab3276a0a50bdb, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

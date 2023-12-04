@@ -97,8 +97,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1107b574adf9945926831d0dec5ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spin: 0
+  spinSpeed: 0
+  attacker:
+    damage: 3
+    areaAttacker: 0
+    attackCooldown: 3
+    cooldownTimer: 0
+    attackDelay: 2
+    animationLeadIn: 0
+    transform: {fileID: 0}
+    bulletPrefab: {fileID: 0}
+    windupParticlePrefab: {fileID: 0}
+    attackParticlePrefab: {fileID: 0}
+    hitParticlePrefab: {fileID: 0}
+    particleOriginOffset: 0
+    leadinSoundEffect: {fileID: 0}
+    attackSoundEffect: {fileID: 0}
+    attackHitSoundEffect: {fileID: 0}
+    originReference: {fileID: 0}
+    animator: {fileID: 0}
+    lobProjectile: 0
+    spray: 0
+    sprayDamage: 1
+    additionalSprayRange: 2
+    bounce: 0
+    bounceHitLimit: 10
+    returning: 0
+    bounceBulletInShroomPossession: 1
+    enemyLayers:
+      serializedVersion: 2
+      m_Bits: 0
+    damageRadius: 3
+    attacking: 0
   timeToTarget: 0
   parabola: 0
+  arcHeight: 40
 --- !u!1001 &6393435729564822146
 PrefabInstance:
   m_ObjectHideFlags: 0
