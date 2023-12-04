@@ -110,7 +110,7 @@ public class Shroom : Building
     [SerializeField] private float lockOnFiringIntermissionTime = 0;
     private Target lockOnTarget;
 
-    [SerializeField] GameObject ChargeUpTransform;
+    public GameObject ChargeUpTransform;
     [SerializeField] GameObject chargeUpParticlePrefab;
     private GameObject chargeDownParticleRef;
 
