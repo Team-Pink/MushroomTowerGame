@@ -6,6 +6,7 @@ using UnityEngine.VFX;
 public class SelfDestruct : MonoBehaviour
 {
     public float secondsTillDestruction;
+<<<<<<< Updated upstream
     private float detonationTime;
     private VisualEffect VFX;
 
@@ -28,6 +29,14 @@ public class SelfDestruct : MonoBehaviour
             if (VFX.aliveParticleCount <= 0) Destroy(gameObject);
         }
 
+=======
+
+    private void Start()
+    {
+        GetComponent<VisualEffect>().Play();
+        Destroy(gameObject,secondsTillDestruction);
+        
+>>>>>>> Stashed changes
     }
     // I prototyped a coroutine but due to the double condition in a loop it just isn't worth it.
 }
