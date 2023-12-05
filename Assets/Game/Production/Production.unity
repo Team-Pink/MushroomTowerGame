@@ -13655,10 +13655,6 @@ PrefabInstance:
       propertyPath: m_SpriteState.m_HighlightedSprite
       value: 
       objectReference: {fileID: 21300000, guid: 324bc72f5b7b544449c00a0908ab5a9f, type: 3}
-    - target: {fileID: 6375534184121751946, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6375534184121751947, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_SizeDelta.x
       value: 1920
@@ -35774,27 +35770,27 @@ PrefabInstance:
       objectReference: {fileID: 76148385}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[1].enemy
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: waves.Array.data[0].batches.Array.data[2].enemy
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
-      propertyPath: waves.Array.data[0].batches.Array.data[3].enemy
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[0].batches.Array.data[2].enemy
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
+      propertyPath: waves.Array.data[0].batches.Array.data[3].enemy
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[1].amount
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[2].amount
-      value: 50
+      value: 96
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[3].amount
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2029106839798511778, guid: 066cde3769000064188cecd38420fa52, type: 3}
       propertyPath: waves.Array.data[0].batches.Array.data[1].withPrevious
