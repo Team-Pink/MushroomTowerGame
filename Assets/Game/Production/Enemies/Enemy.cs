@@ -2,6 +2,10 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using static UnityEngine.Networking.UnityWebRequest;
+using UnityEngine.Assertions.Must;
+using Unity.Mathematics;
+
 
 [Serializable]
 public class Condition
@@ -184,6 +188,9 @@ public class Enemy : MonoBehaviour
 
         enemyLayers = LayerMask.GetMask("Enemy");
         obstacleLayers = LayerMask.GetMask("Shroom", "Node");
+
+        //DELETE ME
+        transform.position += new Vector3(UnityEngine.Random.Range(-0.1f, 0.1f), 0, UnityEngine.Random.Range(-0.1f, 0.1f));
 
         health = maxHealth;
     }
@@ -371,14 +378,17 @@ public class Enemy : MonoBehaviour
         // Targeting
         newVelocity += influences.targetingStrength * levelData.GetFlowAtPoint(transform.position);
 
-        newVelocity += Avoid();
+        //newVelocity += Avoid();
 
         // Apply New Velocity
-        rigidbody.velocity = Speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
+       // rigidbody.velocity = Speed * Vector3.MoveTowards(rigidbody.velocity.normalized, newVelocity.normalized, steeringForce);
+
+        rigidbody.velocity += newVelocity;
 
         // Face Direction of Movement
         if (rigidbody.velocity != Vector3.zero)
         {
+            rigidbody.velocity = rigidbody.velocity.normalized * Speed;
             transform.forward = rigidbody.velocity.normalized;
         }
     }
@@ -433,7 +443,7 @@ public class Enemy : MonoBehaviour
         Vector3 avoidanceInfluence = Vector3.zero;
         foreach (GameObject obstacle in obstacles)
         {
-            avoidanceInfluence += -(obstacle.transform.position - gameObject.transform.position).normalized;
+            avoidanceInfluence += (gameObject.transform.position - obstacle.transform.position).normalized;
         }
 
         return avoidanceInfluence;
@@ -441,45 +451,82 @@ public class Enemy : MonoBehaviour
 
     private Vector3 Flock()
     {
-        Vector3 alignmentInfluence = Vector3.zero, cohesionInfluence = Vector3.zero, seperationInfluence = Vector3.zero;
+        return Align() + Cohere() + Seperate();
+    }
+
+    private Vector3 Align()
+    {
+        Vector3 alignmentInfluence = Vector3.zero;
+        int alignCount = 0;
         foreach (BoidReference boid in neighbourhood)
         {
-            alignmentInfluence += Align(boid);
-            cohesionInfluence += Cohere(boid);
-            seperationInfluence += Seperate(boid);
+            if (BoidInRange(boid.transform, influences.alignmentRange))
+            {
+                Debug.DrawLine(transform.position, boid.transform.position, Color.red);
+                alignmentInfluence += boid.rigidbody.velocity;
+                alignCount++;
+            }
         }
-        Vector3 result = alignmentInfluence.normalized * influences.alignmentStrength;
-        result += cohesionInfluence.normalized * influences.cohesionStrength;
-        result += seperationInfluence.normalized * influences.seperationStrength;
 
-        return result;
+
+        if (alignCount == 0) return Vector3.zero;
+        
+        alignmentInfluence /= alignCount;
+        return alignmentInfluence * influences.alignmentStrength;
+    }
+
+    private Vector3 Cohere()
+    {
+        //Vector3 cohesionInfluence = Vector3.zero;
+
+        int cohereCount = 0;
+        Vector3 averageNeighbourPos = Vector3.zero;
+        foreach (BoidReference boid in neighbourhood)
+        {
+            if (BoidInRange(boid.transform, influences.cohesionRange))
+            {
+                averageNeighbourPos += boid.transform.position;
+                //cohesionInfluence += (boid.transform.position - gameObject.transform.position).normalized;
+                cohereCount++;
+            }
+        }
+        if (cohereCount == 0) return Vector3.zero;
+
+        averageNeighbourPos /= cohereCount;
+        Vector3 towardsAverage = (averageNeighbourPos - transform.position).normalized;
+
+        Debug.DrawLine(transform.position, averageNeighbourPos, Color.cyan);
+        return towardsAverage * influences.cohesionStrength;
+    }
+
+    private Vector3 Seperate()
+    {
+        Vector3 seperationInfluence = Vector3.zero;
+        //int seperateCount = 0;
+        foreach (BoidReference boid in neighbourhood)
+        {
+            if (BoidInRange(boid.transform, influences.seperationRange))
+            {
+                Vector3 displacement = transform.position - boid.transform.position;
+                float distance = displacement.magnitude;
+
+                float strength = 1.0f - (distance / influences.seperationRange);
+
+                seperationInfluence += displacement * strength / distance;
+
+                //seperationInfluence += -(boid.transform.position - gameObject.transform.position).normalized;
+                //seperateCount++;
+            }
+        }
+        //if (seperateCount == 0) return Vector3.zero;
+
+        //seperationInfluence /= seperateCount;
+        return seperationInfluence * influences.seperationStrength;
     }
 
     private bool BoidInRange(Transform boidTransform, float range)
     {
         return (boidTransform.position - transform.position).sqrMagnitude < (range * range);
-    }
-
-    private Vector3 Align(BoidReference boid)
-    {
-        if (BoidInRange(boid.transform, influences.alignmentRange))
-            return boid.rigidbody.velocity;
-        else
-            return Vector3.zero;
-    }
-    private Vector3 Cohere(BoidReference boid)
-    {
-        if (BoidInRange(boid.transform, influences.cohesionRange))
-            return (boid.transform.position - gameObject.transform.position).normalized;
-        else
-            return Vector3.zero;
-    }
-    private Vector3 Seperate(BoidReference boid)
-    {
-        if (BoidInRange(boid.transform, influences.seperationRange))
-            return -(boid.transform.position - gameObject.transform.position).normalized;
-        else
-            return Vector3.zero;
     }
 
     // HUNT

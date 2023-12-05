@@ -227,12 +227,12 @@ MonoBehaviour:
   steeringForce: 0.15
   maxNeighbourhoodSize: 10
   influences:
-    targetingStrength: 3
+    targetingStrength: 1.5
     alignmentRange: 5
     alignmentStrength: 0.6
     cohesionRange: 5
     cohesionStrength: 0.1
-    seperationRange: 1.5
+    seperationRange: 3
     seperationStrength: 2
     avoidanceRange: 1.5
     avoidanceStrength: 2
