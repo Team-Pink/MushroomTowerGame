@@ -101,6 +101,7 @@ public class Node : Building
         private set { }
     }
 
+    public Transform linesTransform;
     private LineMode lineMode = LineMode.Default;
     public GameObject displayLinePrefab;
     public Material displayLineDefault;
@@ -116,6 +117,7 @@ public class Node : Building
 
     private void Start()
     {
+        transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
         CurrentHealth = nodeHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
         AudioManager.PlaySoundEffect(placeAudio.name, 1);
@@ -336,13 +338,13 @@ public class Node : Building
 
     public override void AddLine(Building target)
     {
-        GameObject line = Instantiate(displayLinePrefab, transform);
+        GameObject line = Instantiate(displayLinePrefab, linesTransform);
         displayLines.Add(line);
 
         LineRenderer renderer = line.GetComponent<LineRenderer>();
         renderer.material = displayLineDefault;
-        renderer.SetPosition(0, target.transform.position - transform.position + lineRendererOffset);
-        renderer.SetPosition(1, lineRendererOffset);
+        renderer.SetPosition(0, target.transform.position + lineRendererOffset);
+        renderer.SetPosition(1, transform.position + lineRendererOffset);
     }
     public override void RemoveLine(Building target)
     {
