@@ -128,16 +128,27 @@ public class Attacker
         Debug.Log("Bullet fired " + attackDelay);
 
         Bullet bullet;
+
+        Vector3 shootPos;
+        if (originReference.ChargeUpTransform != null)
+        {
+            shootPos = originReference.ChargeUpTransform.transform.position;
+        }
+        else
+        {
+            shootPos = transform.position + Vector3.up * 2;
+        }
+
         if (bulletPrefab != null)
         {
             if (transform == null) return;
-            bullet = UnityObject.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+            bullet = UnityObject.Instantiate(bulletPrefab, shootPos, Quaternion.identity).GetComponent<Bullet>();
         }
         else
         {
             GameObject bulletObject;
             bulletObject = new GameObject();
-            bulletObject.transform.position = transform.position + Vector3.up * 2;
+            bulletObject.transform.position = shootPos;
             bullet = bulletObject.GetComponent<Bullet>();
         }
 

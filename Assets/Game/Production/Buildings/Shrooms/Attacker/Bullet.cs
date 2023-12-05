@@ -89,7 +89,12 @@ public class Bullet : MonoBehaviour
                 Destroy(gameObject);
                 return;
             }
-            GetComponent<MeshRenderer>().enabled = false;
+            if (!TryGetComponent(out MeshRenderer renderer))
+            {
+                renderer = GetComponentInChildren<MeshRenderer>();
+            }
+            if (renderer != null) renderer.enabled = false;
+            
             Destroy(gameObject, 3);
         }
         else
@@ -116,12 +121,14 @@ public class Bullet : MonoBehaviour
         // update progress to match time elapsed
         progress = timeElapsed / timeToTarget;
 
+        Vector3 newPos = Vector3.Lerp(startPos, targetPos, progress); // update xz position
+        newPos.y = -progress * progress + progress; // update y position
+        newPos.y *= arcHeight;
 
-        currentPos = Vector3.Lerp(startPos, targetPos, progress); // update xz position
-        currentPos.y = -progress * progress + progress; // update y position
-        currentPos.y *= arcHeight;
+        transform.rotation = Quaternion.LookRotation((newPos - currentPos).normalized);
 
-        transform.SetPositionAndRotation(currentPos, Quaternion.LookRotation(currentPos));
+        currentPos = newPos;
+        transform.position = newPos;
     }
 
 

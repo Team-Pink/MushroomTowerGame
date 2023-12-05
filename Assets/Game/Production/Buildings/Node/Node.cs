@@ -117,7 +117,6 @@ public class Node : Building
 
     private void Start()
     {
-        transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
         CurrentHealth = nodeHealth;
         healthDisplay.sharedMaterial.SetFloat("_Value", currentHealth / MaxHealth);
         AudioManager.PlaySoundEffect(placeAudio.name, 1);

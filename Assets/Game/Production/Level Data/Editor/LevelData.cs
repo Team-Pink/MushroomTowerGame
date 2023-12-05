@@ -103,7 +103,7 @@ public class ClosedTile
     [NonSerialized] public TileStatus tileStatus = TileStatus.Unreached;
     public ClosedTile bestNextTile;
     [SerializeField] private Vector2 flowDirection;
-    public Vector2 FlowDirection { get => flowDirection; private set => flowDirection = value; }
+    public Vector2 FlowDirection { get => flowDirection; set => flowDirection = value; }
     public TileType type;
 
     public ClosedTile()
@@ -243,6 +243,73 @@ public class LevelData : ScriptableObject
         }
     }
 
+    private void IncreaseNavStrengthForOutOfBoundsAreas()
+    {
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int z = 0; z < tiles.GetLength(1); z++)
+            {
+                if (tiles[x, z].type == TileType.Path)
+                {
+                    tiles[x, z].FlowDirection *= 0.2f;
+                }
+            }
+        }
+    }
+    private void BlurPass()
+    {
+        ClosedTile[,] newGrid = new ClosedTile[tiles.GetLength(0), tiles.GetLength(1)];
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int z = 0; z < tiles.GetLength(1); z++)
+            {
+                newGrid[x, z] = new ClosedTile();
+                newGrid[x, z].type = tiles[x, z].type;
+                newGrid[x, z].FlowDirection = tiles[x, z].FlowDirection;
+            }
+        }
+
+        for (int x = 1; x < tiles.GetLength(0) - 1; x++)
+        {
+            for (int z = 1; z < tiles.GetLength(1) - 1; z++)
+            {
+                Vector2 newDirection = newGrid[x, z].FlowDirection;
+
+                int weightCount = 1;
+
+                //if (tiles[x + 1, z].type == newGrid[x,z].type)
+                {
+                    newDirection += tiles[x + 1, z].FlowDirection;
+                    weightCount++;
+                }
+
+                //if (tiles[x - 1, z].type == newGrid[x, z].type)
+                {
+                    newDirection += tiles[x - 1, z].FlowDirection;
+                    weightCount++;
+                }
+
+               // if (tiles[x, z + 1].type == newGrid[x, z].type)
+                {
+                    newDirection += tiles[x, z + 1].FlowDirection;
+                    weightCount++;
+                }
+
+               // if (tiles[x, z - 1].type == newGrid[x, z].type)
+                {
+                    newDirection += tiles[x, z - 1].FlowDirection;
+                    weightCount++;
+                }
+
+                newDirection /= weightCount;
+                newGrid[x, z].FlowDirection = newDirection;
+
+            }
+        }
+
+        tiles = newGrid;
+    }
+
     public void PopulateGridDistances()
     {
         float cachedTime = Time.realtimeSinceStartup;
@@ -264,6 +331,8 @@ public class LevelData : ScriptableObject
         float duration = Mathf.Round((Time.realtimeSinceStartup - cachedTime) * 100) / 100;
 
         Debug.Log("Successfully set " + amountClosed.ToString() + " tiles (" + duration + " seconds)");
+        IncreaseNavStrengthForOutOfBoundsAreas();
+        BlurPass(); BlurPass(); BlurPass(); BlurPass();
 
         WriteToTexture();
 
