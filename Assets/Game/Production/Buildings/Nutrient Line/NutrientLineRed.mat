@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: NutrientLineRed
-  m_Shader: {fileID: -6465566751694194690, guid: 60af2bc27b40a674b928e2c1abb650e7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0354829b06000ff439325c88ca78f805, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 2
@@ -50,16 +50,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Line_Hardness: 0.02
     - _Line_Speed: -1
     - _Noise_Scale: 1
     - _Noiseo: 0.72
+    - _Offset: -0.33
+    - _Pulse_Amplitude: 1.37
+    - _Pulse_Scale: 0.549
+    - _Pulse_Speed: 0.319
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Speed: -1
     - _Thicco: 1.5
-    - _Thickness: 2
+    - _Thickness: 0.005
     - _Tiling: 0.1
+    - _Wiggle_Movement: 2.7
+    - _Wiggle_Speed: 0
+    - _Wiggle_Strength: 0.304
+    - _sorry_sam: 7.9
+    - _yeah_sams_gonna_rename_this_later: 83.61
     m_Colors:
+    - _Color: {r: 1, g: 0.07075471, b: 0.07075471, a: 0}
     - _Line_Colour: {r: 2.1185474, g: 0, b: 0.12201058, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3451698467722599690
