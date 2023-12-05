@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 1475003096993206892}
   - component: {fileID: -8638860907995089401}
   - component: {fileID: 8552883208792144059}
+  - component: {fileID: 7117533032978901489}
   m_Layer: 9
   m_Name: Ink
   m_TagString: Untagged
@@ -164,6 +165,26 @@ CapsuleCollider:
   m_Height: 8
   m_Direction: 1
   m_Center: {x: 0, y: 2, z: 0}
+--- !u!95 &7117533032978901489
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420125859224121225}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bcc375c4ef2ff3d4086091d28a1f633c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &5465897866858332073
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -219,10 +240,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 33425099709406103, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: c65ac6ce59fb91a4ea67814d7ef479d2, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94428f711c5ed5143b74fe6abae2dc75, type: 3}
 --- !u!1 &5452868304192742460 stripped

@@ -101,7 +101,7 @@ public class TrapAttacker : Attacker
             return PlaceTrap();
         }
 
-        GameObject newTrap = Object.Instantiate(trapPrefab, targets[inkPlacementIndex].getPosition(), Quaternion.identity);
+        GameObject newTrap = UnityObject.Instantiate(trapPrefab, targets[inkPlacementIndex].getPosition(), Quaternion.Euler(0, Random.Range(0, 360), 0));
         TrapAttackObject trapScript = newTrap.GetComponent<TrapAttackObject>();
 
         trapScript.cleanupDuration = attackCooldown;
