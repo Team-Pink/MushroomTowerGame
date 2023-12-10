@@ -5,6 +5,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] GameObject hudIcons;
     [SerializeField] GameObject mainMenu;
     [SerializeField] GameObject boomy;
+    [SerializeField] GameObject creditsMenu;
 
     private TutorialManager tutorialManager;
 
@@ -12,6 +13,17 @@ public class MainMenu : MonoBehaviour
     {
         tutorialManager = GameObject.Find("GameManager").GetComponent<TutorialManager>();
         InteractionManager.gamePaused = true;
+    }
+
+    public void GoCredits() {
+        mainMenu.SetActive(false);
+        creditsMenu.SetActive(true);
+    }
+
+    public void GoMainMenu()
+    {
+        mainMenu.SetActive(true);
+        creditsMenu.SetActive(false);
     }
 
     public void Play()

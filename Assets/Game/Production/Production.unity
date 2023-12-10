@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18143257, g: 0.2270616, b: 0.30739143, a: 1}
+  m_IndirectSpecularColor: {r: 0.18143228, g: 0.22706123, b: 0.30739063, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -13603,69 +13603,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1934297762}
     m_Modifications:
-    - target: {fileID: 598367714, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
-    - target: {fileID: 654030212, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
-    - target: {fileID: 1013141047748801827, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1203363520936353662, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: waveSpawner
       value: 
       objectReference: {fileID: 6533875848325091997}
-    - target: {fileID: 4504238797571169004, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
-    - target: {fileID: 4724562324140084571, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_PressedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 4445a936a1279ba4896823f6edf0b5eb, type: 3}
-    - target: {fileID: 4724562324140084571, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_DisabledSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
-    - target: {fileID: 4724562324140084571, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_SelectedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: db0ad3a06d1e17d43bfad91126d17dce, type: 3}
-    - target: {fileID: 4724562324140084571, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_HighlightedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 4445a936a1279ba4896823f6edf0b5eb, type: 3}
-    - target: {fileID: 6224900863578024713, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_PressedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 324bc72f5b7b544449c00a0908ab5a9f, type: 3}
-    - target: {fileID: 6224900863578024713, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_DisabledSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
-    - target: {fileID: 6224900863578024713, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_SelectedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: c62b8557dfbe9e443bbc7ccd6ea49102, type: 3}
-    - target: {fileID: 6224900863578024713, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_HighlightedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 324bc72f5b7b544449c00a0908ab5a9f, type: 3}
-    - target: {fileID: 6375534184121751947, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 1920
-      objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Name
       value: Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 6375534184558690578, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6375534184558690590, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
       propertyPath: m_Pivot.x
@@ -13751,26 +13695,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6422987444731372229, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8872087180915895638, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_PressedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: e29c5c32473b12448b7d1983ebaee574, type: 3}
-    - target: {fileID: 8872087180915895638, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_DisabledSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
-    - target: {fileID: 8872087180915895638, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_SelectedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: d2c80542af42c374fb91f68c265c2f59, type: 3}
-    - target: {fileID: 8872087180915895638, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
-      propertyPath: m_SpriteState.m_HighlightedSprite
-      value: 
-      objectReference: {fileID: 21300000, guid: e29c5c32473b12448b7d1983ebaee574, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6a7e3f627eef674c950f9e32e261e66, type: 3}
 --- !u!224 &625561295 stripped
