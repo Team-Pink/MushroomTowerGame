@@ -450,7 +450,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5509838094053468203
 Transform:
   m_ObjectHideFlags: 0
@@ -1445,6 +1445,21 @@ MonoBehaviour:
   costMultiplier: 1
   sellReturnPercent: 0.5
   nodeHealth: 10
+  activeMaterial: {fileID: 2100000, guid: d6ce9b1f7be57e04a844d27a83bd5704, type: 2}
+  deActiveMaterial: {fileID: 2100000, guid: 4ddf076d501b6034badba816fb1e6113, type: 2}
+  nodeParts:
+  - {fileID: 4009978273162530469}
+  - {fileID: 4941698916513292305}
+  - {fileID: 6826920426883474833}
+  - {fileID: 2694894929864276961}
+  - {fileID: 2196507200694607781}
+  - {fileID: 6192460153040367749}
+  - {fileID: 5987125475963832960}
+  - {fileID: 6253363550072009828}
+  - {fileID: 8787792872406333888}
+  - {fileID: 298264944812183354}
+  - {fileID: 1835792997958347666}
+  - {fileID: 5925261513517198188}
   disappearing: 0
   regrowCanvas: {fileID: 1470488734488510315}
   connectedBuildings: []

@@ -57,6 +57,11 @@ public class Node : Building
         }
     }
 
+
+    [SerializeField] Material activeMaterial;
+    [SerializeField] Material deActiveMaterial;
+    [SerializeField] MeshRenderer[] nodeParts;
+
     [SerializeField] public bool disappearing = false;
 
     public GameObject regrowCanvas;
@@ -191,6 +196,10 @@ public class Node : Building
             budAnimator.SetBool("Deactivate", true);
         }
 
+        // turn grey here ///////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach (MeshRenderer nodePart in nodeParts) nodePart.material = deActiveMaterial;
+       
+
         foreach (Building building in connectedBuildings)
         {
             building.Deactivate();
@@ -207,6 +216,9 @@ public class Node : Building
             base.Reactivate();
             budAnimator.SetBool("Reactivate", true);
         }
+
+        // turn green here /////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach (MeshRenderer nodePart in nodeParts) nodePart.material = activeMaterial;
 
         foreach (Building building in connectedBuildings)
         {
