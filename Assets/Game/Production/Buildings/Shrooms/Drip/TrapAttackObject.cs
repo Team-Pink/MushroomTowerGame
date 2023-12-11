@@ -14,6 +14,7 @@ public class TrapAttackObject : MonoBehaviour
     private new Transform transform;
     [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] new GameObject particleSystem;
+    [SerializeField] Animator animator;
 
     // Detection
     private LayerMask enemies;
@@ -45,6 +46,7 @@ public class TrapAttackObject : MonoBehaviour
         }
         else
         {
+            animator.SetTrigger("Sink");
             Destroy(gameObject);
         }
 
