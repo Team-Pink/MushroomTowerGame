@@ -82,7 +82,7 @@ public class Bullet : MonoBehaviour
             attackFinished = true;
             attacker.AttackHit();
 
-            Debug.Log("Bullet hit, " + timeToTarget);
+            //Debug.Log("Bullet hit, " + timeToTarget);
 
             if (spin)
             {

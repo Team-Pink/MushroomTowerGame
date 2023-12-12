@@ -67,6 +67,11 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 5976738373513459433, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
   m_PrefabInstance: {fileID: 1146691833943568179}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7561862175578090170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7428968717981533577, guid: 911d0a69d93c1b44281e522ca82b7462, type: 3}
+  m_PrefabInstance: {fileID: 1146691833943568179}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7405050289851389767
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -257,6 +262,7 @@ MonoBehaviour:
   turnSpeed: 1
   bulletPrefab: {fileID: 3623149293886159787, guid: ac424feb60f2ee24f83e082bb6bc1440, type: 3}
   bulletSpeed: 6
+  bulletSpawn: {fileID: 7561862175578090170}
 --- !u!4 &3867595276330599367 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6010180596776883328, guid: 29a12a55370ce844d8a902893493d34b, type: 3}

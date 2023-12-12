@@ -15,6 +15,8 @@ public class NodeAttacker : Enemy
     [SerializeField] GameObject bulletPrefab;
     [SerializeField, Range(0.1f, 1.0f)] float bulletSpeed;
 
+    [SerializeField] GameObject bulletSpawn;
+
     LayerMask mask = new();
 
     protected override void ApproachState()
@@ -83,9 +85,12 @@ public class NodeAttacker : Enemy
         {
             AttackAudio();
             animator.SetTrigger("Attack");
-            FireBullet();
-            StartCoroutine(DamageNode());
+
+
             attackInProgress = true;
+            StartCoroutine(TimeWaiter(0.6f));
+            // bullet spawn logic is in here, ik its hacky but uh - James
+
 
         }
         else
@@ -100,7 +105,15 @@ public class NodeAttacker : Enemy
         }
     }
 
+    IEnumerator TimeWaiter(float time) {
+   
 
+        yield return new WaitForSeconds(time);
+
+        FireBullet();
+        StartCoroutine(DamageNode());
+        
+    }
 
     bool RotateToTarget(Quaternion lookTarget)  // this should be overridden in child classes
     {
@@ -113,8 +126,9 @@ public class NodeAttacker : Enemy
 
     void FireBullet()
     {
+        //Vector3 dir = (targetBuilding.transform.position - gameObject.transform.position).normalized + new Vector3(90, 0, 0);
 
-        Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.identity).GetComponent<Bullet>();
+        Bullet bulletRef = UnityEngine.Object.Instantiate(bulletPrefab, transform.position + Vector3.up * 2, Quaternion.Euler(90, 0, 0)).GetComponent<Bullet>();
         bulletRef.timeToTarget = attackDuration = Vector3.Distance(transform.position, targetNode.transform.position) / bulletSpeed; ;
         bulletRef.InitializeNoTrackParabolaBullet(targetNode.transform.position);
 
