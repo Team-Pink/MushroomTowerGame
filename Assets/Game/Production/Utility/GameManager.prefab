@@ -2270,7 +2270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currencyText: {fileID: 0}
-  startingAmount: 150
+  startingAmount: 25
 --- !u!114 &2029106839798511778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2823,21 +2823,28 @@ MonoBehaviour:
   - cursorName: Default
     cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 0
+    costTextColour: {r: 0, g: 0, b: 0, a: 0}
   - cursorName: CannotPlace
     cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
+    costTextColour: {r: 0, g: 0, b: 0, a: 0}
   - cursorName: CanPlace
     cursorSprite: {fileID: 21300000, guid: 952dc90fdc0962f4c959b7dfac1fcbf6, type: 3}
     displayCost: 1
+    costTextColour: {r: 0, g: 0, b: 0, a: 0}
   - cursorName: Shovel
     cursorSprite: {fileID: 21300000, guid: 18d67692fe3a3f64994c88b3c64c3f94, type: 3}
     displayCost: 0
+    costTextColour: {r: 0, g: 0, b: 0, a: 0}
   - cursorName: HighlightedShovel
     cursorSprite: {fileID: 21300000, guid: 8f24f2161365c3b4891b13b51b410ed4, type: 3}
     displayCost: 1
+    costTextColour: {r: 0, g: 0, b: 0, a: 0}
   costText: {fileID: 0}
   costPositionFromSoftwareMousePoint: {x: 65, y: -20}
   softwareCursorImage: {fileID: 0}
+  canAffordColour: {r: 1, g: 1, b: 1, a: 1}
+  cantAffordColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &5583641233090253150
 MonoBehaviour:
   m_ObjectHideFlags: 0

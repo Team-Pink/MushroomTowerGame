@@ -15,7 +15,7 @@ public abstract class Building : MonoBehaviour
         get { return false; }
     }
 
-    private bool active = true;
+    protected bool active = true;
     public bool Active
     {
         get => active;

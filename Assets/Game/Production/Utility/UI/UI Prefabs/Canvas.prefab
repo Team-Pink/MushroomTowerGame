@@ -4460,7 +4460,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Version 0.20
+  m_text: Version 1.0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8196,7 +8196,7 @@ PrefabInstance:
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
       value: The bugs are attacking from a new direction! Uprooting a shroom can
-        give back the resources you need to adapt.
+        give back the resources you need to move over.
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_isRightToLeft
@@ -8423,6 +8423,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dialogue Box
       objectReference: {fileID: 0}
+    - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
+      propertyPath: m_text
+      value: 'The bugs are coming! You need to start growing our Defences.
+
+        Click
+        and Drag from the Meteor.'
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
 --- !u!224 &641298642459919982 stripped
@@ -8515,11 +8522,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -305
+      value: -228
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -58
+      value: 107
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8841,11 +8848,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -305
+      value: -235
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -58
+      value: 102
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9839,10 +9846,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
-      value: 'Lets get those resources back up!
-
-        Click here to enter Uproot
-        Mode.'
+      value: Click here to enter Uproot Mode.
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_isRightToLeft
@@ -10171,11 +10175,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -327
+      value: -314
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -107
+      value: 144
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -10637,10 +10641,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
-      value: 'Now you know how to keep your network''s heart safe from bugs.
+      value: 'Here they come! Keep our Heart safe!
 
-        Good
-        luck!'
+        Good Luck!'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
@@ -10746,8 +10749,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
-      value: This is how you select the Shroom Defender you'd like to grow! You'll
-        unlock more over time.
+      value: "Now you can choose the Shroom Defender you'd like to grow! \nYou'll
+        unlock more over time."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
@@ -11171,11 +11174,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -327
+      value: -295
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -107
+      value: 138
       objectReference: {fileID: 0}
     - target: {fileID: 5084247222108054823, guid: b33a2e030e1ffa3419396d5e940a9e48, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11520,10 +11523,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
-      value: 'Just like before, place the bud here.
+      value: 'This time, place the Bud close to the Node.
 
-        It will grow a Shroom
-        Defender!'
+        It will grow a
+        Shroom Defender instead!'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
@@ -11747,7 +11750,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2336857722567581596, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
       propertyPath: m_text
-      value: Place the bud here to expand your network!
+      value: 'Place the Bud here to grow a Node!
+
+        Nodes expand our network.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}
@@ -11972,8 +11977,7 @@ PrefabInstance:
       propertyPath: m_text
       value: 'Great job!
 
-        You can now click and drag on your new Node to
-        grow your defences.'
+        Now Click and Drag on the Node.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc25a70991f89b742981dd7326c44d0f, type: 3}

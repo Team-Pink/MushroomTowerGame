@@ -10,14 +10,20 @@ public class CustomCursor
     public string cursorName;
     public Sprite cursorSprite;
     public bool displayCost = false;
+    public Color costTextColour;
 }
 
 public class CursorManager : MonoBehaviour
 {
+    private CurrencyManager currencyManager;
+
     public CustomCursor[] cursors;
     [SerializeField] TMP_Text costText;
     [SerializeField] Vector2 costPositionFromSoftwareMousePoint;
     [SerializeField] UnityEngine.UI.Image softwareCursorImage;
+
+    [SerializeField] Color canAffordColour = new Color(1, 1, 1);
+    [SerializeField] Color cantAffordColor = new Color(1, 0, 0);
 
     public string currentCursorState
     {
@@ -33,6 +39,8 @@ public class CursorManager : MonoBehaviour
         softwareCursorImage.gameObject.SetActive(true);
         ChangeCursor();
         canvasScaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
+
+        currencyManager = gameObject.GetComponent<CurrencyManager>();
     }
 
     private void Update()
@@ -79,8 +87,15 @@ public class CursorManager : MonoBehaviour
         SetSoftwareCursor(cursors[0]);
     }
 
-    public void DisplayCost(int cost) => costText.text = cost.ToString();
-    public void DisplayCost() => costText.text = "";
+    public void DisplayCost(int cost)
+    {
+        costText.text = cost.ToString();
+        costText.color = cost < currencyManager.GetCurrencyTotal() ? canAffordColour : cantAffordColor;
+    }
+    public void DisplayCost()
+    {
+        costText.text = "";
+    }
 
     void PlaceCursorUIOnCursorPosition()
     {
@@ -105,5 +120,4 @@ public class CursorManager : MonoBehaviour
         costText.gameObject.SetActive(cursor.displayCost);
         currentCursorState = cursor.cursorName;
     }
-
 }

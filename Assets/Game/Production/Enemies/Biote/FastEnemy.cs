@@ -44,7 +44,7 @@ public class FastEnemy : Enemy
         if (!attackInProgress && !attackCoolingDown)
         {
             //Explosion logic goes here
-            Instantiate(explosionParticle);
+            Instantiate(explosionParticle, transform.position, Quaternion.identity);
             AttackAudio();
             TakeDamage(CurrentHealth);
             OnDeath();

@@ -123,6 +123,8 @@ public class Shroom : Building
     [HideInInspector] private Material[] activeMaterials;
     [SerializeField, Space()] Material[] deactivatedMaterials;
 
+    [SerializeField] AnimationClip sellAnim;
+
     [Space(20)]
     [Tooltip("ONLY FOR USE ON THE BOOMERANG SHROOM")] public SkinnedMeshRenderer boomerangCap;
 
@@ -255,9 +257,12 @@ public class Shroom : Building
         CurrencyManager currencyManager = GameObject.Find("GameManager").GetComponent<CurrencyManager>();
         currencyManager.IncreaseCurrencyAmount(purchaseCost, sellReturnPercent);
 
-        Destroy(gameObject);
+        active = false;
+        animator.SetTrigger("Sell");
+        Destroy(gameObject, sellAnim.length);
 
         base.Sell();
+       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
     public void NewPrice(float multiplier) => purchaseCost = (int)(purchaseCost * multiplier);
     public int SellPrice() => (int)(purchaseCost * sellReturnPercent);
