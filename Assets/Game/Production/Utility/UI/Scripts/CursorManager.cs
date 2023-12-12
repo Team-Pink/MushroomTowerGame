@@ -90,7 +90,7 @@ public class CursorManager : MonoBehaviour
     public void DisplayCost(int cost)
     {
         costText.text = cost.ToString();
-        costText.color = cost < currencyManager.GetCurrencyTotal() ? canAffordColour : cantAffordColor;
+        costText.color = cost <= currencyManager.GetCurrencyTotal() ? canAffordColour : cantAffordColor;
     }
     public void DisplayCost()
     {
